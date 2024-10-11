@@ -41,15 +41,6 @@
 
 - TS. **Đỗ Thị Thanh Tuyền** - *tuyendtt@uit.edu.vn*
 
-<!-- Giới thiệu bản thân với nút GitHub có hiệu ứng hover -->
-## 🧑‍💻 GIỚI THIỆU BẢN THÂN
-<a name="banthan"></a>
-
-- **Họ tên**: Lê Minh Nhựt
-- **Sinh viên Khoá**: K17
-- **Email**: 22521060@gm.uit.edu.vn
-- **Github**: <a href="https://github.com/leeminsun1205" target="_blank"><img src="https://img.shields.io/badge/leeminsun1205-%2324292f.svg?style=flat-square&logo=github" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></a>
-
 <!-- Thông tin thành viên với hiệu ứng hover -->
 ## 👨‍👩‍👧‍👦 THÔNG TIN THÀNH VIÊN
 
