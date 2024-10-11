@@ -12,9 +12,9 @@
 
 <!-- Badge -->
 <p align="center">
-  <img src="https://img.shields.io/badge/Machine%20Learning-CS114-blueviolet?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Software%20Engineer-SE104-blueviolet?style=for-the-badge">
   <img src="https://img.shields.io/badge/UIT-2024--2025-lightblue?style=for-the-badge">
-  <img src="https://img.shields.io/badge/Team-CS114%20Squad-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Team-Antimandan%20Squad-green?style=for-the-badge">
 </p>
 
 <hr>
