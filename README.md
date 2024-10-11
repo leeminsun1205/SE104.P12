@@ -49,6 +49,7 @@
 | `22521060` | Lê Minh Nhựt        | 22521060@gm.uit.edu.vn   | [![leeminsun1205](https://img.shields.io/badge/leeminsun1205-%2324292f.svg?style=flat-square&logo=github)](https://github.com/leeminsun1205) |
 | `22521027` | Tăng Nhất           | 22521027@gm.uit.edu.vn   | [![GadGadGad](https://img.shields.io/badge/GadGadGad-%2324292f.svg?style=flat-square&logo=github)](https://github.com/GadGadGad) |
 | `22520195` | Trần Đình Khánh Đăng | 22520195@gm.uit.edu.vn   | [![ra1nei](https://img.shields.io/badge/ra1nei-%2324292f.svg?style=flat-square&logo=github)](https://github.com/ra1nei) |
+| `21520398` | Nguyễn Quế  | 21520398@gm.uit.edu.vn   | [![ra1nei](https://img.shields.io/badge/ynwawithpogct-%2324292f.svg?style=flat-square&logo=github)](https://github.com/ynwawithpogct) |
 
 <hr>
 
