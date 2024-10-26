@@ -154,3 +154,16 @@ a {
 a:hover {
   text-decoration: underline;
 }
+/* src/assets/styles/global.css hoặc src/App.css */
+
+.content {
+  margin-left: 250px; /* Không gian dành cho sidebar */
+  transition: margin-left 0.3s;
+}
+
+/* Điều chỉnh cho thiết bị di động */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+  }
+}

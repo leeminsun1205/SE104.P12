@@ -16,21 +16,21 @@ import './assets/styles/variables.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Thêm trạng thái để quản lý sidebar cho mobile
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-  };
+  const handleLogin = () => setIsAuthenticated(true);
+  const handleLogout = () => setIsAuthenticated(false);
+
+  // Toggle Sidebar cho mobile
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
     <Router>
       <div className="app">
         {isAuthenticated ? (
           <>
-            <Header onLogout={handleLogout} />
-            <Sidebar />
+            <Header onLogout={handleLogout} onToggleSidebar={toggleSidebar} /> {/* Truyền toggleSidebar */}
+            <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} /> {/* Truyền trạng thái và toggle */}
             <div className="content">
               <main>
                 <Routes>
