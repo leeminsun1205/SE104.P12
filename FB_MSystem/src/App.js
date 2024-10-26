@@ -1,13 +1,14 @@
 // src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
-import Teams from './components/Teams';
-import Matches from './components/Matches';
-import Standings from './components/Standings';
-import Login from './components/Login';
+import Header from './components/Header/Header';
+import Sidebar from './components/Sidebar/Sidebar';
+import Dashboard from './pages/DashBoardPage/Dashboard';
+import Teams from './pages/TeamsPage/Teams';
+import Matches from './pages/MatchesPage/Matches';
+import Standings from './pages/StandingsPage/Standings';
+import HomePage from './pages/HomePage/HomePage';
+import Login from './pages/LoginPage/Login';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,7 +26,8 @@ function App() {
             <Sidebar />
             <main>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/teams" element={<Teams />} />
                 <Route path="/matches" element={<Matches />} />
                 <Route path="/standings" element={<Standings />} />
