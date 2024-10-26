@@ -1,5 +1,5 @@
-// src/components/Teams.js
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const teams = [
   { id: 1, name: 'Team A', city: 'Hanoi' },
@@ -16,6 +16,7 @@ function Teams() {
           <li key={team.id}>
             <h3>{team.name}</h3>
             <p>Thành phố: {team.city}</p>
+            <Link to={`/teams/${team.id}/players`}>Xem cầu thủ</Link> {/* Liên kết đến trang cầu thủ */}
           </li>
         ))}
       </ul>

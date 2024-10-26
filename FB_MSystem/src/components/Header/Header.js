@@ -3,22 +3,21 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import styles from './Header.module.css';
 import Button from '../Button/Button';
-function Header() {
+
+function Header({ onLogout }) { // Nhận prop onLogout từ App.js
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
         <Link to="/">Football Championship Management</Link>
       </div>
       <nav className={styles.nav}>
-        <NavLink to="/dashboard" className={styles.navLink} activeClassName={styles.active}>Dashboard</NavLink>
-        <NavLink to="/teams" className={styles.navLink} activeClassName={styles.active}>Teams</NavLink>
-        <NavLink to="/matches" className={styles.navLink} activeClassName={styles.active}>Matches</NavLink>
-        <NavLink to="/standings" className={styles.navLink} activeClassName={styles.active}>Standings</NavLink>
+        <NavLink to="/dashboard" className={({ isActive }) => isActive ? styles.active : styles.navLink}>Dashboard</NavLink>
+        <NavLink to="/teams" className={({ isActive }) => isActive ? styles.active : styles.navLink}>Teams</NavLink>
+        <NavLink to="/matches" className={({ isActive }) => isActive ? styles.active : styles.navLink}>Matches</NavLink>
+        <NavLink to="/standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>Standings</NavLink>
       </nav>
       <div className={styles.userMenu}>
-        {/* <img src="FB_MSystem/src/assets/images/images.jpg" alt="User Avatar" className={styles.avatar} /> */}
-        <Button onClick={() => console.log('Logged out')}>Logout</Button>
-        {/* <span className={styles.userName}>John Doe</span> */}
+        <Button onClick={onLogout}>Logout</Button> {/* Gọi onLogout khi bấm nút */}
       </div>
     </header>
   );
