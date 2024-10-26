@@ -1,0 +1,68 @@
+/* src/pages/DashboardPage/Dashboard.module.css */
+
+.dashboard {
+    padding: 20px;
+    margin: 20px;
+    background-color: var(--color-background);
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+  }
+  
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-small);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .card h3 {
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+    margin-bottom: 10px;
+  }
+  
+  .card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-text-primary);
+  }
+  
+  .graphs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .graph {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-small);
+    text-align: center;
+  }
+  
+  .graph h3 {
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+    margin-bottom: 15px;
+  }
+  

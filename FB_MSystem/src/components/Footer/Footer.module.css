@@ -1,0 +1,61 @@
+/* src/components/Footer/Footer.module.css */
+
+.footer {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex:1
+  }
+  
+  .info {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .socialLinks {
+    display: flex;
+    gap: 15px;
+    font-size: 1.25rem;
+  }
+  
+  .socialLinks a {
+    color: white;
+    transition: color 0.3s;
+  }
+  
+  .socialLinks a:hover {
+    color: var(--color-accent);
+  }
+  
+  .links {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .links a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .links a:hover {
+    color: var(--color-accent);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+  }
+  

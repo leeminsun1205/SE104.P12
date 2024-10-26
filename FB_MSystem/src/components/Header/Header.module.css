@@ -1,0 +1,79 @@
+/* src/components/Header/Header.module.css */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--color-primary);
+    color: white;
+    position: fixed;
+    width: calc(100% - 250px); /* Tương thích với Sidebar cố định */
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .navLink {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+  }
+  
+  .navLink:hover {
+    color: var(--color-secondary);
+  }
+  
+  .active {
+    color: var(--color-accent);
+    font-weight: bold;
+  }
+  
+  .userMenu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  
+  .userName {
+    font-size: 1rem;
+    color: white;
+  }
+  
+  /* Responsive Design cho màn hình nhỏ */
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 15px;
+    }
+  
+    .nav {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  
+    .userMenu {
+      margin-top: 10px;
+    }
+  }
+  

@@ -1,0 +1,11 @@
+/* global.css */
+
+.app {
+    display: flex;
+  }
+  
+  .content {
+    margin-left: 250px; /* Đảm bảo content không bị đè lên Sidebar */
+    width: calc(100% - 250px);
+  }
+  
