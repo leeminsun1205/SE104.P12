@@ -1,7 +1,6 @@
 // src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Button from './components/Button/Button'
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
 import Footer from './components/Footer/Footer';
@@ -29,7 +28,7 @@ function App() {
             <Header />
             <Sidebar />
             <div className="content">
-              <main style={{ marginTop: '60px', marginLeft: '250px', paddingBottom: '20px' }}>
+              <main >
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/dashboard" element={<Dashboard />} />
