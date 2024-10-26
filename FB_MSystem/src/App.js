@@ -9,6 +9,8 @@ import Matches from './pages/MatchesPage/Matches';
 import Standings from './pages/StandingsPage/Standings';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/LoginPage/Login';
+import './assets/styles/global.css';
+import './assets/styles/variables.css'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

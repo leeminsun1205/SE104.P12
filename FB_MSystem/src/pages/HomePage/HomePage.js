@@ -1,6 +1,6 @@
 // src/pages/HomePage.js
 import React from 'react';
-import './HomePage.css';
+import './HomePage.module.css';
 
 function HomePage() {
   return (

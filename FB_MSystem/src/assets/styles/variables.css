@@ -1,0 +1,64 @@
+/* variables.css */
+
+/* === Màu sắc === */
+:root {
+    --color-primary: #4CAF50;         /* Màu chính, dùng cho tiêu đề và các nút */
+    --color-secondary: #81C784;       /* Màu phụ */
+    --color-accent: #388E3C;          /* Màu nhấn, sử dụng khi hover */
+    --color-background: #f9f9f9;      /* Màu nền tổng quát */
+    --color-surface: #ffffff;         /* Màu nền cho các thẻ và hộp */
+    --color-border: #e0e0e0;          /* Màu viền cho các phần tử */
+    --color-text-primary: #333333;    /* Màu chữ chính */
+    --color-text-secondary: #666666;  /* Màu chữ phụ */
+    --color-error: #f44336;           /* Màu thông báo lỗi */
+    --color-warning: #ff9800;         /* Màu cảnh báo */
+    --color-success: #4caf50;         /* Màu thành công */
+    --color-info: #2196f3;            /* Màu thông tin */
+  }
+  
+  /* === Font chữ === */
+  :root {
+    --font-family-base: 'Roboto', sans-serif;    /* Font chữ chính */
+    --font-size-base: 16px;                      /* Kích thước font cơ bản */
+    --font-size-small: 14px;                     /* Font nhỏ */
+    --font-size-large: 20px;                     /* Font lớn */
+    --font-size-title: 24px;                     /* Font cho tiêu đề lớn */
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-bold: 700;
+  }
+  
+  /* === Kích thước và khoảng cách === */
+  :root {
+    --spacing-xs: 4px;          /* Khoảng cách rất nhỏ */
+    --spacing-sm: 8px;          /* Khoảng cách nhỏ */
+    --spacing-md: 16px;         /* Khoảng cách vừa */
+    --spacing-lg: 24px;         /* Khoảng cách lớn */
+    --spacing-xl: 32px;         /* Khoảng cách rất lớn */
+    --border-radius: 8px;       /* Bo góc chuẩn */
+    --card-padding: 20px;       /* Padding cho các thẻ card */
+    --input-padding: 10px 15px; /* Padding cho các input */
+  }
+  
+  /* === Đổ bóng (Shadow) === */
+  :root {
+    --shadow-small: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-large: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* === Kích thước giao diện === */
+  :root {
+    --container-width: 1200px;        /* Độ rộng tối đa của container */
+    --header-height: 60px;            /* Chiều cao của header */
+    --footer-height: 80px;            /* Chiều cao của footer */
+    --button-height: 40px;            /* Chiều cao của button */
+  }
+  
+  /* === Transition (Hiệu ứng chuyển tiếp) === */
+  :root {
+    --transition-fast: 0.2s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+  }
+  
