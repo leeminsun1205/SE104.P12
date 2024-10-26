@@ -14,6 +14,7 @@ html, body {
   font-family: 'Roboto', sans-serif;
   background-color: #f9f9f9;
   color: #333;
+  scroll-behavior: smooth;
 }
 
 /* 2. Thiết lập màu sắc và biến toàn cục */
@@ -25,6 +26,9 @@ html, body {
   --text-light-color: #666;         /* Màu chữ phụ */
   --border-color: #e0e0e0;          /* Màu viền */
   --hover-color: #388E3C;           /* Màu khi hover */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Bóng mờ nhẹ */
+  --radius: 8px;                    /* Bán kính viền */
+  --transition-speed: 0.3s;         /* Thời gian chuyển đổi */
 }
 
 /* 3. Cài đặt kiểu chữ */
@@ -47,7 +51,7 @@ p {
 a {
   color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s;
+  transition: color var(--transition-speed);
 }
 
 a:hover {
@@ -68,6 +72,7 @@ a:hover {
   align-items: center;
 }
 
+/* Responsive Grids */
 .grid-2, .grid-3, .grid-4 {
   display: grid;
   gap: 20px;
@@ -85,14 +90,25 @@ a:hover {
   grid-template-columns: repeat(4, 1fr);
 }
 
+/* Responsive Grid Layout for smaller screens */
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 5. Nút bấm (Button) */
 button {
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius);
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 button.primary {
@@ -113,10 +129,10 @@ button.primary:hover {
 .card {
   background-color: white;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 8px var(--shadow-color);
   padding: 20px;
-  transition: transform 0.2s, box-shadow 0.3s;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .card:hover {
@@ -141,7 +157,7 @@ input, textarea {
   padding: 10px;
   margin: 10px 0;
   border: 1px solid var(--border-color);
-  border-radius: 5px;
+  border-radius: var(--radius);
   font-size: 1rem;
   color: var(--text-color);
 }
@@ -178,10 +194,19 @@ header .nav-links li, footer .nav-links li {
 header .nav-links a, footer .nav-links a {
   color: white;
   text-decoration: none;
+  transition: color var(--transition-speed);
 }
 
 header .nav-links a:hover, footer .nav-links a:hover {
   text-decoration: underline;
+}
+
+/* Responsive adjustments for Header and Footer */
+@media (max-width: 768px) {
+  header .nav-links, footer .nav-links {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 /* 9. Hiệu ứng chung */
@@ -196,4 +221,18 @@ header .nav-links a:hover, footer .nav-links a:hover {
   to {
     opacity: 1;
   }
+}
+
+/* 10. Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--background-color);
 }
