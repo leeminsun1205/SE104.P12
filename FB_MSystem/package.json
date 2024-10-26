@@ -2,6 +2,7 @@
   "name": "fm-se106",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://leeminsun1205.github.io/SE104.P12-Anti-man-dan",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
