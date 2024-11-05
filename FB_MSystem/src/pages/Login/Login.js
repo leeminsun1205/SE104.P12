@@ -9,7 +9,6 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Gọi hàm đăng nhập từ props
     onLogin();
   };
 
@@ -19,7 +18,7 @@ function Login({ onLogin }) {
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className={styles.loginBox}>
-        <h2 className={styles.title}>Welcome Back!</h2>
+        <h2 className={styles.title}>Welcome <br/> Football Management!</h2>
         <p className={styles.subtitle}>Please sign in to continue</p>
         <form onSubmit={handleSubmit}>
           <div className={styles.inputGroup}>

@@ -11,17 +11,18 @@ import Matches from './pages/Matches/Matches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import SignUp from './pages/SignUp/SignUp';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Thêm trạng thái để quản lý sidebar cho mobile
+  const [sidebarOpen, setSidebarOpen] = useState(false); 
 
   const handleLogin = () => setIsAuthenticated(true);
   const handleLogout = () => setIsAuthenticated(false);
 
-  // Toggle Sidebar cho mobile
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
@@ -29,8 +30,8 @@ function App() {
       <div className="app">
         {isAuthenticated ? (
           <>
-            <Header onLogout={handleLogout} onToggleSidebar={toggleSidebar} /> {/* Truyền toggleSidebar */}
-            <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} /> {/* Truyền trạng thái và toggle */}
+            <Header onLogout={handleLogout} onToggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
             <div className="content">
               <main>
                 <Routes>
@@ -49,6 +50,8 @@ function App() {
         ) : (
           <Routes>
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         )}
