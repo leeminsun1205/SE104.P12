@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './SignUp.module.css';
+import backgroundImage from '../../assets/images/hinh-nen-san-bong-dep-banner.jpg';
 
 function SignUp() {
   const [email, setEmail] = useState('');
@@ -21,12 +22,16 @@ function SignUp() {
   };
 
   return (
-    <div className={styles.signUpContainer}>
+    <div className={styles.signUpContainer}
+    style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
       <div className={styles.signUpBox}>
         <h2 className={styles.title}>Đăng Ký Tài Khoản</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">
+              Email <span className={styles.required}>*</span>
+            </label>
             <input
               type="email"
               id="email"
@@ -37,7 +42,9 @@ function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label htmlFor="password">Mật Khẩu</label>
+            <label htmlFor="password">
+                Mật khẩu <span className={styles.required}>*</span>
+              </label>
             <input
               type="password"
               id="password"
@@ -48,7 +55,9 @@ function SignUp() {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label htmlFor="confirmPassword">Xác Nhận Mật Khẩu</label>
+            <label htmlFor="confirmPassword">
+              Xác nhận mật khẩu <span className={styles.required}>*</span>
+              </label>
             <input
               type="password"
               id="confirmPassword"

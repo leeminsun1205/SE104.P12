@@ -13,13 +13,18 @@
   .signUpBox {
     width: 100%;
     max-width: 400px;
-    padding: 40px;
+    padding: 35px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
   
+  .required {
+    color: red;
+  }
+  
+
   .title {
     font-size: 1.8rem;
     color: #333;
@@ -27,7 +32,7 @@
   }
   
   .inputGroup {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-align: left;
   }
   

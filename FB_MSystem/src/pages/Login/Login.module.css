@@ -20,6 +20,10 @@
   text-align: center;
 }
 
+.required {
+  color: red;
+}
+
 .title {
   font-size: 1.8rem;
   color: #333;
