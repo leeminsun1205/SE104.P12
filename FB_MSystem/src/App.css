@@ -26,6 +26,7 @@ a:hover {
 .app {
   display: flex;
   min-height: 100vh;
+  min-width: 80wh;
   flex-direction: column;
 }
 

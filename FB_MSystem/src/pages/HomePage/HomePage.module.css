@@ -3,18 +3,21 @@
 .homepage {
     font-family: Arial, sans-serif;
     color: #333;
+    margin-top: 100px;
   }
   
   .banner {
     background: linear-gradient(135deg, #4CAF50, #81C784);
     color: white;
     text-align: center;
-    padding: 50px 20px;
+    padding: 50px 50px;
   }
   
   .banner h1 {
     font-size: 3rem;
+    margin-top: 20px;
     margin-bottom: 10px;
+    color: black;
   }
 
 
@@ -23,7 +26,7 @@
     font-size: 1rem;
     color: #4CAF50;
     background-color: white;
-    border: none;
+    border: 4;
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;

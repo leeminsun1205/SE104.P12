@@ -3,11 +3,11 @@ import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 
 function Sidebar() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sidebarOpen, setsidebarOpen] = useState(false);
 
   // Toggle sidebar visibility
   const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => {
+    setsidebarOpen((prev) => {
       console.log('Sidebar state:', !prev); // Debugging log
       return !prev;
     });
@@ -16,14 +16,14 @@ function Sidebar() {
   return (
     <>
       <button
-        className={styles.toggleButton}
+        className={`${styles.toggleButton} ${sidebarOpen ? styles.active : ''}`}
         onClick={toggleSidebar}
         aria-label="Toggle Sidebar"
       >
         ☰
       </button>
       <aside
-        className={`${styles.sidebar} ${isSidebarOpen ? styles.active : ''}`}
+        className={`${styles.sidebar} ${sidebarOpen ? styles.active : ''}`}
       >
         <div className={styles.logo}>
           <h2>Football Management</h2>

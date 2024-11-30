@@ -16,9 +16,11 @@ function Header({ onLogout }) { // Nhận prop onLogout từ App.js
         <NavLink to="/matches" className={({ isActive }) => isActive ? styles.active : styles.navLink}>Matches</NavLink>
         <NavLink to="/standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>Standings</NavLink>
       </nav>
+      
       <div className={styles.userMenu}>
         <Button onClick={onLogout}>Logout</Button> {/* Gọi onLogout khi bấm nút */}
       </div>
+      
     </header>
   );
 }
