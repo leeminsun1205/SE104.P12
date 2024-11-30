@@ -1,5 +1,5 @@
-// src/pages/LoginPage/Login.js
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import styles from './Login.module.css';
 import backgroundImage from '../../assets/images/hinh-nen-san-bong-dep-banner.jpg';
 
@@ -9,7 +9,27 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin();
+
+    // Example logic to simulate login
+    if ((email === 'admin@example.com' && password === 'password123')
+      || ( email === 'admin' && password === '123')
+    ) {
+      Swal.fire({
+        title: 'Đăng nhập thành công',
+        text: 'Chào mừng trở lại!',
+        icon: 'success',
+        confirmButtonText: 'Tiếp tục',
+      }).then(() => {
+        onLogin();
+      });
+    } else {
+      Swal.fire({
+        title: 'Đăng nhập thất bại',
+        text: 'Email hoặc mật khẩu không hơp lệ!',
+        icon: 'error',
+        confirmButtonText: 'Thử lại',
+      });
+    }
   };
 
   return (
@@ -26,7 +46,8 @@ function Login({ onLogin }) {
               Email <span className={styles.required}>*</span>
               </label>
             <input 
-              type="email" 
+              type = "text" // for debug
+              // type="email" 
               id="email" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
@@ -47,7 +68,7 @@ function Login({ onLogin }) {
               required 
             />
           </div>
-          <button type="submit" className={styles.loginButton}>Login</button>
+          <button type="submit" className={styles.loginButton}>Đăng nhập</button>
         </form>
         <div className={styles.footer}>
           <a href="/forgot-password" className={styles.forgotPassword}>Quên mật khẩu?</a>

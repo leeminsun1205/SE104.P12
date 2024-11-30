@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!-- Banner -->
 <p align="center">
   <a href="https://www.uit.edu.vn/" title="Trường Đại học Công nghệ Thông tin" style="border: none;">
@@ -63,7 +62,6 @@
 <p align="center">
   <img src="https://media.giphy.com/media/3oEjHGrVGrqgFFknfO/giphy.gif" width="30"/> Cảm ơn bạn đã ghé thăm! <img src="https://media.giphy.com/media/3oEjHGrVGrqgFFknfO/giphy.gif" width="30"/>
 </p>
-=======
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -134,4 +132,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
->>>>>>> a413f91 (Initialize project using Create React App)
+
+

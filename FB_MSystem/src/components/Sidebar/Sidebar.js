@@ -1,29 +1,69 @@
-// src/components/Sidebar/Sidebar.js
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 
 function Sidebar() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Toggle sidebar visibility
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => {
+      console.log('Sidebar state:', !prev); // Debugging log
+      return !prev;
+    });
+  };
+
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.logo}>
-        <h2>Football App</h2>
-      </div>
-      <nav className={styles.nav}>
-        <NavLink to="/dashboard" className={styles.navLink} activeClassName={styles.active}>
-          <i className="fas fa-tachometer-alt"></i> Dashboard
-        </NavLink>
-        <NavLink to="/teams" className={styles.navLink} activeClassName={styles.active}>
-          <i className="fas fa-users"></i> Teams
-        </NavLink>
-        <NavLink to="/matches" className={styles.navLink} activeClassName={styles.active}>
-          <i className="fas fa-futbol"></i> Matches
-        </NavLink>
-        <NavLink to="/standings" className={styles.navLink} activeClassName={styles.active}>
-          <i className="fas fa-list-ol"></i> Standings
-        </NavLink>
-      </nav>
-    </aside>
+    <>
+      <button
+        className={styles.toggleButton}
+        onClick={toggleSidebar}
+        aria-label="Toggle Sidebar"
+      >
+        ☰
+      </button>
+      <aside
+        className={`${styles.sidebar} ${isSidebarOpen ? styles.active : ''}`}
+      >
+        <div className={styles.logo}>
+          <h2>Football Management</h2>
+        </div>
+        <nav className={styles.nav}>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-tachometer-alt"></i> Dashboard
+          </NavLink>
+          <NavLink
+            to="/teams"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-users"></i> Teams
+          </NavLink>
+          <NavLink
+            to="/matches"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-futbol"></i> Matches
+          </NavLink>
+          <NavLink
+            to="/standings"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-list-ol"></i> Standings
+          </NavLink>
+        </nav>
+      </aside>
+    </>
   );
 }
 

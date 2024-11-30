@@ -1,6 +1,6 @@
-// src/pages/SignUp/SignUp.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import styles from './SignUp.module.css';
 import backgroundImage from '../../assets/images/hinh-nen-san-bong-dep-banner.jpg';
 
@@ -12,18 +12,44 @@ function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Mật khẩu không khớp!');
+
+    // Regular expression to validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      Swal.fire({
+        title: 'Lỗi',
+        text: 'Email không hợp lệ!',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
       return;
     }
-    // Thực hiện logic đăng ký người dùng
-    alert('Đăng ký thành công!');
-    navigate('/login'); // Chuyển hướng về trang đăng nhập
+
+    if (password !== confirmPassword) {
+      Swal.fire({
+        title: 'Lỗi',
+        text: 'Mật khẩu không khớp!',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Đăng ký thành công!',
+      text: 'Tài khoản của bạn đã được tạo. Hãy đăng nhập để tiếp tục.',
+      icon: 'success',
+      confirmButtonText: 'OK',
+    }).then(() => {
+      navigate('/login'); 
+    });
   };
 
   return (
-    <div className={styles.signUpContainer}
-    style={{ backgroundImage: `url(${backgroundImage})` }}
+    <div
+      className={styles.signUpContainer}
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className={styles.signUpBox}>
         <h2 className={styles.title}>Đăng Ký Tài Khoản</h2>
@@ -43,8 +69,8 @@ function SignUp() {
           </div>
           <div className={styles.inputGroup}>
             <label htmlFor="password">
-                Mật khẩu <span className={styles.required}>*</span>
-              </label>
+              Mật khẩu <span className={styles.required}>*</span>
+            </label>
             <input
               type="password"
               id="password"
@@ -56,8 +82,8 @@ function SignUp() {
           </div>
           <div className={styles.inputGroup}>
             <label htmlFor="confirmPassword">
-              Xác nhận mật khẩu <span className={styles.required}>*</span>
-              </label>
+            Xác nhận mật khẩu<span className={styles.required}>*</span>
+            </label>
             <input
               type="password"
               id="confirmPassword"
@@ -69,7 +95,12 @@ function SignUp() {
           </div>
           <button type="submit" className={styles.submitButton}>Đăng Ký</button>
         </form>
-      </div>
+        <button
+          className={styles.goBackButton}
+          onClick={() => navigate('/login')}
+        >
+          Quay lại
+        </button>      </div>
     </div>
   );
 }

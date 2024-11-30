@@ -8,7 +8,8 @@
     background-color: var(--color-primary);
     color: white;
     position: fixed;
-    width: calc(120% - 250px); /* Tương thích với Sidebar cố định */
+    /* width: calc(120% - 250px); */ /* Tương thích với Sidebar cố định */
+    width: 100%;
     top: 0;
     z-index: 1000;
   }
