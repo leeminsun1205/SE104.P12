@@ -1,9 +1,12 @@
 .footer {
   background-color: var(--color-primary);
   color: white;
-  padding: 20px 0;
   text-align: center;
+  position: fixed;
   width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .container {
@@ -15,19 +18,18 @@
 }
 
 .info {
-  font-size: 0.9rem;
-  margin-bottom: 10px;
+  font-size: 16px;
 }
 
 .socialLinks {
   display: flex;
   gap: 15px;
-  font-size: 1.25rem;
+  font-size: 16px;
 }
 
 .socialLinks a {
   color: white;
-  font-size: 1.5rem; /* Ensure icon size is appropriate */
+  font-size: 24px; /* Ensure icon size is appropriate */
   transition: color 0.3s;
 }
 

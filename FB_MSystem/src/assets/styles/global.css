@@ -33,8 +33,12 @@ html, body {
 
 /* 3. Cài đặt kiểu chữ */
 body {
+  margin-top: 16px;
+  margin-left: 50px;
   font-size: 16px;
+  padding: 10px 10px 10px 10px ;
   line-height: 1.6;
+  width: 100wh;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -229,7 +233,7 @@ header .nav-links a:hover, footer .nav-links a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--primary-color);
+  background: linear-gradient(to bottom, #28a745, #007bff); /* Gradient from green to blue */
   border-radius: var(--radius);
 }
 

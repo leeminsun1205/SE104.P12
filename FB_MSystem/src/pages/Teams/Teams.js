@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './Team.css';
 
 const initialTeams = [
   { id: 1, name: 'Team A', city: 'Hanoi' },
@@ -68,7 +69,7 @@ function Teams() {
       />
 
       {/* Thêm đội bóng mới */}
-      <div>
+      <div class='input'>
         <input
           type="text"
           placeholder="Tên đội bóng"

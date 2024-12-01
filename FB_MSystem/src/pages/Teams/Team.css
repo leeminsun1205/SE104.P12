@@ -1,0 +1,127 @@
+.teams {
+    position: relative;
+    top: 38px; /* Header size */
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  input[type="text"] {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: calc(100% - 24px);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  button {
+    margin: 5px 0;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    position: relative;
+    align-self: center;
+    display: flex;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  li h3 {
+    margin: 0;
+    color: #333;
+  }
+  
+  li p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  li div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  li div button {
+    margin-left: 5px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  button[style*="red"] {
+    background-color: #ff4d4d;
+    color: white;
+  }
+  
+  button[style*="red"]:hover {
+    background-color: #cc0000;
+  }
+
+  .input {
+    display: flex;
+    flex-direction: column; /* Arrange children in a column (one below the other) */
+    gap: 10px; /* Add spacing between rows */
+  }
+  
+  .input div {
+    display: flex; /* Use flex for each row */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space out the elements within the row */
+  }
+  
+  .input div:last-child {
+    justify-content: flex-end; /* Align the button to the right */
+  }
+  
+  .input div input,
+  .input div button {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .input div input {
+    flex: 1; /* Let input fields take available space */
+    margin-right: 10px; /* Add space between inputs */
+  }
+  

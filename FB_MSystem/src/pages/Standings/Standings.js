@@ -16,6 +16,9 @@ function Standings() {
     { rank: 6, name: 'Team F', played: 10, won: 3, drawn: 2, lost: 1, points: 23 },
     { rank: 6, name: 'Team F', played: 10, won: 3, drawn: 2, lost: 1, points: 23 },
     { rank: 6, name: 'Team F', played: 10, won: 3, drawn: 2, lost: 1, points: 23 },
+    { rank: 6, name: 'Team F', played: 10, won: 3, drawn: 2, lost: 1, points: 23 },
+    { rank: 6, name: 'Team F', played: 10, won: 3, drawn: 2, lost: 1, points: 23 },
+    { rank: 6, name: 'Team F', played: 10, won: 3, drawn: 2, lost: 1, points: 23 },
     // Thêm các đội khác vào đây
   ];
 

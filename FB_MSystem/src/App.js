@@ -12,6 +12,7 @@ import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SignUp from './pages/SignUp/SignUp';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
@@ -44,6 +45,8 @@ function App() {
     </Router>
   );
 }
+
+
 
 function AuthenticatedRoutes() {
   return (

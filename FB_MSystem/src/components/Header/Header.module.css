@@ -4,11 +4,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background-color: var(--color-primary);
+  /* background-color: var(--color-primary); */
   color: white;
   position: fixed;
   width: 100%;
+  left: 0;
   top: 0;
+  right: 0;
   z-index: 1000;
 }
 
