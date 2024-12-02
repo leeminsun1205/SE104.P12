@@ -9,8 +9,8 @@
   position: fixed;
   width: 100%;
   left: 0;
-  top: 0;
   right: 0;
+  top: 0;
   z-index: 1000;
 }
 
@@ -94,8 +94,8 @@
   /* Show sidebar toggle button on small screens */
   .sidebarToggle {
     display: block;
-    position: absolute; /* Fix to top-right corner */
     top: 15px;
+    position: absolute; /* Fix to top-right corner */
     right: 20px;
   }
 
