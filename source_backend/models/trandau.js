@@ -11,7 +11,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'VongDau', // Tên bảng ngoại (nếu có)
+            model: 'VongDau', 
             key: 'MaVongDau',
         },
     },
@@ -19,7 +19,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'DoiBong', // Tên bảng ngoại (nếu có)
+            model: 'DoiBong', 
             key: 'MaDoiBong',
         },
     },
@@ -27,7 +27,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'DoiBong', // Tên bảng ngoại (nếu có)
+            model: 'DoiBong', 
             key: 'MaDoiBong',
         },
     },
@@ -43,7 +43,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'San', // Tên bảng ngoại (nếu có)
+            model: 'San', 
             key: 'MaSan',
         },
     },

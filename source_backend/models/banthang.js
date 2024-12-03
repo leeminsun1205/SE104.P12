@@ -11,7 +11,7 @@ const Banthang = sequelize.define('Banthang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'Trandau', // Tên bảng ngoại (nếu có)
+            model: 'Trandau', 
             key: 'MaTranDau',
         },
     },
@@ -19,7 +19,7 @@ const Banthang = sequelize.define('Banthang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'DoiBong', // Tên bảng ngoại (nếu có)
+            model: 'DoiBong',
             key: 'MaDoiBong',
         },
     },
@@ -27,7 +27,7 @@ const Banthang = sequelize.define('Banthang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'Cauthu', // Tên bảng ngoại (nếu có)
+            model: 'Cauthu', 
             key: 'MaCauThu',
         },
     },
@@ -35,7 +35,7 @@ const Banthang = sequelize.define('Banthang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'LoaiBanThang', // Tên bảng ngoại (nếu có)
+            model: 'LoaiBanThang', 
             key: 'MaLoaiBanThang',
         },
     },
