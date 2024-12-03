@@ -11,9 +11,7 @@ app.use(bodyParser.json());
 app.use('/cauthu', cauthuRoutes);
 // app.use('/doibong', doibongRoutes);
 
-
-// rainei 
-// THEPHAT ,LOAITHEPHAT ,DSTHEPHAT ,THAMSO ,LICHSUGIAIDAU ,THANHTICH
+// rainei
 app.use('/thephat', thephatRoutes);
 app.use('/loaithephat', loaithephatRoutes);
 app.use('/dsthephat', dsthephatRoutes);
