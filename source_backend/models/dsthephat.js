@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const DsThePhat = sequelize.define('DsThePhat', {
+const DsThePhat = sequelize.define('DSThePhat', {
     MaCauThu: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
