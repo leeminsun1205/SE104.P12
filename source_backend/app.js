@@ -4,7 +4,13 @@ const cauthuRoutes = require('./routes/cauthuRoutes');
 
 const app = express();
 
+// Middleware
 app.use(bodyParser.json());
+
+// Route quản lý cầu thủ
 app.use('/cauthu', cauthuRoutes);
 
-app.listen(3000, () => console.log('Server is running on http://localhost:3000'));
+// Khởi động server
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+});
