@@ -1,31 +1,27 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Santhidau = sequelize.define('Santhidau', {
-    MaSan: {
+const Muagiai = sequelize.define('Muagiai', {
+    MaMuaGiai: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
     },
-    TenSan: {
-        type: DataTypes.STRING(30),
-        allowNull: false,
-    },
-    DiaChiSan: {
+    TenMuaGiai: {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
-    SucChua: {
-        type: DataTypes.INTEGER,
+    NgayBatDau: {
+        type: DataTypes.DATE,
         allowNull: false,
     },
-    TieuChuan: {
-        type: DataTypes.TINYINT,
+    NgayKetThuc: {
+        type: DataTypes.DATE,
         allowNull: false,
     },
 }, {
-    tableName: 'SANTHIDAU',
+    tableName: 'MUAGIAI',
     timestamps: false,
 });
 
-module.exports = Santhidau;
+module.exports = Muagiai;

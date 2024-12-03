@@ -1,39 +1,35 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Biennhan = sequelize.define('Biennhan', {
-    MaLePhi: {
+const Vongdau = sequelize.define('Vongdau', {
+    MaVongDau: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
     },
-    MaDoiBong: {
+    MaMuaGiai: {
         type: DataTypes.CHAR(10),
         allowNull: false,
     },
-    SoTien: {
-        type: DataTypes.DECIMAL,
+    LuotDau: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    SoThuTu: {
+        type: DataTypes.TINYINT,
         allowNull: false,
     },
     NgayBatDau: {
         type: DataTypes.DATE,
         allowNull: false,
     },
-    NgayHetHan: {
+    NgayKetThuc: {
         type: DataTypes.DATE,
-        allowNull: false,
-    },
-    NgayThanhToan: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    TinhTrang: {
-        type: DataTypes.BOOLEAN,
         allowNull: false,
     },
 }, {
-    tableName: 'BIENNHAN',
+    tableName: 'VONGDAU',
     timestamps: false,
 });
 
-module.exports = Biennhan;
+module.exports = Vongdau;

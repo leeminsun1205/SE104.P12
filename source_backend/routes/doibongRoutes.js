@@ -1,22 +1,9 @@
 const express = require('express');
+const { getDoibong, createDoibong, deleteDoibong } = require('../controllers/doibongController');
 const router = express.Router();
-const {
-    getDoiBong,
-    createDoiBong,
-    updateDoiBong,
-    deleteDoiBong,
-} = require('../controllers/doibongController');
 
-// Lấy danh sách đội bóng
-router.get('/', getDoiBong);
-
-// Thêm đội bóng mới
-router.post('/', createDoiBong);
-
-// Cập nhật thông tin đội bóng
-router.put('/:MaDoiBong', updateDoiBong);
-
-// Xóa đội bóng
-router.delete('/:MaDoiBong', deleteDoiBong);
+router.get('/', getDoibong);
+router.post('/', createDoibong);
+router.delete('/:MaDoiBong', deleteDoibong);
 
 module.exports = router;

@@ -10,9 +10,14 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-// Route quản lý cầu thủ
+// swn
 app.use('/cauthu', cauthuRoutes);
 app.use('/doibong', doibongRoutes);
+app.use('/santhidau', santhidauRoutes);
+app.use('/bienhan', biennhanRoutes);
+app.use('/muagiai', muagiaiRoutes);
+app.use('/mg_db_ct', mg_db_ctRoutes);
+app.use('/vongdau', vongdauRoutes);
 
 //minsun
 // app.use('/bangxephang', bangxephangRoutes);
