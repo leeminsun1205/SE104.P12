@@ -1,4 +1,4 @@
-const Cauthu = require('../models/Cauthu');
+const Cauthu = require('../models/cauthu');
 
 const getCauthu = async (req, res) => {
     try {

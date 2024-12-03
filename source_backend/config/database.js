@@ -5,21 +5,19 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
     host: dbConfig.host,
     dialect: dbConfig.dialect,
     pool: dbConfig.pool,
-    logging: false, // Tắt log SQL (bật nếu debug)
+    logging: false, 
 });
 
-// Kiểm tra kết nối
 (async () => {
     try {
         await sequelize.authenticate();
         console.log('Kết nối cơ sở dữ liệu thành công!');
     } catch (error) {
         console.error('Không thể kết nối với cơ sở dữ liệu:', error);
-        process.exit(1); // Thoát ứng dụng nếu kết nối thất bại
+        process.exit(1); 
     }
 })();
 
-// Xử lý khi tắt ứng dụng
 process.on('SIGINT', async () => {
     try {
         await sequelize.close();
