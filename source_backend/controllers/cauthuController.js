@@ -1,7 +1,7 @@
 const Cauthu = require('../models/Cauthu');
 
 // Lấy danh sách cầu thủ
-const getCauthus = async (req, res) => {
+const getCauthu = async (req, res) => {
     try {
         const cauthus = await Cauthu.findAll();
         res.status(200).json(cauthus);
@@ -39,4 +39,4 @@ const deleteCauthu = async (req, res) => {
     }
 };
 
-module.exports = { getCauthus, createCauthu, deleteCauthu };
+module.exports = { getCauthu, createCauthu, deleteCauthu };

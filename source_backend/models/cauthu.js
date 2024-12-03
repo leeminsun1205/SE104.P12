@@ -39,6 +39,14 @@ const Cauthu = sequelize.define('Cauthu', {
         type: DataTypes.TINYINT,
         allowNull: false,
     },
+    TieuSu: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+    },
+    AnhCauThu: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+    }
 }, {
     tableName: 'CAUTHU',
     timestamps: false,

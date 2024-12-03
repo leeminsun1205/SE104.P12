@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Cauthu = require('../models/Cauthu');
 
-
-// Lấy danh sách cầu thủ
 router.get('/', async (req, res) => {
     try {
         const cauthus = await Cauthu.findAll(); // Lấy tất cả cầu thủ từ cơ sở dữ liệu
@@ -13,7 +11,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Thêm cầu thủ mới
 router.post('/', async (req, res) => {
     try {
         const cauThu = await Cauthu.create(req.body);
@@ -25,7 +22,6 @@ router.post('/', async (req, res) => {
 
 module.exports = router;
 
-// Xóa cầu thủ theo mã
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -41,7 +37,6 @@ router.delete('/:id', async (req, res) => {
 
 module.exports = router;
 
-// Cập nhật thông tin cầu thủ
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;

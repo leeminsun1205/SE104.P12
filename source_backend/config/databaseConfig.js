@@ -7,9 +7,9 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: 'mysql',
     pool: {
-        max: 5,          // Số kết nối tối đa
-        min: 0,          // Số kết nối tối thiểu
-        acquire: 30000,  // Thời gian tối đa (ms) để lấy kết nối
-        idle: 10000,     // Thời gian chờ tối đa khi không sử dụng
+        max: 5,          
+        min: 0,          
+        acquire: 30000,  
+        idle: 10000,    
     },
 };

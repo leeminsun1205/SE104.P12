@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 
 // Route quản lý cầu thủ
 app.use('/cauthu', cauthuRoutes);
+app.use('/doibong', doibongRoutes);
 
 // Khởi động server
 app.listen(3000, () => {
