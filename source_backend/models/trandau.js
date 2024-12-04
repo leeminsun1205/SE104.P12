@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Trandau = sequelize.define('Trandau', {
+const TranDau = sequelize.define('TranDau', {
     MaTranDau: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -11,7 +11,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'VongDau', // Tên bảng ngoại (nếu có)
+            model: 'VongDau', 
             key: 'MaVongDau',
         },
     },
@@ -19,7 +19,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'DoiBong', // Tên bảng ngoại (nếu có)
+            model: 'DoiBong', 
             key: 'MaDoiBong',
         },
     },
@@ -27,7 +27,7 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'DoiBong', // Tên bảng ngoại (nếu có)
+            model: 'DoiBong', 
             key: 'MaDoiBong',
         },
     },
@@ -43,21 +43,21 @@ const Trandau = sequelize.define('Trandau', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'San', // Tên bảng ngoại (nếu có)
+            model: 'SanThiDau', 
             key: 'MaSan',
         },
     },
     BanThangDoiNha: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT,
         allowNull: false,
     },
     BanThangDoiKhach: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT,
         allowNull: false,
     },
 }, {
-    tableName: 'TRANDAU',
+    tableName: 'TranDau',
     timestamps: false,
 });
 
-module.exports = Trandau;
+module.exports = TranDau;

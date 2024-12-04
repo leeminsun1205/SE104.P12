@@ -1,14 +1,32 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const dbConfig = require('./databaseConfig');
 
-// Create a Sequelize instance using values from the .env file
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
-    host: process.env.DB_HOST,
-    dialect: 'mysql',
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
+    host: dbConfig.host,
+    dialect: dbConfig.dialect,
+    pool: dbConfig.pool,
+    logging: false, 
 });
 
-sequelize.authenticate()
-    .then(() => console.log('Database connected successfully.'))
-    .catch(err => console.error('Unable to connect to the database:', err));
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Kết nối cơ sở dữ liệu thành công!');
+    } catch (error) {
+        console.error('Không thể kết nối với cơ sở dữ liệu:', error);
+        process.exit(1); 
+    }
+})();
+
+process.on('SIGINT', async () => {
+    try {
+        await sequelize.close();
+        console.log('Đã đóng kết nối cơ sở dữ liệu.');
+        process.exit(0);
+    } catch (err) {
+        console.error('Lỗi khi đóng kết nối cơ sở dữ liệu:', err);
+        process.exit(1);
+    }
+});
 
 module.exports = sequelize;

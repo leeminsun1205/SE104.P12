@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Cauthu = sequelize.define('Cauthu', {
+const CauThu = sequelize.define('CauThu', {
     MaCauThu: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -39,9 +39,17 @@ const Cauthu = sequelize.define('Cauthu', {
         type: DataTypes.TINYINT,
         allowNull: false,
     },
+    TieuSu: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+    },
+    AnhCauThu: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+    }
 }, {
     tableName: 'CAUTHU',
     timestamps: false,
 });
 
-module.exports = Cauthu;
+module.exports = CauThu;

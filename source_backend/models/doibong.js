@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Doibong = sequelize.define('Doibong', {
+const DoiBong = sequelize.define('DoiBong', {
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -22,6 +22,10 @@ const Doibong = sequelize.define('Doibong', {
     MaSan: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        references: {
+            model: 'SanThiDau',
+            key: 'MaSan',
+        },
     },
     HLV: {
         type: DataTypes.STRING(50),
@@ -29,15 +33,15 @@ const Doibong = sequelize.define('Doibong', {
     },
     ThongTin: {
         type: DataTypes.STRING(1000),
-        allowNull: false,
+        allowNull: true,
     },
     Logo: {
         type: DataTypes.STRING(100),
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     tableName: 'DOIBONG',
     timestamps: false,
 });
 
-module.exports = Doibong;
+module.exports = DoiBong;

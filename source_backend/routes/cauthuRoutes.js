@@ -1,9 +1,23 @@
 const express = require('express');
-const { getCauthus, createCauthu, deleteCauthu } = require('../controllers/cauthuController');
+const {
+    getCauThu,
+    createCauThu,
+    deleteCauThu,
+    updateCauThu, // Thêm hàm cập nhật cầu thủ
+} = require('../controllers/cauthuController');
+
 const router = express.Router();
 
-router.get('/', getCauthus);
-router.post('/', createCauthu);
-router.delete('/:MaCauThu', deleteCauthu);
+// Lấy danh sách cầu thủ
+router.get('/', getCauThu);
+
+// Thêm cầu thủ mới
+router.post('/', createCauThu);
+
+// Xóa cầu thủ theo mã cầu thủ
+router.delete('/:MaCauThu', deleteCauThu);
+
+// Cập nhật thông tin cầu thủ
+router.put('/:MaCauThu', updateCauThu);
 
 module.exports = router;

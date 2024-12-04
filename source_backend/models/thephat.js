@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const BanThang = sequelize.define('BanThang', {
-    MaBanThang: {
+const ThePhat = sequelize.define('ThePhat', {
+    MaThePhat: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
@@ -11,41 +11,37 @@ const BanThang = sequelize.define('BanThang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'TranDau', 
-            key: 'MaTranDau',
-        },
-    },
-    MaDoiBong: {
-        type: DataTypes.CHAR(10),
-        allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
+            model: "TranDau",
+            key: "MaTranDau",
+        }
     },
     MaCauThu: {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'CauThu', 
-            key: 'MaCauThu',
-        },
+            model: "CauThu",
+            key: "MaCauThu",
+        }
     },
-    MaLoaiBanThang: {
+    MaLoaiThePhat: {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'LoaiBanThang', 
-            key: 'MaLoaiBanThang',
-        },
+            model: "LoaiThePhat",
+            key: "MaLoaiThePhat",
+        }
     },
-    ThoiDiem: {
+    ThoiGian: {
         type: DataTypes.TIME,
         allowNull: false,
     },
+    LyDo: {
+        type: DataTypes.STRING(50), 
+        allowNull: true,
+    },
 }, {
-    tableName: 'BANTHANG',
+    tableName: 'THEPHAT',
     timestamps: false,
 });
 
-module.exports = BanThang;
+module.exports = ThePhat;

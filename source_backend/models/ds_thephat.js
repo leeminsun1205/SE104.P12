@@ -1,36 +1,40 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const VuaPhaLuoi = sequelize.define('VuaPhaLuoi', {
+const DsThePhat = sequelize.define('DSThePhat', {
     MaCauThu: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
         references: {
-            model: 'CauThu', 
+            model: 'CauThu',
             key: 'MaCauThu',
-        },
+        }
     },
-    MaMuaGiai: {
-        type: DataTypes.CHAR(10),
+    MaVongDau: {
+        type: DataTypes.STRING(10),
         primaryKey: true,
         allowNull: false,
         references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
+            model: 'VongDau',
+            key: 'MaVongDau',
+        }
     },
-    SoTran: {
+    SoTheVang: {
         type: DataTypes.CHAR(10),
         allowNull: false,
     },
-    SoBanThang: {
-        type: DataTypes.TIME,
+    SoTheDo: {
+        type: DataTypes.CHAR(10),
+        allowNull: false,
+    },
+    TinhTrangThiDau: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
     },
 }, {
-    tableName: 'VUAPHALUOI',
+    tableName: 'DSTHEPHAT',
     timestamps: false,
 });
 
-module.exports = VuaPhaLuoi;
+module.exports = DsThePhat;

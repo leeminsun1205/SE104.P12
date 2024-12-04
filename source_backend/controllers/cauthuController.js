@@ -1,31 +1,28 @@
-const Cauthu = require('../models/Cauthu');
+const CauThu = require('../models/cauthu');
 
-// Lấy danh sách cầu thủ
-const getCauthus = async (req, res) => {
+const getCauThu = async (req, res) => {
     try {
-        const cauthus = await Cauthu.findAll();
-        res.status(200).json(cauthus);
+        const cauThu = await CauThu.findAll();
+        res.status(200).json(cauThu);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách cầu thủ' });
     }
 };
 
-// Tạo mới cầu thủ
-const createCauthu = async (req, res) => {
+const createCauThu = async (req, res) => {
     try {
         const { MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo } = req.body;
-        const newCauthu = await Cauthu.create({ MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo });
-        res.status(201).json(newCauthu);
+        const newCauThu = await CauThu.create({ MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo });
+        res.status(201).json(newCauThu);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo cầu thủ mới' });
     }
 };
 
-// Xóa cầu thủ
-const deleteCauthu = async (req, res) => {
+const deleteCauThu = async (req, res) => {
     try {
         const { MaCauThu } = req.params;
-        const deleted = await Cauthu.destroy({
+        const deleted = await CauThu.destroy({
             where: { MaCauThu: MaCauThu }
         });
 
@@ -39,4 +36,41 @@ const deleteCauthu = async (req, res) => {
     }
 };
 
-module.exports = { getCauthus, createCauthu, deleteCauthu };
+const updateCauThu = async (req, res) => {
+    try {
+        const { MaCauThu } = req.params; 
+        const {
+            TenCauThu,
+            NgaySinh,
+            QuocTich,
+            LoaiCauThu,
+            ViTri,
+            ChieuCao,
+            CanNang,
+            SoAo
+        } = req.body; 
+
+        const cauThu = await CauThu.findOne({ where: { MaCauThu: MaCauThu } });
+
+        if (!cauThu) {
+            return res.status(404).json({ message: `Không tìm thấy cầu thủ với mã ${MaCauThu}.` });
+        }
+
+        const updatedCauThu = await cauThu.update({
+            TenCauThu,
+            NgaySinh,
+            QuocTich,
+            LoaiCauThu,
+            ViTri,
+            ChieuCao,
+            CanNang,
+            SoAo
+        });
+
+        res.status(200).json({ message: 'Cập nhật cầu thủ thành công.', cauThu: updatedCauThu });
+    } catch (error) {
+        res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật cầu thủ.', error: error.message });
+    }
+};
+
+module.exports = { getCauThu, createCauThu, deleteCauThu, updateCauThu};
