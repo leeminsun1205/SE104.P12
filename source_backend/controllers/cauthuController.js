@@ -2,8 +2,8 @@ const CauThu = require('../models/cauthu');
 
 const getCauThu = async (req, res) => {
     try {
-        const CauThu = await CauThu.findAll();
-        res.status(200).json(CauThu);
+        const cauThu = await CauThu.findAll();
+        res.status(200).json(cauThu);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách cầu thủ' });
     }

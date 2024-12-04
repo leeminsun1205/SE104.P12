@@ -2,8 +2,8 @@ const DoiBong = require('../models/doibong');
 
 const getDoiBong = async (req, res) => {
     try {
-        const DoiBong = await DoiBong.findAll();
-        res.status(200).json(DoiBong);
+        const doiBong = await DoiBong.findAll();
+        res.status(200).json(doiBong);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách đội bóng' });
     }
