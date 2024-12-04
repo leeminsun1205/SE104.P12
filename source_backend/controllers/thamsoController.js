@@ -1,43 +1,54 @@
-// controllers/thamSoController.js
-const ThamSo = require('../models/ThamSo');
+const ThamSo = require('../models/thamso');
 
-// Lấy danh sách các tham số
-const getThamSo = async (req, res) => {
+// Lấy tất cả tham số
+exports.getThamSo = async (req, res) => {
     try {
-        const thamSo = await ThamSo.findAll();
-        res.status(200).json(thamSo);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách tham số' });
+        const thamsos = await ThamSo.findAll();
+        res.json(thamsos);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi lấy danh sách tham số!', error });
     }
 };
 
-// Tạo mới tham số
-const createThamSo = async (req, res) => {
+// Thêm tham số mới
+exports.createThamSo = async (req, res) => {
     try {
-        const { SucChuaToiThieu, TieuChuanToiThieu, TuoiToiThieu, TuoiToiDa, SoLuongCauThuToiThieu, SoLuongCauThuToiDa, SoCauThuNgoaiToiDa, LePhi, ThoiDiemGhiBanToiDa, DiemThang, DiemHoa, DiemThua } = req.body;
-        const newThamSo = await ThamSo.create({ SucChuaToiThieu, TieuChuanToiThieu, TuoiToiThieu, TuoiToiDa, SoLuongCauThuToiThieu, SoLuongCauThuToiDa, SoCauThuNgoaiToiDa, LePhi, ThoiDiemGhiBanToiDa, DiemThang, DiemHoa, DiemThua });
-        res.status(201).json(newThamSo);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể tạo mới tham số' });
+        const thamSo = await ThamSo.create(req.body);
+        res.status(201).json({ message: 'Thêm tham số thành công!', data: thamSo });
+    } catch (error) {
+        res.status(400).json({ message: 'Lỗi khi thêm tham số!', error });
     }
 };
 
 // Xóa tham số
-const deleteThamSo = async (req, res) => {
+exports.deleteThamSo = async (req, res) => {
     try {
-        const { SucChuaToiThieu } = req.params;
-        const deleted = await ThamSo.destroy({
-            where: { SucChuaToiThieu: SucChuaToiThieu }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: `Tham số với sức chứa tối thiểu ${SucChuaToiThieu} đã được xóa.` });
-        } else {
-            res.status(404).json({ message: `Không tìm thấy tham số với sức chứa tối thiểu ${SucChuaToiThieu}.` });
+        const { id } = req.params;
+        const result = await ThamSo.destroy({ where: { MaThamSo: id } });
+        if (result === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy tham số!' });
         }
+        res.json({ message: 'Xóa tham số thành công!' });
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi xóa tham số.', error: error.message });
+        res.status(500).json({ message: 'Lỗi khi xóa tham số!', error });
     }
 };
 
-module.exports = { getThamSo, createThamSo, deleteThamSo };
+// Cập nhật tham số
+exports.updateThamSo = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [updatedRows] = await ThamSo.update(req.body, {
+            where: { MaThamSo: id }
+        });
+
+        if (updatedRows === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy tham số để cập nhật!' });
+        }
+
+        const updatedThamSo = await ThamSo.findOne({ where: { MaThamSo: id } });
+        res.json({ message: 'Cập nhật tham số thành công!', data: updatedThamSo });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi cập nhật tham số!', error });
+    }
+};

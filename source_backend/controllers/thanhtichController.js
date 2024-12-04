@@ -1,43 +1,54 @@
-// controllers/thanhTichController.js
 const ThanhTich = require('../models/ThanhTich');
 
-// Lấy danh sách thành tích
-const getThanhTich = async (req, res) => {
+// Lấy tất cả thành tích
+exports.getThanhTich = async (req, res) => {
     try {
-        const thanhTich = await ThanhTich.findAll();
-        res.status(200).json(thanhTich);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách thành tích' });
+        const thanhTichs = await ThanhTich.findAll();
+        res.json(thanhTichs);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi lấy danh sách thành tích!', error });
     }
 };
 
-// Tạo mới thành tích
-const createThanhTich = async (req, res) => {
+// Thêm thành tích mới
+exports.createThanhTich = async (req, res) => {
     try {
-        const { MaDoiBong, MaMuaGiai, SoTranDaThiDau, SoTranThang, SoTranHoa, SoTranThua, XepHang } = req.body;
-        const newThanhTich = await ThanhTich.create({ MaDoiBong, MaMuaGiai, SoTranDaThiDau, SoTranThang, SoTranHoa, SoTranThua, XepHang });
-        res.status(201).json(newThanhTich);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể tạo mới thành tích' });
+        const thanhTich = await ThanhTich.create(req.body);
+        res.status(201).json({ message: 'Thêm thành tích thành công!', data: thanhTich });
+    } catch (error) {
+        res.status(400).json({ message: 'Lỗi khi thêm thành tích!', error });
     }
 };
 
 // Xóa thành tích
-const deleteThanhTich = async (req, res) => {
+exports.deleteThanhTich = async (req, res) => {
     try {
-        const { MaDoiBong } = req.params;
-        const deleted = await ThanhTich.destroy({
-            where: { MaDoiBong: MaDoiBong }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: `Thành tích của đội bóng với mã ${MaDoiBong} đã được xóa.` });
-        } else {
-            res.status(404).json({ message: `Không tìm thấy thành tích của đội bóng với mã ${MaDoiBong}.` });
+        const { id } = req.params;
+        const result = await ThanhTich.destroy({ where: { MaThanhTich: id } });
+        if (result === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy thành tích!' });
         }
+        res.json({ message: 'Xóa thành tích thành công!' });
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi xóa thành tích.', error: error.message });
+        res.status(500).json({ message: 'Lỗi khi xóa thành tích!', error });
     }
 };
 
-module.exports = { getThanhTich, createThanhTich, deleteThanhTich };
+// Cập nhật thành tích
+exports.updateThanhTich = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [updatedRows] = await ThanhTich.update(req.body, {
+            where: { MaThanhTich: id }
+        });
+
+        if (updatedRows === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy thành tích để cập nhật!' });
+        }
+
+        const updatedThanhTich = await ThanhTich.findOne({ where: { MaThanhTich: id } });
+        res.json({ message: 'Cập nhật thành công!', data: updatedThanhTich });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi cập nhật thành tích!', error });
+    }
+};
