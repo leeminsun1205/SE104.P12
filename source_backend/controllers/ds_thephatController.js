@@ -1,4 +1,4 @@
-const DSThePhat = require('../models/dsthephat');
+const DSThePhat = require('../models/ds_thephat');
 
 // Lấy danh sách thẻ phạt
 const getDSThePhat = async (req, res) => {

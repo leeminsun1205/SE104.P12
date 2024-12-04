@@ -1,9 +1,9 @@
 const express = require('express');
-const { getBiennhan, createBiennhan, deleteBiennhan } = require('../controllers/biennhanController');
+const { getBienNhan, createBienNhan, deleteBienNhan } = require('../controllers/BienNhanController');
 const router = express.Router();
 
-router.get('/', getBiennhan);
-router.post('/', createBiennhan);
-router.delete('/:MaCauThu', deleteBiennhan);
+router.get('/', getBienNhan);
+router.post('/', createBienNhan);
+router.delete('/:MaCauThu', deleteBienNhan);
 
 module.exports = router;

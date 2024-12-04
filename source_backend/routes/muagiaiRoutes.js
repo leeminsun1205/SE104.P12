@@ -1,9 +1,9 @@
 const express = require('express');
-const { getMuagiai, createMuagiai, deleteMuagiai } = require('../controllers/muagiaiController');
+const { getMuaGiai, createMuaGiai, deleteMuaGiai } = require('../controllers/MuaGiaiController');
 const router = express.Router();
 
-router.get('/', getMuagiai);
-router.post('/', createMuagiai);
-router.delete('/:MaCauThu', deleteMuagiai);
+router.get('/', getMuaGiai);
+router.post('/', createMuaGiai);
+router.delete('/:MaCauThu', deleteMuaGiai);
 
 module.exports = router;

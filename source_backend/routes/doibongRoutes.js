@@ -1,9 +1,10 @@
 const express = require('express');
-const { getDoibong, createDoibong, deleteDoibong } = require('../controllers/doibongController');
+const { getDoiBong, createDoiBong, deleteDoiBong, updateDoiBong } = require('../controllers/DoiBongController');
 const router = express.Router();
 
-router.get('/', getDoibong);
-router.post('/', createDoibong);
-router.delete('/:MaDoiBong', deleteDoibong);
+router.get('/', getDoiBong);
+router.post('/', createDoiBong);
+router.delete('/:MaDoiBong', deleteDoiBong);
+router.put('/:MaCauThu', updateDoiBong);
 
 module.exports = router;

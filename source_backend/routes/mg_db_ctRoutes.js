@@ -1,9 +1,9 @@
 const express = require('express');
-const { getMg_Db_Ct, createMg_Db_Ct, deleteMg_Db_Ct } = require('../controllers/mg_db_ctController');
+const { getMG_DB_CT, createMG_DB_CT, deleteMG_DB_CT } = require('../controllers/MG_DB_CTController');
 const router = express.Router();
 
-router.get('/', getMg_Db_Ct);
-router.post('/', createMg_Db_Ct);
-router.delete('/:MaCauThu', deleteMg_Db_Ct);
+router.get('/', getMG_DB_CT);
+router.post('/', createMG_DB_CT);
+router.delete('/:MaCauThu', deleteMG_DB_CT);
 
 module.exports = router;

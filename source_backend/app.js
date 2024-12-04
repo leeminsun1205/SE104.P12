@@ -1,42 +1,64 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+
+// Import các routes
 const cauthuRoutes = require('./routes/cauthuRoutes');
 const doibongRoutes = require('./routes/doibongRoutes');
-const loaibanthangRoutes = require('./routes/loaibanthangRoutes');
-const loaiuutienRoutes = require('./routes/loaibanthangRoutes');
 const santhidauRoutes = require('./routes/santhidauRoutes');
 const mg_db_ctRoutes = require('./routes/mg_db_ctRoutes');
+const bangxephangRoutes = require('./routes/bangxephangRoutes');
+const trandauRoutes = require('./routes/trandauRoutes');
+const banthangRoutes = require('./routes/banthangRoutes');
+const loaibanthangRoutes = require('./routes/loaibanthangRoutes');
+const ut_xephangRoutes = require('./routes/ut_xephangRoutes');
+const vuaphaluoiRoutes = require('./routes/vuaphaluoiRoutes');
+const loaiuutienRoutes = require('./routes/loaiuutienRoutes');
+const thephatRoutes = require('./routes/thephatRoutes');
+const loaithephatRoutes = require('./routes/loaithephatRoutes');
+const dsthephatRoutes = require('./routes/ds_thephatRoutes');
+const thamsoRoutes = require('./routes/thamsoRoutes');
+const lichsugiaidauRoutes = require('./routes/lichsugiaidauRoutes');
+const thanhtichRoutes = require('./routes/thanhtichRoutes');
+const vongdauRoutes = require('./routes/vongdauRoutes');
+const muaGiaiRoutes = require('./routes/muagiaiRoutes');
+const biennhanRoutes = require('./routes/biennhanRoutes');
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
 
-// swn
+// Định tuyến cho các routes
+// Cầu thủ, đội bóng, sân thi đấu, MG_DB_CT
 app.use('/cauthu', cauthuRoutes);
 app.use('/doibong', doibongRoutes);
 app.use('/santhidau', santhidauRoutes);
 app.use('/mg_db_ct', mg_db_ctRoutes);
 
-//minsun
-// app.use('/bangxephang', bangxephangRoutes);
-// app.use('/trandau', trandauRoutes);
-// app.use('/banthang', banthangRoutes);
+// Bảng xếp hạng, trận đấu, bàn thắng, ưu tiên xếp hạng, vua phá lưới, loại ưu tiên
+app.use('/bangxephang', bangxephangRoutes);
+app.use('/trandau', trandauRoutes);
+app.use('/banthang', banthangRoutes);
 app.use('/loaibanthang', loaibanthangRoutes);
-// app.use('/ut_xephang', ut_xephangRoutes);
-// app.use('/vuaphaluoi', vuaphaluoiRoutes);
+app.use('/ut_xephang', ut_xephangRoutes);
+app.use('/vuaphaluoi', vuaphaluoiRoutes);
 app.use('/loaiuutien', loaiuutienRoutes);
 
-// rainei
-// app.use('/thephat', thephatRoutes);
-// app.use('/loaithephat', loaithephatRoutes);
-// app.use('/dsthephat', dsthephatRoutes);
-// app.use('/thamso', thamsoRoutes);
-// app.use('/lichsugiaidau', lichsugiaidauRoutes);
-// app.use('/thanhtich', thanhtichRoutes);
+// Thẻ phạt, loại thẻ phạt, DS thẻ phạt
+app.use('/thephat', thephatRoutes);
+app.use('/loaithephat', loaithephatRoutes);
+app.use('/ds_thephat', dsthephatRoutes);
 
+// Tham số, lịch sử giải đấu, thành tích, vòng đấu, mùa giải, biên nhận
+app.use('/thamso', thamsoRoutes);
+app.use('/lichsugiaidau', lichsugiaidauRoutes);
+app.use('/thanhtich', thanhtichRoutes);
+app.use('/vongdau', vongdauRoutes);
+app.use('/muagiai', muaGiaiRoutes);
+app.use('/biennhan', biennhanRoutes);
 
 // Khởi động server
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -1,9 +1,9 @@
 const express = require('express');
-const { getVongdau, createVongdau, deleteVongdau } = require('../controllers/vongdauController');
+const { getVongDau, createVongDau, deleteVongDau } = require('../controllers/VongDauController');
 const router = express.Router();
 
-router.get('/', getVongdau);
-router.post('/', createVongdau);
-router.delete('/:MaCauThu', deleteVongdau);
+router.get('/', getVongDau);
+router.post('/', createVongDau);
+router.delete('/:MaCauThu', deleteVongDau);
 
 module.exports = router;

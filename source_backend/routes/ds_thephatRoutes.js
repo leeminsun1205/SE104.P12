@@ -5,7 +5,7 @@ const {
     createDSThePhat,
     updateDSThePhat,
     deleteDSThePhat,
-} = require('../controllers/dsthephatController');
+} = require('../controllers/ds_thephatController');
 
 // Lấy tất cả DS thẻ phạt
 router.get('/', getDSThePhat);
