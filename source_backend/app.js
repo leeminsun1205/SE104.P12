@@ -5,6 +5,7 @@ const doibongRoutes = require('./routes/doibongRoutes');
 const loaibanthangRoutes = require('./routes/loaibanthangRoutes');
 const loaiuutienRoutes = require('./routes/loaibanthangRoutes');
 const santhidauRoutes = require('./routes/santhidauRoutes');
+const mg_db_ctRoutes = require('./routes/mg_db_ctRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use('/cauthu', cauthuRoutes);
 app.use('/doibong', doibongRoutes);
 app.use('/santhidau', santhidauRoutes);
+app.use('/mg_db_ct', mg_db_ctRoutes);
 
 //minsun
 // app.use('/bangxephang', bangxephangRoutes);

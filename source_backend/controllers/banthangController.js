@@ -1,8 +1,8 @@
 const BanThang = require('../models/BanThang');
 const TranDau = require('../models/TranDau');
-const CauThu = require('../models/cauthu');
-const LoaiBanThang = require('../models/loaibanthang');
-const DoiBong = require('../models/doibong');
+const CauThu = require('../models/CauThu');
+const LoaiBanThang = require('../models/LoaiBanThang');
+const DoiBong = require('../models/DoiBong');
 
 // Lấy danh sách bàn thắng
 const getBanThang = async (req, res) => {

@@ -1,28 +1,28 @@
-const Cauthu = require('../models/cauthu');
+const CauThu = require('../models/CauThu');
 
-const getCauthu = async (req, res) => {
+const getCauThu = async (req, res) => {
     try {
-        const cauthu = await Cauthu.findAll();
-        res.status(200).json(cauthu);
+        const CauThu = await CauThu.findAll();
+        res.status(200).json(CauThu);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách cầu thủ' });
     }
 };
 
-const createCauthu = async (req, res) => {
+const createCauThu = async (req, res) => {
     try {
         const { MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo } = req.body;
-        const newCauthu = await Cauthu.create({ MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo });
-        res.status(201).json(newCauthu);
+        const newCauThu = await CauThu.create({ MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo });
+        res.status(201).json(newCauThu);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo cầu thủ mới' });
     }
 };
 
-const deleteCauthu = async (req, res) => {
+const deleteCauThu = async (req, res) => {
     try {
         const { MaCauThu } = req.params;
-        const deleted = await Cauthu.destroy({
+        const deleted = await CauThu.destroy({
             where: { MaCauThu: MaCauThu }
         });
 
@@ -36,4 +36,4 @@ const deleteCauthu = async (req, res) => {
     }
 };
 
-module.exports = { getCauthu, createCauthu, deleteCauthu };
+module.exports = { getCauThu, createCauThu, deleteCauThu };

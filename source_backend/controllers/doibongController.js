@@ -1,28 +1,28 @@
-const Doibong = require('../models/Doibong');
+const DoiBong = require('../models/DoiBong');
 
-const getDoibong = async (req, res) => {
+const getDoiBong = async (req, res) => {
     try {
-        const doibong = await Doibong.findAll();
-        res.status(200).json(Doibong);
+        const DoiBong = await DoiBong.findAll();
+        res.status(200).json(DoiBong);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách đội bóng' });
     }
 };
 
-const createDoibong = async (req, res) => {
+const createDoiBong = async (req, res) => {
     try {
         const { MaDoiBong, TenDoiBong, CoQuanChuQuan, ThanhPhoTrucThuoc, MaSan, HLV, ThongTin, Logo } = req.body;
-        const newDoibong = await Doibong.create({ MaDoiBong, TenDoiBong, CoQuanChuQuan, ThanhPhoTrucThuoc, MaSan, HLV, ThongTin, Logo });
-        res.status(201).json(newDoibong);
+        const newDoiBong = await DoiBong.create({ MaDoiBong, TenDoiBong, CoQuanChuQuan, ThanhPhoTrucThuoc, MaSan, HLV, ThongTin, Logo });
+        res.status(201).json(newDoiBong);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo đội bóng mới' });
     }
 };
 
-const deleteDoibong = async (req, res) => {
+const deleteDoiBong = async (req, res) => {
     try {
         const { MaDoiBong } = req.params;
-        const deleted = await Doibong.destroy({
+        const deleted = await DoiBong.destroy({
             where: { MaDoiBong: MaDoiBong }
         });
 
@@ -36,4 +36,4 @@ const deleteDoibong = async (req, res) => {
     }
 };
 
-module.exports = { getDoibong, createDoibong, deleteDoibong };
+module.exports = { getDoiBong, createDoiBong, deleteDoiBong };

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Banthang = sequelize.define('Banthang', {
+const BanThang = sequelize.define('BanThang', {
     MaBanThang: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -11,7 +11,7 @@ const Banthang = sequelize.define('Banthang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'Trandau', 
+            model: 'TranDau', 
             key: 'MaTranDau',
         },
     },
@@ -27,7 +27,7 @@ const Banthang = sequelize.define('Banthang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'Cauthu', 
+            model: 'CauThu', 
             key: 'MaCauThu',
         },
     },
@@ -48,4 +48,4 @@ const Banthang = sequelize.define('Banthang', {
     timestamps: false,
 });
 
-module.exports = Banthang;
+module.exports = BanThang;

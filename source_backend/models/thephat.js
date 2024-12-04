@@ -10,14 +10,26 @@ const ThePhat = sequelize.define('ThePhat', {
     MaTranDau: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        references: {
+            model: "TranDau",
+            key: "MaTranDau",
+        }
     },
     MaCauThu: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        references: {
+            model: "CauThu",
+            key: "MaCauThu",
+        }
     },
     MaLoaiThePhat: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        references: {
+            model: "LoaiThePhat",
+            key: "MaLoaiThePhat",
+        }
     },
     ThoiGian: {
         type: DataTypes.TIME,
@@ -25,7 +37,7 @@ const ThePhat = sequelize.define('ThePhat', {
     },
     LyDo: {
         type: DataTypes.STRING(50), 
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     tableName: 'THEPHAT',

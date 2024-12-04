@@ -6,10 +6,19 @@ const ThanhTich = sequelize.define('ThanhTich', {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
+        references: {
+            model: 'DoiBong',
+            key: 'MaDoiBong',
+        }
     },
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
+        references: {
+            model: 'MuaGiai',
+            key: 'MaMuaGiai',
+        }
     },
     SoTranDaThiDau: {
         type: DataTypes.TINYINT,

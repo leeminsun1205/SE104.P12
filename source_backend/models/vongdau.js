@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Vongdau = sequelize.define('Vongdau', {
+const VongDau = sequelize.define('VongDau', {
     MaVongDau: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -10,6 +10,10 @@ const Vongdau = sequelize.define('Vongdau', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        references: {
+            model: "MuaGiai",
+            key: "MaMuaGiai",
+        }
     },
     LuotDau: {
         type: DataTypes.BOOLEAN,
@@ -32,4 +36,4 @@ const Vongdau = sequelize.define('Vongdau', {
     timestamps: false,
 });
 
-module.exports = Vongdau;
+module.exports = VongDau;

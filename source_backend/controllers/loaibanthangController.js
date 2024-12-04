@@ -1,10 +1,10 @@
-const LoaiBanThang = require('../models/loaibanthang'); // Import model LoaiBanThang
+const LoaiBanThang = require('../models/LoaiBanThang'); // Import model LoaiBanThang
 
 // Lấy danh sách loại bàn thắng
 const getLoaiBanThang = async (req, res) => {
     try {
-        const loaiBanThangs = await LoaiBanThang.findAll();
-        res.status(200).json(loaiBanThangs);
+        const LoaiBanThangs = await LoaiBanThang.findAll();
+        res.status(200).json(LoaiBanThangs);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Không thể lấy danh sách loại bàn thắng.', error: error.message });
@@ -43,17 +43,17 @@ const updateLoaiBanThang = async (req, res) => {
         const { TenLoaiBanThang, MoTa } = req.body;
 
         // Kiểm tra loại bàn thắng có tồn tại
-        const loaiBanThang = await LoaiBanThang.findOne({ where: { MaLoaiBanThang } });
-        if (!loaiBanThang) {
+        const LoaiBanThang = await LoaiBanThang.findOne({ where: { MaLoaiBanThang } });
+        if (!LoaiBanThang) {
             return res.status(404).json({ message: `Không tìm thấy loại bàn thắng với mã ${MaLoaiBanThang}.` });
         }
 
         // Cập nhật thông tin
-        loaiBanThang.TenLoaiBanThang = TenLoaiBanThang || loaiBanThang.TenLoaiBanThang;
-        loaiBanThang.MoTa = MoTa || loaiBanThang.MoTa;
-        await loaiBanThang.save();
+        LoaiBanThang.TenLoaiBanThang = TenLoaiBanThang || LoaiBanThang.TenLoaiBanThang;
+        LoaiBanThang.MoTa = MoTa || LoaiBanThang.MoTa;
+        await LoaiBanThang.save();
 
-        res.status(200).json({ message: `Cập nhật loại bàn thắng với mã ${MaLoaiBanThang} thành công.`, loaiBanThang });
+        res.status(200).json({ message: `Cập nhật loại bàn thắng với mã ${MaLoaiBanThang} thành công.`, LoaiBanThang });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Không thể cập nhật loại bàn thắng.', error: error.message });

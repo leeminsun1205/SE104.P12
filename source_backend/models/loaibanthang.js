@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Loaibanthang = sequelize.define('Loaibanthang', {
+const LoaiBanThang = sequelize.define('LoaiBanThang', {
     MaLoaiBanThang: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -20,4 +20,4 @@ const Loaibanthang = sequelize.define('Loaibanthang', {
     timestamps: false,
 });
 
-module.exports = Loaibanthang;
+module.exports = LoaiBanThang;

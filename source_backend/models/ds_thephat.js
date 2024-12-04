@@ -6,10 +6,19 @@ const DsThePhat = sequelize.define('DSThePhat', {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
+        references: {
+            model: 'CauThu',
+            key: 'MaCauThu',
+        }
     },
     MaVongDau: {
         type: DataTypes.STRING(10),
+        primaryKey: true,
         allowNull: false,
+        references: {
+            model: 'VongDau',
+            key: 'MaVongDau',
+        }
     },
     SoTheVang: {
         type: DataTypes.CHAR(10),

@@ -1,11 +1,11 @@
-// controllers/loaiThePhatController.js
+// controllers/LoaiThePhatController.js
 const LoaiThePhat = require('../models/LoaiThePhat');
 
 // Lấy danh sách loại thẻ phạt
 const getLoaiThePhat = async (req, res) => {
     try {
-        const loaiThePhats = await LoaiThePhat.findAll();
-        res.status(200).json(loaiThePhats);
+        const LoaiThePhats = await LoaiThePhat.findAll();
+        res.status(200).json(LoaiThePhats);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách loại thẻ phạt' });
     }

@@ -1,28 +1,28 @@
-const Mg_Db_Ct = require('../models/mg_db_ct');
+const MG_DB_CT = require('../models/MG_DB_CT');
 
-const getMg_Db_Ct = async (req, res) => {
+const getMG_DB_CT = async (req, res) => {
     try {
-        const mg_db_ct = await Mg_Db_Ct.findAll();
-        res.status(200).json(mg_db_ct);
+        const MG_DB_CT = await MG_DB_CT.findAll();
+        res.status(200).json(MG_DB_CT);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách thông tin' });
     }
 };
 
-const createMg_Db_Ct = async (req, res) => {
+const createMG_DB_CT = async (req, res) => {
     try {
         const { MaMuaGiai, MaDoiBong, MaCauThu } = req.body;
-        const newMg_Db_Ct = await Mg_Db_Ct.create({ MaMuaGiai, MaDoiBong, MaCauThu });
-        res.status(201).json(newMg_Db_Ct);
+        const newMG_DB_CT = await MG_DB_CT.create({ MaMuaGiai, MaDoiBong, MaCauThu });
+        res.status(201).json(newMG_DB_CT);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo thông tin mới' });
     }
 };
 
-const deleteMg_Db_Ct = async (req, res) => {
+const deleteMG_DB_CT = async (req, res) => {
     try {
         const { MaCauThu } = req.params;
-        const deleted = await Mg_Db_Ct.destroy({
+        const deleted = await MG_DB_CT.destroy({
             where: { MaCauThu: MaCauThu }
         });
 
@@ -36,4 +36,4 @@ const deleteMg_Db_Ct = async (req, res) => {
     }
 };
 
-module.exports = { getMg_Db_Ct, createMg_Db_Ct, deleteMg_Db_Ct };
+module.exports = { getMG_DB_CT, createMG_DB_CT, deleteMG_DB_CT };

@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Vuaphaluoi = sequelize.define('Vuaphaluoi', {
+const VuaPhaLuoi = sequelize.define('VuaPhaLuoi', {
     MaCauThu: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
         references: {
-            model: 'Cauthu', // Tên bảng cầu thủ, nếu có
+            model: 'CauThu', 
             key: 'MaCauThu',
         },
     },
@@ -16,7 +16,7 @@ const Vuaphaluoi = sequelize.define('Vuaphaluoi', {
         primaryKey: true,
         allowNull: false,
         references: {
-            model: 'Muagiai', // Tên bảng mùa giải, nếu có
+            model: 'MuaGiai',
             key: 'MaMuaGiai',
         },
     },
@@ -33,4 +33,4 @@ const Vuaphaluoi = sequelize.define('Vuaphaluoi', {
     timestamps: false,
 });
 
-module.exports = Vuaphaluoi;
+module.exports = VuaPhaLuoi;

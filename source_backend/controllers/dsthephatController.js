@@ -1,10 +1,10 @@
-// controllers/dsthephatController.js
-const DSTHEPHAT = require('../models/DSThePhat');
+// controllers/DSThePhatController.js
+const DSThePhat = require('../models/DSThePhat');
 
 // Lấy danh sách thẻ phạt
 const getThePhat = async (req, res) => {
     try {
-        const thephats = await DSTHEPHAT.findAll();
+        const thephats = await DSThePhat.findAll();
         res.status(200).json(thephats);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách thẻ phạt' });
@@ -15,7 +15,7 @@ const getThePhat = async (req, res) => {
 const createThePhat = async (req, res) => {
     try {
         const { MaCauThu, MaVongDau, SoTheVang, SoTheDo, TinhTrangThiDau } = req.body;
-        const newThePhat = await DSTHEPHAT.create({ MaCauThu, MaVongDau, SoTheVang, SoTheDo, TinhTrangThiDau });
+        const newThePhat = await DSThePhat.create({ MaCauThu, MaVongDau, SoTheVang, SoTheDo, TinhTrangThiDau });
         res.status(201).json(newThePhat);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo mới thẻ phạt' });
@@ -26,7 +26,7 @@ const createThePhat = async (req, res) => {
 const deleteThePhat = async (req, res) => {
     try {
         const { MaCauThu } = req.params;
-        const deleted = await DSTHEPHAT.destroy({
+        const deleted = await DSThePhat.destroy({
             where: { MaCauThu: MaCauThu }
         });
 

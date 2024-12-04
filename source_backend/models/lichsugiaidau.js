@@ -6,6 +6,10 @@ const LichSuGiaiDau = sequelize.define('LichSuGiaiDau', {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
+        references: {
+            model: 'DoiBong',
+            key: 'MaDoiBonng',
+        }
     },
     SoLanThamGia: {
         type: DataTypes.TINYINT,

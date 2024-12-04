@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Utxephang = sequelize.define('Utxephang', {
+const UT_XepHang = sequelize.define('UT_XepHang', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
         references: {
-            model: 'Muagiai', // Tên bảng mùa giải, nếu có
+            model: 'MuaGiai', 
             key: 'MaMuaGiai',
         },
     },
@@ -16,7 +16,7 @@ const Utxephang = sequelize.define('Utxephang', {
         primaryKey: true,
         allowNull: false,
         references: {
-            model: 'Loaiuutien', // Tên bảng loại ưu tiên, nếu có
+            model: 'LoaiUuTien', 
             key: 'MaLoaiUT',
         },
     },
@@ -29,4 +29,4 @@ const Utxephang = sequelize.define('Utxephang', {
     timestamps: false,
 });
 
-module.exports = Utxephang;
+module.exports = UT_XepHang;

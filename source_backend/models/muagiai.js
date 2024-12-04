@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Muagiai = sequelize.define('Muagiai', {
+const MuaGiai = sequelize.define('MuaGiai', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -24,4 +24,4 @@ const Muagiai = sequelize.define('Muagiai', {
     timestamps: false,
 });
 
-module.exports = Muagiai;
+module.exports = MuaGiai;

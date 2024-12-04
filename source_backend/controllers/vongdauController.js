@@ -1,28 +1,28 @@
-const Vongdau = require('../models/vongdau');
+const VongDau = require('../models/VongDau');
 
-const getVongdau = async (req, res) => {
+const getVongDau = async (req, res) => {
     try {
-        const vongdau = await Vongdau.findAll();
-        res.status(200).json(vongdau);
+        const VongDau = await VongDau.findAll();
+        res.status(200).json(VongDau);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách vòng đấu' });
     }
 };
 
-const createVongdau = async (req, res) => {
+const createVongDau = async (req, res) => {
     try {
         const { MaVongDau, MaMuaGiai, LuotDau, SoThuTu, NgayBatDau, NgayKetThuc } = req.body;
-        const newVongdau = await Vongdau.create({ MaVongDau, MaMuaGiai, LuotDau, SoThuTu, NgayBatDau, NgayKetThuc });
-        res.status(201).json(newVongdau);
+        const newVongDau = await VongDau.create({ MaVongDau, MaMuaGiai, LuotDau, SoThuTu, NgayBatDau, NgayKetThuc });
+        res.status(201).json(newVongDau);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo vòng đấu mới' });
     }
 };
 
-const deleteVongdau = async (req, res) => {
+const deleteVongDau = async (req, res) => {
     try {
         const { MaVongDau } = req.params;
-        const deleted = await Vongdau.destroy({
+        const deleted = await VongDau.destroy({
             where: { MaVongDau: MaVongDau }
         });
 
@@ -36,4 +36,4 @@ const deleteVongdau = async (req, res) => {
     }
 };
 
-module.exports = { getVongdau, createVongdau, deleteVongdau };
+module.exports = { getVongDau, createVongDau, deleteVongDau };

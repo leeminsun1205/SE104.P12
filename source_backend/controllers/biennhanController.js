@@ -1,19 +1,19 @@
-const Biennhan = require('../models/biennhan');
+const BienNhan = require('../models/BienNhan');
 
-const getBiennhan = async (req, res) => {
+const getBienNhan = async (req, res) => {
     try {
-        const biennhan = await Biennhan.findAll();
-        res.status(200).json(biennhan);
+        const BienNhan = await BienNhan.findAll();
+        res.status(200).json(BienNhan);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách biên nhận' });
     }
 };
 
-const createBiennhan = async (req, res) => {
+const createBienNhan = async (req, res) => {
     try {
         const { MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang } = req.body;
-        const newBiennhan = await Biennhan.create({ MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang });
-        res.status(201).json(newBiennhan);
+        const newBienNhan = await BienNhan.create({ MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang });
+        res.status(201).json(newBienNhan);
     } catch (err) {
         res.status(500).json({ error: 'Không thể tạo biên nhận mới' });
     }
@@ -22,7 +22,7 @@ const createBiennhan = async (req, res) => {
 const deleteBienhan = async (req, res) => {
     try {
         const { MaLePhi } = req.params;
-        const deleted = await Biennhan.destroy({
+        const deleted = await BienNhan.destroy({
             where: { MaLePhi: MaLePhi }
         });
 
@@ -36,4 +36,4 @@ const deleteBienhan = async (req, res) => {
     }
 };
 
-module.exports = { getBiennhan, createBiennhan, deleteBienhan };
+module.exports = { getBienNhan, createBienNhan, deleteBienhan };

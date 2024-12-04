@@ -13,7 +13,7 @@ const LoaiThePhat = sequelize.define('LoaiThePhat', {
     },
     MoTa: {
         type: DataTypes.STRING(50), 
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     tableName: 'LOAITHEPHAT',

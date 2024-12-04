@@ -3,8 +3,8 @@ const LoaiUuTien = require('../models/LoaiUuTien');
 // Lấy danh sách loại ưu tiên
 const getLoaiUuTien = async (req, res) => {
     try {
-        const loaiUuTiens = await LoaiUuTien.findAll();
-        res.status(200).json(loaiUuTiens);
+        const LoaiUuTiens = await LoaiUuTien.findAll();
+        res.status(200).json(LoaiUuTiens);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Không thể lấy danh sách loại ưu tiên.', error: error.message });
@@ -39,16 +39,16 @@ const updateLoaiUuTien = async (req, res) => {
         const { TenLoaiUT } = req.body;
 
         // Kiểm tra loại ưu tiên có tồn tại không
-        const loaiUuTien = await LoaiUuTien.findOne({ where: { MaLoaiUT } });
-        if (!loaiUuTien) {
+        const LoaiUuTien = await LoaiUuTien.findOne({ where: { MaLoaiUT } });
+        if (!LoaiUuTien) {
             return res.status(404).json({ message: `Không tìm thấy loại ưu tiên với mã ${MaLoaiUT}.` });
         }
 
         // Cập nhật tên loại ưu tiên
-        loaiUuTien.TenLoaiUT = TenLoaiUT || loaiUuTien.TenLoaiUT;
-        await loaiUuTien.save();
+        LoaiUuTien.TenLoaiUT = TenLoaiUT || LoaiUuTien.TenLoaiUT;
+        await LoaiUuTien.save();
 
-        res.status(200).json({ message: `Cập nhật loại ưu tiên với mã ${MaLoaiUT} thành công.`, loaiUuTien });
+        res.status(200).json({ message: `Cập nhật loại ưu tiên với mã ${MaLoaiUT} thành công.`, LoaiUuTien });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Không thể cập nhật loại ưu tiên.', error: error.message });

@@ -1,11 +1,11 @@
-// controllers/lichSuGiaiDauController.js
+// controllers/LichSuGiaiDauController.js
 const LichSuGiaiDau = require('../models/LichSuGiaiDau');
 
 // Lấy danh sách lịch sử giải đấu
 const getLichSuGiaiDau = async (req, res) => {
     try {
-        const lichSuGiaiDau = await LichSuGiaiDau.findAll();
-        res.status(200).json(lichSuGiaiDau);
+        const LichSuGiaiDau = await LichSuGiaiDau.findAll();
+        res.status(200).json(LichSuGiaiDau);
     } catch (err) {
         res.status(500).json({ error: 'Không thể lấy danh sách lịch sử giải đấu' });
     }

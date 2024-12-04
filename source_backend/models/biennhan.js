@@ -10,6 +10,10 @@ const Biennhan = sequelize.define('Biennhan', {
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        references: {
+            model: "DoiBong",
+            key: "MaDoiBong",
+        }
     },
     SoTien: {
         type: DataTypes.DECIMAL,
@@ -25,7 +29,7 @@ const Biennhan = sequelize.define('Biennhan', {
     },
     NgayThanhToan: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     TinhTrang: {
         type: DataTypes.BOOLEAN,
