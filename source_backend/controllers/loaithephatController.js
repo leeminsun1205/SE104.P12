@@ -1,66 +1,76 @@
-<<<<<<< HEAD
-// controllers/LoaiThePhatController.js
-const LoaiThePhat = require('../models/LoaiThePhat');
-=======
 const LoaiThePhat = require('../models/loaithephat');
->>>>>>> a07afed323c93860ee640e8f3265ba141ac6eadc
 
-// Lấy tất cả loại thẻ phạt
-exports.getLoaiThePhat = async (req, res) => {
+// Lấy danh sách loại thẻ phạt
+const getLoaiThePhat = async (req, res) => {
     try {
-<<<<<<< HEAD
-        const LoaiThePhats = await LoaiThePhat.findAll();
-        res.status(200).json(LoaiThePhats);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách loại thẻ phạt' });
-=======
         const loaiThePhats = await LoaiThePhat.findAll();
-        res.json(loaiThePhats);
-    } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi lấy danh sách loại thẻ phạt!', error });
->>>>>>> a07afed323c93860ee640e8f3265ba141ac6eadc
+        res.status(200).json(loaiThePhats);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Không thể lấy danh sách loại thẻ phạt.', details: err.message });
     }
 };
 
 // Thêm loại thẻ phạt mới
-exports.createLoaiThePhat = async (req, res) => {
+const createLoaiThePhat = async (req, res) => {
     try {
-        const loaiThePhat = await LoaiThePhat.create(req.body);
+        const { TenLoaiThePhat, MoTa } = req.body;
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!TenLoaiThePhat) {
+            return res.status(400).json({ message: 'Tên loại thẻ phạt là bắt buộc!' });
+        }
+
+        const loaiThePhat = await LoaiThePhat.create({ TenLoaiThePhat, MoTa });
         res.status(201).json({ message: 'Thêm loại thẻ phạt thành công!', data: loaiThePhat });
     } catch (error) {
-        res.status(400).json({ message: 'Lỗi khi thêm loại thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi thêm loại thẻ phạt!', details: error.message });
     }
 };
 
 // Xóa loại thẻ phạt
-exports.deleteLoaiThePhat = async (req, res) => {
+const deleteLoaiThePhat = async (req, res) => {
     try {
-        const { id } = req.params;
-        const result = await LoaiThePhat.destroy({ where: { MaLoaiThePhat: id } });
+        const { MaLoaiThePhat } = req.params;
+
+        // Xóa loại thẻ phạt
+        const result = await LoaiThePhat.destroy({ where: { MaLoaiThePhat } });
         if (result === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy loại thẻ phạt!' });
+            return res.status(404).json({ message: `Không tìm thấy loại thẻ phạt với mã ${MaLoaiThePhat}!` });
         }
-        res.json({ message: 'Xóa loại thẻ phạt thành công!' });
+
+        res.status(200).json({ message: `Xóa loại thẻ phạt với mã ${MaLoaiThePhat} thành công!` });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi xóa loại thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi xóa loại thẻ phạt!', details: error.message });
     }
 };
 
 // Cập nhật loại thẻ phạt
-exports.updateLoaiThePhat = async (req, res) => {
+const updateLoaiThePhat = async (req, res) => {
     try {
-        const { id } = req.params;
-        const [updatedRows] = await LoaiThePhat.update(req.body, {
-            where: { MaLoaiThePhat: id }
-        });
+        const { MaLoaiThePhat } = req.params;
+        const { TenLoaiThePhat, MoTa } = req.body;
 
-        if (updatedRows === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy loại thẻ phạt để cập nhật!' });
+        // Kiểm tra dữ liệu đầu vào
+        if (!TenLoaiThePhat && !MoTa) {
+            return res.status(400).json({ message: 'Không có thông tin nào để cập nhật!' });
         }
 
-        const updatedLoaiThePhat = await LoaiThePhat.findOne({ where: { MaLoaiThePhat: id } });
-        res.json({ message: 'Cập nhật loại thẻ phạt thành công!', data: updatedLoaiThePhat });
+        // Cập nhật loại thẻ phạt
+        const [updatedRows] = await LoaiThePhat.update({ TenLoaiThePhat, MoTa }, { where: { MaLoaiThePhat } });
+
+        if (updatedRows === 0) {
+            return res.status(404).json({ message: `Không tìm thấy loại thẻ phạt với mã ${MaLoaiThePhat} để cập nhật!` });
+        }
+
+        const updatedLoaiThePhat = await LoaiThePhat.findOne({ where: { MaLoaiThePhat } });
+        res.status(200).json({ message: `Cập nhật loại thẻ phạt với mã ${MaLoaiThePhat} thành công!`, data: updatedLoaiThePhat });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi cập nhật loại thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi cập nhật loại thẻ phạt!', details: error.message });
     }
 };
+
+module.exports = { getLoaiThePhat, createLoaiThePhat, deleteLoaiThePhat, updateLoaiThePhat };

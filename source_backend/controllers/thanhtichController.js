@@ -1,54 +1,76 @@
-const ThanhTich = require('../models/ThanhTich');
+const ThanhTich = require('../models/thanhtich');
 
-// Lấy tất cả thành tích
-exports.getThanhTich = async (req, res) => {
+// Lấy danh sách thành tích
+const getThanhTich = async (req, res) => {
     try {
         const thanhTichs = await ThanhTich.findAll();
-        res.json(thanhTichs);
+        res.status(200).json(thanhTichs);
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi lấy danh sách thành tích!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi lấy danh sách thành tích!', details: error.message });
     }
 };
 
 // Thêm thành tích mới
-exports.createThanhTich = async (req, res) => {
+const createThanhTich = async (req, res) => {
     try {
-        const thanhTich = await ThanhTich.create(req.body);
+        const { TenThanhTich, MoTa, MaDoiBong, MaMuaGiai } = req.body;
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!TenThanhTich || !MaDoiBong || !MaMuaGiai) {
+            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc!' });
+        }
+
+        const thanhTich = await ThanhTich.create({ TenThanhTich, MoTa, MaDoiBong, MaMuaGiai });
         res.status(201).json({ message: 'Thêm thành tích thành công!', data: thanhTich });
     } catch (error) {
-        res.status(400).json({ message: 'Lỗi khi thêm thành tích!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi thêm thành tích!', details: error.message });
     }
 };
 
 // Xóa thành tích
-exports.deleteThanhTich = async (req, res) => {
+const deleteThanhTich = async (req, res) => {
     try {
-        const { id } = req.params;
-        const result = await ThanhTich.destroy({ where: { MaThanhTich: id } });
+        const { MaThanhTich } = req.params;
+
+        // Xóa thành tích
+        const result = await ThanhTich.destroy({ where: { MaThanhTich } });
         if (result === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy thành tích!' });
+            return res.status(404).json({ message: `Không tìm thấy thành tích với mã ${MaThanhTich}!` });
         }
-        res.json({ message: 'Xóa thành tích thành công!' });
+
+        res.status(200).json({ message: `Xóa thành tích với mã ${MaThanhTich} thành công!` });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi xóa thành tích!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi xóa thành tích!', details: error.message });
     }
 };
 
 // Cập nhật thành tích
-exports.updateThanhTich = async (req, res) => {
+const updateThanhTich = async (req, res) => {
     try {
-        const { id } = req.params;
-        const [updatedRows] = await ThanhTich.update(req.body, {
-            where: { MaThanhTich: id }
-        });
+        const { MaThanhTich } = req.params;
+        const { TenThanhTich, MoTa, MaDoiBong, MaMuaGiai } = req.body;
 
-        if (updatedRows === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy thành tích để cập nhật!' });
+        // Kiểm tra dữ liệu đầu vào
+        if (!TenThanhTich && !MoTa && !MaDoiBong && !MaMuaGiai) {
+            return res.status(400).json({ message: 'Không có thông tin nào để cập nhật!' });
         }
 
-        const updatedThanhTich = await ThanhTich.findOne({ where: { MaThanhTich: id } });
-        res.json({ message: 'Cập nhật thành công!', data: updatedThanhTich });
+        // Cập nhật thành tích
+        const [updatedRows] = await ThanhTich.update({ TenThanhTich, MoTa, MaDoiBong, MaMuaGiai }, { where: { MaThanhTich } });
+
+        if (updatedRows === 0) {
+            return res.status(404).json({ message: `Không tìm thấy thành tích với mã ${MaThanhTich} để cập nhật!` });
+        }
+
+        const updatedThanhTich = await ThanhTich.findOne({ where: { MaThanhTich } });
+        res.status(200).json({ message: `Cập nhật thành tích với mã ${MaThanhTich} thành công!`, data: updatedThanhTich });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi cập nhật thành tích!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi cập nhật thành tích!', details: error.message });
     }
 };
+
+module.exports = { getThanhTich, createThanhTich, deleteThanhTich, updateThanhTich };

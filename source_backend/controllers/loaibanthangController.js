@@ -1,20 +1,23 @@
-const LoaiBanThang = require('../models/LoaiBanThang'); // Import model LoaiBanThang
+const LoaiBanThang = require('../models/loaibanthang');
 
-// Lấy danh sách loại bàn thắng
 const getLoaiBanThang = async (req, res) => {
     try {
-        const LoaiBanThangs = await LoaiBanThang.findAll();
-        res.status(200).json(LoaiBanThangs);
+        const loaiBanThangs = await LoaiBanThang.findAll();
+        res.status(200).json(loaiBanThangs);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Không thể lấy danh sách loại bàn thắng.', error: error.message });
     }
 };
 
-// Thêm một loại bàn thắng mới
 const createLoaiBanThang = async (req, res) => {
     try {
         const { MaLoaiBanThang, TenLoaiBanThang, MoTa } = req.body;
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!MaLoaiBanThang || !TenLoaiBanThang) {
+            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc.' });
+        }
 
         // Kiểm tra loại bàn thắng đã tồn tại chưa
         const existingLoai = await LoaiBanThang.findOne({ where: { MaLoaiBanThang } });
@@ -36,36 +39,29 @@ const createLoaiBanThang = async (req, res) => {
     }
 };
 
-// Cập nhật loại bàn thắng
 const updateLoaiBanThang = async (req, res) => {
     try {
         const { MaLoaiBanThang } = req.params;
         const { TenLoaiBanThang, MoTa } = req.body;
 
-        // Kiểm tra loại bàn thắng có tồn tại
-        const LoaiBanThang = await LoaiBanThang.findOne({ where: { MaLoaiBanThang } });
-        if (!LoaiBanThang) {
+        const loaiBanThang = await LoaiBanThang.findOne({ where: { MaLoaiBanThang } });
+        if (!loaiBanThang) {
             return res.status(404).json({ message: `Không tìm thấy loại bàn thắng với mã ${MaLoaiBanThang}.` });
         }
 
-        // Cập nhật thông tin
-        LoaiBanThang.TenLoaiBanThang = TenLoaiBanThang || LoaiBanThang.TenLoaiBanThang;
-        LoaiBanThang.MoTa = MoTa || LoaiBanThang.MoTa;
-        await LoaiBanThang.save();
+        await loaiBanThang.update({ TenLoaiBanThang, MoTa });
 
-        res.status(200).json({ message: `Cập nhật loại bàn thắng với mã ${MaLoaiBanThang} thành công.`, LoaiBanThang });
+        res.status(200).json({ message: `Cập nhật loại bàn thắng với mã ${MaLoaiBanThang} thành công.`, loaiBanThang });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Không thể cập nhật loại bàn thắng.', error: error.message });
     }
 };
 
-// Xóa loại bàn thắng
 const deleteLoaiBanThang = async (req, res) => {
     try {
         const { MaLoaiBanThang } = req.params;
 
-        // Kiểm tra loại bàn thắng có tồn tại
         const deleted = await LoaiBanThang.destroy({ where: { MaLoaiBanThang } });
         if (!deleted) {
             return res.status(404).json({ message: `Không tìm thấy loại bàn thắng với mã ${MaLoaiBanThang}.` });

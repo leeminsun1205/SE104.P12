@@ -1,4 +1,4 @@
-const CauThu = require('../models/CauThu');
+const CauThu = require('../models/cauthu');
 
 const getCauThu = async (req, res) => {
     try {
@@ -36,4 +36,41 @@ const deleteCauThu = async (req, res) => {
     }
 };
 
-module.exports = { getCauThu, createCauThu, deleteCauThu };
+const updateCauThu = async (req, res) => {
+    try {
+        const { MaCauThu } = req.params; 
+        const {
+            TenCauThu,
+            NgaySinh,
+            QuocTich,
+            LoaiCauThu,
+            ViTri,
+            ChieuCao,
+            CanNang,
+            SoAo
+        } = req.body; 
+
+        const cauThu = await CauThu.findOne({ where: { MaCauThu: MaCauThu } });
+
+        if (!cauThu) {
+            return res.status(404).json({ message: `Không tìm thấy cầu thủ với mã ${MaCauThu}.` });
+        }
+
+        const updatedCauThu = await cauThu.update({
+            TenCauThu,
+            NgaySinh,
+            QuocTich,
+            LoaiCauThu,
+            ViTri,
+            ChieuCao,
+            CanNang,
+            SoAo
+        });
+
+        res.status(200).json({ message: 'Cập nhật cầu thủ thành công.', cauThu: updatedCauThu });
+    } catch (error) {
+        res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật cầu thủ.', error: error.message });
+    }
+};
+
+module.exports = { getCauThu, createCauThu, deleteCauThu, updateCauThu};

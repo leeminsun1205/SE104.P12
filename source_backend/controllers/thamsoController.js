@@ -1,54 +1,72 @@
 const ThamSo = require('../models/thamso');
 
-// Lấy tất cả tham số
-exports.getThamSo = async (req, res) => {
+const getThamSo = async (req, res) => {
     try {
         const thamsos = await ThamSo.findAll();
-        res.json(thamsos);
+        res.status(200).json(thamsos);
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi lấy danh sách tham số!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi lấy danh sách tham số!', details: error.message });
     }
 };
 
-// Thêm tham số mới
-exports.createThamSo = async (req, res) => {
+const createThamSo = async (req, res) => {
     try {
-        const thamSo = await ThamSo.create(req.body);
-        res.status(201).json({ message: 'Thêm tham số thành công!', data: thamSo });
-    } catch (error) {
-        res.status(400).json({ message: 'Lỗi khi thêm tham số!', error });
-    }
-};
+        const { TenThamSo, GiaTri } = req.body;
 
-// Xóa tham số
-exports.deleteThamSo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const result = await ThamSo.destroy({ where: { MaThamSo: id } });
-        if (result === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy tham số!' });
+        // Kiểm tra dữ liệu đầu vào
+        if (!TenThamSo || !GiaTri) {
+            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc!' });
         }
-        res.json({ message: 'Xóa tham số thành công!' });
+
+        const newThamSo = await ThamSo.create({ TenThamSo, GiaTri });
+        res.status(201).json({ message: 'Thêm tham số thành công!', data: newThamSo });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi xóa tham số!', error });
+        console.error(error);
+        res.status(400).json({ message: 'Lỗi khi thêm tham số!', details: error.message });
     }
 };
 
-// Cập nhật tham số
-exports.updateThamSo = async (req, res) => {
+const deleteThamSo = async (req, res) => {
     try {
-        const { id } = req.params;
-        const [updatedRows] = await ThamSo.update(req.body, {
-            where: { MaThamSo: id }
-        });
+        const { MaThamSo } = req.params;
+
+        // Xóa tham số
+        const deleted = await ThamSo.destroy({ where: { MaThamSo } });
+        if (!deleted) {
+            return res.status(404).json({ message: `Không tìm thấy tham số với mã ${MaThamSo}!` });
+        }
+
+        res.status(200).json({ message: `Xóa tham số với mã ${MaThamSo} thành công!` });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi xóa tham số!', details: error.message });
+    }
+};
+
+const updateThamSo = async (req, res) => {
+    try {
+        const { MaThamSo } = req.params;
+        const { TenThamSo, GiaTri } = req.body;
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!TenThamSo && !GiaTri) {
+            return res.status(400).json({ message: 'Thiếu thông tin để cập nhật!' });
+        }
+
+        // Cập nhật tham số
+        const [updatedRows] = await ThamSo.update({ TenThamSo, GiaTri }, { where: { MaThamSo } });
 
         if (updatedRows === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy tham số để cập nhật!' });
+            return res.status(404).json({ message: `Không tìm thấy tham số với mã ${MaThamSo} để cập nhật!` });
         }
 
-        const updatedThamSo = await ThamSo.findOne({ where: { MaThamSo: id } });
-        res.json({ message: 'Cập nhật tham số thành công!', data: updatedThamSo });
+        const updatedThamSo = await ThamSo.findOne({ where: { MaThamSo } });
+        res.status(200).json({ message: `Cập nhật tham số với mã ${MaThamSo} thành công!`, data: updatedThamSo });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi cập nhật tham số!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi cập nhật tham số!', details: error.message });
     }
 };
+
+module.exports = { getThamSo, createThamSo, deleteThamSo, updateThamSo };

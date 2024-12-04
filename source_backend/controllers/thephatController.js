@@ -1,54 +1,71 @@
 const ThePhat = require('../models/thephat');
 
-// Lấy tất cả thẻ phạt
-exports.getThePhat = async (req, res) => {
+const getThePhat = async (req, res) => {
     try {
-        const thephats = await ThePhat.findAll();
-        res.json(thephats);
+        const thePhats = await ThePhat.findAll();
+        res.status(200).json(thePhats);
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi lấy danh sách thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi lấy danh sách thẻ phạt!', details: error.message });
     }
 };
 
-// Thêm thẻ phạt mới
-exports.createThePhat = async (req, res) => {
+const createThePhat = async (req, res) => {
     try {
-        const thePhat = await ThePhat.create(req.body);
+        const { MaCauThu, MaTranDau, MaLoaiThePhat, ThoiDiem, LyDo } = req.body;
+
+        if (!MaCauThu || !MaTranDau || !MaLoaiThePhat || !ThoiDiem) {
+            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc!' });
+        }
+
+        const thePhat = await ThePhat.create({ MaCauThu, MaTranDau, MaLoaiThePhat, ThoiDiem, LyDo });
         res.status(201).json({ message: 'Thêm thẻ phạt thành công!', data: thePhat });
     } catch (error) {
-        res.status(400).json({ message: 'Lỗi khi thêm thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi thêm thẻ phạt!', details: error.message });
     }
 };
 
-// Xóa thẻ phạt
-exports.deleteThePhat = async (req, res) => {
+const deleteThePhat = async (req, res) => {
     try {
-        const { id } = req.params;
-        const result = await ThePhat.destroy({ where: { MaThePhat: id } });
+        const { MaThePhat } = req.params;
+
+        const result = await ThePhat.destroy({ where: { MaThePhat } });
         if (result === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy thẻ phạt!' });
+            return res.status(404).json({ message: `Không tìm thấy thẻ phạt với mã ${MaThePhat}!` });
         }
-        res.json({ message: 'Xóa thẻ phạt thành công!' });
+
+        res.status(200).json({ message: `Xóa thẻ phạt với mã ${MaThePhat} thành công!` });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi xóa thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi xóa thẻ phạt!', details: error.message });
     }
 };
 
-// Cập nhật thẻ phạt
-exports.updateThePhat = async (req, res) => {
+const updateThePhat = async (req, res) => {
     try {
-        const { id } = req.params;
-        const [updatedRows] = await ThePhat.update(req.body, {
-            where: { MaThePhat: id }
-        });
+        const { MaThePhat } = req.params;
+        const { MaCauThu, MaTranDau, MaLoaiThePhat, ThoiDiem, LyDo } = req.body;
+
+        if (!MaCauThu && !MaTranDau && !MaLoaiThePhat && !ThoiDiem && !LyDo) {
+            return res.status(400).json({ message: 'Không có thông tin nào để cập nhật!' });
+        }
+
+        const [updatedRows] = await ThePhat.update(
+            { MaCauThu, MaTranDau, MaLoaiThePhat, ThoiDiem, LyDo },
+            { where: { MaThePhat } }
+        );
 
         if (updatedRows === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy thẻ phạt để cập nhật!' });
+            return res.status(404).json({ message: `Không tìm thấy thẻ phạt với mã ${MaThePhat} để cập nhật!` });
         }
 
-        const updatedThePhat = await ThePhat.findOne({ where: { MaThePhat: id } });
-        res.json({ message: 'Cập nhật thẻ phạt thành công!', data: updatedThePhat });
+        const updatedThePhat = await ThePhat.findOne({ where: { MaThePhat } });
+        res.status(200).json({ message: `Cập nhật thẻ phạt với mã ${MaThePhat} thành công!`, data: updatedThePhat });
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi khi cập nhật thẻ phạt!', error });
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi khi cập nhật thẻ phạt!', details: error.message });
     }
 };
+
+module.exports = { getThePhat, createThePhat, deleteThePhat, updateThePhat };
