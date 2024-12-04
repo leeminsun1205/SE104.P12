@@ -4,6 +4,7 @@ const cauthuRoutes = require('./routes/cauthuRoutes');
 const doibongRoutes = require('./routes/doibongRoutes');
 const loaibanthangRoutes = require('./routes/loaibanthangRoutes');
 const loaiuutienRoutes = require('./routes/loaibanthangRoutes');
+const santhidauRoutes = require('./routes/santhidauRoutes');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 // Route quản lý cầu thủ
 app.use('/cauthu', cauthuRoutes);
 app.use('/doibong', doibongRoutes);
+app.use('/santhidau', santhidauRoutes);
 
 //minsun
 // app.use('/bangxephang', bangxephangRoutes);

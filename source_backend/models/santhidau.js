@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Cauthu = sequelize.define('Santhidau', {
+const SanThiDau = sequelize.define('SanThiDau', {
     MaSan: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -28,4 +28,4 @@ const Cauthu = sequelize.define('Santhidau', {
     timestamps: false,
 });
 
-module.exports = Santhidau;
+module.exports = SanThiDau;
