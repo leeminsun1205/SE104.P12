@@ -1,22 +1,9 @@
 const express = require('express');
+const { getSanthidau, createSanthidau, deleteSanthidau } = require('../controllers/santhidauController');
 const router = express.Router();
-const {
-    getSanThiDau,
-    createSanThiDau,
-    updateSanThiDau,
-    deleteSanThiDau,
-} = require('../controllers/santhidauController');
 
-// Lấy danh sách sân thi đấu
-router.get('/', getSanThiDau);
-
-// Thêm sân thi đấu mới
-router.post('/', createSanThiDau);
-
-// Cập nhật thông tin sân thi đấu
-router.put('/:MaSan', updateSanThiDau);
-
-// Xóa sân thi đấu
-router.delete('/:MaSan', deleteSanThiDau);
+router.get('/', getSanthidau);
+router.post('/', createSanthidau);
+router.delete('/:MaDoiBong', deleteSanthidau);
 
 module.exports = router;
