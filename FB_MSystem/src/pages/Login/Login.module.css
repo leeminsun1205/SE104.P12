@@ -65,7 +65,7 @@
 .loginButton {
   width: 100%;
   padding: 12px;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: bold;
   color: white;
   background-color: #4caf50;
@@ -73,11 +73,15 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .loginButton:hover {
   background-color: #388e3c;
 }
+
 
 .footer {
   margin-top: 20px;

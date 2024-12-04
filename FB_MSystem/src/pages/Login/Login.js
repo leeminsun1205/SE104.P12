@@ -38,7 +38,7 @@ function Login({ onLogin }) {
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className={styles.loginBox}>
-        <h2 className={styles.title}>Welcome <br/> Football Management!</h2>
+        <h2 className={styles.title}>Phần mềm <br></br>Quản lý giải bóng đá</h2>
         <p className={styles.subtitle}>Vui lòng đăng nhập để tiếp tục</p>
         <form onSubmit={handleSubmit}>
           <div className={styles.inputGroup}>

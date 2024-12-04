@@ -17,8 +17,8 @@ function HomePage() {
     <div className={styles.container}>
       <div className={styles.content}>
         <header className={styles.banner}>
-          <h1>Welcome to Football Championship Management</h1>
-          <p>Get the latest updates on teams, matches, and standings.</p>
+          <h1>Chào mừng đến với Phần mềm Quản lý giải Bóng đá </h1>
+          <p>temp.</p>
           <button className={styles.ctaButton} onClick={handleGetStartedClick}>
             Get Started
           </button>

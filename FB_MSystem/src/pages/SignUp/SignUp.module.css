@@ -58,6 +58,9 @@
   }
   
   .submitButton {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     width: 100%;
     padding: 12px;
     font-size: 1rem;
@@ -91,7 +94,7 @@
   
   .goBackButton {
     margin-top: 15px;
-    background-color: #f0f0f0;
+    background-color: #e2e2e294;
     color: #333;
     border: none;
     padding: 10px 15px;
@@ -102,6 +105,6 @@
   }
   
   .goBackButton:hover {
-    background-color: #ddd;
+    background-color: #cbcaca;
   }
   

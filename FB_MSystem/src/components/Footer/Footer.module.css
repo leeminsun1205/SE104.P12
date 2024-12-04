@@ -7,18 +7,22 @@
   left: 0;
   right: 0;
   bottom: 0;
+  display: flex;
 }
-
+.footer p {
+  margin-bottom: 3px;
+}
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
   flex: 1;
 }
 
 .info {
-  font-size: 16px;
+  font-size: 12px;
+  margin-bottom: 0px;
 }
 
 .socialLinks {
@@ -29,7 +33,7 @@
 
 .socialLinks a {
   color: white;
-  font-size: 24px; /* Ensure icon size is appropriate */
+  font-size: 24px;
   transition: color 0.3s;
 }
 
@@ -39,7 +43,7 @@
 
 .links {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   font-size: 0.9rem;
 }
 

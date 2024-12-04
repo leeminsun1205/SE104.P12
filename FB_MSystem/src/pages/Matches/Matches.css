@@ -1,0 +1,48 @@
+/* src/components/Matches.css */
+.matches {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f4f4f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .matches h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .matches ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .matches li {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .matches li:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .matches p {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .matches p:first-child {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+  }
+  

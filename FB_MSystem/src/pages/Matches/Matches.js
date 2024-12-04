@@ -1,5 +1,7 @@
 // src/components/Matches.js
 import React from 'react';
+import './Matches.css';
+
 
 const matches = [
   { id: 1, homeTeam: 'Team A', awayTeam: 'Team B', date: '2024-01-15', time: '18:00' },
