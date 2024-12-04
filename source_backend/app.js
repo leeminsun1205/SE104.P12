@@ -15,13 +15,6 @@ app.use(bodyParser.json());
 app.use('/cauthu', cauthuRoutes);
 app.use('/doibong', doibongRoutes);
 app.use('/santhidau', santhidauRoutes);
-<<<<<<< HEAD
-=======
-app.use('/bienhan', biennhanRoutes);
-app.use('/muagiai', muagiaiRoutes);
-app.use('/mg_db_ct', mg_db_ctRoutes);
-app.use('/vongdau', vongdauRoutes);
->>>>>>> 44bbe262c884313044fd09f4beee4849b952ecdc
 
 //minsun
 // app.use('/bangxephang', bangxephangRoutes);
