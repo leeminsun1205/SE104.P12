@@ -38,29 +38,48 @@
 
 .inputGroup {
   margin-bottom: 20px;
-  text-align: left;
+  width: 100%;
 }
 
 .inputGroup label {
   display: block;
-  font-size: 0.9rem;
-  color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  text-align: left;
 }
 
 .inputGroup input {
   width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  transition: border-color 0.3s;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
-.inputGroup input:focus {
-  border-color: #4caf50;
-  outline: none;
+.inputGroup input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
+
+.inputGroup input[type="password"],
+.inputGroup input[type="text"] {
+  display: block;
+  margin: 10px 0;
+  width: 100%;
+  padding-right: 40px; /* Space for the toggle icon */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  appearance: none; /* Standardize appearance across browsers */
+}
+
 
 .loginButton {
   width: 100%;
@@ -82,6 +101,34 @@
   background-color: #388e3c;
 }
 
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.passwordWrapper input {
+  width: 100%;
+  padding-right: 40px; /* Ensure space for the toggle icon */
+  box-sizing: border-box; /* Prevents padding from affecting width */
+}
+
+.togglePassword {
+  position: absolute;
+  top: 50%;
+  right: 10px; 
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.passwordIcon {
+  position: absolute;
+  top: -10px;
+  right: 0px;
+  width: 20px;
+  height: 20px;
+}
 
 .footer {
   margin-top: 20px;
