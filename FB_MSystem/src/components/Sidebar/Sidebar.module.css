@@ -38,29 +38,28 @@
 }
 .toggleButton {
   position: absolute;
-  top: 50vh;
-  left: 25vh;
+  top: 2px;
+  left: 27vh;
   background-color: transparent;
   border: none;
-  color: var(--color-primary);
+  color: white;
   font-size: 30px;
   cursor: pointer;
   z-index: 1001;
   transform: translateX(-200px);
   transition: transform 0.3s ease-in-out;
-  opacity: 50%;
 }
 
 .toggleButton:hover {
   opacity: 100%;
-  background-color: rgb(110, 255, 110);
+  background-color: rgb(0, 177, 0);
 }
-
+/* 
 .toggleButton.active {
   transform: translateX(10px);
   transition: transform 0.3s ease-in-out;
   opacity: 20%;
-}
+} */
 
 @media (max-width: 769px) {
   .sidebar {

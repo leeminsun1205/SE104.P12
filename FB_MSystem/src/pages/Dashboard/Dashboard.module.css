@@ -7,6 +7,7 @@
   background: linear-gradient(135deg, #f3f4f6, #e4e7eb);
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .title {
@@ -15,6 +16,7 @@
   color: #2c3e50;
   margin-bottom: 20px;
   text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .cards {
@@ -25,17 +27,18 @@
 }
 
 .card {
-  background-color: #ffffff;
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f0f9ff, #d9efff);
 }
 
 .card h3 {
@@ -47,7 +50,19 @@
 .card p {
   font-size: 1.6rem;
   font-weight: bold;
-  color: #2ecc71;
+  color: #27ae60;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .graphs {
@@ -57,22 +72,24 @@
 }
 
 .graph {
-  background-color: #ffffff;
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .graph:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f0f9ff, #d9efff);
 }
 
 .graph h3 {
   font-size: 1.4rem;
   color: #34495e;
   margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -82,5 +99,28 @@
 
   .title {
     font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .card, .graph {
+    padding: 15px;
+  }
+
+  .card h3, .graph h3 {
+    font-size: 1.2rem;
+  }
+
+  .card p {
+    font-size: 1.4rem;
   }
 }

@@ -52,6 +52,20 @@
     transition: border-color 0.3s;
   }
   
+  .inputGroup input[type="password"],
+  .inputGroup input[type="text"] {
+  display: block;
+  margin: 10px 0;
+  width: 100%;
+  padding-right: 40px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  appearance: none; 
+  } 
+
   .inputGroup input:focus {
     border-color: #4caf50;
     outline: none;
@@ -77,21 +91,6 @@
     background-color: #388e3c;
   }
   
-  .footer {
-    margin-top: 20px;
-    font-size: 0.9rem;
-    color: #666;
-  }
-  
-  .footer a {
-    color: #4caf50;
-    text-decoration: none;
-  }
-  
-  .footer a:hover {
-    text-decoration: underline;
-  }
-  
   .goBackButton {
     margin-top: 15px;
     background-color: #e2e2e294;
@@ -106,5 +105,79 @@
   
   .goBackButton:hover {
     background-color: #cbcaca;
+  }
+  
+  .passwordWrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .passwordWrapper input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+  }
+  
+  .togglePassword {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  .passwordIcon {
+    position: absolute;
+    top: -10px;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+    opacity: 25%;
+  }
+  
+  .footer {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .footer a {
+    color: #4caf50;
+    text-decoration: none;
+  }
+  
+  .footer a:hover {
+    text-decoration: underline;
+  }
+  .passwordStrength {
+    margin-top: 10px;
+  }
+  
+  .strengthBar {
+    height: 5px;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  
+  .weak {
+    width: 33%;
+    background-color: red;
+  }
+  
+  .medium {
+    width: 66%;
+    background-color: orange;
+  }
+  
+  .strong {
+    width: 100%;
+    background-color: green;
+  }
+  
+  .strengthText {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #666;
   }
   

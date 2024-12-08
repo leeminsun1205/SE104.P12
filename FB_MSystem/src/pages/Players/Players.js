@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import './Players.css'; // Thêm file CSS để cải thiện giao diện
 
 const initialPlayers = {
   1: [
-    { id: 1, name: 'Player A1', position: 'Forward', age: 24 },
-    { id: 2, name: 'Player A2', position: 'Midfielder', age: 27 },
+    { id: 1, name: 'Cầu thủ A1', position: 'Tiền đạo', age: 24 },
+    { id: 2, name: 'Cầu thủ A2', position: 'Tiền vệ', age: 27 },
   ],
   2: [
-    { id: 1, name: 'Player B1', position: 'Defender', age: 22 },
-    { id: 2, name: 'Player B2', position: 'Goalkeeper', age: 30 },
+    { id: 1, name: 'Cầu thủ B1', position: 'Hậu vệ', age: 22 },
+    { id: 2, name: 'Cầu thủ B2', position: 'Thủ môn', age: 30 },
   ],
   3: [
-    { id: 1, name: 'Player C1', position: 'Forward', age: 25 },
-    { id: 2, name: 'Player C2', position: 'Midfielder', age: 28 },
+    { id: 1, name: 'Cầu thủ C1', position: 'Tiền đạo', age: 25 },
+    { id: 2, name: 'Cầu thủ C2', position: 'Tiền vệ', age: 28 },
   ],
 };
 
 function Player() {
-  const { teamId } = useParams(); // Lấy teamId từ URL
+  const { teamId } = useParams();
   const [players, setPlayers] = useState(initialPlayers);
-  const teamPlayers = players[teamId] || [];
   const [searchTerm, setSearchTerm] = useState('');
   const [newPlayer, setNewPlayer] = useState({ name: '', position: '', age: '' });
-  const [editPlayer, setEditPlayer] = useState(null); // Lưu cầu thủ đang chỉnh sửa
-  const [deletedPlayer, setDeletedPlayer] = useState(null); // Lưu cầu thủ đã xóa để undo
+  const [editPlayer, setEditPlayer] = useState(null);
+  const [deletedPlayer, setDeletedPlayer] = useState(null);
 
-  // Lọc danh sách cầu thủ dựa trên từ khóa tìm kiếm
+  const teamPlayers = players[teamId] || [];
+
   const filteredPlayers = teamPlayers.filter(player =>
     player.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Thêm cầu thủ mới
   const handleAddPlayer = () => {
     if (newPlayer.name && newPlayer.position && newPlayer.age) {
       const updatedPlayers = [...teamPlayers, { id: Date.now(), ...newPlayer }];
@@ -39,52 +39,43 @@ function Player() {
     }
   };
 
-  // Xóa cầu thủ
   const handleDeletePlayer = (id) => {
     const playerToDelete = teamPlayers.find(player => player.id === id);
-    setDeletedPlayer({ ...playerToDelete, teamId }); // Lưu cầu thủ bị xóa để undo
+    setDeletedPlayer({ ...playerToDelete, teamId });
     setPlayers({ ...players, [teamId]: teamPlayers.filter(player => player.id !== id) });
   };
 
-  // Hoàn tác xóa cầu thủ
   const handleUndoDelete = () => {
     if (deletedPlayer) {
       const updatedPlayers = [...players[deletedPlayer.teamId], deletedPlayer];
       setPlayers({ ...players, [deletedPlayer.teamId]: updatedPlayers });
-      setDeletedPlayer(null); // Xóa cầu thủ đã lưu để tránh hoàn tác lại nhiều lần
+      setDeletedPlayer(null);
     }
   };
 
-  // Cập nhật cầu thủ sau khi chỉnh sửa
   const handleUpdatePlayer = () => {
     const updatedPlayers = teamPlayers.map(player =>
       player.id === editPlayer.id ? editPlayer : player
     );
     setPlayers({ ...players, [teamId]: updatedPlayers });
-    setEditPlayer(null); // Xóa trạng thái chỉnh sửa
+    setEditPlayer(null);
   };
 
   return (
-    <div className="players">
-      <h2>Danh sách cầu thủ</h2>
-      
+    <div className="players-container">
+      <h2>Quản lý cầu thủ</h2>
+
       {/* Thanh tìm kiếm */}
       <input
         type="text"
         placeholder="Tìm kiếm cầu thủ..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{
-          padding: '10px',
-          width: '100%',
-          marginBottom: '20px',
-          borderRadius: '5px',
-          border: '1px solid #ddd'
-        }}
+        className="search-input"
       />
 
       {/* Thêm cầu thủ mới */}
-      <div>
+      <div className="add-player-form">
         <input
           type="text"
           placeholder="Tên cầu thủ"
@@ -106,14 +97,13 @@ function Player() {
         <button onClick={handleAddPlayer}>Thêm cầu thủ</button>
       </div>
 
-      {/* Danh sách cầu thủ đã lọc */}
-      <ul>
+      {/* Danh sách cầu thủ */}
+      <ul className="player-list">
         {filteredPlayers.length > 0 ? (
           filteredPlayers.map(player => (
-            <li key={player.id}>
+            <li key={player.id} className="player-card">
               {editPlayer && editPlayer.id === player.id ? (
-                // Chế độ chỉnh sửa
-                <div>
+                <div className="edit-player-form">
                   <input
                     type="text"
                     value={editPlayer.name}
@@ -133,8 +123,7 @@ function Player() {
                   <button onClick={() => setEditPlayer(null)}>Hủy</button>
                 </div>
               ) : (
-                // Chế độ hiển thị thông thường
-                <div>
+                <div className="player-details">
                   <h3>{player.name}</h3>
                   <p>Vị trí: {player.position}</p>
                   <p>Tuổi: {player.age}</p>
@@ -145,13 +134,13 @@ function Player() {
             </li>
           ))
         ) : (
-          <p>Không có cầu thủ nào phù hợp với từ khóa tìm kiếm.</p>
+          <p>Không tìm thấy cầu thủ nào.</p>
         )}
       </ul>
 
       {/* Nút Hoàn tác Xóa */}
       {deletedPlayer && (
-        <button onClick={handleUndoDelete} style={{ color: 'red', marginTop: '10px' }}>
+        <button onClick={handleUndoDelete} className="undo-delete-btn">
           Hoàn tác xóa
         </button>
       )}

@@ -71,13 +71,13 @@
   display: block;
   margin: 10px 0;
   width: 100%;
-  padding-right: 40px; /* Space for the toggle icon */
+  padding-right: 40px;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
   box-sizing: border-box;
-  appearance: none; /* Standardize appearance across browsers */
+  appearance: none; 
 }
 
 
@@ -108,8 +108,8 @@
 
 .passwordWrapper input {
   width: 100%;
-  padding-right: 40px; /* Ensure space for the toggle icon */
-  box-sizing: border-box; /* Prevents padding from affecting width */
+  padding-right: 40px;
+  box-sizing: border-box;
 }
 
 .togglePassword {
@@ -128,6 +128,7 @@
   right: 0px;
   width: 20px;
   height: 20px;
+  opacity: 25%;
 }
 
 .footer {
