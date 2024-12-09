@@ -37,13 +37,13 @@
   font-size: 16px;
 }
 .toggleButton {
-  position: absolute;
+  position: fixed;
   top: 2px;
   left: 27vh;
   background-color: transparent;
   border: none;
   color: white;
-  font-size: 30px;
+  font-size: 24px;
   cursor: pointer;
   z-index: 1001;
   transform: translateX(-200px);

@@ -3,15 +3,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  /* background-color: var(--color-primary); */
+  padding: 10px 20px;
+  background-color: var(--primary-color);
   color: white;
-  position: fixed;
-  width: 100%;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 1000;
+  height: var(--header-height);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
 }
 
 .logo a {
@@ -21,6 +23,10 @@
   text-decoration: none;
   position: relative;
   left: 50px;
+}
+
+.logo a:hover {
+  color: var(--color-secondary);
 }
 
 .nav {

@@ -147,7 +147,7 @@ function SignUp() {
           </div>
           <div className={styles.inputGroup}>
             <label htmlFor="confirmPassword">
-              Xác nhận mật khẩu<span className={styles.required}>*</span>
+              Xác nhận mật khẩu <span className={styles.required}>*</span>
             </label>
             <div className={styles.passwordWrapper}>
               <input

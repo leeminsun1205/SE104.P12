@@ -1,0 +1,218 @@
+.teams {
+  position: relative;
+  top: 16px; /* Header size */
+  bottom: 64px; /* Footer size */
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f6f9;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.teams h2 {
+  text-align: center;
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.teams input[type="text"] {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 15px;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid #d1d8e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.teams input[type="text"]:focus {
+  border-color: #0984e3;
+  outline: none;
+  box-shadow: 0 0 10px rgba(9, 132, 227, 0.2);
+}
+
+.teams ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.teams li {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.teams li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.teams li h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #34495e;
+  font-weight: 600;
+}
+
+.teams li p {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: #7f8c8d;
+}
+
+.teams li .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.teams a {
+  text-decoration: none;
+  color: #0984e3;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.teams a:hover {
+  color: #74b9ff;
+}
+
+.teams button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.teams button.delete {
+  background-color: #ff7675;
+  color: white;
+}
+
+.teams button.delete:hover {
+  background-color: #d63031;
+}
+
+.teams button.edit {
+  background-color: #6c5ce7;
+  color: white;
+}
+
+.teams button.edit:hover {
+  background-color: #5e49c3;
+}
+
+.teams .add-button {
+  display: block;
+  margin: 25px auto;
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background-color: #2ecc71;
+  text-align: center;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.teams .add-button:hover {
+  background-color: #27ae60;
+}
+
+/* AddTeam and EditTeam */
+
+.form-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f6f9;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.form-container input[type="text"] {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 15px;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid #d1d8e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.form-container input[type="text"]:focus {
+  border-color: #0984e3;
+  outline: none;
+  box-shadow: 0 0 10px rgba(9, 132, 227, 0.2);
+}
+
+.form-container button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 15px 10px;
+}
+
+.form-container button.add {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.form-container button.add:hover {
+  background-color: #27ae60;
+}
+
+.form-container button.cancel {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.form-container button.cancel:hover {
+  background-color: #c0392b;
+}
+
+.form-container button.save {
+  background-color: #3498db;
+  color: white;
+}
+
+.form-container button.save:hover {
+  background-color: #2980b9;
+}

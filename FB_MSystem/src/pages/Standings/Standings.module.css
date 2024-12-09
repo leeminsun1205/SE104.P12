@@ -1,7 +1,7 @@
 .standingsContainer {
   margin: 20px auto;
   padding: 20px;
-  background-color: var(--color-surface);
+  background-color: #f4f4f9;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-medium);
   max-width: 90%;
