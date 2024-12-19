@@ -3,11 +3,11 @@ import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 
 function Sidebar() {
-  const [sidebarOpen, setsidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Toggle sidebar visibility
   const toggleSidebar = () => {
-    setsidebarOpen((prev) => {
+    setSidebarOpen((prev) => {
       console.log('Sidebar state:', !prev); // Debugging log
       return !prev;
     });
@@ -22,9 +22,8 @@ function Sidebar() {
       >
         ☰
       </button>
-      <aside
-        className={`${styles.sidebar} ${sidebarOpen ? styles.active : ''}`}
-      >
+      {sidebarOpen && <div className={styles.overlay} onClick={toggleSidebar}></div>} {/* Overlay div */}
+      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.active : ''}`}>
         <div className={styles.logo}>
           <h2>Football Management</h2>
         </div>
