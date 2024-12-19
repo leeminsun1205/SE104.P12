@@ -51,7 +51,7 @@
   :root {
     --container-width: 1200px;        /* Độ rộng tối đa của container */
     --header-height: 60px;            /* Chiều cao của header */
-    --footer-height: 80px;            /* Chiều cao của footer */
+    --footer-height: 100px;            /* Chiều cao của footer */
     --button-height: 40px;            /* Chiều cao của button */
   }
   

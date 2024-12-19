@@ -1,13 +1,14 @@
 .footer {
-  background-color: var(--color-primary);
-  color: white;
-  text-align: center;
-  position: fixed;
-  width: 100%;
-  left: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 50px;
+  padding-top: auto;
+  background-color: var(--primary-color);
+  color: white;
+  height: var(--footer-height);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
 }
 .footer p {
   margin-bottom: 3px;

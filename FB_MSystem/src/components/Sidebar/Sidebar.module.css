@@ -1,6 +1,5 @@
 /* Sidebar.module.css */
 
-
 .sidebar {
   position: fixed;
   left: 0;
@@ -39,7 +38,7 @@
 .toggleButton {
   position: fixed;
   top: 2px;
-  left: 27vh;
+  left: 32vh;
   background-color: transparent;
   border: none;
   color: white;
