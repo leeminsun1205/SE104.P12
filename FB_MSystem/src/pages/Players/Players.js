@@ -1,43 +1,46 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './Players.css'; // Thêm file CSS để cải thiện giao diện
+import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
+import './Players.css';
 
 const initialPlayers = {
-  1: [
-    { id: 1, name: 'Cầu thủ A1', position: 'Tiền đạo', age: 24 },
-    { id: 2, name: 'Cầu thủ A2', position: 'Tiền vệ', age: 27 },
-  ],
-  2: [
-    { id: 1, name: 'Cầu thủ B1', position: 'Hậu vệ', age: 22 },
-    { id: 2, name: 'Cầu thủ B2', position: 'Thủ môn', age: 30 },
-  ],
-  3: [
-    { id: 1, name: 'Cầu thủ C1', position: 'Tiền đạo', age: 25 },
-    { id: 2, name: 'Cầu thủ C2', position: 'Tiền vệ', age: 28 },
-  ],
+    '2023-2024': {
+        1: [
+            { id: 1, name: 'Cầu thủ A1', position: 'Tiền đạo', age: 24, season: '2023-2024' },
+            { id: 2, name: 'Cầu thủ A2', position: 'Tiền vệ', age: 27, season: '2023-2024' },
+        ],
+    },
+    '2022-2023': {
+        1: [
+            { id: 3, name: 'Player X', position: 'Midfielder', age: 25, season: '2022-2023'},
+        ]
+    }
 };
 
+const seasonsPlayers = Object.keys(initialPlayers);
+
 function Player() {
-  const { teamId } = useParams();
-  const [players, setPlayers] = useState(initialPlayers);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [newPlayer, setNewPlayer] = useState({ name: '', position: '', age: '' });
-  const [editPlayer, setEditPlayer] = useState(null);
-  const [deletedPlayer, setDeletedPlayer] = useState(null);
+    const { teamId } = useParams();
+    const [selectedSeason, setSelectedSeason] = useState(seasonsPlayers[0]);
+    const [players, setPlayers] = useState(initialPlayers);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [newPlayer, setNewPlayer] = useState({ name: '', position: '', age: '', season: selectedSeason });
+    const [editPlayer, setEditPlayer] = useState(null);
+    const [deletedPlayer, setDeletedPlayer] = useState(null);
 
-  const teamPlayers = players[teamId] || [];
+    const teamPlayers = players[selectedSeason] && players[selectedSeason][teamId] || [];
 
-  const filteredPlayers = teamPlayers.filter(player =>
-    player.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const filteredPlayers = teamPlayers.filter(player =>
+        player.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-  const handleAddPlayer = () => {
-    if (newPlayer.name && newPlayer.position && newPlayer.age) {
-      const updatedPlayers = [...teamPlayers, { id: Date.now(), ...newPlayer }];
-      setPlayers({ ...players, [teamId]: updatedPlayers });
-      setNewPlayer({ name: '', position: '', age: '' });
-    }
-  };
+    const handleAddPlayer = () => {
+        if (newPlayer.name && newPlayer.position && newPlayer.age) {
+            const updatedPlayers = [...teamPlayers, { id: Date.now(), ...newPlayer, season: selectedSeason }];
+            setPlayers({ ...players, [selectedSeason]: { ...players[selectedSeason], [teamId]: updatedPlayers } });
+            setNewPlayer({ name: '', position: '', age: '', season: selectedSeason });
+        }
+    };
 
   const handleDeletePlayer = (id) => {
     const playerToDelete = teamPlayers.find(player => player.id === id);
@@ -64,6 +67,7 @@ function Player() {
   return (
     <div className="players-container">
       <h2>Quản lý cầu thủ</h2>
+      <SeasonSelector onSeasonChange={setSelectedSeason} seasons={seasonsPlayers} selectedSeason={selectedSeason}/>
 
       {/* Thanh tìm kiếm */}
       <input

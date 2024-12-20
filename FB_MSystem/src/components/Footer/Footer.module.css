@@ -1,14 +1,14 @@
+/* Footer.module.css */
+
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 100px;
   padding-top: auto;
   background-color: var(--primary-color);
   color: white;
   height: var(--footer-height);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  
 }
 .footer p {
   margin-bottom: 3px;
@@ -19,6 +19,7 @@
   align-items: center;
   gap: 2px;
   flex: 1;
+  flex-grow: 1;
 }
 
 .info {
