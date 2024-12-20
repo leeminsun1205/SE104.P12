@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Teams.css';
+import './AddTeam.css';
 
 function AddTeam({ onAddTeam }) {
   const [team, setTeam] = useState({ name: '', city: '' });

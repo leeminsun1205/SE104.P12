@@ -3,6 +3,7 @@
   flex-direction: column;
   position: relative;
   padding: 20px;
+  top: var(--header-height);
   margin: 20px;
   background: linear-gradient(135deg, #f3f4f6, #e4e7eb);
   border-radius: 12px;

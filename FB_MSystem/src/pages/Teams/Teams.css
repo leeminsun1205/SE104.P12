@@ -1,9 +1,9 @@
+
 .teams {
   position: relative;
-  top: 16px; /* Header size */
-  bottom: 64px; /* Footer size */
   max-width: 800px;
-  margin: 0 auto;
+  top: 10px;
+  margin: 0 auto 0;
   padding: 30px;
   font-family: 'Roboto', sans-serif;
   background-color: #f4f6f9;
@@ -143,7 +143,7 @@
 .form-container {
   position: relative;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 20;
   padding: 30px;
   font-family: 'Roboto', sans-serif;
   background-color: #f4f6f9;

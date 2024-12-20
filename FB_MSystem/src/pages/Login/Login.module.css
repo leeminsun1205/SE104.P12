@@ -1,5 +1,7 @@
 /* src/pages/LoginPage/Login.module.css */
-
+body {
+  margin-top: 0;
+}
 .loginContainer {
   display: flex;
   align-items: center;
