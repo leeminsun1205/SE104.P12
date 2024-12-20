@@ -140,7 +140,7 @@ body {
 }
 
 .footer a {
-  color: #4caf50;
+  color: var(--secondary-color);
   text-decoration: none;
 }
 

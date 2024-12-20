@@ -55,18 +55,21 @@ function Teams({ teams, seasons, onDeleteTeam }) {
                 selectedSeason={selectedSeason}
             />
             <div className="search-container">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm đội bóng..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                    <button className="clear-search" onClick={clearSearch}>
-                        X
-                    </button>
-                )}
+                <div className="search-input-wrapper">
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm đội bóng..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    {searchTerm && (
+                        <button className="clear-search" onClick={clearSearch}>
+                            &#x2715;
+                        </button>
+                    )}
+                </div>
             </div>
+
             <button className="add-button" onClick={handleAddTeam}>
                 Thêm đội bóng mới
             </button>

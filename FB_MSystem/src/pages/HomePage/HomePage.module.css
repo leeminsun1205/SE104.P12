@@ -12,7 +12,7 @@
   align-items: center;
   text-align: center;
   padding: 50px 50px;
-  background: linear-gradient(135deg, #28a745, #4e73df); /* Consider using a contrast checker to ensure accessibility */
+  background: #b1ceff;
   color: white;
 }
 

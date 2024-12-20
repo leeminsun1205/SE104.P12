@@ -41,7 +41,7 @@ function ForgotPassword() {
         <form onSubmit={handleSubmit}>
           <div className={styles.inputGroup}>
             <label htmlFor="email">
-              Email<span className={styles.required}>*</span>
+              Email <span className={styles.required}>*</span>
             </label>
             <input
               type="email"

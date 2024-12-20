@@ -141,3 +141,35 @@ footer {
   color: white;
   text-align: center;
 }
+
+.search-container {
+  position: relative;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-wrapper input[type="text"] {
+  width: 100%;
+  padding-right: 40px; /* Space for the clear button */
+}
+
+.search-input-wrapper .clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 0;
+}
+
+.search-input-wrapper .clear-search:hover {
+  color: #d63031;
+}
