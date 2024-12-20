@@ -1,5 +1,6 @@
-// Apps.js
-import React, { useState } from 'react';
+// /src/Apps.js
+
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -15,24 +16,38 @@ import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SignUp from './pages/SignUp/SignUp';
+import Temp from './pages/Temp/Temp';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import './App.css'
+import './App.css';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
 function App() {
-  const initialTeams = [
-      { id: 1, name: 'Team A', city: 'Hanoi', season: '2023-2024' },
-      { id: 2, name: 'Team B', city: 'Ho Chi Minh', season: '2022-2023' },
-      { id: 3, name: 'Team C', city: 'Da Nang', season: '2023-2024' },
-  ];
-  const [teams, setTeams] = useState(initialTeams);
-  const seasons = [...new Set(initialTeams.map(team => team.season))];
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const initialTeams = [
+        { id: 1, name: 'Team A', city: 'Hanoi', season: '2023-2024' },
+        { id: 2, name: 'Team B', city: 'Ho Chi Minh', season: '2022-2023' },
+        { id: 3, name: 'Team C', city: 'Da Nang', season: '2023-2024' },
+    ];
+    const [teams, setTeams] = useState(initialTeams);
+    const seasons = [...new Set(initialTeams.map(team => team.season))];
+
+    // Check localStorage for authentication status
+    const [isAuthenticated, setIsAuthenticated] = useState(
+        () => localStorage.getItem('isAuthenticated') === 'true'
+    );
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    useEffect(() => {
+        // Persist authentication state in localStorage
+        localStorage.setItem('isAuthenticated', isAuthenticated);
+    }, [isAuthenticated]);
+
     const handleLogin = () => setIsAuthenticated(true);
-    const handleLogout = () => setIsAuthenticated(false);
+    const handleLogout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('isAuthenticated');
+    };
+
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
     const handleAddTeam = (team) => setTeams([...teams, team]);
@@ -72,6 +87,7 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/temp" element={<Temp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route
                 path="/teams"
@@ -79,7 +95,7 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
             />
             <Route
                 path="/teams/add"
-                element={<AddTeam teams={teams} seasons={seasons} onAddTeam={onAddTeam} />} // Pass seasons prop
+                element={<AddTeam teams={teams} seasons={seasons} onAddTeam={onAddTeam} />}
             />
             <Route
                 path="/teams/edit/:id"
@@ -96,6 +112,7 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
 function UnauthenticatedRoutes({ onLogin }) {
     return (
         <Routes>
+            <Route path="/temp" element={<Temp />} />
             <Route path="/login" element={<Login onLogin={onLogin} />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/signup" element={<SignUp />} />

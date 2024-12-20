@@ -89,7 +89,7 @@ body {
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color: #4caf50;
+  background-color: var(--primary-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -100,7 +100,7 @@ body {
 }
 
 .loginButton:hover {
-  background-color: #388e3c;
+  background-color: rgb(88, 152, 255);
 }
 
 .passwordWrapper {

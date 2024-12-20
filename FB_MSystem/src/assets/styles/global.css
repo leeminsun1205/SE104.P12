@@ -28,13 +28,14 @@ html{
 
 /* 2. Thiết lập màu sắc và biến toàn cục */
 :root {
-  --primary-color: #4CAF50;         /* Màu chính (primary) */
-  --secondary-color: #81C784;       /* Màu phụ (secondary) */
-  --background-color: #f9f9f9;      /* Màu nền tổng quát */
+  --primary-color: #0065fc;         /* Màu chính (primary) */
+  --secondary-color: #5879fc;       /* Màu phụ (secondary) */
+  --background-color: #ADD8E6;      /* Màu nền tổng quát */
   --text-color: #333;               /* Màu chữ chính */
   --text-light-color: #666;         /* Màu chữ phụ */
   --border-color: #e0e0e0;          /* Màu viền */
-  --hover-color: #388E3C;           /* Màu khi hover */
+  --button-color: #0065fc;
+  --hover-color: rgb(88, 152, 255); /* Màu khi hover */
   --shadow-color: rgba(0, 0, 0, 0.1); /* Bóng mờ nhẹ */
   --radius: 8px;                    /* Bán kính viền */
   --transition-speed: 0.3s;         /* Thời gian chuyển đổi */

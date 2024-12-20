@@ -12,6 +12,7 @@
 }
 .footer p {
   margin-bottom: 3px;
+  color: white;
 }
 .container {
   display: flex;

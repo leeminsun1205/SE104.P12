@@ -14,17 +14,17 @@
   
   /* Biến thể của Button */
   .primary {
-    background-color: var(--color-primary);
+    background-color: var(--button-color);
     color: white;
     border: none;
   }
   
   .primary:hover {
-    background-color: var(--color-accent);
+    background-color: rgb(88, 152, 255);
   }
   
   .secondary {
-    background-color: var(--color-secondary);
+    background-color: var(--secondary-color);
     color: white;
     border: none;
   }

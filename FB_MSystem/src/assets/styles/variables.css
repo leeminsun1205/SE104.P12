@@ -2,9 +2,9 @@
 
 /* === Màu sắc === */
 :root {
-    --color-primary: #4CAF50;         /* Màu chính, dùng cho tiêu đề và các nút */
-    --color-secondary: #81C784;       /* Màu phụ */
-    --color-accent: #388E3C;          /* Màu nhấn, sử dụng khi hover */
+    --color-primary: #ADD8E6;         /* Màu chính, dùng cho tiêu đề và các nút */
+    --color-secondary: #87CEFA;      /* Màu phụ */
+    --color-accent: #ADD8E6;          /* Màu nhấn, sử dụng khi hover */
     --color-background: #f9f9f9;      /* Màu nền tổng quát */
     --color-surface: #ffffff;         /* Màu nền cho các thẻ và hộp */
     --color-border: #e0e0e0;          /* Màu viền cho các phần tử */

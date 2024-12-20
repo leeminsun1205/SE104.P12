@@ -1,60 +1,95 @@
-/* src/pages/HomePage.css */
+/* src/pages/HomePage.module.css */
 
 .homepage {
-    font-family: Arial, sans-serif;
-    color: #333;
-    margin-top: 100px;
-  }
-  
-  .banner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 50px 50px;
-      background: linear-gradient(135deg, #4CAF50, #81C784);
-      color: white;
-  }
-  .banner h1 {
-    font-size: 3rem;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: black;
-  }
+  font-family: Arial, sans-serif;
+  color: #333;
+  margin-top: 100px;
+}
 
-  .cta-button {
-      padding: 10px 20px;
-      font-size: 1rem;
-      color: #4CAF50;
-      background-color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-  }
+.banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 50px 50px;
+  background: linear-gradient(135deg, #28a745, #4e73df); /* Consider using a contrast checker to ensure accessibility */
+  color: white;
+}
 
-  .cta-button:hover {
-      background-color: #f1f1f1;
-  }
+.banner h1 {
+  font-size: 3rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
 
-  .features {
-    display: flex;
-    justify-content: space-around;
-    padding: 30px 20px;
-    background-color: #f9f9f9;
-  }
-  
+.cta-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  background-color: #007bff; /* A more prominent button color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold; /* Make the button text bolder */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+}
+
+.cta-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  transform: translateY(-2px); /* Subtle lift on hover */
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.features {
+  display: flex;
+  justify-content: space-around;
+  padding: 30px 20px;
+  background-color: #f8f9fa; /* A slightly softer background */
+  flex-wrap: wrap; /* Allow features to wrap on smaller screens */
+}
+
+.feature {
+  text-align: center;
+  width: 30%;
+  margin-bottom: 20px; /* Add spacing between features */
+}
+
+.feature img {
+  max-width: 100px; /* Set a maximum width for the images */
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.feature h2 {
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 1rem;
+  color: #555; /* Slightly darker text for better readability */
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
   .feature {
-    text-align: center;
-    width: 30%;
+    width: 45%; /* Two features per row on medium screens */
   }
-  
-  .feature h2 {
-    color: #4CAF50;
-    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .feature {
+    width: 100%; /* One feature per row on small screens */
   }
-  
-  .feature p {
-    font-size: 1rem;
-  }
-  
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure container takes up full viewport height */
+}
+
+.content {
+    flex: 1; /* Allow content to expand and fill available space */
+}
