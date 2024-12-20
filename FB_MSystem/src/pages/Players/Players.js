@@ -28,7 +28,7 @@ function Player() {
     const [editPlayer, setEditPlayer] = useState(null);
     const [deletedPlayer, setDeletedPlayer] = useState(null);
 
-    const teamPlayers = players[selectedSeason] && players[selectedSeason][teamId] || [];
+    const teamPlayers = (players[selectedSeason] && players[selectedSeason][teamId]) || [];
 
     const filteredPlayers = teamPlayers.filter(player =>
         player.name.toLowerCase().includes(searchTerm.toLowerCase())

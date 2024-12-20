@@ -1,0 +1,14 @@
+/* /src/pages/Teams/EditTeams.js */
+/* Loader */
+.loader {
+    text-align: center;
+    margin: 30px auto;
+    font-size: 18px;
+    color: #3498db;
+  }
+  
+  /* Form Validation */
+  .form-container input:invalid {
+    border-color: #e74c3c;
+  }
+  

@@ -1,9 +1,10 @@
+// /src/pages/Teams/Teams.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
-import './Teams.css'; // Make sure this CSS file exists
+import './Teams.css';
 
-function Teams({ teams, seasons, onDeleteTeam }) { // Removed onAddTeam and onEditTeam from props here
+function Teams({ teams, seasons, onDeleteTeam }) {
     const navigate = useNavigate();
     const [selectedSeason, setSelectedSeason] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -39,6 +40,8 @@ function Teams({ teams, seasons, onDeleteTeam }) { // Removed onAddTeam and onEd
         navigate('/teams/add');
     };
 
+    const clearSearch = () => setSearchTerm('');
+
     if (!seasons || seasons.length === 0) {
         return <p>No seasons available.</p>;
     }
@@ -51,18 +54,25 @@ function Teams({ teams, seasons, onDeleteTeam }) { // Removed onAddTeam and onEd
                 seasons={seasons}
                 selectedSeason={selectedSeason}
             />
-            <input
-                type="text"
-                placeholder="Tìm kiếm đội bóng..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <div className="search-container">
+                <input
+                    type="text"
+                    placeholder="Tìm kiếm đội bóng..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                    <button className="clear-search" onClick={clearSearch}>
+                        X
+                    </button>
+                )}
+            </div>
             <button className="add-button" onClick={handleAddTeam}>
                 Thêm đội bóng mới
             </button>
-            <ul>
-                {filteredTeams.length > 0 ? (
-                    filteredTeams.map((team) => (
+            {filteredTeams.length > 0 ? (
+                <ul>
+                    {filteredTeams.map((team) => (
                         <li key={team.id}>
                             <h3>{team.name}</h3>
                             <p>Thành phố: {team.city}</p>
@@ -75,11 +85,13 @@ function Teams({ teams, seasons, onDeleteTeam }) { // Removed onAddTeam and onEd
                                 </button>
                             </div>
                         </li>
-                    ))
-                ) : (
-                    <p>Không tìm thấy đội bóng nào.</p>
-                )}
-            </ul>
+                    ))}
+                </ul>
+            ) : (
+                <div className="empty-state">
+                    <p>Không tìm thấy đội bóng nào. Hãy thử tìm kiếm với từ khóa khác.</p>
+                </div>
+            )}
         </div>
     );
 }
