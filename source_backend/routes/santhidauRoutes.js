@@ -1,9 +1,12 @@
 const express = require('express');
-const { getSanThiDau, createSanThiDau, deleteSanThiDau } = require('../controllers/SanThiDauController');
+const SanThiDauController = require('../controllers/santhidauController');
+
 const router = express.Router();
 
-router.get('/', getSanThiDau);
-router.post('/', createSanThiDau);
-router.delete('/:MaDoiBong', deleteSanThiDau);
+router.get('/', SanThiDauController.getAll);
+router.get('/:id', SanThiDauController.getById);
+router.post('/', SanThiDauController.create);
+router.put('/:id', SanThiDauController.update);
+router.delete('/:id', SanThiDauController.delete);
 
 module.exports = router;

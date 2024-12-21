@@ -8,16 +8,16 @@ const LoaiThePhat = sequelize.define('LoaiThePhat', {
         allowNull: false,
     },
     TenLoaiThePhat: {
-        type: DataTypes.STRING(10), 
+        type: DataTypes.STRING(10),
         allowNull: false,
     },
     MoTa: {
-        type: DataTypes.STRING(50), 
+        type: DataTypes.STRING(50),
         allowNull: true,
     },
 }, {
     tableName: 'LOAITHEPHAT',
-    timestamps: false, 
+    timestamps: false,
 });
 
 module.exports = LoaiThePhat;

@@ -46,6 +46,8 @@ DoiBong.associate = (models) => {
     DoiBong.hasMany(models.BienNhan, {
         foreignKey: 'MaDoiBong',
         as: 'BienNhan',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     });
 
     // Một đội bóng có thể tham gia nhiều mùa giải

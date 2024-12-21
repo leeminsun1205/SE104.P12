@@ -1,32 +1,50 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const UT_XepHang = sequelize.define('UT_XepHang', {
+const UtXepHang = sequelize.define('UtXepHang', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
-        primaryKey: true,
         allowNull: false,
         references: {
-            model: 'MuaGiai', 
+            model: 'MuaGiai',
             key: 'MaMuaGiai',
         },
     },
     MaLoaiUT: {
-        type: DataTypes.STRING(50),
-        primaryKey: true,
+        type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'LoaiUuTien', 
+            model: 'LoaiUuTien',
             key: 'MaLoaiUT',
         },
     },
     MucDoUT: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        validate: { min: 1 }, // Mức độ ưu tiên phải >= 1
     },
 }, {
     tableName: 'UT_XEPHANG',
     timestamps: false,
 });
 
-module.exports = UT_XepHang;
+// Thiết lập quan hệ với các bảng khác
+UtXepHang.associate = (models) => {
+    // Thuộc một mùa giải
+    UtXepHang.belongsTo(models.MuaGiai, {
+        foreignKey: 'MaMuaGiai',
+        as: 'MuaGiai',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Thuộc một loại ưu tiên
+    UtXepHang.belongsTo(models.LoaiUuTien, {
+        foreignKey: 'MaLoaiUT',
+        as: 'LoaiUuTien',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+};
+
+module.exports = UtXepHang;

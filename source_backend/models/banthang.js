@@ -11,7 +11,7 @@ const BanThang = sequelize.define('BanThang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'TranDau', 
+            model: 'TranDau',
             key: 'MaTranDau',
         },
     },
@@ -27,7 +27,7 @@ const BanThang = sequelize.define('BanThang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'CauThu', 
+            model: 'CauThu',
             key: 'MaCauThu',
         },
     },
@@ -35,7 +35,7 @@ const BanThang = sequelize.define('BanThang', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'LoaiBanThang', 
+            model: 'LoaiBanThang',
             key: 'MaLoaiBanThang',
         },
     },
@@ -47,5 +47,40 @@ const BanThang = sequelize.define('BanThang', {
     tableName: 'BANTHANG',
     timestamps: false,
 });
+
+// Thiết lập quan hệ với các bảng khác
+BanThang.associate = (models) => {
+    // Một bàn thắng thuộc một trận đấu
+    BanThang.belongsTo(models.TranDau, {
+        foreignKey: 'MaTranDau',
+        as: 'TranDau',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Một bàn thắng thuộc một đội bóng
+    BanThang.belongsTo(models.DoiBong, {
+        foreignKey: 'MaDoiBong',
+        as: 'DoiBong',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Một bàn thắng được ghi bởi một cầu thủ
+    BanThang.belongsTo(models.CauThu, {
+        foreignKey: 'MaCauThu',
+        as: 'CauThu',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Một bàn thắng có loại bàn thắng
+    BanThang.belongsTo(models.LoaiBanThang, {
+        foreignKey: 'MaLoaiBanThang',
+        as: 'LoaiBanThang',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+};
 
 module.exports = BanThang;

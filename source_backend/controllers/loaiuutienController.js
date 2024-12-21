@@ -1,76 +1,51 @@
-const LoaiUuTien = require('../models/LoaiUuTien');
+const { LoaiUuTien } = require('../models');
 
-// Lấy danh sách loại ưu tiên
-const getLoaiUuTien = async (req, res) => {
-    try {
-        const LoaiUuTiens = await LoaiUuTien.findAll();
-        res.status(200).json(LoaiUuTiens);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể lấy danh sách loại ưu tiên.', error: error.message });
-    }
-};
-
-// Thêm một loại ưu tiên mới
-const createLoaiUuTien = async (req, res) => {
-    try {
-        const { MaLoaiUT, TenLoaiUT } = req.body;
-
-        // Kiểm tra loại ưu tiên đã tồn tại chưa
-        const existingLoai = await LoaiUuTien.findOne({ where: { MaLoaiUT } });
-        if (existingLoai) {
-            return res.status(400).json({ message: 'Mã loại ưu tiên đã tồn tại.' });
+const LoaiUuTienController = {
+    async getAll(req, res) {
+        try {
+            const loaiUuTiens = await LoaiUuTien.findAll();
+            res.status(200).json(loaiUuTiens);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách loại ưu tiên.' });
         }
+    },
 
-        // Thêm loại ưu tiên mới
-        const newLoaiUuTien = await LoaiUuTien.create({ MaLoaiUT, TenLoaiUT });
-
-        res.status(201).json({ message: 'Thêm loại ưu tiên thành công.', newLoaiUuTien });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể thêm loại ưu tiên.', error: error.message });
-    }
-};
-
-// Cập nhật loại ưu tiên
-const updateLoaiUuTien = async (req, res) => {
-    try {
-        const { MaLoaiUT } = req.params;
-        const { TenLoaiUT } = req.body;
-
-        // Kiểm tra loại ưu tiên có tồn tại không
-        const LoaiUuTien = await LoaiUuTien.findOne({ where: { MaLoaiUT } });
-        if (!LoaiUuTien) {
-            return res.status(404).json({ message: `Không tìm thấy loại ưu tiên với mã ${MaLoaiUT}.` });
+    async create(req, res) {
+        try {
+            const { MaLoaiUT, TenLoaiUT } = req.body;
+            const loaiUuTien = await LoaiUuTien.create({
+                MaLoaiUT, TenLoaiUT,
+            });
+            res.status(201).json(loaiUuTien);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm loại ưu tiên.' });
         }
+    },
 
-        // Cập nhật tên loại ưu tiên
-        LoaiUuTien.TenLoaiUT = TenLoaiUT || LoaiUuTien.TenLoaiUT;
-        await LoaiUuTien.save();
-
-        res.status(200).json({ message: `Cập nhật loại ưu tiên với mã ${MaLoaiUT} thành công.`, LoaiUuTien });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể cập nhật loại ưu tiên.', error: error.message });
-    }
-};
-
-// Xóa loại ưu tiên
-const deleteLoaiUuTien = async (req, res) => {
-    try {
-        const { MaLoaiUT } = req.params;
-
-        // Kiểm tra loại ưu tiên có tồn tại không
-        const deleted = await LoaiUuTien.destroy({ where: { MaLoaiUT } });
-        if (!deleted) {
-            return res.status(404).json({ message: `Không tìm thấy loại ưu tiên với mã ${MaLoaiUT}.` });
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const updates = req.body;
+            const loaiUuTien = await LoaiUuTien.findByPk(id);
+            if (!loaiUuTien) return res.status(404).json({ error: 'Không tìm thấy loại ưu tiên.' });
+            await loaiUuTien.update(updates);
+            res.status(200).json(loaiUuTien);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi cập nhật loại ưu tiên.' });
         }
+    },
 
-        res.status(200).json({ message: `Xóa loại ưu tiên với mã ${MaLoaiUT} thành công.` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể xóa loại ưu tiên.', error: error.message });
-    }
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const loaiUuTien = await LoaiUuTien.findByPk(id);
+            if (!loaiUuTien) return res.status(404).json({ error: 'Không tìm thấy loại ưu tiên.' });
+            await loaiUuTien.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa loại ưu tiên.' });
+        }
+    },
 };
 
-module.exports = { getLoaiUuTien, createLoaiUuTien, updateLoaiUuTien, deleteLoaiUuTien };
+module.exports = LoaiUuTienController;

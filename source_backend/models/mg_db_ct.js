@@ -1,34 +1,36 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const MG_DB_CT = sequelize.define('MG_DB_CT', {
+const MgDbCt = sequelize.define('MgDbCt', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: "MuaGiai",
-            key: "MaMuaGiai",
-        }
+            model: 'MuaGiai',
+            key: 'MaMuaGiai',
+        },
     },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: "DoiBong",
-            key: "MaDoiBong",
-        }
+            model: 'DoiBong',
+            key: 'MaDoiBong',
+        },
     },
     MaCauThu: {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: "CauThu",
-            key: "MaCauThu",
-        }
+            model: 'CauThu',
+            key: 'MaCauThu',
+        },
     },
 }, {
     tableName: 'MG_DB_CT',
     timestamps: false,
 });
 
-module.exports = MG_DB_CT;
+// Không cần thiết lập quan hệ ở đây vì `MuaGiai`, `DoiBong`, và `CauThu` đã thiết lập quan hệ qua bảng này.
+
+module.exports = MgDbCt;

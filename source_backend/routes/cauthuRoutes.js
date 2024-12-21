@@ -1,19 +1,12 @@
 const express = require('express');
-const {
-    getCauThu,
-    createCauThu,
-    deleteCauThu,
-    updateCauThu, 
-} = require('../controllers/cauthuController');
+const CauThuController = require('../controllers/cauthuController');
 
 const router = express.Router();
 
-router.get('/', getCauThu);
-
-router.post('/', createCauThu);
-
-router.delete('/:MaCauThu', deleteCauThu);
-
-router.put('/:MaCauThu', updateCauThu);
+router.get('/', CauThuController.getAll); 
+router.get('/:id', CauThuController.getById); 
+router.post('/', CauThuController.create); 
+router.put('/:id', CauThuController.update); 
+router.delete('/:id', CauThuController.delete); 
 
 module.exports = router;

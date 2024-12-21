@@ -8,32 +8,48 @@ const LichSuGiaiDau = sequelize.define('LichSuGiaiDau', {
         allowNull: false,
         references: {
             model: 'DoiBong',
-            key: 'MaDoiBonng',
-        }
+            key: 'MaDoiBong',
+        },
     },
     SoLanThamGia: {
         type: DataTypes.TINYINT,
         allowNull: false,
-    },
-    SoTranThang: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
+        validate: { min: 0 },
     },
     SoLanVoDich: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        validate: { min: 0 },
     },
     SoLanAQuan: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        validate: { min: 0 },
     },
     SoLanHangBa: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        validate: { min: 0 },
+    },
+    TongSoTran: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        validate: { min: 0 },
     },
 }, {
     tableName: 'LICHSUGIAIDAU',
     timestamps: false,
 });
+
+// Thiết lập quan hệ với các bảng khác
+LichSuGiaiDau.associate = (models) => {
+    // Thuộc một đội bóng
+    LichSuGiaiDau.belongsTo(models.DoiBong, {
+        foreignKey: 'MaDoiBong',
+        as: 'DoiBong',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+};
 
 module.exports = LichSuGiaiDau;

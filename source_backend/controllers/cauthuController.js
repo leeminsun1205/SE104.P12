@@ -1,76 +1,62 @@
-const CauThu = require('../models/cauthu');
+const { CauThu } = require('../models');
 
-const getCauThu = async (req, res) => {
-    try {
-        const cauThu = await CauThu.findAll();
-        res.status(200).json(cauThu);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách cầu thủ' });
-    }
-};
-
-const createCauThu = async (req, res) => {
-    try {
-        const { MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo } = req.body;
-        const newCauThu = await CauThu.create({ MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo });
-        res.status(201).json(newCauThu);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể tạo cầu thủ mới' });
-    }
-};
-
-const deleteCauThu = async (req, res) => {
-    try {
-        const { MaCauThu } = req.params;
-        const deleted = await CauThu.destroy({
-            where: { MaCauThu: MaCauThu }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: `Cầu thủ với mã ${MaCauThu} đã được xóa.` });
-        } else {
-            res.status(404).json({ message: `Không tìm thấy cầu thủ với mã ${MaCauThu}.` });
+const CauThuController = {
+    async getAll(req, res) {
+        try {
+            const cauThus = await CauThu.findAll();
+            res.status(200).json(cauThus);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ.' });
         }
-    } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi xóa cầu thủ.', error: error.message });
-    }
-};
+    },
 
-const updateCauThu = async (req, res) => {
-    try {
-        const { MaCauThu } = req.params; 
-        const {
-            TenCauThu,
-            NgaySinh,
-            QuocTich,
-            LoaiCauThu,
-            ViTri,
-            ChieuCao,
-            CanNang,
-            SoAo
-        } = req.body; 
-
-        const cauThu = await CauThu.findOne({ where: { MaCauThu: MaCauThu } });
-
-        if (!cauThu) {
-            return res.status(404).json({ message: `Không tìm thấy cầu thủ với mã ${MaCauThu}.` });
+    async getById(req, res) {
+        try {
+            const { id } = req.params;
+            const cauThu = await CauThu.findByPk(id);
+            if (!cauThu) return res.status(404).json({ error: 'Không tìm thấy cầu thủ.' });
+            res.status(200).json(cauThu);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy thông tin cầu thủ.' });
         }
+    },
 
-        const updatedCauThu = await cauThu.update({
-            TenCauThu,
-            NgaySinh,
-            QuocTich,
-            LoaiCauThu,
-            ViTri,
-            ChieuCao,
-            CanNang,
-            SoAo
-        });
+    async create(req, res) {
+        try {
+            const { MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo, TieuSu, AnhCauThu } = req.body;
+            const cauThu = await CauThu.create({
+                MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo, TieuSu, AnhCauThu,
+            });
+            res.status(201).json(cauThu);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm cầu thủ mới.' });
+        }
+    },
 
-        res.status(200).json({ message: 'Cập nhật cầu thủ thành công.', cauThu: updatedCauThu });
-    } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật cầu thủ.', error: error.message });
-    }
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const updates = req.body;
+            const cauThu = await CauThu.findByPk(id);
+            if (!cauThu) return res.status(404).json({ error: 'Không tìm thấy cầu thủ.' });
+            await cauThu.update(updates);
+            res.status(200).json(cauThu);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin cầu thủ.' });
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const cauThu = await CauThu.findByPk(id);
+            if (!cauThu) return res.status(404).json({ error: 'Không tìm thấy cầu thủ.' });
+            await cauThu.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa cầu thủ.' });
+        }
+    },
 };
 
-module.exports = { getCauThu, createCauThu, deleteCauThu, updateCauThu};
+module.exports = CauThuController;

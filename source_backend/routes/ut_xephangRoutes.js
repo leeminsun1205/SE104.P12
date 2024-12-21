@@ -1,22 +1,10 @@
 const express = require('express');
+const UtXepHangController = require('../controllers/ut_xephangController');
+
 const router = express.Router();
-const {
-    getUT_XepHang,
-    createUT_XepHang,
-    deleteUT_XepHang,
-    updateUT_XepHang,
-} = require('../controllers/ut_xephangController');
 
-// Lấy danh sách ưu tiên xếp hạng
-router.get('/', getUT_XepHang);
-
-// Thêm mới ưu tiên xếp hạng
-router.post('/', createUT_XepHang);
-
-// Xóa ưu tiên xếp hạng theo mã mùa giải và mã loại ưu tiên
-router.delete('/:MaMuaGiai/:MaLoaiUT', deleteUT_XepHang);
-
-// Cập nhật ưu tiên xếp hạng theo mã mùa giải và mã loại ưu tiên
-router.put('/:MaMuaGiai/:MaLoaiUT', updateUT_XepHang);
+router.get('/muagiai/:MaMuaGiai', UtXepHangController.getByMuaGiai); // Lấy danh sách ưu tiên xếp hạng theo mùa giải
+router.post('/', UtXepHangController.create); // Thêm ưu tiên xếp hạng
+router.delete('/:MaMuaGiai/:MaLoaiUT', UtXepHangController.delete); // Xóa ưu tiên xếp hạng
 
 module.exports = router;

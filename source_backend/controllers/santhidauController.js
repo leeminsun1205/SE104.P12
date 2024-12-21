@@ -1,68 +1,62 @@
-const SanThiDau = require('../models/santhidau');
+const { SanThiDau } = require('../models');
 
-const getSanThiDau = async (req, res) => {
-    try {
-        const sanThiDauList = await SanThiDau.findAll();
-        res.status(200).json(sanThiDauList);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể lấy danh sách sân thi đấu.', error: error.message });
-    }
+const SanThiDauController = {
+    async getAll(req, res) {
+        try {
+            const sanThiDaus = await SanThiDau.findAll();
+            res.status(200).json(sanThiDaus);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách sân thi đấu.' });
+        }
+    },
+
+    async getById(req, res) {
+        try {
+            const { id } = req.params;
+            const sanThiDau = await SanThiDau.findByPk(id);
+            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            res.status(200).json(sanThiDau);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy thông tin sân thi đấu.' });
+        }
+    },
+
+    async create(req, res) {
+        try {
+            const { MaSan, TenSan, DiaChiSan, SucChua, TieuChuan } = req.body;
+            const sanThiDau = await SanThiDau.create({
+                MaSan, TenSan, DiaChiSan, SucChua, TieuChuan,
+            });
+            res.status(201).json(sanThiDau);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm sân thi đấu mới.' });
+        }
+    },
+
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const updates = req.body;
+            const sanThiDau = await SanThiDau.findByPk(id);
+            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            await sanThiDau.update(updates);
+            res.status(200).json(sanThiDau);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin sân thi đấu.' });
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const sanThiDau = await SanThiDau.findByPk(id);
+            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            await sanThiDau.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa sân thi đấu.' });
+        }
+    },
 };
 
-const createSanThiDau = async (req, res) => {
-    try {
-        const { MaSan, TenSan, DiaChiSan, SucChua, TieuChuan } = req.body;
-
-        if (!MaSan || !TenSan || !DiaChiSan || !SucChua || !TieuChuan) {
-            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc.' });
-        }
-
-        const existingSan = await SanThiDau.findOne({ where: { MaSan } });
-        if (existingSan) {
-            return res.status(400).json({ message: 'Mã sân thi đấu đã tồn tại.', existingSan });
-        }
-
-        const newSanThiDau = await SanThiDau.create({ MaSan, TenSan, DiaChiSan, SucChua, TieuChuan });
-        res.status(201).json(newSanThiDau);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể thêm sân thi đấu.', error: error.message });
-    }
-};
-
-const updateSanThiDau = async (req, res) => {
-    try {
-        const { MaSan } = req.params;
-        const { TenSan, DiaChiSan, SucChua, TieuChuan } = req.body;
-
-        const sanThiDau = await SanThiDau.findOne({ where: { MaSan } });
-        if (!sanThiDau) {
-            return res.status(404).json({ message: `Không tìm thấy sân thi đấu với mã ${MaSan}.` });
-        }
-
-        await sanThiDau.update({ TenSan, DiaChiSan, SucChua, TieuChuan });
-        res.status(200).json(sanThiDau);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể cập nhật sân thi đấu.', error: error.message });
-    }
-};
-
-const deleteSanThiDau = async (req, res) => {
-    try {
-        const { MaSan } = req.params;
-
-        const deleted = await SanThiDau.destroy({ where: { MaSan } });
-        if (!deleted) {
-            return res.status(404).json({ message: `Không tìm thấy sân thi đấu với mã ${MaSan}.` });
-        }
-
-        res.status(200).json({ message: `Xóa sân thi đấu với mã ${MaSan} thành công.` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Không thể xóa sân thi đấu.', error: error.message });
-    }
-};
-
-module.exports = { getSanThiDau, createSanThiDau, updateSanThiDau, deleteSanThiDau };
+module.exports = SanThiDauController;

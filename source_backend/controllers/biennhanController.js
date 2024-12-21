@@ -1,76 +1,57 @@
-const BienNhan = require('../models/biennhan');
+const { BienNhan, DoiBong } = require('../models');
 
-const getBienNhan = async (req, res) => {
-    try {
-        const bienNhanList = await BienNhan.findAll();
-        res.status(200).json(bienNhanList);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách biên nhận', details: err.message });
-    }
+const BienNhanController = {
+    async getAll(req, res) {
+        try {
+            const bienNhans = await BienNhan.findAll({
+                include: [
+                    { model: DoiBong, as: 'DoiBong' },
+                ],
+            });
+            res.status(200).json(bienNhans);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách biên nhận.' });
+        }
+    },
+
+    async getByDoiBong(req, res) {
+        try {
+            const { MaDoiBong } = req.params;
+            const bienNhans = await BienNhan.findAll({
+                where: { MaDoiBong },
+                include: [
+                    { model: DoiBong, as: 'DoiBong' },
+                ],
+            });
+            res.status(200).json(bienNhans);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách biên nhận của đội bóng.' });
+        }
+    },
+
+    async create(req, res) {
+        try {
+            const { MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang } = req.body;
+            const bienNhan = await BienNhan.create({
+                MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang,
+            });
+            res.status(201).json(bienNhan);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm biên nhận mới.' });
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const bienNhan = await BienNhan.findByPk(id);
+            if (!bienNhan) return res.status(404).json({ error: 'Không tìm thấy biên nhận.' });
+            await bienNhan.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa biên nhận.' });
+        }
+    },
 };
 
-const createBienNhan = async (req, res) => {
-    try {
-        const { MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang } = req.body;
-
-        if (!MaLePhi || !MaDoiBong || !SoTien || !NgayBatDau || !NgayHetHan) {
-            return res.status(400).json({ error: 'Thiếu thông tin bắt buộc.' });
-        }
-        if (new Date(NgayBatDau) >= new Date(NgayHetHan)) {
-            return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn ngày hết hạn.' });
-        }
-
-        const newBienNhan = await BienNhan.create({ MaLePhi, MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang });
-        res.status(201).json(newBienNhan);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể tạo biên nhận mới', details: err.message });
-    }
-};
-
-const updateBienNhan = async (req, res) => {
-    try {
-        const { MaLePhi } = req.params; 
-        const { MaDoiBong, SoTien, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang } = req.body;
-
-        const bienNhan = await BienNhan.findOne({ where: { MaLePhi } });
-        if (!bienNhan) {
-            return res.status(404).json({ message: `Không tìm thấy biên nhận với mã ${MaLePhi}.` });
-        }
-
-        if (NgayBatDau && NgayHetHan && new Date(NgayBatDau) >= new Date(NgayHetHan)) {
-            return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn ngày hết hạn.' });
-        }
-
-        const updatedBienNhan = await bienNhan.update({
-            MaDoiBong: MaDoiBong || bienNhan.MaDoiBong,
-            SoTien: SoTien || bienNhan.SoTien,
-            NgayBatDau: NgayBatDau || bienNhan.NgayBatDau,
-            NgayHetHan: NgayHetHan || bienNhan.NgayHetHan,
-            NgayThanhToan: NgayThanhToan || bienNhan.NgayThanhToan,
-            TinhTrang: TinhTrang || bienNhan.TinhTrang,
-        });
-
-        res.status(200).json({ message: `Cập nhật biên nhận với mã ${MaLePhi} thành công.`, updatedBienNhan });
-    } catch (error) {
-        res.status(500).json({ message: 'Không thể cập nhật biên nhận.', error: error.message });
-    }
-};
-
-const deleteBienNhan = async (req, res) => {
-    try {
-        const { MaLePhi } = req.params;
-        const deleted = await BienNhan.destroy({
-            where: { MaLePhi: MaLePhi }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: `Biên nhận với mã ${MaLePhi} đã được xóa.` });
-        } else {
-            res.status(404).json({ message: `Không tìm thấy biên nhận với mã ${MaLePhi}.` });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi xóa biên nhận.', error: error.message });
-    }
-};
-
-module.exports = {getBienNhan, createBienNhan, deleteBienNhan, updateBienNhan};
+module.exports = BienNhanController;

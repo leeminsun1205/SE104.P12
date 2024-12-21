@@ -1,74 +1,62 @@
-const DoiBong = require('../models/doibong');
+const { DoiBong } = require('../models');
 
-const getDoiBong = async (req, res) => {
-    try {
-        const doiBong = await DoiBong.findAll();
-        res.status(200).json(doiBong);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách đội bóng' });
-    }
-};
-
-const createDoiBong = async (req, res) => {
-    try {
-        const { MaDoiBong, TenDoiBong, CoQuanChuQuan, ThanhPhoTrucThuoc, MaSan, HLV, ThongTin, Logo } = req.body;
-        const newDoiBong = await DoiBong.create({ MaDoiBong, TenDoiBong, CoQuanChuQuan, ThanhPhoTrucThuoc, MaSan, HLV, ThongTin, Logo });
-        res.status(201).json(newDoiBong);
-    } catch (err) {
-        res.status(500).json({ error: 'Không thể tạo đội bóng mới' });
-    }
-};
-
-const deleteDoiBong = async (req, res) => {
-    try {
-        const { MaDoiBong } = req.params;
-        const deleted = await DoiBong.destroy({
-            where: { MaDoiBong: MaDoiBong }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: `Đội bóng với mã ${MaDoiBong} đã được xóa.` });
-        } else {
-            res.status(404).json({ message: `Không tìm thấy đội bóng với mã ${MaDoiBong}.` });
+const DoiBongController = {
+    async getAll(req, res) {
+        try {
+            const doiBongs = await DoiBong.findAll();
+            res.status(200).json(doiBongs);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng.' });
         }
-    } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi xóa đội bóng.', error: error.message });
-    }
-};
+    },
 
-const updateDoiBong = async (req, res) => {
-    try {
-        const { MaDoiBong } = req.params; 
-        const {
-            TenDoiBong,
-            CoQuanChuQuan,
-            ThanhPhoTrucThuoc,
-            MaSan,
-            HLV,
-            ThongTin,
-            Logo
-        } = req.body;
-   
-        const doiBong = await DoiBong.findOne({ where: { MaDoiBong: MaDoiBong } });
-
-        if (!doiBong) {
-            return res.status(404).json({ message: `Không tìm thấy đội bóng với mã ${MaDoiBong}.` });
+    async getById(req, res) {
+        try {
+            const { id } = req.params;
+            const doiBong = await DoiBong.findByPk(id);
+            if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
+            res.status(200).json(doiBong);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy thông tin đội bóng.' });
         }
+    },
 
-        const updatedDoiBong = await doiBong.update({
-            TenDoiBong,
-            CoQuanChuQuan,
-            ThanhPhoTrucThuoc,
-            MaSan,
-            HLV,
-            ThongTin,
-            Logo
-        });
+    async create(req, res) {
+        try {
+            const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin, Logo } = req.body;
+            const doiBong = await DoiBong.create({
+                MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin, Logo,
+            });
+            res.status(201).json(doiBong);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.' });
+        }
+    },
 
-        res.status(200).json({ message: 'Cập nhật đội bóng thành công.', doiBong: updatedDoiBong });
-    } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật đội bóng.', error: error.message });
-    }
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const updates = req.body;
+            const doiBong = await DoiBong.findByPk(id);
+            if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
+            await doiBong.update(updates);
+            res.status(200).json(doiBong);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin đội bóng.' });
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const doiBong = await DoiBong.findByPk(id);
+            if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
+            await doiBong.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa đội bóng.' });
+        }
+    },
 };
 
-module.exports = { getDoiBong, createDoiBong, deleteDoiBong, updateDoiBong };
+module.exports = DoiBongController;

@@ -1,145 +1,62 @@
-const TranDau = require('../models/trandau');
+const { TranDau } = require('../models');
 
-// Lấy danh sách các trận đấu
-const getTranDau = async (req, res) => {
-    try {
-        const tranDaus = await TranDau.findAll();
-        res.status(200).json(tranDaus);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Lỗi khi lấy danh sách trận đấu!', details: error.message });
-    }
-};
-
-// Thêm trận đấu mới
-const createTranDau = async (req, res) => {
-    try {
-        const {
-            MaTranDau,
-            MaVongDau,
-            MaDoiBongNha,
-            MaDoiBongKhach,
-            NgayThiDau,
-            GioThiDau,
-            MaSan,
-            BanThangDoiNha,
-            BanThangDoiKhach,
-        } = req.body;
-
-        // Kiểm tra dữ liệu đầu vào
-        if (
-            !MaTranDau ||
-            !MaVongDau ||
-            !MaDoiBongNha ||
-            !MaDoiBongKhach ||
-            !NgayThiDau ||
-            !GioThiDau ||
-            !MaSan ||
-            BanThangDoiNha === undefined ||
-            BanThangDoiKhach === undefined
-        ) {
-            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc!' });
+const TranDauController = {
+    async getAll(req, res) {
+        try {
+            const tranDaus = await TranDau.findAll();
+            res.status(200).json(tranDaus);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu.' });
         }
+    },
 
-        const tranDau = await TranDau.create({
-            MaTranDau,
-            MaVongDau,
-            MaDoiBongNha,
-            MaDoiBongKhach,
-            NgayThiDau,
-            GioThiDau,
-            MaSan,
-            BanThangDoiNha,
-            BanThangDoiKhach,
-        });
-
-        res.status(201).json({ message: 'Thêm trận đấu thành công!', data: tranDau });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Lỗi khi thêm trận đấu!', details: error.message });
-    }
-};
-
-// Xóa trận đấu
-const deleteTranDau = async (req, res) => {
-    try {
-        const { MaTranDau } = req.params;
-
-        // Xóa trận đấu
-        const result = await TranDau.destroy({ where: { MaTranDau } });
-        if (result === 0) {
-            return res.status(404).json({ message: `Không tìm thấy trận đấu với mã ${MaTranDau}!` });
+    async getById(req, res) {
+        try {
+            const { id } = req.params;
+            const tranDau = await TranDau.findByPk(id);
+            if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
+            res.status(200).json(tranDau);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.' });
         }
+    },
 
-        res.status(200).json({ message: `Xóa trận đấu với mã ${MaTranDau} thành công!` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Lỗi khi xóa trận đấu!', details: error.message });
-    }
-};
-
-// Cập nhật thông tin trận đấu
-const updateTranDau = async (req, res) => {
-    try {
-        const { MaTranDau } = req.params;
-        const {
-            MaVongDau,
-            MaDoiBongNha,
-            MaDoiBongKhach,
-            NgayThiDau,
-            GioThiDau,
-            MaSan,
-            BanThangDoiNha,
-            BanThangDoiKhach,
-        } = req.body;
-
-        // Kiểm tra dữ liệu đầu vào
-        if (
-            !MaVongDau &&
-            !MaDoiBongNha &&
-            !MaDoiBongKhach &&
-            !NgayThiDau &&
-            !GioThiDau &&
-            !MaSan &&
-            BanThangDoiNha === undefined &&
-            BanThangDoiKhach === undefined
-        ) {
-            return res.status(400).json({ message: 'Không có thông tin nào để cập nhật!' });
+    async create(req, res) {
+        try {
+            const { MaTranDau, MaVongDau, MaDoiBongNha, MaDoiBongKhach, MaSan, NgayThiDau, GioThiDau, BanThangDoiNha, BanThangDoiKhach } = req.body;
+            const tranDau = await TranDau.create({
+                MaTranDau, MaVongDau, MaDoiBongNha, MaDoiBongKhach, MaSan, NgayThiDau, GioThiDau, BanThangDoiNha, BanThangDoiKhach,
+            });
+            res.status(201).json(tranDau);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm trận đấu mới.' });
         }
+    },
 
-        // Cập nhật trận đấu
-        const [updatedRows] = await TranDau.update(
-            {
-                MaVongDau,
-                MaDoiBongNha,
-                MaDoiBongKhach,
-                NgayThiDau,
-                GioThiDau,
-                MaSan,
-                BanThangDoiNha,
-                BanThangDoiKhach,
-            },
-            { where: { MaTranDau } }
-        );
-
-        if (updatedRows === 0) {
-            return res.status(404).json({ message: `Không tìm thấy trận đấu với mã ${MaTranDau} để cập nhật!` });
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const updates = req.body;
+            const tranDau = await TranDau.findByPk(id);
+            if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
+            await tranDau.update(updates);
+            res.status(200).json(tranDau);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin trận đấu.' });
         }
+    },
 
-        const updatedTranDau = await TranDau.findOne({ where: { MaTranDau } });
-        res.status(200).json({
-            message: `Cập nhật trận đấu với mã ${MaTranDau} thành công!`,
-            data: updatedTranDau,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Lỗi khi cập nhật trận đấu!', details: error.message });
-    }
+    async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const tranDau = await TranDau.findByPk(id);
+            if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
+            await tranDau.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa trận đấu.' });
+        }
+    },
 };
 
-module.exports = {
-    getTranDau,
-    createTranDau,
-    deleteTranDau,
-    updateTranDau,
-};
+module.exports = TranDauController;

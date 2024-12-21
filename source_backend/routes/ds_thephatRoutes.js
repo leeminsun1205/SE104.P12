@@ -1,22 +1,9 @@
 const express = require('express');
+const DsThePhatController = require('../controllers/ds_thephatController');
+
 const router = express.Router();
-const {
-    getDSThePhat,
-    createDSThePhat,
-    updateDSThePhat,
-    deleteDSThePhat,
-} = require('../controllers/ds_thephatController');
 
-// Lấy tất cả DS thẻ phạt
-router.get('/', getDSThePhat);
-
-// Thêm DS thẻ phạt mới
-router.post('/', createDSThePhat);
-
-// Cập nhật DS thẻ phạt
-router.put('/:id', updateDSThePhat);
-
-// Xóa DS thẻ phạt
-router.delete('/:id', deleteDSThePhat);
+router.get('/vongdau/:MaVongDau', DsThePhatController.getByVongDau); // Lấy danh sách thẻ phạt theo vòng đấu
+router.get('/muagiai/:MaMuaGiai', DsThePhatController.getByMuaGiai); // Lấy danh sách thẻ phạt theo mùa giải
 
 module.exports = router;

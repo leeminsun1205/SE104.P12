@@ -1,22 +1,9 @@
 const express = require('express');
+const ThanhTichController = require('../controllers/thanhtichController');
+
 const router = express.Router();
-const {
-    getThanhTich,
-    createThanhTich,
-    deleteThanhTich,
-    updateThanhTich
-} = require('../controllers/thanhtichController');
 
-// Lấy tất cả thành tích
-router.get('/', getThanhTich);
-
-// Thêm thành tích mới
-router.post('/', createThanhTich);
-
-// Xóa thành tích
-router.delete('/:id', deleteThanhTich);
-
-// Cập nhật thành tích
-router.put('/:id', updateThanhTich);
+router.get('/muagiai/:MaMuaGiai', ThanhTichController.getByMuaGiai); // Lấy thành tích theo mùa giải
+router.get('/doibong/:MaDoiBong', ThanhTichController.getByDoiBong); // Lấy thành tích của đội bóng
 
 module.exports = router;
