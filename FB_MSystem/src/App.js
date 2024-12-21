@@ -144,7 +144,7 @@ function UnauthenticatedRoutes({ onLogin }) {
             <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
     );
-}
+}   
 
 export default App;
 

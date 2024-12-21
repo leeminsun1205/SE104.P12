@@ -27,7 +27,62 @@ let players = {
   },
 };
 
-// Routes
+let teams = [
+  {
+    id: 1,
+    name: "Hà Nội FC",
+    city: "Hà Nội",
+    managing_body: "T&T",
+    stadium: "Hàng Đẫy",
+    capacity: 22500,
+    fifa_stars: 3,
+    home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
+    away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
+    third_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
+    description: "Hà Nội FC description",
+    season: "2023-2024",
+  },
+];
+
+// Team Routes
+app.get('/api/teams', (req, res) => {
+  res.json({ teams });
+});
+
+app.post('/api/teams', (req, res) => {
+  const { team } = req.body;
+  const newTeam = { id: Date.now(), ...team };
+  teams.push(newTeam);
+  res.status(201).json({ message: 'Team added successfully', team: newTeam });
+});
+
+app.put('/api/teams/:id', (req, res) => {
+  const { id } = req.params;
+  const { updatedTeam } = req.body;
+  teams = teams.map((team) =>
+    team.id === parseInt(id) ? { ...team, ...updatedTeam } : team
+  );
+  res.json({ message: 'Team updated successfully' });
+});
+
+app.delete('/api/teams/:id', (req, res) => {
+  const { id } = req.params;
+  const teamId = parseInt(id);
+  teams = teams.filter((team) => team.id !== teamId);
+  res.json({ message: 'Team deleted successfully' });
+});
+
+app.get('/api/teams/:id', (req, res) => {
+  const { id } = req.params;
+  const team = teams.find((team) => team.id === parseInt(id));
+  if (team) {
+    res.json(team);
+  } else {
+    res.status(404).json({ message: 'Team not found' });
+  }
+});
+
+// Player Routes
 app.get('/api/players', (req, res) => {
   res.json({ players });
 });
@@ -65,23 +120,22 @@ app.delete('/api/players/:id', (req, res) => {
 });
 
 app.get('/api/players/:id', (req, res) => {
-    const { id } = req.params;
-    const playerId = parseInt(id);
-  
-    for (const season in players) {
-      for (const teamId in players[season]) {
-        const player = players[season][teamId].find((p) => p.id === playerId);
-        if (player) {
-          return res.json(player);
-        }
+  const { id } = req.params;
+  const playerId = parseInt(id);
+
+  for (const season in players) {
+    for (const teamId in players[season]) {
+      const player = players[season][teamId].find((p) => p.id === playerId);
+      if (player) {
+        return res.json(player);
       }
     }
-  
-    res.status(404).json({ message: 'Player not found' });
-  });
-  
+  }
+
+  res.status(404).json({ message: 'Player not found' });
+});
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
