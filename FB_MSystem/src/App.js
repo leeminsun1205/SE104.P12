@@ -8,7 +8,8 @@ import Teams from './pages/Teams/Teams';
 import AddTeam from './pages/Teams/AddTeam';
 import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
-import Players from './pages/Players/Players'; // Import Players page
+import Players from './pages/Players/Players';
+import PlayerInfo from './pages/Players/PlayerInfo';
 import Matches from './pages/Matches/Matches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
@@ -70,11 +71,11 @@ function App() {
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
     const handleAddTeam = (team) => setTeams([...teams, team]);
     const handleEditTeam = (updatedTeam) => {
-        setTeams((prevTeams) => 
+        setTeams((prevTeams) =>
             prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeam : team))
         );
     };
-    
+
     const handleDeleteTeam = (id) => setTeams(teams.filter((team) => team.id !== id));
 
     return (
@@ -122,6 +123,10 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
             <Route path="/teams/edit/:id" element={<EditTeam teams={teams} onEditTeam={onEditTeam} />} />
             <Route path="/teams/:id" element={<TeamInfo teams={teams} key={Date.now()} />} />
             <Route path="/teams/:teamId/players" element={<Players players={teams} />} />
+            <Route
+                path="/teams/:teamId/players/:playerId"
+                element={<PlayerInfo teams={teams} />}
+                />
             <Route path="/matches" element={<Matches />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="*" element={<Navigate to="/" />} />
@@ -142,3 +147,4 @@ function UnauthenticatedRoutes({ onLogin }) {
 }
 
 export default App;
+

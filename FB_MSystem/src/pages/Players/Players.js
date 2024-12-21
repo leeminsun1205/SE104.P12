@@ -1,289 +1,133 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
+import PlayerList from '../../pages/Players/PlayerList';
+import Modal from '../../pages/Players/Modal';
 import './Players.css';
 
-const initialPlayers = {
-  '2023-2024': {
-    1: [
-      {
-        id: 1,
-        name: 'Cầu thủ A1',
-        dob: '1999-03-15',
-        position: 'Tiền đạo',
-        nationality: 'Việt Nam',
-        birthplace: 'Hà Nội',
-        height: 180,
-        weight: 75,
-        bio: 'Một tiền đạo tài năng của đội.',
-        season: '2023-2024',
-      },
-      {
-        id: 2,
-        name: 'Cầu thủ A2',
-        dob: '1996-07-10',
-        position: 'Tiền vệ',
-        nationality: 'Việt Nam',
-        birthplace: 'Hồ Chí Minh',
-        height: 175,
-        weight: 70,
-        bio: 'Chơi tốt ở vị trí tiền vệ trung tâm.',
-        season: '2023-2024',
-      },
-    ],
-  },
-};
-
-const predefinedPositions = ['Tiền đạo', 'Tiền vệ', 'Hậu vệ', 'Thủ môn'];
-const seasonsPlayers = Object.keys(initialPlayers);
-
-function calculateAge(dob) {
-  const birthDate = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
-}
-
-function Players() {
+const Players = () => {
   const { teamId } = useParams();
   const navigate = useNavigate();
-  const [selectedSeason, setSelectedSeason] = useState(seasonsPlayers[0]);
-  const [players, setPlayers] = useState(initialPlayers);
+  const [selectedSeason, setSelectedSeason] = useState('');
+  const [players, setPlayers] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [newPlayer, setNewPlayer] = useState({
-    name: '',
-    position: '',
-    dob: '',
-    nationality: '',
-    birthplace: '',
-    height: '',
-    weight: '',
-    bio: '',
-    season: selectedSeason
-  });
-  const [editPlayer, setEditPlayer] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState('add');
+  const [modal, setModal] = useState({ type: null, player: null });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/players');
+        const data = await response.json();
+        setPlayers(data.players);
+        setSelectedSeason(Object.keys(data.players)[0]); // Set the first season as default
+      } catch (error) {
+        console.error('Failed to fetch player data:', error);
+      }
+    };
+    fetchData();
+  }, []);  
 
-  const teamPlayers = (players[selectedSeason]?.[teamId]) || [];
-  const filteredPlayers = teamPlayers.filter(player =>
+  const teamPlayers = players[selectedSeason]?.[teamId] || [];
+  const filteredPlayers = teamPlayers.filter((player) =>
     player.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const openModal = (type, player = null) => {
-    setModalType(type);
-    setShowModal(true);
-    if (type === 'edit' && player) setEditPlayer(player);
-  };
+  const openModal = (type, player = null) => setModal({ type, player });
+  const closeModal = () => setModal({ type: null, player: null });
 
-  const closeModal = () => {
-    setShowModal(false);
-    setNewPlayer({
-      name: '',
-      position: '',
-      dob: '',
-      nationality: '',
-      birthplace: '',
-      height: '',
-      weight: '',
-      bio: '',
-      season: selectedSeason
-    });
-    setEditPlayer(null);
-  };
-
-  const handleAddPlayer = () => {
-    if (newPlayer.name && newPlayer.position && newPlayer.dob) {
-      const updatedPlayers = [
-        ...teamPlayers,
-        { id: Date.now(), ...newPlayer, season: selectedSeason },
-      ];
-      setPlayers({
-        ...players,
-        [selectedSeason]: { ...players[selectedSeason], [teamId]: updatedPlayers },
-      });
+  const handleSavePlayer = async (playerData) => {
+    try {
+      if (modal.type === 'add') {
+        await fetch('http://localhost:5000/api/players', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            season: selectedSeason,
+            teamId,
+            player: playerData,
+          }),
+        });
+      } else {
+        await fetch(`http://localhost:5000/api/players/${playerData.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            season: selectedSeason,
+            teamId,
+            updatedPlayer: playerData,
+          }),
+        });
+      }
       closeModal();
+  
+      // Refresh the players data
+      const updatedResponse = await fetch('http://localhost:5000/api/players');
+      const updatedData = await updatedResponse.json();
+      setPlayers(updatedData.players); // Ensure `players` or `teams` is updated
+    } catch (error) {
+      console.error('Failed to save player:', error);
+    }
+  };
+  
+
+  const handleDeletePlayer = async (playerId) => {
+    try {
+      await fetch(`http://localhost:5000/api/players/${playerId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          season: selectedSeason,
+          teamId,
+        }),
+      });
+      const updatedResponse = await fetch('http://localhost:5000/api/players');
+      const updatedData = await updatedResponse.json();
+      setPlayers(updatedData.players);
+    } catch (error) {
+      console.error('Failed to delete player:', error);
     }
   };
 
-  const handleUpdatePlayer = () => {
-    const updatedPlayers = teamPlayers.map(player =>
-      player.id === editPlayer.id ? editPlayer : player
-    );
-    setPlayers({
-      ...players,
-      [selectedSeason]: { ...players[selectedSeason], [teamId]: updatedPlayers },
-    });
-    closeModal();
-  };
-
-  const handleDeletePlayer = (playerId) => {
-    const updatedPlayers = teamPlayers.filter(player => player.id !== playerId);
-    setPlayers({
-      ...players,
-      [selectedSeason]: { ...players[selectedSeason], [teamId]: updatedPlayers },
-    });
-  };
-
-  const clearSearch = () => setSearchTerm('');
+  const navigateToPlayerInfo = (playerId) => navigate(`/teams/${teamId}/players/${playerId}`);
 
   return (
     <div className="players-container">
       <div className="header-container">
-        <button onClick={() => navigate('/teams')} className="back-to-teams">
-          Quay lại
-        </button>
+        <button onClick={() => navigate('/teams')} className="back-to-teams">Quay lại</button>
         <h2>Quản lý cầu thủ</h2>
       </div>
       <SeasonSelector
-        seasons={seasonsPlayers}
+        seasons={Object.keys(players)}
         selectedSeason={selectedSeason}
         onSeasonChange={setSelectedSeason}
       />
       <div className="search-container">
-        <div className="search-input-wrapper">
-          <input
-            type="text"
-            placeholder="Tìm kiếm cầu thủ..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          {searchTerm && (
-            <button className="clear-search" onClick={clearSearch}>
-              &#x2715;
-            </button>
-          )}
-        </div>
+        <input
+          type="text"
+          placeholder="Tìm kiếm cầu thủ..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {searchTerm && <button onClick={() => setSearchTerm('')}>&#x2715;</button>}
       </div>
-      <button onClick={() => openModal('add')} className="add-player">
-        Thêm cầu thủ
-      </button>
-      <ul className="player-list">
-        {filteredPlayers.length > 0 ? (
-          filteredPlayers.map(player => (
-            <li key={player.id} className="player-card">
-              <div className="player-details">
-                <h3>{player.name}</h3>
-                <p>Năm sinh: {player.dob} (Tuổi: {calculateAge(player.dob)})</p>
-                <p>Quốc tịch: {player.nationality}</p>
-                <p>Vị trí: {player.position}</p>
-              </div>
-              <div className="action">
-                <button onClick={() => openModal('edit', player)} className="edit-player">Chỉnh sửa</button>
-                <button onClick={() => handleDeletePlayer(player.id)} className="delete-player">Xóa</button>
-              </div>
-            </li>
-          ))
-        ) : (
-          <div className="empty-state">
-            <p>Không tìm thấy cầu thủ nào. Hãy thử tìm kiếm với từ khóa khác.</p>
-          </div>
-        )}
-      </ul>
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>{modalType === 'add' ? 'Thêm cầu thủ mới' : 'Chỉnh sửa cầu thủ'}</h3>
-            <input
-              type="text"
-              placeholder="Tên cầu thủ"
-              value={modalType === 'add' ? newPlayer.name : editPlayer?.name || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, name: e.target.value })
-                  : setEditPlayer({ ...editPlayer, name: e.target.value })
-              }
-            />
-            <select
-              value={modalType === 'add' ? newPlayer.position : editPlayer?.position || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, position: e.target.value })
-                  : setEditPlayer({ ...editPlayer, position: e.target.value })
-              }
-            >
-              <option value="" disabled>Chọn vị trí</option>
-              {predefinedPositions.map((position) => (
-                <option key={position} value={position}>{position}</option>
-              ))}
-            </select>
-            <input
-              type="date"
-              placeholder="Ngày sinh"
-              value={modalType === 'add' ? newPlayer.dob : editPlayer?.dob || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, dob: e.target.value })
-                  : setEditPlayer({ ...editPlayer, dob: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Quốc tịch"
-              value={modalType === 'add' ? newPlayer.nationality : editPlayer?.nationality || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ?
-                  setNewPlayer({ ...newPlayer, nationality: e.target.value })
-                  : setEditPlayer({ ...editPlayer, nationality: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Nơi sinh"
-              value={modalType === 'add' ? newPlayer.birthplace : editPlayer?.birthplace || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, birthplace: e.target.value })
-                  : setEditPlayer({ ...editPlayer, birthplace: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Chiều cao (cm)"
-              value={modalType === 'add' ? newPlayer.height : editPlayer?.height || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, height: e.target.value })
-                  : setEditPlayer({ ...editPlayer, height: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Cân nặng (kg)"
-              value={modalType === 'add' ? newPlayer.weight : editPlayer?.weight || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, weight: e.target.value })
-                  : setEditPlayer({ ...editPlayer, weight: e.target.value })
-              }
-            />
-            <textarea
-              placeholder="Tiểu sử"
-              value={modalType === 'add' ? newPlayer.bio : editPlayer?.bio || ''}
-              onChange={(e) =>
-                modalType === 'add'
-                  ? setNewPlayer({ ...newPlayer, bio: e.target.value })
-                  : setEditPlayer({ ...editPlayer, bio: e.target.value })
-              }
-            />
-            <div className="modal-actions">
-              <button
-                onClick={modalType === 'add' ? handleAddPlayer : handleUpdatePlayer}
-              >
-                {modalType === 'add' ? 'Thêm' : 'Cập nhật'}
-              </button>
-              <button onClick={closeModal}>Hủy</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <button onClick={() => openModal('add')} className="add-player">Thêm cầu thủ</button>
+      <PlayerList
+        players={filteredPlayers}
+        onEdit={(player) => openModal('edit', player)}
+        onDelete={handleDeletePlayer}
+        onNavigate={navigateToPlayerInfo}
+      />
+      {modal.type && (
+      <Modal
+        type={modal.type}
+        player={modal.player}
+        positions={['Tiền đạo', 'Tiền vệ', 'Hậu vệ', 'Thủ môn']}
+        season={selectedSeason}
+        onSave={handleSavePlayer}
+        onCancel={closeModal}
+      />
+    )}
     </div>
   );
-}
+};
 
 export default Players;

@@ -1,0 +1,135 @@
+/* General modal container */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px; /* Ensure content doesn't touch the screen edges */
+    box-sizing: border-box;
+    overflow: hidden; /* Prevent body overflow when modal is open */
+  }
+  
+  /* Modal content */
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 800px; /* Constrain width */
+    max-height: 90vh; /* Constrain height */
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-out;
+    box-sizing: border-box;
+  }
+  
+  /* Header styles */
+  .modal-content h3 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Form layout using grid */
+  .modal-content form {
+    display: grid;
+    grid-template-columns: 1fr; /* Default single-column layout */
+    gap: 15px;
+  }
+  
+  /* Paired fields in grid layout */
+  .modal-content .grid-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for paired inputs */
+    gap: 15px; /* Space between the two inputs */
+  }
+  
+  /* General styling for form groups */
+  .form-group {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+    gap: 2px; /* Reduced space between label and input */
+  }
+  
+  .form-group label {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+    text-align: left;
+    margin-bottom: 0px;
+  }
+  
+  /* Input fields */
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  .modal-content select {
+    margin-top: 10px;
+  }
+  /* Textarea styles */
+  .modal-content textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  /* Modal actions */
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .modal-actions button {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .save-button {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .save-button:hover {
+    background-color: #45a049;
+  }
+  
+  .cancel-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .cancel-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
