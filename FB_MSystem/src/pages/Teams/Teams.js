@@ -89,6 +89,9 @@ function Teams({ teams, seasons, onDeleteTeam }) {
                                 <button className="delete" onClick={() => handleDelete(team.id)}>
                                     Xóa
                                 </button>
+                                <Link to={`/teams/${team.id}/players`} className="view-players">
+                                    Quản lý cầu thủ
+                                </Link>
                             </div>
                         </li>
                     ))}

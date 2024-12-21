@@ -7,8 +7,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Teams from './pages/Teams/Teams';
 import AddTeam from './pages/Teams/AddTeam';
 import EditTeam from './pages/Teams/EditTeam';
-import TeamInfo from './pages/Teams/TeamInfo'; // Import TeamInfo
-import Players from './pages/Players/Players';
+import TeamInfo from './pages/Teams/TeamInfo';
+import Players from './pages/Players/Players'; // Import Players page
 import Matches from './pages/Matches/Matches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
@@ -113,7 +113,6 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
             <Route path="/dashboard" element={<Dashboard />} />
             <Route
                 path="/teams"
-                
                 element={<Teams teams={teams} seasons={seasons} onDeleteTeam={onDeleteTeam} />}
             />
             <Route
@@ -122,7 +121,7 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
             />
             <Route path="/teams/edit/:id" element={<EditTeam teams={teams} onEditTeam={onEditTeam} />} />
             <Route path="/teams/:id" element={<TeamInfo teams={teams} key={Date.now()} />} />
-            <Route path="/teams/:teamId/players" element={<Players />} />
+            <Route path="/teams/:teamId/players" element={<Players players={teams} />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="*" element={<Navigate to="/" />} />
