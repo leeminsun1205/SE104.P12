@@ -6,7 +6,7 @@ const CauThuController = {
             const cauThus = await CauThu.findAll();
             res.status(200).json(cauThus);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ.' });
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ.' , details: error.message });
         }
     },
 

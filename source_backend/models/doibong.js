@@ -40,46 +40,46 @@ const DoiBong = sequelize.define('DoiBong', {
     timestamps: false, 
 });
 
-// Thiết lập quan hệ với các bảng khác
-DoiBong.associate = (models) => {
-    // Một đội bóng có thể thuộc nhiều biên nhận
-    DoiBong.hasMany(models.BienNhan, {
-        foreignKey: 'MaDoiBong',
-        as: 'BienNhan',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
+// // Thiết lập quan hệ với các bảng khác
+// DoiBong.associate = (models) => {
+//     // Một đội bóng có thể thuộc nhiều biên nhận
+//     DoiBong.hasMany(models.BienNhan, {
+//         foreignKey: 'MaDoiBong',
+//         as: 'BienNhan',
+//         onDelete: 'CASCADE',
+//         onUpdate: 'CASCADE',
+//     });
 
-    // Một đội bóng có thể tham gia nhiều mùa giải
-    DoiBong.belongsToMany(models.MuaGiai, {
-        through: models.MgDbCt, // Bảng trung gian
-        foreignKey: 'MaDoiBong',
-        otherKey: 'MaMuaGiai',
-        as: 'MuaGiai',
-    });
+//     // Một đội bóng có thể tham gia nhiều mùa giải
+//     DoiBong.belongsToMany(models.MuaGiai, {
+//         through: models.MgDbCt, // Bảng trung gian
+//         foreignKey: 'MaDoiBong',
+//         otherKey: 'MaMuaGiai',
+//         as: 'MuaGiai',
+//     });
 
-    // Một đội bóng có thể tham gia nhiều trận đấu
-    DoiBong.hasMany(models.TranDau, {
-        foreignKey: 'MaDoiBongNha',
-        as: 'TranDauNha',
-    });
+//     // Một đội bóng có thể tham gia nhiều trận đấu
+//     DoiBong.hasMany(models.TranDau, {
+//         foreignKey: 'MaDoiBongNha',
+//         as: 'TranDauNha',
+//     });
 
-    DoiBong.hasMany(models.TranDau, {
-        foreignKey: 'MaDoiBongKhach',
-        as: 'TranDauKhach',
-    });
+//     DoiBong.hasMany(models.TranDau, {
+//         foreignKey: 'MaDoiBongKhach',
+//         as: 'TranDauKhach',
+//     });
 
-    // Một đội bóng có thể có nhiều cầu thủ
-    DoiBong.hasMany(models.CauThu, {
-        foreignKey: 'MaDoiBong',
-        as: 'CauThu',
-    });
+//     // Một đội bóng có thể có nhiều cầu thủ
+//     DoiBong.hasMany(models.CauThu, {
+//         foreignKey: 'MaDoiBong',
+//         as: 'CauThu',
+//     });
 
-    // Một đội bóng có thể có nhiều thành tích
-    DoiBong.hasMany(models.ThanhTich, {
-        foreignKey: 'MaDoiBong',
-        as: 'ThanhTich',
-    });
-};
+//     // Một đội bóng có thể có nhiều thành tích
+//     DoiBong.hasMany(models.ThanhTich, {
+//         foreignKey: 'MaDoiBong',
+//         as: 'ThanhTich',
+//     });
+// };
 
 module.exports = DoiBong;

@@ -4,6 +4,7 @@ const sequelize = require('../config/database');
 const MgDbCt = sequelize.define('MgDbCt', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
         references: {
             model: 'MuaGiai',
@@ -12,6 +13,7 @@ const MgDbCt = sequelize.define('MgDbCt', {
     },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
         references: {
             model: 'DoiBong',
@@ -20,6 +22,7 @@ const MgDbCt = sequelize.define('MgDbCt', {
     },
     MaCauThu: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
         references: {
             model: 'CauThu',

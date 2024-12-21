@@ -52,42 +52,42 @@ const CauThu = sequelize.define('CauThu', {
     },
 }, {
     tableName: 'CAUTHU',
-    timestamps: false, // Không sử dụng createdAt, updatedAt
+    timestamps: false, 
 });
 
-// Thiết lập quan hệ với các bảng khác
-CauThu.associate = (models) => {
-    // Một cầu thủ có thể nhận nhiều thẻ phạt
-    CauThu.hasMany(models.ThePhat, {
-        foreignKey: 'MaCauThu',
-        as: 'ThePhat',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
+// // Thiết lập quan hệ với các bảng khác
+// CauThu.associate = (models) => {
+//     // Một cầu thủ có thể nhận nhiều thẻ phạt
+//     CauThu.hasMany(models.ThePhat, {
+//         foreignKey: 'MaCauThu',
+//         as: 'ThePhat',
+//         onDelete: 'CASCADE',
+//         onUpdate: 'CASCADE',
+//     });
 
-    // Một cầu thủ có thể là vua phá lưới nhiều mùa giải
-    CauThu.hasMany(models.VuaPhaLuoi, {
-        foreignKey: 'MaCauThu',
-        as: 'VuaPhaLuoi',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
+//     // Một cầu thủ có thể là vua phá lưới nhiều mùa giải
+//     CauThu.hasMany(models.VuaPhaLuoi, {
+//         foreignKey: 'MaCauThu',
+//         as: 'VuaPhaLuoi',
+//         onDelete: 'CASCADE',
+//         onUpdate: 'CASCADE',
+//     });
 
-    // Một cầu thủ có thể thuộc nhiều đội bóng qua bảng trung gian MG_DB_CT
-    CauThu.belongsToMany(models.DoiBong, {
-        through: models.MgDbCt,
-        foreignKey: 'MaCauThu',
-        otherKey: 'MaDoiBong',
-        as: 'DoiBong',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
+//     // Một cầu thủ có thể thuộc nhiều đội bóng qua bảng trung gian MG_DB_CT
+//     CauThu.belongsToMany(models.DoiBong, {
+//         through: models.MgDbCt,
+//         foreignKey: 'MaCauThu',
+//         otherKey: 'MaDoiBong',
+//         as: 'DoiBong',
+//     });
 
-    // Một cầu thủ có thể ghi nhiều bàn thắng (không dùng CASCADE để giữ lịch sử)
-    CauThu.hasMany(models.BanThang, {
-        foreignKey: 'MaCauThu',
-        as: 'BanThang',
-    });
-};
+    
+
+//     // Một cầu thủ có thể ghi nhiều bàn thắng (không dùng CASCADE để giữ lịch sử)
+//     CauThu.hasMany(models.BanThang, {
+//         foreignKey: 'MaCauThu',
+//         as: 'BanThang',
+//     });
+// };
 
 module.exports = CauThu;
