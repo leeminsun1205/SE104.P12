@@ -16,11 +16,12 @@ function Teams({ teams, seasons, onDeleteTeam }) {
             if (!selectedSeason) {
                 setSelectedSeason(seasons[0]); // Default to the first season
             }
+            const term = searchTerm.trim().toLowerCase();
             setFilteredTeams(
                 teams.filter(
                     (team) =>
                         team.season === selectedSeason &&
-                        team.name.toLowerCase().includes(searchTerm.toLowerCase())
+                        team.name.toLowerCase().includes(term)
                 )
             );
         }
@@ -32,7 +33,9 @@ function Teams({ teams, seasons, onDeleteTeam }) {
             onDeleteTeam(id);
         }
     };
-
+    const handleToPlayer = (id) => {
+        navigate(`/teams/${id}/players`)
+    };
     const handleEdit = (id) => {
         navigate(`/teams/edit/${id}`);
     };
@@ -83,23 +86,23 @@ function Teams({ teams, seasons, onDeleteTeam }) {
                             </h3>
                             <p>Thành phố: {team.city}</p>
                             <div className="actions">
+                                <button className="toplayer" onClick={() => handleToPlayer(team.id)}>
+                                    Quản lý
+                                </button>
                                 <button className="edit" onClick={() => handleEdit(team.id)}>
                                     Sửa
                                 </button>
                                 <button className="delete" onClick={() => handleDelete(team.id)}>
                                     Xóa
                                 </button>
-                                <Link to={`/teams/${team.id}/players`} className="view-players">
-                                    Quản lý cầu thủ
-                                </Link>
                             </div>
                         </li>
                     ))}
                 </ul>
             ) : (
-                <div className="empty-state">
-                    <p>Không tìm thấy đội bóng nào. Hãy thử tìm kiếm với từ khóa khác.</p>
-                </div>
+            <div className="empty-state">
+                <p>Không tìm thấy đội bóng nào. Hãy thử tìm kiếm với từ khóa khác.</p>
+            </div>
             )}
         </div>
     );

@@ -3,6 +3,7 @@
 .form-container {
   max-width: 600px;
   margin: 5px 5px 5px 5px;
+  margin-bottom: 10px;
   padding: 1.5rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -19,7 +20,7 @@ h2 {
 input, textarea, select {
   width: 100%;
   padding: 0.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;

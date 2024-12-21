@@ -9,7 +9,9 @@ function TeamInfo({ teams }) {
     const navigate = useNavigate();
     const teamId = parseInt(id, 10);
     const team = teams.find((t) => t.id === teamId);
-
+    const handleToPlayer = (id) => {
+        navigate(`/teams/${id}/players`)
+    };
     if (!team) {
         return (
             <div className="team-info">
@@ -26,6 +28,17 @@ function TeamInfo({ teams }) {
             <button className="go-back-button" onClick={() => navigate(-1)}>
                 Go Back
             </button>
+            <div className="team-details">
+                <h2>{team.name}</h2>
+                <ul>
+                    <li><strong>Thành phố:</strong> {team.city}</li>
+                    <li><strong>Cơ quan/Công ty chủ quản:</strong> {team.managing_body}</li>
+                    <li><strong>Sân nhà:</strong> {team.stadium}</li>
+                    <li><strong>Sức chứa:</strong> {team.capacity}</li>
+                    <li><strong>Đạt tiêu chuẩn (số sao)</strong> {team.fifa_stars}</li>
+                </ul>
+                <p><strong>Giới thiệu:</strong> {team.description}</p>
+            </div>
             <div className="uniform-images">
                 <img
                     src={
@@ -48,16 +61,10 @@ function TeamInfo({ teams }) {
                     loading="lazy"
                 />
             </div>
-            <div className="team-details">
-                <h2>{team.name}</h2>
-                <ul>
-                    <li><strong>Thành phố:</strong> {team.city}</li>
-                    <li><strong>Cơ quan/Công ty chủ quản:</strong> {team.managing_body}</li>
-                    <li><strong>Sân nhà:</strong> {team.stadium}</li>
-                    <li><strong>Sức chứa:</strong> {team.capacity}</li>
-                    <li><strong>FIFA Stars:</strong> {team.fifa_stars}</li>
-                </ul>
-                <p><strong>Giới thiệu:</strong> {team.description}</p>
+            <div className="action">
+                <button className="toplayer" onClick={() => handleToPlayer(team.id)}>
+                    Quản lý
+                </button>
             </div>
         </div>
     );

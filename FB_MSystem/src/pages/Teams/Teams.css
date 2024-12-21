@@ -1,5 +1,3 @@
-/* /src/pages/Teams/Teams.css */
-
 .teams {
   position: relative;
   max-width: 800px;
@@ -10,7 +8,7 @@
   background-color: #f4f6f9;
   border-radius: 15px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  margin-bottom: 100px; 
+  margin-bottom: 100px;
 }
 
 .teams h2 {
@@ -20,7 +18,6 @@
   margin-bottom: 25px;
   font-weight: 700;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-
 }
 
 .teams input[type="text"] {
@@ -61,8 +58,8 @@
 }
 
 .teams li:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .teams li h3 {
@@ -72,18 +69,31 @@
   font-weight: 600;
 }
 
+.teams li h3 a {
+  text-decoration: none;
+  color: #2980b9;
+  transition: color 0.3s ease;
+}
+
+.teams li h3 a:hover {
+  color: #3498db;
+}
+
+
 .teams li p {
   margin: 0 0 10px;
   font-size: 15px;
   color: #7f8c8d;
+  position: relative; /* Ensures button positioning is relative to this */
 }
+
 
 .teams li .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  align-items: center;
+  gap: 10px; 
 }
-
 .teams button {
   padding: 10px 20px;
   font-size: 14px;
@@ -112,6 +122,15 @@
   background-color: #5e49c3;
 }
 
+.teams button.toplayer {
+  background-color: rgb(150, 150, 150);
+  color: white;
+}
+
+.teams button.toplayer:hover {
+  background-color: rgb(80, 79, 79);
+  color: white;
+}
 .teams .add-button {
   display: block;
   margin: 25px auto;
@@ -131,19 +150,38 @@
   background-color: #27ae60;
 }
 
-/* Footer fix */
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+.empty-state {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 16px;
+  color: #7f8c8d;
 }
 
-footer {
-  margin-top: auto;
+.empty-state p {
+  background-color: #f8f9fa;
   padding: 20px;
-  background-color: #34495e;
-  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.season-selector {
+  margin: 20px auto;
   text-align: center;
+}
+
+.season-selector select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #d1d8e0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #34495e;
+  transition: border-color 0.3s ease;
+}
+
+.season-selector select:focus {
+  border-color: #0984e3;
+  outline: none;
 }
 
 .search-container {
@@ -158,13 +196,13 @@ footer {
 
 .search-input-wrapper input[type="text"] {
   width: 100%;
-  padding-right: 40px; /* Space for the clear button */
+  padding-right: 40px;
 }
 
 .search-input-wrapper .clear-search {
   position: absolute;
   right: 10px;
-  top: 50%;
+  top: 35%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
@@ -176,4 +214,28 @@ footer {
 
 .search-input-wrapper .clear-search:hover {
   color: #d63031;
+}
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .teams {
+    padding: 20px;
+  }
+
+  .teams h2 {
+    font-size: 24px;
+  }
+
+  .teams button {
+    font-size: 12px;
+    padding: 8px 15px;
+  }
+
+  .teams .add-button {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .search-container {
+    margin: 15px auto;
+  }
 }
