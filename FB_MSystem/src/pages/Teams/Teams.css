@@ -1,3 +1,5 @@
+/* /src/pages/Teams/Teams.css */
+
 .teams {
   position: relative;
   max-width: 800px;
@@ -17,6 +19,8 @@
   color: #2c3e50;
   margin-bottom: 25px;
   font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+
 }
 
 .teams input[type="text"] {

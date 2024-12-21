@@ -1,6 +1,7 @@
 // /src/pages/Teams/Teams.js
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
 import './Teams.css';
 
@@ -13,15 +14,15 @@ function Teams({ teams, seasons, onDeleteTeam }) {
     useEffect(() => {
         if (seasons && seasons.length > 0) {
             if (!selectedSeason) {
-                setSelectedSeason(seasons[0]);
+                setSelectedSeason(seasons[0]); // Default to the first season
             }
-            setFilteredTeams(teams.filter(
-                (team) =>
-                    team.season === selectedSeason &&
-                    team.name.toLowerCase().includes(searchTerm.toLowerCase())
-            ));
-        } else {
-            setFilteredTeams([]);
+            setFilteredTeams(
+                teams.filter(
+                    (team) =>
+                        team.season === selectedSeason &&
+                        team.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
         }
     }, [teams, selectedSeason, searchTerm, seasons]);
 
@@ -77,7 +78,9 @@ function Teams({ teams, seasons, onDeleteTeam }) {
                 <ul>
                     {filteredTeams.map((team) => (
                         <li key={team.id}>
-                            <h3>{team.name}</h3>
+                            <h3>
+                                <Link to={`/teams/${team.id}`}>{team.name}</Link>
+                            </h3>
                             <p>Thành phố: {team.city}</p>
                             <div className="actions">
                                 <button className="edit" onClick={() => handleEdit(team.id)}>
