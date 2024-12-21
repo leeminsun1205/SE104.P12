@@ -1,5 +1,3 @@
-// /src/Apps.js
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -9,7 +7,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Teams from './pages/Teams/Teams';
 import AddTeam from './pages/Teams/AddTeam';
 import EditTeam from './pages/Teams/EditTeam';
-import Players from './pages/Players/Players';
+import TeamInfo from './pages/Teams/TeamInfo';
+import Players from './pages/Players/Players'; // Import Players page
 import Matches from './pages/Matches/Matches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
@@ -22,23 +21,44 @@ import './App.css';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
-function App() {
-    const initialTeams = [
-        { id: 1, name: 'Team A', city: 'Hanoi', season: '2023-2024' },
-        { id: 2, name: 'Team B', city: 'Ho Chi Minh', season: '2022-2023' },
-        { id: 3, name: 'Team C', city: 'Da Nang', season: '2023-2024' },
-    ];
-    const [teams, setTeams] = useState(initialTeams);
-    const seasons = [...new Set(initialTeams.map(team => team.season))];
+const initialTeams = [
+    {
+        id: 1,
+        name: "Hà Nội FC",
+        city: "Hà Nội",
+        managing_body: "T&T",
+        stadium: "Hàng Đẫy",
+        capacity: 22500,
+        fifa_stars: 3,
+        home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
+        away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
+        third_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
+        description: "Hà Nội FC description",
+        season: "2023-2024",
+    },
+    {
+        id: 2,
+        name: "Hoàng Anh Gia Lai",
+        city: "Pleiku",
+        managing_body: "HAGL",
+        stadium: "Pleiku",
+        capacity: 12000,
+        fifa_stars: 2,
+        home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/77/Hoang_Anh_Gia_Lai_FC_logo.svg/1200px-Hoang_Anh_Gia_Lai_FC_logo.svg.png",
+        away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/77/Hoang_Anh_Gia_Lai_FC_logo.svg/1200px-Hoang_Anh_Gia_Lai_FC_logo.svg.png",
+        third_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/77/Hoang_Anh_Gia_Lai_FC_logo.svg/1200px-Hoang_Anh_Gia_Lai_FC_logo.svg.png",
+        description: "HAGL description",
+        season: "2022-2023",
+    },
+];
+const seasons = [...new Set(initialTeams.map((team) => team.season))];
 
-    // Check localStorage for authentication status
-    const [isAuthenticated, setIsAuthenticated] = useState(
-        () => localStorage.getItem('isAuthenticated') === 'true'
-    );
+function App() {
+    const [teams, setTeams] = useState(initialTeams);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('isAuthenticated') === 'true');
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
-        // Persist authentication state in localStorage
         localStorage.setItem('isAuthenticated', isAuthenticated);
     }, [isAuthenticated]);
 
@@ -47,12 +67,14 @@ function App() {
         setIsAuthenticated(false);
         localStorage.removeItem('isAuthenticated');
     };
-
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
     const handleAddTeam = (team) => setTeams([...teams, team]);
-    const handleEditTeam = (updatedTeam) =>
-        setTeams(teams.map((team) => (team.id === updatedTeam.id ? updatedTeam : team)));
+    const handleEditTeam = (updatedTeam) => {
+        setTeams((prevTeams) => 
+            prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeam : team))
+        );
+    };
+    
     const handleDeleteTeam = (id) => setTeams(teams.filter((team) => team.id !== id));
 
     return (
@@ -97,11 +119,9 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
                 path="/teams/add"
                 element={<AddTeam teams={teams} seasons={seasons} onAddTeam={onAddTeam} />}
             />
-            <Route
-                path="/teams/edit/:id"
-                element={<EditTeam teams={teams} onEditTeam={onEditTeam} />}
-            />
-            <Route path="/teams/:teamId/players" element={<Players />} />
+            <Route path="/teams/edit/:id" element={<EditTeam teams={teams} onEditTeam={onEditTeam} />} />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} key={Date.now()} />} />
+            <Route path="/teams/:teamId/players" element={<Players players={teams} />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="*" element={<Navigate to="/" />} />

@@ -37,8 +37,7 @@ const Option = styled.option`
 `;
 
 function SeasonSelector({ onSeasonChange, seasons }) {
-    const [selectedSeason, setSelectedSeason] = useState(seasons[0]); // Default to the first season
-
+    const [selectedSeason, setSelectedSeason] = useState(seasons.length > 0 ? seasons[0] : '-------Chọn mùa giải-------');
     const handleChange = (event) => {
         setSelectedSeason(event.target.value);
         onSeasonChange(event.target.value);

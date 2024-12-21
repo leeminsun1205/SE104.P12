@@ -1,0 +1,101 @@
+/* TeamInfo.css */
+
+.team-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.uniform-images {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.uniform-image {
+    max-width: 45%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.team-details {
+    width: 100%;
+    text-align: left;
+}
+
+.team-details h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.team-details ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.team-details ul li {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.team-details ul li strong {
+    color: #333;
+}
+
+.go-back-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.go-back-button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+    .team-info {
+        padding: 10px;
+    }
+
+    .uniform-images {
+        flex-direction: column;
+    }
+
+    .uniform-image {
+        max-width: 100%;
+    }
+
+    .team-details h2 {
+        font-size: 1.5rem;
+    }
+
+    .team-details ul li {
+        font-size: 0.9rem;
+    }
+
+    .go-back-button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}
