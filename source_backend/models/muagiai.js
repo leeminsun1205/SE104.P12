@@ -1,11 +1,11 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 
 const MuaGiai = sequelize.define(
     'MuaGiai',
     {
         MaMuaGiai: {
-            type: DataTypes.CHAR(10),
+            type: DataTypes.CHAR(10), 
             primaryKey: true,
             allowNull: false,
         },
@@ -14,7 +14,7 @@ const MuaGiai = sequelize.define(
             allowNull: false,
         },
         NgayBatDau: {
-            type: DataTypes.DATEONLY, 
+            type: DataTypes.DATEONLY,
             allowNull: false,
         },
         NgayKetThuc: {
@@ -33,11 +33,43 @@ const MuaGiai = sequelize.define(
         tableName: 'MUAGIAI',
         timestamps: false,
         hooks: {
-            beforeValidate: (muaGiai) => {
-                // Nếu chưa có mã mùa giải, tự động tạo
+            beforeValidate: async (muaGiai) => {
                 if (!muaGiai.MaMuaGiai) {
                     const year = new Date(muaGiai.NgayBatDau).getFullYear();
-                    muaGiai.MaMuaGiai = `MG${year}`;
+                    const baseMaMuaGiai = `MG${year}`;
+        
+                    const existingCodes = await MuaGiai.findAll({
+                        where: {
+                            MaMuaGiai: {
+                                [Op.like]: `${baseMaMuaGiai}%`,
+                            },
+                        },
+                        attributes: ['MaMuaGiai'],
+                    });
+        
+                    const suffixes = existingCodes.map(code => {
+                        const match = code.MaMuaGiai.match(/_(\d+)$/);
+                        return match ? parseInt(match[1], 10) : 0;
+                    });
+        
+                    const nextSuffix = suffixes.length > 0 ? Math.max(...suffixes) + 1 : 1;
+        
+                    muaGiai.MaMuaGiai = `${baseMaMuaGiai}_${nextSuffix}`;
+                }
+            },
+        
+            beforeCreate: async (muaGiai) => {
+                // Kiểm tra trùng tên và thời gian bắt đầu - kết thúc
+                const existingMuaGiai = await MuaGiai.findOne({
+                    where: {
+                        TenMuaGiai: muaGiai.TenMuaGiai,
+                        NgayBatDau: muaGiai.NgayBatDau,
+                        NgayKetThuc: muaGiai.NgayKetThuc,
+                    },
+                });
+        
+                if (existingMuaGiai) {
+                    throw new Error('Mùa giải với tên và thời gian này đã tồn tại!');
                 }
             },
         },

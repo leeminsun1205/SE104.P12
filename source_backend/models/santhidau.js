@@ -1,52 +1,75 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 
-const SanThiDau = sequelize.define('SanThiDau', {
-    MaSan: {
-        type: DataTypes.CHAR(10),
-        primaryKey: true,
-        allowNull: false,
+const SanThiDau = sequelize.define(
+    'SanThiDau',
+    {
+        MaSan: {
+            type: DataTypes.CHAR(10),
+            primaryKey: true,
+            allowNull: false,
+        },
+        TenSan: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        DiaChiSan: {
+            type: DataTypes.STRING(80),
+            allowNull: false,
+        },
+        SucChua: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: { min: 1 }, // Sức chứa phải lớn hơn 0
+        },
+        TieuChuan: {
+            type: DataTypes.TINYINT,
+            allowNull: false,
+            validate: { min: 1, max: 5 }, // Tiêu chuẩn từ 1 đến 5 sao
+        },
     },
-    TenSan: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-    },
-    DiaChiSan: {
-        type: DataTypes.STRING(80),
-        allowNull: false,
-    },
-    SucChua: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: { min: 1 }, // Sức chứa phải lớn hơn 0
-    },
-    TieuChuan: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        validate: { min: 1, max: 5 }, // Tiêu chuẩn từ 1 đến 5 sao
-    },
-}, {
-    tableName: 'SANTHIDAU',
-    timestamps: false,
-});
+    {
+        tableName: 'SANTHIDAU',
+        timestamps: false,
+        hooks: {
+            beforeValidate: async (san) => {
+                if (!san.MaSan) {
+                    const baseMaSan = `SAN_${san.TenSan.split(' ').map(word => word[0].toUpperCase()).join('')}`;
+        
+                    const existingCodes = await SanThiDau.findAll({
+                        where: {
+                            MaSan: {
+                                [Op.like]: `${baseMaSan}%`,
+                            },
+                        },
+                        attributes: ['MaSan'],
+                    });
+        
+                    const suffixes = existingCodes.map(code => {
+                        const match = code.MaSan.match(/_(\d+)$/);
+                        return match ? parseInt(match[1], 10) : 0;
+                    });
+        
+                    const nextSuffix = suffixes.length > 0 ? Math.max(...suffixes) + 1 : 1;
+        
+                    san.MaSan = suffixes.length > 0 ? `${baseMaSan}_${nextSuffix}` : baseMaSan;
+                }
+            },
 
-// Thiết lập quan hệ với các bảng khác
-SanThiDau.associate = (models) => {
-    // Một sân thi đấu có thể được sử dụng trong nhiều trận đấu
-    SanThiDau.hasMany(models.TranDau, {
-        foreignKey: 'MaSan',
-        as: 'TranDau',
-        onDelete: 'SET NULL', // Nếu sân bị xóa, để NULL thay vì xóa trận đấu
-        onUpdate: 'CASCADE',
-    });
-
-    // Một sân thi đấu có thể thuộc nhiều đội bóng
-    SanThiDau.hasMany(models.DoiBong, {
-        foreignKey: 'MaSan',
-        as: 'DoiBong',
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-    });
-};
+            beforeCreate: async (san) => {
+                // Kiểm tra trùng tên sân
+                const existingSan = await SanThiDau.findOne({
+                    where: {
+                        TenSan: san.TenSan,
+                    },
+                });
+        
+                if (existingSan) {
+                    throw new Error(`Tên sân "${san.TenSan}" đã tồn tại!`);
+                }
+            },
+        },
+    }
+);
 
 module.exports = SanThiDau;

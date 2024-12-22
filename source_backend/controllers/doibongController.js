@@ -29,7 +29,7 @@ const DoiBongController = {
             });
             res.status(201).json(doiBong);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.' });
+            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.', details: error.massage});
         }
     },
 

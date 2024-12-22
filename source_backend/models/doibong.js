@@ -1,85 +1,85 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 
-const DoiBong = sequelize.define('DoiBong', {
-    MaDoiBong: {
-        type: DataTypes.CHAR(10),
-        primaryKey: true,
-        allowNull: false,
-    },
-    TenDoiBong: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-    },
-    ThanhPhoTrucThuoc: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-    },
-    MaSan: {
-        type: DataTypes.CHAR(10),
-        allowNull: false,
-        references: {
-            model: 'SanThiDau', // Tên bảng tham chiếu
-            key: 'MaSan',
+const DoiBong = sequelize.define(
+    'DoiBong',
+    {
+        MaDoiBong: {
+            type: DataTypes.CHAR(10),
+            primaryKey: true,
+            allowNull: false,
+        },
+        TenDoiBong: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        ThanhPhoTrucThuoc: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        MaSan: {
+            type: DataTypes.CHAR(10),
+            allowNull: false,
+            references: {
+                model: 'SanThiDau',
+                key: 'MaSan',
+            },
+        },
+        TenHLV: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        ThongTin: {
+            type: DataTypes.STRING(1000),
+            allowNull: true,
+        },
+        Logo: {
+            type: DataTypes.STRING(200),
+            allowNull: true,
         },
     },
-    TenHLV: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-    },
-    ThongTin: {
-        type: DataTypes.STRING(1000),
-        allowNull: true, 
-    },
-    Logo: {
-        type: DataTypes.STRING(200),
-        allowNull: true, 
-    },
-}, {
-    tableName: 'DOIBONG',
-    timestamps: false, 
-});
+    {
+        tableName: 'DOIBONG',
+        timestamps: false,
+        hooks: {
+            beforeValidate: async (doiBong) => {
+                if (!doiBong.MaDoiBong) {
+                    const baseMaDoiBong = `DB_${doiBong.TenDoiBong.split(' ').map(word => word[0].toUpperCase()).join('')}`;
 
-// // Thiết lập quan hệ với các bảng khác
-// DoiBong.associate = (models) => {
-//     // Một đội bóng có thể thuộc nhiều biên nhận
-//     DoiBong.hasMany(models.BienNhan, {
-//         foreignKey: 'MaDoiBong',
-//         as: 'BienNhan',
-//         onDelete: 'CASCADE',
-//         onUpdate: 'CASCADE',
-//     });
+                    const existingCodes = await DoiBong.findAll({
+                        where: {
+                            MaDoiBong: {
+                                [Op.like]: `${baseMaDoiBong}%`,
+                            },
+                        },
+                        attributes: ['MaDoiBong'],
+                    });
 
-//     // Một đội bóng có thể tham gia nhiều mùa giải
-//     DoiBong.belongsToMany(models.MuaGiai, {
-//         through: models.MgDbCt, // Bảng trung gian
-//         foreignKey: 'MaDoiBong',
-//         otherKey: 'MaMuaGiai',
-//         as: 'MuaGiai',
-//     });
+                    const suffixes = existingCodes.map((code) => {
+                        const match = code.MaDoiBong.match(/_(\d+)$/);
+                        return match ? parseInt(match[1], 10) : 0;
+                    });
 
-//     // Một đội bóng có thể tham gia nhiều trận đấu
-//     DoiBong.hasMany(models.TranDau, {
-//         foreignKey: 'MaDoiBongNha',
-//         as: 'TranDauNha',
-//     });
+                    const nextSuffix = suffixes.length > 0 ? Math.max(...suffixes) + 1 : 1;
 
-//     DoiBong.hasMany(models.TranDau, {
-//         foreignKey: 'MaDoiBongKhach',
-//         as: 'TranDauKhach',
-//     });
+                    doiBong.MaDoiBong = suffixes.length > 0 ? `${baseMaDoiBong}_${nextSuffix}` : baseMaDoiBong;
+                }
+            },
 
-//     // Một đội bóng có thể có nhiều cầu thủ
-//     DoiBong.hasMany(models.CauThu, {
-//         foreignKey: 'MaDoiBong',
-//         as: 'CauThu',
-//     });
+            beforeCreate: async (doiBong) => {
+                // Kiểm tra trùng tên đội bóng
+                const existingTeam = await DoiBong.findOne({
+                    where: {
+                        TenDoiBong: doiBong.TenDoiBong,
+                    },
+                });
 
-//     // Một đội bóng có thể có nhiều thành tích
-//     DoiBong.hasMany(models.ThanhTich, {
-//         foreignKey: 'MaDoiBong',
-//         as: 'ThanhTich',
-//     });
-// };
+                if (existingTeam) {
+                    throw new Error(`Tên đội bóng "${doiBong.TenDoiBong}" đã tồn tại!`);
+                }
+            },
+        },
+    }
+);
 
 module.exports = DoiBong;

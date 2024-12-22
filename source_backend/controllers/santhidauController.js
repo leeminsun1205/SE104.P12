@@ -13,9 +13,9 @@ const SanThiDauController = {
     async getById(req, res) {
         try {
             const { id } = req.params;
-            const sanThiDau = await SanThiDau.findByPk(id);
-            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
-            res.status(200).json(sanThiDau);
+            const sanThiDaus = await SanThiDau.findByPk(id);
+            if (!sanThiDaus) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            res.status(200).json(sanThiDaus);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin sân thi đấu.' });
         }
@@ -24,12 +24,12 @@ const SanThiDauController = {
     async create(req, res) {
         try {
             const { MaSan, TenSan, DiaChiSan, SucChua, TieuChuan } = req.body;
-            const sanThiDau = await SanThiDau.create({
+            const sanThiDaus = await SanThiDau.create({
                 MaSan, TenSan, DiaChiSan, SucChua, TieuChuan,
             });
-            res.status(201).json(sanThiDau);
+            res.status(201).json(sanThiDaus);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi thêm sân thi đấu mới.' });
+            res.status(500).json({ error: 'Lỗi khi thêm sân thi đấu mới.', details: error.massages });
         }
     },
 
@@ -37,10 +37,10 @@ const SanThiDauController = {
         try {
             const { id } = req.params;
             const updates = req.body;
-            const sanThiDau = await SanThiDau.findByPk(id);
-            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
-            await sanThiDau.update(updates);
-            res.status(200).json(sanThiDau);
+            const sanThiDaus = await SanThiDau.findByPk(id);
+            if (!sanThiDaus) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            await sanThiDaus.update(updates);
+            res.status(200).json(sanThiDaus);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi cập nhật thông tin sân thi đấu.' });
         }
@@ -49,9 +49,9 @@ const SanThiDauController = {
     async delete(req, res) {
         try {
             const { id } = req.params;
-            const sanThiDau = await SanThiDau.findByPk(id);
-            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
-            await sanThiDau.destroy();
+            const sanThiDaus = await SanThiDau.findByPk(id);
+            if (!sanThiDaus) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            await sanThiDaus.destroy();
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi xóa sân thi đấu.' });

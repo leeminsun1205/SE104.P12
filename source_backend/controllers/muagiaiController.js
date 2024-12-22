@@ -29,7 +29,7 @@ const MuaGiaiController = {
             });
             res.status(201).json(muaGiai);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi thêm mùa giải.' });
+            res.status(500).json({ error: 'Lỗi khi thêm mùa giải.', details: error.massages });
         }
     },
 
