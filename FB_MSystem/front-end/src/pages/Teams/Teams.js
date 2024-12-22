@@ -1,111 +1,175 @@
-// /src/pages/Teams/Teams.js
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
+import AddTeamsToSeasonModal from "./AddTeamsToSeasonModal";
+import "./Teams.css";
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
-import './Teams.css';
+function Teams({
+  teams,
+  seasons,
+  selectedSeason,
+  onSeasonChange,
+  onDeleteTeam,
+}) {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredTeams, setFilteredTeams] = useState([]);
+  const [showAddTeamsModal, setShowAddTeamsModal] = useState(false);
 
-function Teams({ teams, seasons, onDeleteTeam }) {
-    const navigate = useNavigate();
-    const [selectedSeason, setSelectedSeason] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredTeams, setFilteredTeams] = useState([]);
-
-    useEffect(() => {
-        if (seasons && seasons.length > 0) {
-            if (!selectedSeason) {
-                setSelectedSeason(seasons[0]); // Default to the first season
-            }
-            const term = searchTerm.trim().toLowerCase();
-            setFilteredTeams(
-                teams.filter(
-                    (team) =>
-                        team.season === selectedSeason &&
-                        team.name.toLowerCase().includes(term)
-                )
-            );
-        }
-    }, [teams, selectedSeason, searchTerm, seasons]);
-
-    const handleDelete = (id) => {
-        const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa đội bóng này?');
-        if (confirmDelete) {
-            onDeleteTeam(id);
-        }
-    };
-    const handleToPlayer = (id) => {
-        navigate(`/teams/${id}/players`)
-    };
-    const handleEdit = (id) => {
-        navigate(`/teams/edit/${id}`);
-    };
-
-    const handleAddTeam = () => {
-        navigate('/teams/add');
-    };
-
-    const clearSearch = () => setSearchTerm('');
-
-    if (!seasons || seasons.length === 0) {
-        return <p>No seasons available.</p>;
-    }
-
-    return (
-        <div className="teams">
-            <h2>Danh sách đội bóng</h2>
-            <SeasonSelector
-                onSeasonChange={setSelectedSeason}
-                seasons={seasons}
-                selectedSeason={selectedSeason}
-            />
-            <div className="search-container">
-                <div className="search-input-wrapper">
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm đội bóng..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    {searchTerm && (
-                        <button className="clear-search" onClick={clearSearch}>
-                            &#x2715;
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <button className="add-button" onClick={handleAddTeam}>
-                Thêm đội bóng mới
-            </button>
-            {filteredTeams.length > 0 ? (
-                <ul>
-                    {filteredTeams.map((team) => (
-                        <li key={team.id}>
-                            <h3>
-                                <Link to={`/teams/${team.id}`}>{team.name}</Link>
-                            </h3>
-                            <p>Thành phố: {team.city}</p>
-                            <div className="actions">
-                                <button className="toplayer" onClick={() => handleToPlayer(team.id)}>
-                                    Quản lý
-                                </button>
-                                <button className="edit" onClick={() => handleEdit(team.id)}>
-                                    Sửa
-                                </button>
-                                <button className="delete" onClick={() => handleDelete(team.id)}>
-                                    Xóa
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-            <div className="empty-state">
-                <p>Không tìm thấy đội bóng nào. Hãy thử tìm kiếm với từ khóa khác.</p>
-            </div>
-            )}
-        </div>
+  useEffect(() => {
+    const term = searchTerm.trim().toLowerCase();
+    setFilteredTeams(
+      teams.filter((team) => team.name.toLowerCase().includes(term))
     );
+  }, [teams, searchTerm]);
+
+  const handleDelete = (id) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa đội bóng này?"
+    );
+    if (confirmDelete) {
+      onDeleteTeam(id);
+    }
+  };
+
+  const handleToPlayer = (id) => {
+    navigate(`/teams/${id}/players`);
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/teams/edit/${id}`);
+  };
+
+  const handleAddTeamsToSeason = async (selectedTeamIds, season) => {
+    setShowAddTeamsModal(false);
+  
+    // Use a for...of loop to fetch team data and update filteredTeams
+    for (const teamId of selectedTeamIds) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/teams/${teamId}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const teamToAdd = await response.json();
+        if (teamToAdd) {
+          setFilteredTeams((prevTeams) => {
+            // Check if the team is already in the list before adding
+            if (!prevTeams.some((team) => team.id === teamToAdd.id)) {
+              return [...prevTeams, { ...teamToAdd, season: season }];
+            }
+            return prevTeams;
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching team data:", error);
+        // Handle error, possibly revert the optimistic UI update
+      }
+    }
+  
+    // Then, make the API call to update the server
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/seasons/${season}/teams`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ teamIds: selectedTeamIds }),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add teams to season");
+      }
+  
+      // After the server-side update is successful, refetch teams for the selected season
+      await onSeasonChange(season);
+    } catch (error) {
+      console.error("Error adding teams to season:", error);
+      // Handle error, possibly revert the optimistic UI update
+    }
+  };
+
+  const clearSearch = () => setSearchTerm("");
+
+  return (
+    <div className="teams">
+      <h2>Danh sách đội bóng</h2>
+      <SeasonSelector
+        seasons={seasons}
+        selectedSeason={selectedSeason}
+        onSeasonChange={onSeasonChange}
+      />
+      <div className="search-container">
+        <div className="search-input-wrapper">
+          <input
+            type="text"
+            placeholder="Tìm kiếm đội bóng..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button className="clear-search" onClick={clearSearch}>
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
+
+      <button
+        className="add-to-season-button"
+        onClick={() => setShowAddTeamsModal(true)}
+      >
+        Add Teams to Season
+      </button>
+
+      {showAddTeamsModal && (
+        <AddTeamsToSeasonModal
+          season={selectedSeason}
+          onAddTeamsToSeason={handleAddTeamsToSeason}
+          onClose={() => setShowAddTeamsModal(false)} // Pass onClose correctly
+        />
+      )}
+
+      {filteredTeams.length > 0 ? (
+        <ul>
+          {filteredTeams.map((team) => (
+            <li key={team.id}>
+              <h3>
+                <Link to={`/teams/${team.id}`}>{team.name}</Link>
+              </h3>
+              <p>Thành phố: {team.city}</p>
+              <div className="actions">
+                <button
+                  className="toplayer"
+                  onClick={() => handleToPlayer(team.id)}
+                >
+                  Quản lý
+                </button>
+                <button className="edit" onClick={() => handleEdit(team.id)}>
+                  Sửa
+                </button>
+                <button className="delete" onClick={() => handleDelete(team.id)}>
+                  Xóa
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="empty-state">
+          <p>
+            Không tìm thấy đội bóng nào. Hãy thử tìm kiếm với từ khóa
+            khác.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Teams;

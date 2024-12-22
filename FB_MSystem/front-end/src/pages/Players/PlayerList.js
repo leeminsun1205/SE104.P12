@@ -24,11 +24,15 @@ const PlayerList = ({ players, onEdit, onDelete, onNavigate , season    }) => {
             <p>Năm sinh: {player.dob} (Tuổi: {calculateAge(player.dob)})</p>
             <p>Quốc tịch: {player.nationality}</p>
             <p>Vị trí: {player.position}</p>
-            <p>Mùa giải: {player.season}</p>
+            {player.season && <p>Mùa giải: {player.season}</p>}
           </div>
           <div className="action">
-            <button onClick={() => onEdit(player)} className="edit-player">Chỉnh sửa</button>
-            <button onClick={() => onDelete(player.id)} className="delete-player">Xóa</button>
+            <button onClick={() => onEdit(player)} className="edit-player">
+              Chỉnh sửa
+            </button>
+            <button onClick={() => onDelete(player.id)} className="delete-player">
+              Xóa
+            </button>
           </div>
         </li>
       ))}

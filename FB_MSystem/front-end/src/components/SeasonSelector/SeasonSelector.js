@@ -42,11 +42,9 @@ function SeasonSelector({ onSeasonChange, seasons, selectedSeason }) {
     return (
         <Container>
             <Label htmlFor="season">Mùa giải:</Label>
-            <Select id="season" value={selectedSeason} onChange={handleChange}>
-                <Option value="">
-                    -------Chọn mùa giải-------
-                </Option>
-                {seasons.map((season) => (
+            <Select value={selectedSeason || ''} onChange={handleChange}>
+                <Option value="all">Chọn mùa giải</Option>
+                {seasons.filter(season => season !== 'all').map(season => (
                     <Option key={season} value={season}>
                         {season}
                     </Option>

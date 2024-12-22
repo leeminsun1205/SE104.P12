@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -6,7 +5,8 @@ import Sidebar from './components/Sidebar/Sidebar';
 import Footer from './components/Footer/Footer';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Teams from './pages/Teams/Teams';
-import AddTeam from './pages/Teams/AddTeam';
+import CreateTeam from './pages/Teams/CreateTeam';
+import CreateNew from './pages/CreateNew/CreateNew';
 import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
 import Players from './pages/Players/Players';
@@ -30,28 +30,60 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('isAuthenticated') === 'true');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [seasons, setSeasons] = useState([]);
+    const [selectedSeason, setSelectedSeason] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchTeams = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch(`${API_URL}/teams`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Fetch available seasons
+                const seasonsResponse = await fetch(`${API_URL}/seasons`);
+                if (!seasonsResponse.ok) {
+                    throw new Error(`Failed to fetch seasons: ${seasonsResponse.status}`);
                 }
-                const data = await response.json();
-                setTeams(data.teams);
-                const uniqueSeasons = [...new Set(data.teams.map((team) => team.season))];
-                setSeasons(uniqueSeasons);
-            } catch (err) {
-                setError(err);
+                const seasonsData = await seasonsResponse.json();
+
+                // Add 'all' to the beginning of the seasons array
+                const updatedSeasons = ['all', ...seasonsData.seasons];
+                setSeasons(updatedSeasons);
+
+                // Set the default season to 'all'
+                setSelectedSeason('all');
+
+                // Fetch teams for the default season
+                await handleSeasonChange('all');
+            } catch (error) {
+                setError(error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchTeams();
+
+        fetchData();
     }, []);
+
+    const handleSeasonChange = async (newSeason) => {
+        setSelectedSeason(newSeason);
+        try {
+            let teamsResponse;
+            if (newSeason === "all") {
+                // Fetch all teams when 'all' is selected
+                teamsResponse = await fetch(`${API_URL}/teams/all`);
+            } else {
+                // Fetch teams for a specific season
+                teamsResponse = await fetch(`${API_URL}/teams?season=${newSeason}`);
+            }
+            if (!teamsResponse.ok) {
+                throw new Error(`HTTP error! status: ${teamsResponse.status}`);
+            }
+            const data = await teamsResponse.json();
+            setTeams(data.teams);
+        } catch (error) {
+            console.error("Error fetching teams for new season:", error);
+            setError(error);
+        }
+    };
 
     useEffect(() => {
         localStorage.setItem('isAuthenticated', isAuthenticated);
@@ -63,39 +95,25 @@ function App() {
         localStorage.removeItem('isAuthenticated');
     };
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
-    const handleAddTeam = async (team) => {
-        try {
-            const response = await fetch(`${API_URL}/teams`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ team }),
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const newTeamData = await response.json();
-            setTeams([...teams, newTeamData.team]);
-        } catch (error) {
-            console.error("Error adding team:", error);
-        }
-    };
-
+    
     const handleEditTeam = async (updatedTeam) => {
         try {
             const response = await fetch(`${API_URL}/teams/${updatedTeam.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updatedTeam }),
+                body: JSON.stringify(updatedTeam),
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            const updatedTeamData = await response.json();
+
+            // Update the teams array with the updated team data
             setTeams((prevTeams) =>
-                prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeam : team))
+                prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeamData.team : team))
             );
         } catch (error) {
-            console.error("Error updating team:", error)
+            console.error("Error updating team:", error);
         }
     };
 
@@ -105,7 +123,9 @@ function App() {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            setTeams(teams.filter((team) => team.id !== id));
+
+            // Remove the team from the teams array
+            setTeams((prevTeams) => prevTeams.filter((team) => team.id !== id));
         } catch (error) {
             console.error("Error deleting team:", error);
         }
@@ -120,13 +140,14 @@ function App() {
                 {isAuthenticated ? (
                     <>
                         <Header onLogout={handleLogout} onToggleSidebar={toggleSidebar} />
-                        <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+                        <Sidebar isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
                         <div className="content">
                             <main>
                                 <AuthenticatedRoutes
                                     teams={teams}
                                     seasons={seasons}
-                                    onAddTeam={handleAddTeam}
+                                    selectedSeason={selectedSeason}
+                                    onSeasonChange={handleSeasonChange}
                                     onEditTeam={handleEditTeam}
                                     onDeleteTeam={handleDeleteTeam}
                                 />
@@ -142,20 +163,28 @@ function App() {
     );
 }
 
-function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTeam }) {
+function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam }) {
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/temp" element={<Temp />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/teams" element={<Teams teams={teams} seasons={seasons} onDeleteTeam={onDeleteTeam} />} />
-            <Route path="/teams/add" element={<AddTeam teams={teams} seasons={seasons} onAddTeam={onAddTeam} />} />
-            <Route path="/teams/edit/:id" element={<EditTeam teams={teams} onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} />} /> {/* Removed key prop */}
-            <Route path="/teams/:teamId/players" element={<Players />} /> {/* Needs implementation */}
-            <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} /> {/* Needs implementation */}
+            <Route path="/teams"
+                element={<Teams
+                    teams={teams}
+                    seasons={seasons}
+                    selectedSeason={selectedSeason}
+                    onSeasonChange={onSeasonChange}
+                    onDeleteTeam={onDeleteTeam} />}
+            />
+            <Route path="/create/team" element={<CreateTeam/>} />
+            <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} />} />
+            <Route path="/teams/:teamId/players" element={<Players />} />
+            <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/standings" element={<Standings />} />
+            <Route path="/create" element={<CreateNew />}/>
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

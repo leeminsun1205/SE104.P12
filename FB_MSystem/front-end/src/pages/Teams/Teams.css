@@ -239,3 +239,17 @@
     margin: 15px auto;
   }
 }
+.add-to-season-button {
+  background-color: #007bff; /* Blue background */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.add-to-season-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}

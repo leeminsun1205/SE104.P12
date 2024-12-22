@@ -1,8 +1,8 @@
-import './AddTeam.css';
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './AddTeam.css';
 
-function AddTeam({ teams = [], onAddTeam, seasons }) {
+const CreateTeam = memo(({ onAddTeam }) => {
     const navigate = useNavigate();
     const [team, setTeam] = useState({
         name: '',
@@ -21,42 +21,50 @@ function AddTeam({ teams = [], onAddTeam, seasons }) {
         away_kit_image: null,
         third_kit_image: null,
     });
-    const [selectedSeason, setSelectedSeason] = useState(seasons[0] || '');
     const [error, setError] = useState('');
 
-    const handleAdd = () => {
+    const handleAdd = async () => {
         setError('');
-
-        if (!team.name.trim() || !team.city.trim() || !selectedSeason) {
-            setError('Vui lòng điền đầy đủ thông tin và chọn một mùa giải.');
+    
+        if (!team.name.trim() || !team.city.trim()) {
+            setError('Vui lòng điền đầy đủ thông tin.');
             return;
         }
-
-        const duplicateTeam = teams.find(
-            (existingTeam) => existingTeam?.name?.toLowerCase() === team.name.toLowerCase()
-        );
-        if (duplicateTeam) {
-            setError('Tên đội bóng đã tồn tại.');
-            return;
-        }
-
+    
         const newTeam = {
             ...team,
-            id: Date.now(),
-            season: selectedSeason,
+            id: Date.now(), // Temporary ID, server will likely assign a proper one
             capacity: team.capacity ? parseInt(team.capacity, 10) : null,
             fifa_stars: team.fifa_stars ? parseInt(team.fifa_stars, 10) : null,
         };
-
-        console.log('Adding Team:', newTeam);
-
-        if (typeof onAddTeam === 'function') {
-            onAddTeam(newTeam);
-        } else {
-            console.error('onAddTeam is not defined or is not a function');
+    
+        console.log('Creating Team:', newTeam);
+    
+        try {
+            const response = await fetch('http://localhost:5000/api/teams/available', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newTeam),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create team');
+            }
+    
+            const data = await response.json();
+            console.log("Calling onAddTeam with:", data.team)
+            if (typeof onAddTeam === 'function') {
+                onAddTeam(data.team);
+            }
+            navigate('/create');
+    
+        } catch (error) {
+            console.error('Error creating team:', error);
+            setError(error.message);
         }
-
-        navigate('/teams');
     };
 
     const handleChange = (e) => {
@@ -93,27 +101,12 @@ function AddTeam({ teams = [], onAddTeam, seasons }) {
             away_kit_image: null,
             third_kit_image: null,
         });
-        setSelectedSeason(seasons[0] || '');
     };
 
     return (
         <div className="form-container">
             <h2>Thêm đội bóng mới</h2>
             {error && <p className="error-message">{error}</p>}
-            <div>
-                <label htmlFor="season">Mùa giải</label> {/* Added htmlFor */}
-                <select
-                    id="season" // Added id
-                    value={selectedSeason}
-                    onChange={(e) => setSelectedSeason(e.target.value)}
-                >
-                    {seasons.map((season) => (
-                        <option key={season} value={season}>
-                            {season}
-                        </option>
-                    ))}
-                </select>
-            </div>
             {[
                 { name: 'name', label: 'Tên đội bóng', type: 'text', required: true },
                 { name: 'city', label: 'Thành phố', type: 'text', required: true },
@@ -142,7 +135,7 @@ function AddTeam({ teams = [], onAddTeam, seasons }) {
                 { name: 'third_kit_image', label: 'Quần áo dự bị' },
             ].map((fileInput) => (
                 <div key={fileInput.name}>
-                    <label htmlFor={fileInput.name}>{fileInput.label}</label> 
+                    <label htmlFor={fileInput.name}>{fileInput.label}</label>
                     <input
                         type="file"
                         name={fileInput.name}
@@ -163,7 +156,7 @@ function AddTeam({ teams = [], onAddTeam, seasons }) {
                 <label htmlFor="description">Giới thiệu đội</label>
                 <textarea
                     name="description"
-                    id="description" 
+                    id="description"
                     value={team.description || ''}
                     onChange={handleChange}
                 />
@@ -172,7 +165,7 @@ function AddTeam({ teams = [], onAddTeam, seasons }) {
                 <button className="add" onClick={handleAdd}>
                     Thêm
                 </button>
-                <button className="cancel" onClick={() => navigate('/teams')}>
+                <button className="cancel" onClick={() => navigate('/create')}>
                     Hủy
                 </button>
                 <button className="reset" onClick={resetForm}>
@@ -181,6 +174,6 @@ function AddTeam({ teams = [], onAddTeam, seasons }) {
             </div>
         </div>
     );
-}
+});
 
-export default AddTeam;
+export default CreateTeam;

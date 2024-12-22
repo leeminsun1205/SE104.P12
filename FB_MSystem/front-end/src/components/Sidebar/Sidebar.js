@@ -1,29 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 
-function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  // Toggle sidebar visibility
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => {
-      console.log('Sidebar state:', !prev); // Debugging log
-      return !prev;
-    });
-  };
-
+function Sidebar({isOpen, onToggleSidebar}) {
   return (
     <>
-      <button
-        className={`${styles.toggleButton} ${sidebarOpen ? styles.active : ''}`}
-        onClick={toggleSidebar}
-        aria-label="Toggle Sidebar"
-      >
-        ☰
-      </button>
-      {sidebarOpen && <div className={styles.overlay} onClick={toggleSidebar}></div>} {/* Overlay div */}
-      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.active : ''}`}>
+      {isOpen && <div className={styles.overlay} onClick={onToggleSidebar}></div>}
+      <aside className={`${styles.sidebar} ${isOpen ? styles.active : ''}`}>
         <div className={styles.logo}>
           <h2>Football Management</h2>
         </div>
@@ -59,6 +42,22 @@ function Sidebar() {
             }
           >
             <i className="fas fa-list-ol"></i> Standings
+          </NavLink>
+          <NavLink
+            to="/create/team"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-users"></i> Create Team
+          </NavLink>
+          <NavLink
+            to="/create"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-users"></i> Create Team
           </NavLink>
         </nav>
       </aside>

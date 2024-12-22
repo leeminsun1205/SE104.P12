@@ -14,8 +14,19 @@
   right: 0;
   z-index: 1000;
 }
-
-
+.toggleButton:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+.toggleButton {
+  margin-top: 0px;
+  background-color: var(--primary-color);
+}
+.toggleButton:hover {
+  margin-top: 0px;
+  background-color: rgb(88, 122, 255);
+  border: none;
+}
 .header .logo {
   font-size: 1.5rem;
   font-weight: bold;
@@ -28,7 +39,7 @@
   color: white;
   text-decoration: none;
   position: relative;
-  left: 50px;
+  left: -50px;
 }
 
 .logo a:hover {
@@ -78,12 +89,11 @@
   color: white;
 }
 
-/* Sidebar Toggle Button (for small screens) */
 .sidebarToggle {
-  display: none; /* Initially hidden */
+  display: none; 
   background: none;
   border: none;
-  font-size: 30px; /* Size of hamburger icon */
+  font-size: 30px;
   cursor: pointer;
   color: white;
 }

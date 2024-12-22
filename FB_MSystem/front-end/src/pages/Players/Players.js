@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
-import PlayerList from '../../pages/Players/PlayerList';
-import Modal from '../../pages/Players/Modal';
-import './Players.css';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
+import PlayerList from "../../pages/Players/PlayerList";
+import Modal from "../../pages/Players/Modal";
+import "./Players.css";
 
 const Players = () => {
   const { teamId } = useParams();
   const navigate = useNavigate();
-  const [selectedSeason, setSelectedSeason] = useState('');
-  const [players, setPlayers] = useState({});
-  const [availableSeasons, setAvailableSeasons] = useState([]); // Add available seasons state
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSeason, setSelectedSeason] = useState("");
+  const [players, setPlayers] = useState([]); // Simplified state
+  const [availableSeasons, setAvailableSeasons] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [modal, setModal] = useState({ type: null, player: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,17 +19,15 @@ const Players = () => {
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const teamsResponse = await fetch('http://localhost:5000/api/teams');
-        if (!teamsResponse.ok) {
-          throw new Error(`HTTP error! status: ${teamsResponse.status}`);
+        const response = await fetch("http://localhost:5000/api/seasons");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const teamsData = await teamsResponse.json();
-        const seasons = new Set();
-        teamsData.teams.forEach(team => seasons.add(team.season));
-        const seasonArray = Array.from(seasons).sort(); // Optional: sort seasons
+        const data = await response.json();
+        const seasonArray = data.seasons.sort();
         setAvailableSeasons(seasonArray);
 
-        // Set default season only if not already selected
+        // Set default season if not already selected
         if (!selectedSeason && seasonArray.length > 0) {
           setSelectedSeason(seasonArray[0]);
         }
@@ -43,50 +41,45 @@ const Players = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-
       setLoading(true);
       setError(null);
 
       try {
         let response;
-        if (selectedSeason === "") {
-          response = await fetch(`http://localhost:5000/api/teams/${teamId}/players`);
+        if (!selectedSeason || selectedSeason === "") {
+          // Fetch all players if no season is selected
+          response = await fetch(
+            `http://localhost:5000/api/teams/${teamId}/players`
+          );
         } else {
-          response = await fetch(`http://localhost:5000/api/teams/${teamId}/players?season=${selectedSeason}`);
+          // Fetch players for the selected season
+          response = await fetch(
+            `http://localhost:5000/api/teams/${teamId}/players?season=${selectedSeason}`
+          );
         }
-        const data = await response.json();
 
-        setPlayers(prevPlayers => ({
-          ...prevPlayers,
-          [selectedSeason]: {
-            ...prevPlayers[selectedSeason],
-            [teamId]: data.players || [],
-          },
-        }));
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setPlayers(data.players || []); // Update directly
       } catch (error) {
-        console.error('Failed to fetch player data:', error);
+        console.error("Failed to fetch player data:", error);
         setError("Error loading players. Please try again later.");
-        setPlayers(prevPlayers => ({
-          ...prevPlayers,
-          [selectedSeason]: {
-            ...prevPlayers[selectedSeason],
-            [teamId]: [],
-          },
-        }));
+        setPlayers([]); // Reset to empty array on error
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [teamId, selectedSeason]);
+  }, [teamId, selectedSeason]); // Run when teamId or selectedSeason changes
 
-
-  const teamPlayers = players[selectedSeason]?.[teamId] || [];
-  const filteredPlayers = teamPlayers.filter((player) =>
+  const filteredPlayers = players.filter((player) =>
     player.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   const openModal = (type, player = null) => setModal({ type, player });
   const closeModal = () => setModal({ type: null, player: null });
 
@@ -170,7 +163,6 @@ const Players = () => {
           }
         }}
       />
-
       <div className="search-container">
         <input
           type="text"
