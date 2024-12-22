@@ -62,3 +62,27 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server đang khởi chạy tại http://localhost:${PORT}`);
 });
+
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const cors = require('cors'); // Để xử lý CORS cho front-end
+
+// // Import các routes
+// const teamsRoutes = require('./routes/doibongRoutes');
+// const playersRoutes = require('./routes/cauthuRoutes');
+
+// const app = express();
+
+// // Middleware
+// app.use(cors()); // Kích hoạt CORS
+// app.use(bodyParser.json()); // Đọc JSON từ request body
+
+// // Định tuyến API với tiền tố '/api' để khớp với front-end
+// app.use('/api/teams', teamsRoutes); // Routes cho đội bóng
+// app.use('/api/players', playersRoutes); // Routes cho cầu thủ (nằm trong team)
+
+// // Khởi động server
+// const PORT = process.env.PORT || 5000; // Khớp với API_URL trong front-end (http://localhost:5000)
+// app.listen(PORT, () => {
+//     console.log(`Server đang chạy tại http://localhost:${PORT}`);
+// });

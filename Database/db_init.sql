@@ -232,20 +232,54 @@ CREATE TABLE THANHTICH (
     FOREIGN KEY (MaMuaGiai) REFERENCES MUAGIAI(MaMuaGiai)
 );
 
-CREATE TABLE THAMSO(
-	SucChuaToiThieu INT NOT NULL,
-	TieuChuanToiThieu TINYINT NOT NULL,
-	TuoiToiThieu TINYINT NOT NULL,
-	TuoiToiDa TINYINT NOT NULL,
-	SoLuongCauThuToiThieu TINYINT NOT NULL,
-	SoLuongCauThuToiDa TINYINT NOT NULL,
-	SoCauThuNgoaiToiDa TINYINT NOT NULL,
-	LePhi INT NOT NULL,
-	ThoiDiemGhiBanToiDa INT NOT NULL,
-	DiemThang TINYINT NOT NULL,
-	DiemHoa TINYINT NOT NULL,
-	DiemThua TINYINT NOT NULL
+-- CREATE TABLE THAMSO(
+-- 	SucChuaToiThieu INT NOT NULL,
+-- 	TieuChuanToiThieu TINYINT NOT NULL,
+-- 	TuoiToiThieu TINYINT NOT NULL,
+-- 	TuoiToiDa TINYINT NOT NULL,
+-- 	SoLuongCauThuToiThieu TINYINT NOT NULL,
+-- 	SoLuongCauThuToiDa TINYINT NOT NULL,
+-- 	SoCauThuNgoaiToiDa TINYINT NOT NULL,
+-- 	LePhi INT NOT NULL,
+-- 	ThoiDiemGhiBanToiDa INT NOT NULL,
+-- 	DiemThang TINYINT NOT NULL,
+-- 	DiemHoa TINYINT NOT NULL,
+-- 	DiemThua TINYINT NOT NULL
+-- )ENGINE=MyISAM MAX_ROWS=1;
+CREATE TABLE THAMSO (
+    id INT PRIMARY KEY DEFAULT 1,
+    SucChuaToiThieu INT NOT NULL DEFAULT 100,
+    TieuChuanToiThieu TINYINT NOT NULL DEFAULT 3,
+    TuoiToiThieu TINYINT NOT NULL DEFAULT 18,
+    TuoiToiDa TINYINT NOT NULL DEFAULT 40,
+    SoLuongCauThuToiThieu TINYINT NOT NULL DEFAULT 11,
+    SoLuongCauThuToiDa TINYINT NOT NULL DEFAULT 25,
+    SoCauThuNgoaiToiDa TINYINT NOT NULL DEFAULT 5,
+    LePhi INT NOT NULL DEFAULT 100000,
+    ThoiDiemGhiBanToiDa INT NOT NULL DEFAULT 90,
+    DiemThang TINYINT NOT NULL DEFAULT 3,
+    DiemHoa TINYINT NOT NULL DEFAULT 1,
+    DiemThua TINYINT NOT NULL DEFAULT 0
+);
+INSERT INTO THAMSO (
+    SucChuaToiThieu,
+    TieuChuanToiThieu,
+    TuoiToiThieu,
+    TuoiToiDa,
+    SoLuongCauThuToiThieu,
+    SoLuongCauThuToiDa,
+    SoCauThuNgoaiToiDa,
+    LePhi,
+    ThoiDiemGhiBanToiDa,
+    DiemThang,
+    DiemHoa,
+    DiemThua
+) VALUES (
+    100, 3, 18, 40, 11, 25, 5, 100000, 90, 3, 1
 );
 
 #Kiểm tra bảng
-SHOW TABLES;
+-- SHOW TABLES;
+-- DESCRIBE THAMSO;
+-- select * from thamso;
+-- DROP TABLE IF EXISTS THAMSO;
