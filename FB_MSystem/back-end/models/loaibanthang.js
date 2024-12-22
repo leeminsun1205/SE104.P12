@@ -15,6 +15,7 @@ const LoaiBanThang = sequelize.define('LoaiBanThang', {
     MoTa: {
         type: DataTypes.STRING(50),
         allowNull: true,
+        defaultValue: '',
     },
 }, {
     tableName: 'LOAIBANTHANG',

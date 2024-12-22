@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const { autoCreateCode } = require('../utils/autoCreateCode');
 
 const LoaiUuTien = sequelize.define('LoaiUuTien', {
     MaLoaiUT: {
@@ -12,8 +13,15 @@ const LoaiUuTien = sequelize.define('LoaiUuTien', {
         allowNull: false,
     },
 }, {
-    tableName: 'LOAIUUTIEN',
+    tableName: 'LoaiUuTien',
     timestamps: false,
+    hooks: {
+        beforeValidate: async (record) => {
+            if (!record.MaLoaiUT) {
+                record.MaLoaiUT = await autoCreateCode(LoaiUuTien, 'LUT', 'MaLoaiUT', 1);
+            }
+        },
+    },
 });
 
 module.exports = LoaiUuTien;

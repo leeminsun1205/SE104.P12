@@ -11,7 +11,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
         acquire: 30000,  // Thời gian tối đa cố gắng để kết nối (ms)
         idle: 10000,     // Thời gian tối đa một kết nối rảnh trước khi bị đóng (ms)
     },
-    logging: false, // Tắt logging nếu không cần thiết
+    logging: false, 
 });
 
 // Tự động kiểm tra kết nối khi khởi động

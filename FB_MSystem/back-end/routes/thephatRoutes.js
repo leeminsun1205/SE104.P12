@@ -1,11 +1,11 @@
 const express = require('express');
-const ThePhatController = require('../controllers/thephatController');
+const thePhatController = require('../controllers/thePhatController');
 
 const router = express.Router();
 
-router.get('/', ThePhatController.getAll); // Lấy danh sách tất cả thẻ phạt
-router.get('/trandau/:MaTranDau', ThePhatController.getByTranDau); // Lấy thẻ phạt theo trận đấu
-router.post('/', ThePhatController.create); // Thêm thẻ phạt mới
-router.delete('/:id', ThePhatController.delete); // Xóa thẻ phạt
+router.get('/', thePhatController.getAll); // Lấy danh sách tất cả thẻ phạt
+router.get('/tran-dau/:MaTranDau', thePhatController.getByTranDau); // Lấy thẻ phạt theo trận đấu
+router.post('/', thePhatController.create); // Thêm thẻ phạt mới
+router.delete('/:id', thePhatController.delete); // Xóa thẻ phạt
 
 module.exports = router;

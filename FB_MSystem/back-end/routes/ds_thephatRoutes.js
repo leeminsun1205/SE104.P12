@@ -1,9 +1,9 @@
 const express = require('express');
-const DsThePhatController = require('../controllers/ds_thephatController');
+const ds_ThePhatController = require('../controllers/ds_ThePhatController');
 
 const router = express.Router();
 
-router.get('/vongdau/:MaVongDau', DsThePhatController.getByVongDau); // Lấy danh sách thẻ phạt theo vòng đấu
-router.get('/muagiai/:MaMuaGiai', DsThePhatController.getByMuaGiai); // Lấy danh sách thẻ phạt theo mùa giải
+router.get('/vong-dau/:MaVongDau', ds_ThePhatController.getByVongDau); // Lấy danh sách thẻ phạt theo vòng đấu
+router.get('/mua-giai/:MaMuaGiai', ds_ThePhatController.getByMuaGiai); // Lấy danh sách thẻ phạt theo mùa giải
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const { autoCreateCode } = require('../utils/autoCreateCode');
 
 const LoaiThePhat = sequelize.define('LoaiThePhat', {
     MaLoaiThePhat: {
@@ -14,6 +15,7 @@ const LoaiThePhat = sequelize.define('LoaiThePhat', {
     MoTa: {
         type: DataTypes.STRING(50),
         allowNull: true,
+        defaultValue: '',
     },
 }, {
     tableName: 'LOAITHEPHAT',

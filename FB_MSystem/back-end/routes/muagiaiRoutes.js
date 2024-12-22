@@ -1,12 +1,14 @@
 const express = require('express');
-const MuaGiaiController = require('../controllers/muagiaiController');
+const muaGiaiController = require('../controllers/muaGiaiController');
+const vongDauController = require('../controllers/vongDauController')
 
 const router = express.Router();
 
-router.get('/', MuaGiaiController.getAll); // Lấy danh sách tất cả mùa giải
-router.get('/:id', MuaGiaiController.getById); // Lấy mùa giải theo ID
-router.post('/', MuaGiaiController.create); // Thêm mùa giải mới
-router.put('/:id', MuaGiaiController.update); // Cập nhật mùa giải
-router.delete('/:id', MuaGiaiController.delete); // Xóa mùa giải
+router.get('/', muaGiaiController.getAll); // Lấy danh sách tất cả mùa giải
+router.get('/:id', muaGiaiController.getById); // Lấy mùa giải theo ID
+router.post('/', muaGiaiController.create); // Thêm mùa giải mới
+router.put('/:id', muaGiaiController.update); // Cập nhật mùa giải
+router.delete('/:id', muaGiaiController.delete); // Xóa mùa giải
+router.post('/:maMuaGiai/vong-dau', vongDauController.createByMuaGiai);
 
 module.exports = router;

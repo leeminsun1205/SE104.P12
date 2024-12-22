@@ -1,5 +1,6 @@
-const { DataTypes, Op } = require('sequelize');
+const { DataTypes} = require('sequelize');
 const sequelize = require('../config/database');
+const {autoCreateCode} = require('../utils/autoCreateCode')
 
 const SanThiDau = sequelize.define(
     'SanThiDau',

@@ -1,9 +1,9 @@
 const express = require('express');
-const BangXepHangController = require('../controllers/bangxephangController');
+const bangXepHangController = require('../controllers/bangXepHangController');
 
 const router = express.Router();
 
-router.get('/muagiai/:MaMuaGiai', BangXepHangController.getByMuaGiai); // Lấy bảng xếp hạng theo mùa giải
-router.get('/vongdau/:MaVongDau', BangXepHangController.getByVongDau); // Lấy bảng xếp hạng theo vòng đấu
+router.get('/mua-giai/:MaMuaGiai', bangXepHangController.getByMuaGiai); // Lấy bảng xếp hạng theo mùa giải
+router.get('/vong-dau/:MaVongDau', bangXepHangController.getByVongDau); // Lấy bảng xếp hạng theo vòng đấu
 
 module.exports = router;

@@ -40,7 +40,7 @@ const TranDau = sequelize.define('TranDau', {
         },
     },
     NgayThiDau: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
     GioThiDau: {

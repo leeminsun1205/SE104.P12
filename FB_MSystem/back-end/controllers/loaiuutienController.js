@@ -23,7 +23,8 @@ const LoaiUuTienController = {
             });
             res.status(201).json(loaiUuTien);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi thêm loại ưu tiên.' });
+            console.error('Lỗi khi thêm loại ưu tiên:', error);
+            res.status(500).json({ error: 'Lỗi khi thêm loại ưu tiên.', details: error.massage});
         }
     },
 

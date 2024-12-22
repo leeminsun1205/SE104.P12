@@ -1,11 +1,11 @@
 const express = require('express');
-const LoaiUuTienController = require('../controllers/loaiuutienController');
+const loaiUuTienController = require('../controllers/loaiUuTienController');
 
 const router = express.Router();
 
-router.get('/', LoaiUuTienController.getAll); // Lấy danh sách loại ưu tiên
-router.post('/', LoaiUuTienController.create); // Thêm loại ưu tiên
-router.put('/:id', LoaiUuTienController.update); // Cập nhật loại ưu tiên
-router.delete('/:id', LoaiUuTienController.delete); // Xóa loại ưu tiên
+router.get('/', loaiUuTienController.getAll); // Lấy danh sách loại ưu tiên
+router.post('/', loaiUuTienController.create); // Thêm loại ưu tiên
+router.put('/:id', loaiUuTienController.update); // Cập nhật loại ưu tiên
+router.delete('/:id', loaiUuTienController.delete); // Xóa loại ưu tiên
 
 module.exports = router;

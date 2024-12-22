@@ -27,11 +27,11 @@ const VongDau = sequelize.define('VongDau', {
         },
     },
     NgayBatDau: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
     },
     NgayKetThuc: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
         validate: {
             isAfterField(value) {

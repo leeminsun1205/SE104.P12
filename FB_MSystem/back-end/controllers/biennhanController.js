@@ -1,5 +1,5 @@
 const { BienNhan, DoiBong, ThamSo } = require('../models');
-
+const { isValidRange } = require('../utils/kiemTraNgay');
 const BienNhanController = {
     async getAll(req, res) {
         try {
@@ -14,7 +14,16 @@ const BienNhanController = {
                 ],
             });
     
-            res.status(200).json(bienNhans);
+            // Chuyển đổi kết quả để chỉ lấy TenDoiBong
+            const results = bienNhans.map((bienNhan) => {
+                const { DoiBong, ...rest } = bienNhan.get(); // Loại bỏ DoiBong
+                return {
+                    ...rest,
+                    TenDoiBong: DoiBong ? DoiBong.TenDoiBong : null, // Lấy TenDoiBong từ DoiBong
+                };
+            });
+    
+            res.status(200).json(results);
         } catch (error) {
             console.error('Lỗi khi lấy danh sách biên nhận:', error.message);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách biên nhận.' });
@@ -40,6 +49,11 @@ const BienNhanController = {
         try {
             const { MaLePhi, MaDoiBong, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang } = req.body;
     
+            // Kiểm tra ngày hợp lệ
+            if (!isValidRange(NgayBatDau, NgayHetHan)) {
+                return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày hết hạn.' });
+            }
+    
             // Lấy giá trị SoTien từ bảng THAMSO
             const thamSo = await ThamSo.findOne();
             if (!thamSo) {
@@ -62,6 +76,50 @@ const BienNhanController = {
         } catch (error) {
             console.error('Lỗi khi thêm biên nhận mới:', error);
             res.status(500).json({ error: 'Lỗi khi thêm biên nhận mới.', details: error.message });
+        }
+    },
+
+    async update(req, res) {
+        try {
+            const { id } = req.params; // Lấy ID biên nhận từ URL
+            const { NgayThanhToan, ...updates } = req.body;
+    
+            // Lấy biên nhận cần cập nhật
+            const bienNhan = await BienNhan.findByPk(id);
+            if (!bienNhan) {
+                return res.status(404).json({ error: 'Không tìm thấy biên nhận.' });
+            }
+    
+            // Ngăn chặn cập nhật trực tiếp TinhTrang
+            if ('TinhTrang' in updates) {
+                return res.status(400).json({ error: 'Không được phép cập nhật trực tiếp TinhTrang.' });
+            }
+    
+            // Kiểm tra và xử lý NgayThanhToan
+            if (NgayThanhToan) {
+                const ngayThanhToan = new Date(NgayThanhToan);
+                const ngayBatDau = new Date(bienNhan.NgayBatDau);
+                const ngayHetHan = new Date(bienNhan.NgayHetHan);
+    
+                // Kiểm tra NgayThanhToan có nằm trong khoảng hợp lệ không
+                if (ngayThanhToan < ngayBatDau || ngayThanhToan > ngayHetHan) {
+                    return res.status(400).json({
+                        error: 'Ngày thanh toán phải nằm trong khoảng từ Ngày bắt đầu đến Ngày hết hạn.',
+                    });
+                }
+    
+                // Cập nhật NgayThanhToan và tự động đặt TinhTrang thành true
+                updates.NgayThanhToan = ngayThanhToan;
+                updates.TinhTrang = true;
+            }
+    
+            // Cập nhật các giá trị khác
+            await bienNhan.update(updates);
+    
+            res.status(200).json(bienNhan);
+        } catch (error) {
+            console.error('Lỗi khi cập nhật biên nhận:', error);
+            res.status(500).json({ error: 'Lỗi khi cập nhật biên nhận.', details: error.message });
         }
     },
 

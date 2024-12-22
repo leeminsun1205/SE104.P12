@@ -1,9 +1,9 @@
 const express = require('express');
-const ThamSoController = require('../controllers/thamsoController');
+const thamSoController = require('../controllers/thamSoController');
 
 const router = express.Router();
 
-router.get('/', ThamSoController.getAll); // Lấy danh sách tham số
-router.put('/', ThamSoController.update); // Cập nhật tham số
+router.get('/', thamSoController.getAll); // Lấy danh sách tham số
+router.put('/', thamSoController.update); // Cập nhật tham số
 
 module.exports = router;

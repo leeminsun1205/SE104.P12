@@ -1,9 +1,9 @@
 const express = require('express');
-const ThanhTichController = require('../controllers/thanhtichController');
+const thanhTichController = require('../controllers/thanhTichController');
 
 const router = express.Router();
 
-router.get('/muagiai/:MaMuaGiai', ThanhTichController.getByMuaGiai); // Lấy thành tích theo mùa giải
-router.get('/doibong/:MaDoiBong', ThanhTichController.getByDoiBong); // Lấy thành tích của đội bóng
+router.get('/mua-giai/:MaMuaGiai', thanhTichController.getByMuaGiai); // Lấy thành tích theo mùa giải
+router.get('/doi-bong/:MaDoiBong', thanhTichController.getByDoiBong); // Lấy thành tích của đội bóng
 
 module.exports = router;

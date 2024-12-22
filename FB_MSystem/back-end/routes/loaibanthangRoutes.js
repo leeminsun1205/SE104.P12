@@ -1,11 +1,11 @@
 const express = require('express');
-const LoaiBanThangController = require('../controllers/loaibanthangController');
+const loaiBanThangController = require('../controllers/loaiBanThangController');
 
 const router = express.Router();
 
-router.get('/', LoaiBanThangController.getAll); // Lấy danh sách loại bàn thắng
-router.post('/', LoaiBanThangController.create); // Thêm loại bàn thắng mới
-router.put('/:id', LoaiBanThangController.update); // Cập nhật loại bàn thắng
-router.delete('/:id', LoaiBanThangController.delete); // Xóa loại bàn thắng
+router.get('/', loaiBanThangController.getAll); // Lấy danh sách loại bàn thắng
+router.post('/', loaiBanThangController.create); // Thêm loại bàn thắng mới
+router.put('/:id', loaiBanThangController.update); // Cập nhật loại bàn thắng
+router.delete('/:id', loaiBanThangController.delete); // Xóa loại bàn thắng
 
 module.exports = router;

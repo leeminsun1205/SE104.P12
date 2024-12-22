@@ -68,5 +68,10 @@ const DoiBong = sequelize.define(
         },
     }
 );
-
+DoiBong.associate = (models) => {
+    DoiBong.belongsTo(models.SanThiDau, {
+        foreignKey: 'MaSan',
+        as: 'SanThiDau',
+    });
+};
 module.exports = DoiBong;

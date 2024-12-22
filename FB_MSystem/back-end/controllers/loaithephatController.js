@@ -23,7 +23,8 @@ const LoaiThePhatController = {
             });
             res.status(201).json(loaiThePhat);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi thêm loại thẻ phạt.' });
+            console.error("Lỗi khi thêm loại thẻ phạt:", error),
+            res.status(500).json({ error: 'Lỗi khi thêm loại thẻ phạt.', details: error.massage });
         }
     },
 
