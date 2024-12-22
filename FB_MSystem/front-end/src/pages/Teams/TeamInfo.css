@@ -1,3 +1,5 @@
+/* src/pages/Teams/TeamInfo.css */
+
 .team-info {
     display: flex;
     flex-direction: column;
@@ -17,16 +19,16 @@
 .team-details {
     width: 100%;
     text-align: left;
-    margin-bottom: 20px; /* Add spacing from uniform images */
+    margin-bottom: 20px;
 }
 
 .uniform-images {
     display: flex;
-    justify-content: center; /* Center the images horizontally */
-    gap: 20px; /* Add space between the two images */
-    margin-top: 20px; /* Ensure some spacing above images */
-    margin-bottom: 20px; /* Ensure spacing between images and the "Quản lý" button */
-    max-width: 45%; /* Adjust size to fit well */
+    justify-content: center;
+    gap: 20px; 
+    margin-top: 20px; 
+    margin-bottom: 20px; 
+    max-width: 45%; 
     height: auto;
     border-radius: 8px;
     border: 1px solid #ddd;
@@ -36,12 +38,12 @@
 .team-details { 
     width: 100%;
     text-align: left;
-    margin-top: 20px; /* Add spacing from uniforms */
+    margin-top: 20px; 
 }
 
 .team-details h2 {
     text-align: center;
-    font-size: 2rem; /* Slightly larger title */
+    font-size: 2rem;
     color: #333;
     margin-bottom: 20px;
 }
@@ -49,8 +51,8 @@
 .team-details ul {
     list-style-type: none;
     padding: 0;
-    columns: 2; /* Split the list into two columns for a wider view */
-    gap: 20px; /* Add spacing between columns */
+    columns: 2;
+    gap: 20px;
     margin-bottom: 10px;
 }
 
@@ -70,7 +72,7 @@
     padding: 10px 15px;
     border-radius: 5px;
     font-size: 1rem;
-    margin-top: 10px; /* Add a bit of spacing from the images */
+    margin-top: 10px; 
 }
 .go-back-button {
     background-color: #007bff;
@@ -91,10 +93,10 @@
 .team-info button.toplayer {
     background-color: rgb(150, 150, 150);
     color: white;
-    padding: 10px 15px; /* Add padding for a consistent look */
+    padding: 10px 15px;
     border-radius: 5px;
     font-size: 1rem;
-    margin-top: 20px; /* Space it from other elements */
+    margin-top: 20px; 
 }
 
 .team-info button.toplayer:hover {
@@ -105,25 +107,25 @@
 @media (max-width: 900px) {
     .team-info {
         padding: 15px;
-        max-width: 95%; /* Reduce max width for smaller screens */
+        max-width: 95%; 
     }
 
     .uniform-images {
-        flex-direction: column; /* Stack images on smaller screens */
+        flex-direction: column;
         gap: 20px;
     }
 
     .uniform-image {
-        max-width: 100%; /* Ensure images take full width */
+        max-width: 100%; 
     }
 
     .team-details ul {
-        columns: 1; /* Revert to single column on smaller screens */
+        columns: 1;
     }
 
     .go-back-button,
     .team-info button.toplayer {
-        font-size: 0.9rem; /* Adjust font size */
+        font-size: 0.9rem; 
         padding: 8px 12px;
     }
 }

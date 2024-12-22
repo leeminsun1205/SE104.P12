@@ -1,3 +1,4 @@
+// src/pages/Teams/AddTeamsToSeasonModal.js
 import React, { useState, useEffect } from "react";
 import "./AddTeamsToSeasonModal.css";
 
@@ -39,7 +40,6 @@ function AddTeamsToSeasonModal({ season, onAddTeamsToSeason, onClose }) {
 
   const handleAddTeams = async () => {
     try {
-      // Instead of fetching available teams, pass selectedTeams directly
       onAddTeamsToSeason(selectedTeams, season);
       onClose();
     } catch (error) {

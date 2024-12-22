@@ -1,4 +1,6 @@
-/* Modal Overlay */
+/* /src/pages/Teams/AddTeamsToSeasonModal.css */
+
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -9,35 +11,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it's on top */
+    z-index: 1000;
 }
 
-/* Modal Container */
 .add-teams-modal {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    width: 80%; /* Responsive width */
-    max-width: 500px; /* Maximum width */
+    width: 80%;
+    max-width: 500px; 
 }
 
-/* Modal Header */
 .add-teams-modal h2 {
     margin-top: 0;
     color: #333;
 }
 
-/* Team List */
 .team-list {
     list-style: none;
     padding: 0;
     margin: 15px 0;
-    max-height: 250px; /* Scrollable list */
+    max-height: 250px; 
     overflow-y: auto;
 }
 
-/* Team Item */
 .team-item {
     padding: 10px 0;
     border-bottom: 1px solid #eee;
@@ -75,26 +73,22 @@
     cursor: pointer;
 }
 
-/* Add Button */
 .add-button {
     background-color: #4CAF50; /* Green */
     color: white;
 }
 
-/* Cancel Button */
 .cancel-button {
     background-color: #f44336; /* Red */
     color: white;
 }
 
-/* Loading Text */
 .add-teams-modal p {
     text-align: center;
     font-size: 1rem;
     color: #666;
 }
 
-/* Responsive Design */
 @media (max-width: 600px) {
     .add-teams-modal {
         width: 95%;

@@ -14,7 +14,7 @@
 .temp-container h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: #ff6347; /* Tomato color for emphasis */
+    color: #ff6347; 
 }
 
 .temp-container p {
@@ -27,7 +27,7 @@
     padding: 10px 20px;
     font-size: 1rem;
     color: #fff;
-    background-color: #007bff; /* Bootstrap primary blue */
+    background-color: #007bff; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -35,5 +35,5 @@
 }
 
 .temp-container button:hover {
-    background-color: #0056b3; /* Darker blue for hover effect */
+    background-color: #0056b3;
 }

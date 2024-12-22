@@ -1,3 +1,5 @@
+// src/pages/Teams/TeamInfo.js
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; 
 import './TeamInfo.css';

@@ -1,3 +1,5 @@
+// src/pages/Teams/Teams.js
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
@@ -43,7 +45,6 @@ function Teams({
   const handleAddTeamsToSeason = async (selectedTeamIds, season) => {
     setShowAddTeamsModal(false);
   
-    // Use a for...of loop to fetch team data and update filteredTeams
     for (const teamId of selectedTeamIds) {
       try {
         const response = await fetch(
@@ -55,7 +56,6 @@ function Teams({
         const teamToAdd = await response.json();
         if (teamToAdd) {
           setFilteredTeams((prevTeams) => {
-            // Check if the team is already in the list before adding
             if (!prevTeams.some((team) => team.id === teamToAdd.id)) {
               return [...prevTeams, { ...teamToAdd, season: season }];
             }
@@ -64,11 +64,9 @@ function Teams({
         }
       } catch (error) {
         console.error("Error fetching team data:", error);
-        // Handle error, possibly revert the optimistic UI update
       }
     }
   
-    // Then, make the API call to update the server
     try {
       const response = await fetch(
         `http://localhost:5000/api/seasons/${season}/teams`,
@@ -86,11 +84,9 @@ function Teams({
         throw new Error(errorData.message || "Failed to add teams to season");
       }
   
-      // After the server-side update is successful, refetch teams for the selected season
       await onSeasonChange(season);
     } catch (error) {
       console.error("Error adding teams to season:", error);
-      // Handle error, possibly revert the optimistic UI update
     }
   };
 
@@ -131,7 +127,7 @@ function Teams({
         <AddTeamsToSeasonModal
           season={selectedSeason}
           onAddTeamsToSeason={handleAddTeamsToSeason}
-          onClose={() => setShowAddTeamsModal(false)} // Pass onClose correctly
+          onClose={() => setShowAddTeamsModal(false)} 
         />
       )}
 

@@ -1,3 +1,5 @@
+/* src/pages/Teams/Teams.css */
+
 .teams {
   position: relative;
   max-width: 800px;
@@ -84,7 +86,7 @@
   margin: 0 0 10px;
   font-size: 15px;
   color: #7f8c8d;
-  position: relative; /* Ensures button positioning is relative to this */
+  position: relative;
 }
 
 
@@ -215,7 +217,7 @@
 .search-input-wrapper .clear-search:hover {
   color: #d63031;
 }
-/* Responsive Styles */
+
 @media (max-width: 768px) {
   .teams {
     padding: 20px;
@@ -240,7 +242,7 @@
   }
 }
 .add-to-season-button {
-  background-color: #007bff; /* Blue background */
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -251,5 +253,5 @@
 }
 
 .add-to-season-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3;
 }
