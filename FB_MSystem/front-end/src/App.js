@@ -6,12 +6,13 @@ import Footer from './components/Footer/Footer';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Teams from './pages/Teams/Teams';
 import CreateTeam from './pages/Teams/CreateTeam';
+import CreatePlayer from './pages/Players/CreatePlayer';
 import CreateNew from './pages/CreateNew/CreateNew';
 import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
 import Players from './pages/Players/Players';
 import PlayerInfo from './pages/Players/PlayerInfo';
-import Matches from './pages/Matches/Matches';
+import OtherLeagueMatches from './pages/Teams/OtherLeagueMatches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
@@ -33,6 +34,7 @@ function App() {
     const [selectedSeason, setSelectedSeason] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [otherMatches, setOtherMatches] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,7 +97,7 @@ function App() {
         localStorage.removeItem('isAuthenticated');
     };
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-    
+
     const handleEditTeam = async (updatedTeam) => {
         try {
             const response = await fetch(`${API_URL}/teams/${updatedTeam.id}`, {
@@ -162,8 +164,7 @@ function App() {
         </Router>
     );
 }
-
-function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam }) {
+function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches }) {
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
@@ -177,14 +178,15 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
                     onSeasonChange={onSeasonChange}
                     onDeleteTeam={onDeleteTeam} />}
             />
-            <Route path="/create/team" element={<CreateTeam/>} />
+            <Route path="/create/team" element={<CreateTeam />} />
+            <Route path="/create/player" element={<CreatePlayer/>} />
             <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} />} />
-            <Route path="/teams/:teamId/players" element={<Players />} />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} otherMatches={otherMatches}/>} />
+            <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
             <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
-            <Route path="/matches" element={<Matches />} />
+            <Route path="/teams/:id/other-matches" element={<OtherLeagueMatches teams={teams} otherMatches={otherMatches} />} />
             <Route path="/standings" element={<Standings />} />
-            <Route path="/create" element={<CreateNew />}/>
+            <Route path="/create" element={<CreateNew />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

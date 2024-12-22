@@ -1,39 +1,49 @@
-/* /src/pages/Temp/Temp.css */
+/* CreateNew.css */
+
 .create-new-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f5f5f5;
-    color: #333;
-    font-family: 'Arial', sans-serif;
-    text-align: center;
-}
-
-.create-new-container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: #ff6347; /* Tomato color for emphasis */
-}
-
-.create-new-container p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #666;
-}
-
-.create-new-container button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #007bff; /* Bootstrap primary blue */
+    justify-content: center;
+    width: 80%; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .create-new-container button {
+    width: 100%; /* Make buttons fill the container width */
+    padding: 15px 20px;
+    margin-bottom: 15px; /* Space between buttons */
     border: none;
     border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.create-new-container button:hover {
-    background-color: #0056b3; /* Darker blue for hover effect */
-}
+  }
+  
+  .create-new-container button:first-of-type {
+    background-color: #008CBA; /* Back to Dashboard button color */
+  }
+  
+  .create-new-container button:nth-of-type(2) {
+    background-color: #4CAF50; /* Create Team button color */
+  }
+  
+  .create-new-container button:last-of-type {
+    background-color: #717d96; /* Create Player button color */
+  }
+  
+  .create-new-container button:hover {
+    opacity: 0.8;
+  }

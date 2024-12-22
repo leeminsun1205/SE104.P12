@@ -17,24 +17,24 @@ function Header({ onLogout, onToggleSidebar }) {
             </div>
             <nav className={styles.nav}>
                 <NavLink to="/dashboard" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                    Dashboard
+                    Bảng điều khiển
                 </NavLink>
                 <NavLink to="/teams" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                    Teams
+                    Đội bóng
                 </NavLink>
                 <NavLink to="/matches" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                    Matches
+                    Trận đấu
                 </NavLink>
                 <NavLink to="/standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                    Standings
+                    Bảng xếp hạng
                 </NavLink>
                 <NavLink to="/create" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                  Create New
+                  Thêm mới
               </NavLink>
             </nav>
 
             <div className={styles.userMenu}>
-                <Button onClick={onLogout}>Logout</Button>
+                <Button  className="logout-button" onClick={onLogout}> Thoát</Button>
             </div>
         </header>
     );

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
-import AddTeamsToSeasonModal from "./AddTeamsToSeasonModal";
+import AddTeamsToSeasonModal from "./../CreateNew/AddTeamsToSeasonModal";
 import "./Teams.css";
 
 function Teams({
@@ -120,7 +120,7 @@ function Teams({
         className="add-to-season-button"
         onClick={() => setShowAddTeamsModal(true)}
       >
-        Add Teams to Season
+        Thêm đội bóng vào mùa giải
       </button>
 
       {showAddTeamsModal && (
@@ -144,7 +144,7 @@ function Teams({
                   className="toplayer"
                   onClick={() => handleToPlayer(team.id)}
                 >
-                  Quản lý
+                  Cầu thủ
                 </button>
                 <button className="edit" onClick={() => handleEdit(team.id)}>
                   Sửa

@@ -1,0 +1,108 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .add-teams-modal {
+    background-color: white;
+    padding: 30px;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+  }
+  
+  .add-teams-modal h2 {
+    margin-top: 0;
+    color: #212529;
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+  }
+  
+  .error-message {
+    color: #dc3545;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  
+  /* Use more unique class names for the list and items */
+  .add-teams-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .add-teams-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+  }
+  
+  /* Target the hover styles specifically within the modal */
+  .add-teams-modal .add-teams-list .add-teams-item:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .add-teams-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  
+  .add-teams-checkbox {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+  }
+  
+  .add-teams-name {
+    font-size: 1.1rem;
+    color: #495057;
+  }
+  
+  .modal-sbuttons {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  /* Use more specific class names for the buttons */
+  .add-teams-modal .add-sbutton,
+  .add-teams-modal .cancel-sbutton {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: white;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  .add-teams-modal .add-sbutton {
+    background-color: #007bff;
+  }
+  
+  .add-teams-modal .add-sbutton:hover {
+    background-color: #0056b3;
+  }
+  
+  .add-teams-modal .cancel-sbutton {
+    background-color: #6c757d;
+  }
+  
+  .add-teams-modal .cancel-sbutton:hover {
+    background-color: #545b62;
+  }

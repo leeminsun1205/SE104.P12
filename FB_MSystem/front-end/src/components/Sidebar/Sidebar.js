@@ -17,7 +17,7 @@ function Sidebar({isOpen, onToggleSidebar}) {
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
           >
-            <i className="fas fa-tachometer-alt"></i> Dashboard
+            <i className="fas fa-tachometer-alt"></i> Bảng điều khiển
           </NavLink>
           <NavLink
             to="/teams"
@@ -25,7 +25,7 @@ function Sidebar({isOpen, onToggleSidebar}) {
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
           >
-            <i className="fas fa-users"></i> Teams
+            <i className="fas fa-users"></i> Đội bóng
           </NavLink>
           <NavLink
             to="/matches"
@@ -33,7 +33,7 @@ function Sidebar({isOpen, onToggleSidebar}) {
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
           >
-            <i className="fas fa-futbol"></i> Matches
+            <i className="fas fa-futbol"></i> Trận đáu
           </NavLink>
           <NavLink
             to="/standings"
@@ -41,15 +41,7 @@ function Sidebar({isOpen, onToggleSidebar}) {
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
           >
-            <i className="fas fa-list-ol"></i> Standings
-          </NavLink>
-          <NavLink
-            to="/create/team"
-            className={({ isActive }) =>
-              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
-            }
-          >
-            <i className="fas fa-users"></i> Create Team
+            <i className="fas fa-list-ol"></i> Bảng xếp hạng
           </NavLink>
           <NavLink
             to="/create"
@@ -57,7 +49,7 @@ function Sidebar({isOpen, onToggleSidebar}) {
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
           >
-            <i className="fas fa-users"></i> Create Team
+            <i className="fas fa-users"></i> Thêm mới
           </NavLink>
         </nav>
       </aside>

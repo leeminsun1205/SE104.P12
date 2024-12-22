@@ -1,27 +1,35 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'// Import the CSS file
-import "./CreateNew.css"
+import { useNavigate } from 'react-router-dom';
+import './CreateNew.css'; // Make sure the path is correct
 
-function CreatNew() {
+function CreateNew() {
     const navigate = useNavigate();
 
     const handleBackToDashboard = () => {
-        navigate('/homepage'); // Navigate to the Dashboard
+        navigate('/dashboard'); 
     };
+
     const handleToCreateTeam = () => {
         navigate('/create/team');
-    }
+    };
+
+    const handleToCreatePlayer = () => {
+        navigate('/create/player');
+    };
 
     return (
         <div className="create-new-container">
-            <button onClick={handleBackToDashboard}>
-                Back to Dashboard
-            </button>
             <button onClick={handleToCreateTeam}>
-                Create Team
+                Thêm đội bóng
+            </button>
+            <button onClick={handleToCreatePlayer}>
+                Thêm cầu thủ
+            </button>
+            <button onClick={handleBackToDashboard}>
+                Quay lại bảng điều khiển
             </button>
         </div>
     );
 }
 
-export default CreatNew;
+export default CreateNew;

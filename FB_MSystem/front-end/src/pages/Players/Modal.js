@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Modal.css';
 
 const Modal = ({ type, player, positions, season, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(
-    player || {
-      name: '',
-      position: '',
-      dob: '',
-      nationality: '',
-      birthplace: '',
-      height: '',
-      weight: '',
-      bio: '',
-      season, // Default to the passed season
+  const [formData, setFormData] = useState({
+    name: '',
+    position: '',
+    dob: '',
+    nationality: '',
+    birthplace: '',
+    height: '',
+    weight: '',
+    bio: '',
+    season: season || '',
+  });
+
+  useEffect(() => {
+    if (player) {
+      setFormData({
+        ...player,
+        season: season || player.season || '',
+      });
+    } else {
+      setFormData({
+        name: '',
+        position: '',
+        dob: '',
+        nationality: '',
+        birthplace: '',
+        height: '',
+        weight: '',
+        bio: '',
+        season: season || '',
+      });
     }
-  );
+  }, [player, season]);
 
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });

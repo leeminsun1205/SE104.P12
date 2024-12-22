@@ -45,6 +45,13 @@ h2 {
   background-color: #218838;
 }
 
+.add-players-button {
+  color: white;
+  background-color: #007bff;
+}
+.add-players-button:hover {
+  background-color: #003cc9;
+}
 .player-list {
   list-style-type: none;
   padding: 0;

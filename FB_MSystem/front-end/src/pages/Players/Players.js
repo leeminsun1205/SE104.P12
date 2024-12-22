@@ -1,202 +1,204 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import PlayerList from "./PlayerList";
+import CreatePlayer from "../Players/CreatePlayer";
+import AddPlayersToTeamModal from "../CreateNew/AddPlayersToTeamModal";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
-import PlayerList from "../../pages/Players/PlayerList";
-import Modal from "../../pages/Players/Modal";
 import "./Players.css";
 
-const Players = () => {
+function Players({ seasons }) {
   const { teamId } = useParams();
   const navigate = useNavigate();
-  const [selectedSeason, setSelectedSeason] = useState("");
-  const [players, setPlayers] = useState([]); // Simplified state
-  const [availableSeasons, setAvailableSeasons] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [modal, setModal] = useState({ type: null, player: null });
+  const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showCreatePlayer, setShowCreatePlayer] = useState(false);
+  const [showAddPlayersModal, setShowAddPlayersModal] = useState(false);
+  const [selectedSeason, setSelectedSeason] = useState(""); // Initialize to an empty string for "All Seasons"
+  const [availablePlayers, setAvailablePlayers] = useState([]);
+  const [teamName, setTeamName] = useState(""); // State for team name
 
+  // Fetch players for the selected team and season
   useEffect(() => {
-    const fetchSeasons = async () => {
+    const fetchTeamName = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/seasons");
+        const response = await fetch(`http://localhost:5000/api/teams/${teamId}`);
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error("Failed to fetch team data");
         }
         const data = await response.json();
-        const seasonArray = data.seasons.sort();
-        setAvailableSeasons(seasonArray);
-
-        // Set default season if not already selected
-        if (!selectedSeason && seasonArray.length > 0) {
-          setSelectedSeason(seasonArray[0]);
-        }
+        setTeamName(data.name);
       } catch (error) {
-        console.error("Error fetching seasons:", error);
-        setError("Error fetching available seasons.");
+        console.error("Error fetching team name:", error);
       }
     };
-    fetchSeasons();
-  }, []);
+
+    fetchTeamName();
+  }, [teamName]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPlayers = async () => {
       setLoading(true);
-      setError(null);
-
       try {
-        let response;
-        if (!selectedSeason || selectedSeason === "") {
-          // Fetch all players if no season is selected
-          response = await fetch(
-            `http://localhost:5000/api/teams/${teamId}/players`
-          );
-        } else {
-          // Fetch players for the selected season
-          response = await fetch(
-            `http://localhost:5000/api/teams/${teamId}/players?season=${selectedSeason}`
-          );
+        let url = `http://localhost:5000/api/teams/${teamId}/players`;
+        if (selectedSeason) {
+          url += `?season=${selectedSeason}`;
         }
-
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error("Failed to fetch players");
         }
-
         const data = await response.json();
-        setPlayers(data.players || []); // Update directly
+        setPlayers(data.players);
       } catch (error) {
-        console.error("Failed to fetch player data:", error);
-        setError("Error loading players. Please try again later.");
-        setPlayers([]); // Reset to empty array on error
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [teamId, selectedSeason]); // Run when teamId or selectedSeason changes
+    fetchPlayers();
+  }, [teamId, selectedSeason]);
 
-  const filteredPlayers = players.filter((player) =>
-    player.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  const openModal = (type, player = null) => setModal({ type, player });
-  const closeModal = () => setModal({ type: null, player: null });
-
-  const handleSavePlayer = async (playerData) => {
-    try {
-      const method = modal.type === 'add' ? 'POST' : 'PUT';
-      const url = modal.type === 'add' ? `http://localhost:5000/api/teams/${teamId}/players` : `/api/teams/${teamId}/players/${playerData.id}`;
-      const body = modal.type === 'add' ?
-        JSON.stringify({ season: selectedSeason, player: playerData })
-        :
-        JSON.stringify({ season: selectedSeason, updatedPlayer: playerData });
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      closeModal();
-      const updatedResponse = await fetch(`http://localhost:5000/api/teams/${teamId}/players?season=${selectedSeason}`);
-      const updatedData = await updatedResponse.json();
-      setPlayers(prevPlayers => ({
-        ...prevPlayers,
-        [selectedSeason]: {
-          ...prevPlayers[selectedSeason],
-          [teamId]: updatedData.players
+  // Fetch available players (not in the current team) for the selected season
+  useEffect(() => {
+    const fetchAvailablePlayers = async () => {
+      try {
+        let url = `http://localhost:5000/api/players/available`;
+        if (selectedSeason) {
+          url += `?season=${selectedSeason}`;
         }
-      }));
-    } catch (error) {
-      console.error('Failed to save player:', error);
-      setError(error);
-    }
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Failed to fetch available players");
+        }
+        const data = await response.json();
+        setAvailablePlayers(data.players);
+      } catch (error) {
+        console.error("Error fetching available players:", error);
+        setError("Failed to fetch available players.");
+      }
+    };
+
+    fetchAvailablePlayers();
+  }, [selectedSeason]);
+
+  // Handle adding a new player (created via CreatePlayer modal)
+  const handleAddPlayer = (newPlayer) => {
+    setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
+    setShowCreatePlayer(false);
   };
 
+  // Handle deleting a player from the team
   const handleDeletePlayer = async (playerId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/teams/${teamId}/players/${playerId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ season: selectedSeason }),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const updatedResponse = await fetch(`http://localhost:5000/api/teams/${teamId}/players?season=${selectedSeason}`);
-      const updatedData = await updatedResponse.json();
-      setPlayers(prevPlayers => ({
-        ...prevPlayers,
-        [selectedSeason]: {
-          ...prevPlayers[selectedSeason],
-          [teamId]: updatedData.players
+      const response = await fetch(
+        `http://localhost:5000/api/teams/${teamId}/players/${playerId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ season: selectedSeason }),
         }
-      }));
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete player");
+      }
+
+      setPlayers((prevPlayers) =>
+        prevPlayers.filter((player) => player.id !== playerId)
+      );
     } catch (error) {
-      console.error('Failed to delete player:', error);
-      setError(error);
+      console.error("Error deleting player:", error);
+      setError(error.message);
     }
   };
 
-  const navigateToPlayerInfo = (playerId) => navigate(`/teams/${teamId}/players/${playerId}`);
+  const handleAddPlayersToTeam = (selectedPlayerIds) => {
+    const newPlayers = availablePlayers.filter((player) =>
+      selectedPlayerIds.includes(player.id)
+    );
+    setPlayers((prevPlayers) => [...prevPlayers, ...newPlayers]);
+    setAvailablePlayers((prevAvailablePlayers) =>
+      prevAvailablePlayers.filter(
+        (player) => !selectedPlayerIds.includes(player.id)
+      )
+    );
+    setShowAddPlayersModal(false);
+  };
 
-  if (loading) return <div>Loading players...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // Navigate to the player details page
+  const handleNavigate = (player) => {
+    navigate(`/teams/${teamId}/players/${player.id}`, { state: { player } });
+  };
+  const handleToTeams = () => {
+    navigate(`/teams`)
+  }
+  // Handle season change from the SeasonSelector
+  const handleSeasonChange = (newSeason) => {
+    setSelectedSeason(newSeason);
+  };
 
   return (
     <div className="players-container">
-      <div className="header-container">
-        <button onClick={() => navigate('/teams')} className="back-to-teams">Quay lại</button>
-        <h2>Quản lý cầu thủ</h2>
-      </div>
+      <button
+        className="add-players-button"
+        onClick={() => handleToTeams()}
+      >
+        Quay lại
+      </button>
+      <h2>Cầu thủ trong đội {teamName}</h2> 
       <SeasonSelector
-        seasons={availableSeasons}
+        seasons={seasons}
         selectedSeason={selectedSeason}
-        onSeasonChange={(newSeason) => {
-          if (newSeason !== selectedSeason) {
-            setSelectedSeason(newSeason);
-          }
-        }}
+        onSeasonChange={handleSeasonChange}
       />
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Tìm kiếm cầu thủ..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        {searchTerm && <button onClick={() => setSearchTerm('')}>&#x2715;</button>}
-      </div>
-      {selectedSeason && (
-        <button onClick={() => openModal('add')} className="add-player">
-          Thêm cầu thủ
-        </button>
-      )}
-      {!selectedSeason && (
-        <p>Vui lòng chọn mùa giải trước khi thêm cầu thủ.</p>
-      )}      <PlayerList
-        players={filteredPlayers}
-        onEdit={(player) => openModal('edit', player)}
-        onDelete={handleDeletePlayer}
-        onNavigate={navigateToPlayerInfo}
-      />
-      {modal.type && (
-        <Modal
-          type={modal.type}
-          player={modal.player}
-          positions={['Tiền đạo', 'Tiền vệ', 'Hậu vệ', 'Thủ môn']}
+      <button
+        className="add-players-button"
+        onClick={() => setShowAddPlayersModal(true)}
+      >
+        Thêm cầu thủ vào đội
+      </button>
+      
+      {showAddPlayersModal && (
+        <AddPlayersToTeamModal
+          teamId={teamId}
           season={selectedSeason}
-          onSave={handleSavePlayer}
-          onCancel={closeModal}
+          onAddPlayersToTeam={handleAddPlayersToTeam}
+          onClose={() => setShowAddPlayersModal(false)}
         />
+      )}
+      {showCreatePlayer && (
+        <div className="create-player-modal">
+          <div className="modal-content">
+            <CreatePlayer
+              seasons={seasons}
+              onAddPlayer={handleAddPlayer}
+              onClose={() => setShowCreatePlayer(false)}
+            />
+          </div>
+        </div>
+      )}
+      {error && <p className="error-message">{error}</p>}
+      {loading ? (
+        <p>Đang tải...</p>
+      ) : players.length > 0 ? (
+        <PlayerList
+          players={players}
+          onDelete={handleDeletePlayer}
+          onNavigate={handleNavigate}
+          season={selectedSeason}
+        />
+      ) : (
+        <div className="empty-state">
+          <p>Không tìm thấy cầu thủ trong đội {teamName}</p>
+        </div>
       )}
     </div>
   );
-};
+}
 
 export default Players;

@@ -1,10 +1,11 @@
 // src/pages/Teams/EditTeam.js
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './EditTeam.css';
 
-function EditTeam({ teams, onEditTeam }) {
+const API_URL = 'http://localhost:5000/api';
+
+function EditTeam() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [team, setTeam] = useState(null);
@@ -17,40 +18,73 @@ function EditTeam({ teams, onEditTeam }) {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const teamToEdit = teams.find((team) => team.id === parseInt(id, 10));
-        if (teamToEdit) {
-            setTeam(teamToEdit);
+        const fetchTeam = async () => {
+          try {
+            const response = await fetch(`${API_URL}/teams/${id}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch team data');
+            }
+            const data = await response.json();
+            setTeam(data);
             setImagePreviews({
-                home_kit_image: teamToEdit.home_kit_image && teamToEdit.home_kit_image instanceof File
-                    ? URL.createObjectURL(teamToEdit.home_kit_image)
-                    : teamToEdit.home_kit_image,
-                away_kit_image: teamToEdit.away_kit_image && teamToEdit.away_kit_image instanceof File
-                    ? URL.createObjectURL(teamToEdit.away_kit_image)
-                    : teamToEdit.away_kit_image,
-                third_kit_image: teamToEdit.third_kit_image && teamToEdit.third_kit_image instanceof File
-                    ? URL.createObjectURL(teamToEdit.third_kit_image)
-                    : teamToEdit.third_kit_image,
+              home_kit_image: data.home_kit_image,
+              away_kit_image: data.away_kit_image,
+              third_kit_image: data.third_kit_image,
             });
-        }
-        setLoading(false);
-    }, [teams, id]);
+          } catch (error) {
+            console.error('Error fetching team:', error);
+            setError(error.message);
+          } finally {
+            setLoading(false);
+          }
+        };
+      
+        fetchTeam();
+      }, [id]);
 
-    const handleSave = () => {
+      const handleSave = async () => {
         setError('');
         if (!team || !team.name.trim() || !team.city.trim()) {
-            setError('Vui lòng điền đầy đủ thông tin bắt buộc.');
-            return;
+          setError('Please fill in all required fields.');
+          return;
         }
-
+      
         const updatedTeam = {
-            ...team,
-            capacity: team.capacity ? parseInt(team.capacity, 10) : null,
-            fifa_stars: team.fifa_stars ? parseInt(team.fifa_stars, 10) : null,
+          ...team,
+          capacity: team.capacity ? parseInt(team.capacity, 10) : null,
+          fifa_stars: team.fifa_stars ? parseInt(team.fifa_stars, 10) : null,
         };
+      
+        const formData = new FormData();
+        for (const key in updatedTeam) {
+            if (updatedTeam[key] !== null && updatedTeam[key] !== undefined) {
+              if (key === 'home_kit_image' || key === 'away_kit_image' || key === 'third_kit_image') {
+                if (updatedTeam[key] instanceof File) {
+                  formData.append(key, updatedTeam[key]);
+                }
+              } else {
+                formData.append(key, updatedTeam[key]);
+              }
+            }
+          }
 
-        onEditTeam(updatedTeam);
-        navigate('/teams');
-    };
+        try {
+          const response = await fetch(`${API_URL}/teams/${id}`, {
+            method: 'PUT',
+            body: formData,
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update team');
+          }
+      
+          navigate('/teams');
+        } catch (error) {
+          console.error('Error updating team:', error);
+          setError(error.message);
+        }
+      };
 
     const handleChange = (e) => {
         const { name, value } = e.target;

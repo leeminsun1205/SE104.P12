@@ -1,4 +1,4 @@
-// src/pages/Teams/AddTeamsToSeasonModal.js
+// src\pages\Teams\AddTeamsToSeasonModal.js
 import React, { useState, useEffect } from "react";
 import "./AddTeamsToSeasonModal.css";
 
@@ -51,33 +51,34 @@ function AddTeamsToSeasonModal({ season, onAddTeamsToSeason, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="add-teams-modal">
-        <h2>Add Teams to Season {season}</h2>
+        <h2>Thêm đội vào mùa giải {season}</h2>
         {error && <p className="error-message">{error}</p>}
         {loading ? (
-          <p>Loading available teams...</p>
+          <p>Đang tải đội bóng...</p>
         ) : (
           <>
-            <ul className="team-list">
+            {/* Update class names here to match the CSS */}
+            <ul className="add-teams-list">
               {availableTeams.map((team) => (
-                <li key={team.id} className="team-item">
-                  <label className="team-label">
+                <li key={team.id} className="add-teams-item">
+                  <label className="add-teams-label">
                     <input
                       type="checkbox"
-                      className="team-checkbox"
+                      className="add-teams-checkbox"
                       checked={selectedTeams.includes(team.id)}
                       onChange={() => handleTeamSelection(team.id)}
                     />
-                    <span className="team-name">{team.name}</span>
+                    <span className="add-teams-name">{team.name}</span>
                   </label>
                 </li>
               ))}
             </ul>
-            <div className="modal-buttons">
-              <button className="add-button" onClick={handleAddTeams}>
-                Add Selected Teams
+            <div className="modal-sbuttons">
+              <button className="add-sbutton" onClick={handleAddTeams}>
+                Thêm đội bóng đã chọn
               </button>
-              <button className="cancel-button" onClick={onClose}>
-                Cancel
+              <button className="cancel-sbutton" onClick={onClose}>
+                Hủy
               </button>
             </div>
           </>

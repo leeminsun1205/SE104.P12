@@ -1,7 +1,7 @@
 // src/pages/Teams/CreateTeam.js
 import React, { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AddTeam.css';
+import './CreateTeam.css';
 
 const CreateTeam = memo(({ onAddTeam }) => {
     const navigate = useNavigate();
