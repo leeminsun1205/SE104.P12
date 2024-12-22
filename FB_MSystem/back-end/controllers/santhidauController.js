@@ -1,4 +1,5 @@
 const { SanThiDau, ThamSo } = require('../models');
+const { isDuplicate } = require('../utils/isDuplicate');
 
 const SanThiDauController = {
     async getAll(req, res) {
@@ -24,6 +25,10 @@ const SanThiDauController = {
     async create(req, res) {
         try {
             const { MaSan, TenSan, DiaChiSan, SucChua, TieuChuan } = req.body;
+            const isDuplicateName = await isDuplicate(SanThiDau, 'TenSan', TenSan);
+            if (isDuplicateName) {
+                return res.status(400).json({ error: `Tên sân "${TenSan}" đã tồn tại.` });
+            }
 
             // Lấy giá trị tham số từ bảng THAMSO
             const thamSo = await ThamSo.findOne();
@@ -82,7 +87,12 @@ const SanThiDauController = {
             if (!sanThiDaus) {
                 return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
             }
-
+            if (updates.TenSan && updates.TenSan !== sanThiDaus.TenSan) {
+                const isDuplicateName = await isDuplicate(SanThiDau, 'TenSan', updates.TenSan);
+                if (isDuplicateName) {
+                    return res.status(400).json({ error: `Tên sân "${updates.TenSan}" đã tồn tại.` });
+                }
+            }
             // Cập nhật thông tin
             await sanThiDaus.update(updates);
             res.status(200).json(sanThiDaus);

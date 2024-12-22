@@ -84,15 +84,19 @@ CREATE TABLE MG_DB_CT (
 );
 
 CREATE TABLE VONGDAU (
-	MaVongDau CHAR(10) NOT NULL,
-	MaMuaGiai CHAR(10) NOT NULL,
-	LuotDau	BIT NOT NULL, -- 0: lượt đi, 1: lượt về
-	SoThuTu	TINYINT NOT NULL,
-	NgayBatDau DATE NOT NULL,
-	NgayKetThuc DATE NOT NULL,
-    CHECK (NgayBatDau <= NgayKetThuc),
-    PRIMARY KEY (MaVongDau),
-    FOREIGN KEY (MaMuaGiai) REFERENCES MUAGIAI(MaMuaGiai)
+    MaVongDau CHAR(10) NOT NULL,                
+    MaMuaGiai CHAR(10) NOT NULL,                
+    LuotDau BIT NOT NULL,                       -- false: lượt đi, true: lượt về
+    SoThuTu TINYINT UNSIGNED NOT NULL,          
+    NgayBatDau DATE,                            
+    NgayKetThuc DATE,                           
+    CONSTRAINT CK_NgayBatDau_NgayKetThuc        -- Ràng buộc: Ngày bắt đầu phải trước hoặc bằng ngày kết thúc
+        CHECK (NgayBatDau IS NULL OR NgayKetThuc IS NULL OR NgayBatDau <= NgayKetThuc),
+    CONSTRAINT PK_VongDau PRIMARY KEY (MaVongDau), -- Khóa chính: MaVongDau
+    CONSTRAINT FK_MaMuaGiai FOREIGN KEY (MaMuaGiai) -- Khóa ngoại: MaMuaGiai tham chiếu đến bảng MUAGIAI
+        REFERENCES MUAGIAI(MaMuaGiai)
+        ON DELETE CASCADE                          -- Xóa vòng đấu nếu mùa giải bị xóa
+        ON UPDATE CASCADE                          -- Cập nhật mã mùa giải nếu có thay đổi
 );
 
 CREATE TABLE TRANDAU (
@@ -280,6 +284,6 @@ INSERT INTO THAMSO (
 
 #Kiểm tra bảng
 -- SHOW TABLES;
--- DESCRIBE THAMSO;
--- select * from thamso;
--- DROP TABLE IF EXISTS THAMSO;
+-- DESCRIBE TRANDAU;
+-- select * from trandau;
+-- DROP TABLE IF EXISTS TRANDAU;

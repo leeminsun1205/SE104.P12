@@ -18,6 +18,13 @@ const LoaiThePhat = sequelize.define('LoaiThePhat', {
 }, {
     tableName: 'LOAITHEPHAT',
     timestamps: false,
+    hooks: {
+        beforeValidate: async (record) => {
+            if (!record.MaLoaiThePhat) {
+                record.MaLoaiThePhat = await autoCreateCode(LoaiThePhat, 'LTP', 'MaLoaiThePhat', 1);
+            }
+        },
+    },
 });
 
 module.exports = LoaiThePhat;

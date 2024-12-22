@@ -1,4 +1,5 @@
 const { LoaiThePhat } = require('../models');
+const { isDuplicate } = require('../utils/isDuplicate');
 
 const LoaiThePhatController = {
     async getAll(req, res) {
@@ -13,6 +14,10 @@ const LoaiThePhatController = {
     async create(req, res) {
         try {
             const { MaLoaiThePhat, TenLoaiThePhat, MoTa } = req.body;
+            const isDuplicateName = await isDuplicate(LoaiThePhat, 'TenLoaiThePhat', TenLoaiThePhat);
+            if (isDuplicateName) {
+                return res.status(400).json({ error: `Tên loại thẻ phạt "${TenLoaiThePhat}" đã tồn tại.` });
+            }
             const loaiThePhat = await LoaiThePhat.create({
                 MaLoaiThePhat, TenLoaiThePhat, MoTa,
             });
@@ -28,6 +33,12 @@ const LoaiThePhatController = {
             const updates = req.body;
             const loaiThePhat = await LoaiThePhat.findByPk(id);
             if (!loaiThePhat) return res.status(404).json({ error: 'Không tìm thấy loại thẻ phạt.' });
+            if (updates.TenLoaiThePhat && updates.TenLoaiThePhat !== loaiThePhat.TenLoaiThePhat) {
+                const isDuplicateName = await isDuplicate(LoaiThePhat, 'TenLoaiThePhat', updates.TenLoaiThePhat);
+                if (isDuplicateName) {
+                    return res.status(400).json({ error: `Tên loại thẻ phạt "${updates.TenLoaiThePhat}" đã tồn tại.` });
+                }
+            }
             await loaiThePhat.update(updates);
             res.status(200).json(loaiThePhat);
         } catch (error) {

@@ -22,7 +22,7 @@ const CauThu = sequelize.define(
             allowNull: false,
         },
         LoaiCauThu: {
-            type: DataTypes.BOOLEAN, // 1: Trong nước, 0: Ngoài nước
+            type: DataTypes.BOOLEAN, // true: Trong nước, false: Ngoài nước
             allowNull: false,
         },
         ViTri: {
@@ -57,25 +57,9 @@ const CauThu = sequelize.define(
         tableName: 'CAUTHU',
         timestamps: false,
         hooks: {
-            beforeValidate: async (cauThu) => {
-                if (!cauThu.MaCauThu) {
-                    const existingCodes = await CauThu.findAll({
-                        where: {
-                            MaCauThu: {
-                                [Op.like]: 'CT%',
-                            },
-                        },
-                        attributes: ['MaCauThu'],
-                    });
-
-                    const suffixes = existingCodes.map((code) => {
-                        const match = code.MaCauThu.match(/CT(\d+)$/);
-                        return match ? parseInt(match[1], 10) : 0;
-                    });
-
-                    const nextSuffix = suffixes.length > 0 ? Math.max(...suffixes) + 1 : 1;
-
-                    cauThu.MaCauThu = `CT${String(nextSuffix).padStart(3, '0')}`; // Định dạng CT001, CT002, ...
+            beforeValidate: async (record) => {
+                if (!record.MaCauThu) {
+                    record.MaCauThu = await autoCreateCode(CauThu, 'CT', 'MaCauThu', 4);
                 }
             },
         },

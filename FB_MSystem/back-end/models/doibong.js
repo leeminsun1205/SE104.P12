@@ -65,19 +65,6 @@ const DoiBong = sequelize.define(
                     doiBong.MaDoiBong = suffixes.length > 0 ? `${baseMaDoiBong}_${nextSuffix}` : baseMaDoiBong;
                 }
             },
-
-            beforeCreate: async (doiBong) => {
-                // Kiểm tra trùng tên đội bóng
-                const existingTeam = await DoiBong.findOne({
-                    where: {
-                        TenDoiBong: doiBong.TenDoiBong,
-                    },
-                });
-
-                if (existingTeam) {
-                    throw new Error(`Tên đội bóng "${doiBong.TenDoiBong}" đã tồn tại!`);
-                }
-            },
         },
     }
 );

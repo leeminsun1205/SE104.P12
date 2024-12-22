@@ -1,5 +1,5 @@
 const { DoiBong } = require('../models');
-
+const { isDuplicate } = require('../utils/isDuplicate');
 const DoiBongController = {
     async getAll(req, res) {
         try {
@@ -24,6 +24,10 @@ const DoiBongController = {
     async create(req, res) {
         try {
             const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin, Logo } = req.body;
+            const isDuplicateName = await isDuplicate(DoiBong, 'TenDoiBong', TenDoiBong);
+            if (isDuplicateName) {
+                return res.status(400).json({ error: `Tên đội bóng "${TenDoiBong}" đã tồn tại.` });
+            }
             const doiBong = await DoiBong.create({
                 MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin, Logo,
             });
@@ -39,6 +43,12 @@ const DoiBongController = {
             const updates = req.body;
             const doiBong = await DoiBong.findByPk(id);
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
+            if (updates.TenDoiBong && updates.TenDoiBong !== doiBong.TenDoiBong) {
+                const isDuplicateName = await isDuplicate(DoiBong, 'TenDoiBong', updates.TenDoiBong);
+                if (isDuplicateName) {
+                    return res.status(400).json({ error: `Tên đội bóng "${updates.TenDoiBong}" đã tồn tại.` });
+                }
+            }
             await doiBong.update(updates);
             res.status(200).json(doiBong);
         } catch (error) {

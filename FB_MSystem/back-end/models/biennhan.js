@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
+const { autoCreateCode } = require('../utils/autoCreateCode');
 
 const BienNhan = sequelize.define('BienNhan', {
     MaLePhi: {
@@ -20,11 +21,11 @@ const BienNhan = sequelize.define('BienNhan', {
         allowNull: false,
     },
     NgayBatDau: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
     NgayHetHan: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
             isAfterField(value) {
@@ -46,26 +47,25 @@ const BienNhan = sequelize.define('BienNhan', {
         },
     },
     TinhTrang: {
-        type: DataTypes.BOOLEAN, // 0: chưa thanh toán, 1: đã thanh toán
+        type: DataTypes.BOOLEAN, // true: chưa thanh toán, false: đã thanh toán
         allowNull: false,
-        validate: {
-            isIn: [[0, 1]],
-        },
     },
 }, {
     tableName: 'BIENNHAN',
     timestamps: false,
+    hooks: {
+        beforeValidate: async (record) => {
+            if (!record.MaLePhi) {
+                record.MaLePhi = await autoCreateCode(BienNhan, 'BN', 'MaLePhi', 4);
+            }
+        },
+    },
+    
 });
-
-// Thiết lập quan hệ với các bảng khác
 BienNhan.associate = (models) => {
-    // Một biên nhận liên kết với một đội bóng
     BienNhan.belongsTo(models.DoiBong, {
         foreignKey: 'MaDoiBong',
         as: 'DoiBong',
-        onDelete: 'CASCADE', // Xóa đội bóng thì xóa luôn biên nhận
-        onUpdate: 'CASCADE',
     });
-};
-
+}
 module.exports = BienNhan;

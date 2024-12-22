@@ -1,4 +1,5 @@
 const { MuaGiai } = require('../models');
+const { isDuplicate } = require('../utils/isDuplicate');
 
 const MuaGiaiController = {
     async getAll(req, res) {
@@ -24,6 +25,10 @@ const MuaGiaiController = {
     async create(req, res) {
         try {
             const { MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc } = req.body;
+            const isDuplicateName = await isDuplicate(MuaGiai, 'TenMuaGiai', TenMuaGiai);
+            if (isDuplicateName) {
+                return res.status(400).json({ error: `Tên mùa giải "${TenMuaGiai}" đã tồn tại.` });
+            }
             const muaGiai = await MuaGiai.create({
                 MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc,
             });
@@ -39,6 +44,12 @@ const MuaGiaiController = {
             const updates = req.body;
             const muaGiai = await MuaGiai.findByPk(id);
             if (!muaGiai) return res.status(404).json({ error: 'Không tìm thấy mùa giải.' });
+            if (updates.TenMuaGiai && updates.TenMuaGiai !== muaGiai.TenMuaGiai) {
+                const isDuplicateName = await isDuplicate(MuaGiai, 'TenMuaGiai', updates.TenMuaGiai);
+                if (isDuplicateName) {
+                    return res.status(400).json({ error: `Tên mùa giải "${updates.TenMuaGiai}" đã tồn tại.` });
+                }
+            }
             await muaGiai.update(updates);
             res.status(200).json(muaGiai);
         } catch (error) {

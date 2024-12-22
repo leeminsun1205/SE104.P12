@@ -57,21 +57,6 @@ const MuaGiai = sequelize.define(
                     muaGiai.MaMuaGiai = `${baseMaMuaGiai}_${nextSuffix}`;
                 }
             },
-        
-            beforeCreate: async (muaGiai) => {
-                // Kiểm tra trùng tên và thời gian bắt đầu - kết thúc
-                const existingMuaGiai = await MuaGiai.findOne({
-                    where: {
-                        TenMuaGiai: muaGiai.TenMuaGiai,
-                        NgayBatDau: muaGiai.NgayBatDau,
-                        NgayKetThuc: muaGiai.NgayKetThuc,
-                    },
-                });
-        
-                if (existingMuaGiai) {
-                    throw new Error('Mùa giải với tên và thời gian này đã tồn tại!');
-                }
-            },
         },
     }
 );

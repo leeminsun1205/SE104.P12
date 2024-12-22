@@ -32,40 +32,9 @@ const SanThiDau = sequelize.define(
         tableName: 'SANTHIDAU',
         timestamps: false,
         hooks: {
-            beforeValidate: async (san) => {
-                if (!san.MaSan) {
-                    const baseMaSan = `SAN_${san.TenSan.split(' ').map(word => word[0].toUpperCase()).join('')}`;
-        
-                    const existingCodes = await SanThiDau.findAll({
-                        where: {
-                            MaSan: {
-                                [Op.like]: `${baseMaSan}%`,
-                            },
-                        },
-                        attributes: ['MaSan'],
-                    });
-        
-                    const suffixes = existingCodes.map(code => {
-                        const match = code.MaSan.match(/_(\d+)$/);
-                        return match ? parseInt(match[1], 10) : 0;
-                    });
-        
-                    const nextSuffix = suffixes.length > 0 ? Math.max(...suffixes) + 1 : 1;
-        
-                    san.MaSan = suffixes.length > 0 ? `${baseMaSan}_${nextSuffix}` : baseMaSan;
-                }
-            },
-
-            beforeCreate: async (san) => {
-                // Kiểm tra trùng tên sân
-                const existingSan = await SanThiDau.findOne({
-                    where: {
-                        TenSan: san.TenSan,
-                    },
-                });
-        
-                if (existingSan) {
-                    throw new Error(`Tên sân "${san.TenSan}" đã tồn tại!`);
+            beforeValidate: async (record) => {
+                if (!record.MaSan) {
+                    record.MaSan = await autoCreateCode(SanThiDau, 'SAN', 'MaSan', 2);
                 }
             },
         },
