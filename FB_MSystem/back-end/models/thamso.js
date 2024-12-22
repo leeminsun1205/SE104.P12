@@ -2,6 +2,11 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const ThamSo = sequelize.define('ThamSo', {
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull:false,
+        primaryKey: true,
+    },
     SucChuaToiThieu: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -40,12 +45,12 @@ const ThamSo = sequelize.define('ThamSo', {
     LePhi: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: { min: 0 },
+        validate: { min: 500 },
     },
     ThoiDiemGhiBanToiDa: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: { min: 0 },
+        validate: { min: 1 },
     },
     DiemThang: {
         type: DataTypes.TINYINT,
