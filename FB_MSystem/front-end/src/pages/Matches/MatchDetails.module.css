@@ -1,0 +1,86 @@
+
+.matchDetails {
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px var(--card-shadow);
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+}
+
+.matchTitle {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+.matchTitle span {
+  color: var(--secondary-color);
+  font-weight: normal;
+}
+
+.matchInfo {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px var(--card-shadow);
+  padding: 20px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.infoItem {
+  font-size: 16px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: var(--label-color);
+  font-weight: bold;
+}
+
+.notFound {
+  text-align: center;
+  padding: 40px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px var(--card-shadow);
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.notFound h2 {
+  font-size: 24px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.notFound p {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.backButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #3700b3;
+}

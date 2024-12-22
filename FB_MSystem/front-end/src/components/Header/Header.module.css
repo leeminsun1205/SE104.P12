@@ -1,4 +1,9 @@
+/* src/components/Header/Header.module.css */
 /* General Header Styles */
+button:focus, input:focus {
+  outline: none;
+  outline-offset: none;
+}
 .header {
   display: flex;
   justify-content: space-between;
@@ -14,44 +19,62 @@
   right: 0;
   z-index: 1000;
 }
+
+.toggleButtonContainer {
+  /* Thêm phần này */
+  display: flex;
+  align-items: center;
+}
+
 .toggleButton:focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+
 .toggleButton {
   margin-top: 0px;
   background-color: var(--primary-color);
+  border: none; /* Thêm phần này */
+  color: white; /* Thêm phần này */
+  cursor: pointer; /* Thêm phần này */
+  font-size: 1.5rem; /* Thêm phần này */
 }
+
 .toggleButton:hover {
   margin-top: 0px;
   background-color: rgb(88, 122, 255);
   border: none;
 }
+
 .header .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  /* font-size: 1.5rem; */
+  /* font-weight: bold; */
   color: white;
+  display: flex; /* Thêm phần này */
+  align-items: center; /* Thêm phần này */
 }
+
 .logout-button {
   font-weight: 600;
 }
+
 .logo a {
   font-size: 1.5rem;
   font-weight: bold;
   color: white;
   text-decoration: none;
-  position: relative;
-  left: -50px;
+  /* position: relative;
+  left: -50px; */
 }
 
 .logo a:hover {
   color: var(--color-secondary);
 }
 
-
 .nav {
   display: flex;
-  gap: 15px;
+  /* gap: 15px; */
+  align-items: center; /* Thêm phần này */
 }
 
 .navLink {
@@ -59,6 +82,7 @@
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.3s;
+  padding: 14px; /* Thêm phần này để căn đều với button */
 }
 
 .navLink:hover {
@@ -77,7 +101,7 @@
 .userMenu {
   display: flex;
   align-items: center;
-  gap: 10px;
+  /* gap: 10px; */
 }
 
 .avatar {
@@ -92,7 +116,7 @@
 }
 
 .sidebarToggle {
-  display: none; 
+  display: none;
   background: none;
   border: none;
   font-size: 30px;
@@ -132,4 +156,56 @@
   .navLink {
     font-size: 1.1rem; /* Slightly larger font for easier readability on mobile */
   }
+}
+
+/* Dropdown styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: inherit;
+  color: white;
+  padding: 14px; /* Giữ nguyên padding để button và link cao bằng nhau */
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  align-items: center;
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  background-color: #0d6efd;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 45px;
+}
+
+.dropdownContent a {
+  color: rgb(255, 255, 255);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdownContent a:hover {
+  background-color: #0b5ed7;
+}
+
+.show {
+  display: block;
+}
+
+/* Thêm phần này để căn đều các phần tử trong header */
+.header > * {
+  margin-left: 20px;
+}
+
+.header > *:first-child {
+    margin-left: 0px;
 }

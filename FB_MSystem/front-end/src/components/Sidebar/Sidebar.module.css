@@ -78,3 +78,63 @@
 .overlay:hover {
   cursor: pointer;
 }
+/* src/components/Sidebar/Sidebar.module.css */
+/* ... other styles ... */
+
+.nav .navLink {
+  /* Existing styles for navLink */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.nav .navLink i:first-child {
+  margin-right: 5px;
+}
+.nav .navLink i:nth-child(2) {
+  margin-right: 10px;
+}
+
+.management {
+  display: none;
+  padding-left: 20px; /* Thụt lề các link con */
+}
+
+.management.show {
+  display: block;
+}
+
+.management .navLink {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 1rem;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.management .navLink:hover {
+  color: #f1f1f1;
+}
+
+.management .navLink i {
+  width: 25px; /* Căn chỉnh icon cho đều */
+}
+.management .active {
+  background-color: #04aa6d;
+}
+.fa-caret-right{
+    display: none;
+}
+.show + .fa-caret-down{
+    display: block;
+}
+.show + .fa-caret-right{
+    display: block;
+}
+.navLink .fa-caret-right {
+  margin-right: 10px;
+}
+.navLink .fa-caret-down {
+  margin-right: 10px;
+}

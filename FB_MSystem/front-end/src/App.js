@@ -18,7 +18,11 @@ import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SignUp from './pages/SignUp/SignUp';
+import MatchDetails from './pages/Matches/MatchDetails';
+import Matches from './pages/Matches/Matches';
+import Invoices from './pages/Invoices/Invoices';
 import Temp from './pages/Temp/Temp';
+
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 import './assets/styles/global.css';
@@ -179,14 +183,17 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
                     onDeleteTeam={onDeleteTeam} />}
             />
             <Route path="/create/team" element={<CreateTeam />} />
-            <Route path="/create/player" element={<CreatePlayer/>} />
+            <Route path="/create/player" element={<CreatePlayer />} />
             <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} otherMatches={otherMatches}/>} />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} otherMatches={otherMatches} />} />
             <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
             <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
+            <Route path="/matches" element={<Matches />} />
+            <Route path="/match/:season/:round/:id" element={<MatchDetails />} />
             <Route path="/teams/:id/other-matches" element={<OtherLeagueMatches teams={teams} otherMatches={otherMatches} />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="/create" element={<CreateNew />} />
+            <Route path="/invoices" element={<Invoices />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );
