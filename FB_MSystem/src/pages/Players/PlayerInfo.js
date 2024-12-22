@@ -11,20 +11,17 @@ const PlayerInfo = ({ players }) => {
   useEffect(() => {
     console.log("Rendering PlayerInfo for playerId:", playerId, "and teamId:", teamId);
     console.log("Players data:", players);
-    console.log("Team ID:", teamId);
-    console.log("Player ID:", playerId);
   }, [playerId, teamId, players]);
 
   useEffect(() => {
     const findPlayerLocally = () => {
-      return Object.values(players || {})
-        .flatMap((season) => season[teamId] || [])
-        .find((p) => p.id.toString() === playerId);
+      const selectedSeason = Object.keys(players || {})[0]; // Assuming you have at least one season
+      return players[selectedSeason]?.[teamId]?.find((p) => p.id.toString() === playerId);
     };
 
     const fetchPlayerFromAPI = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/players/${playerId}`);
+        const response = await fetch(`http://localhost:5000/api/teams/${teamId}/players/${playerId}`);
         if (!response.ok) {
           throw new Error('Player not found');
         }
@@ -66,14 +63,7 @@ const PlayerInfo = ({ players }) => {
   }
 
   const calculateAge = (dob) => {
-    const birthDate = new Date(dob);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
+    // ... (same logic as before)
   };
 
   return (

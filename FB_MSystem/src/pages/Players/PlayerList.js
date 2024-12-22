@@ -10,7 +10,7 @@ const calculateAge = (dob) => {
     return age;
   };
   
-const PlayerList = ({ players, onEdit, onDelete, onNavigate }) => {
+const PlayerList = ({ players, onEdit, onDelete, onNavigate , season    }) => {
   if (players.length === 0) {
     return <p>Không tìm thấy cầu thủ nào.</p>;
   }
@@ -24,6 +24,7 @@ const PlayerList = ({ players, onEdit, onDelete, onNavigate }) => {
             <p>Năm sinh: {player.dob} (Tuổi: {calculateAge(player.dob)})</p>
             <p>Quốc tịch: {player.nationality}</p>
             <p>Vị trí: {player.position}</p>
+            <p>Mùa giải: {player.season}</p>
           </div>
           <div className="action">
             <button onClick={() => onEdit(player)} className="edit-player">Chỉnh sửa</button>

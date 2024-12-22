@@ -1,6 +1,4 @@
-// /src/components/SeasonSelector/SeasonSelector.js
-
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 // Styled components for styling
@@ -36,10 +34,8 @@ const Option = styled.option`
     padding: 0.5rem;
 `;
 
-function SeasonSelector({ onSeasonChange, seasons }) {
-    const [selectedSeason, setSelectedSeason] = useState(seasons.length > 0 ? seasons[0] : '-------Chọn mùa giải-------');
+function SeasonSelector({ onSeasonChange, seasons, selectedSeason }) {
     const handleChange = (event) => {
-        setSelectedSeason(event.target.value);
         onSeasonChange(event.target.value);
     };
 
@@ -47,6 +43,9 @@ function SeasonSelector({ onSeasonChange, seasons }) {
         <Container>
             <Label htmlFor="season">Mùa giải:</Label>
             <Select id="season" value={selectedSeason} onChange={handleChange}>
+                <Option value="">
+                    -------Chọn mùa giải-------
+                </Option>
                 {seasons.map((season) => (
                     <Option key={season} value={season}>
                         {season}

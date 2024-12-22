@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -22,42 +23,35 @@ import './App.css';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
-const initialTeams = [
-    {
-        id: 1,
-        name: "Hà Nội FC",
-        city: "Hà Nội",
-        managing_body: "T&T",
-        stadium: "Hàng Đẫy",
-        capacity: 22500,
-        fifa_stars: 3,
-        home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
-        away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
-        third_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/f/f7/Logo_Hanoi_FC.svg/1200px-Logo_Hanoi_FC.svg.png",
-        description: "Hà Nội FC description",
-        season: "2023-2024",
-    },
-    {
-        id: 2,
-        name: "Hoàng Anh Gia Lai",
-        city: "Pleiku",
-        managing_body: "HAGL",
-        stadium: "Pleiku",
-        capacity: 12000,
-        fifa_stars: 2,
-        home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/77/Hoang_Anh_Gia_Lai_FC_logo.svg/1200px-Hoang_Anh_Gia_Lai_FC_logo.svg.png",
-        away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/77/Hoang_Anh_Gia_Lai_FC_logo.svg/1200px-Hoang_Anh_Gia_Lai_FC_logo.svg.png",
-        third_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/77/Hoang_Anh_Gia_Lai_FC_logo.svg/1200px-Hoang_Anh_Gia_Lai_FC_logo.svg.png",
-        description: "HAGL description",
-        season: "2022-2023",
-    },
-];
-const seasons = [...new Set(initialTeams.map((team) => team.season))];
+const API_URL = 'http://localhost:5000/api';
 
 function App() {
-    const [teams, setTeams] = useState(initialTeams);
+    const [teams, setTeams] = useState([]);
     const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('isAuthenticated') === 'true');
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [seasons, setSeasons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchTeams = async () => {
+            try {
+                const response = await fetch(`${API_URL}/teams`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setTeams(data.teams);
+                const uniqueSeasons = [...new Set(data.teams.map((team) => team.season))];
+                setSeasons(uniqueSeasons);
+            } catch (err) {
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTeams();
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('isAuthenticated', isAuthenticated);
@@ -69,14 +63,56 @@ function App() {
         localStorage.removeItem('isAuthenticated');
     };
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-    const handleAddTeam = (team) => setTeams([...teams, team]);
-    const handleEditTeam = (updatedTeam) => {
-        setTeams((prevTeams) =>
-            prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeam : team))
-        );
+
+    const handleAddTeam = async (team) => {
+        try {
+            const response = await fetch(`${API_URL}/teams`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ team }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const newTeamData = await response.json();
+            setTeams([...teams, newTeamData.team]);
+        } catch (error) {
+            console.error("Error adding team:", error);
+        }
     };
 
-    const handleDeleteTeam = (id) => setTeams(teams.filter((team) => team.id !== id));
+    const handleEditTeam = async (updatedTeam) => {
+        try {
+            const response = await fetch(`${API_URL}/teams/${updatedTeam.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ updatedTeam }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            setTeams((prevTeams) =>
+                prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeam : team))
+            );
+        } catch (error) {
+            console.error("Error updating team:", error)
+        }
+    };
+
+    const handleDeleteTeam = async (id) => {
+        try {
+            const response = await fetch(`${API_URL}/teams/${id}`, { method: 'DELETE' });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            setTeams(teams.filter((team) => team.id !== id));
+        } catch (error) {
+            console.error("Error deleting team:", error);
+        }
+    };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error.message}</div>;
 
     return (
         <Router>
@@ -112,21 +148,12 @@ function AuthenticatedRoutes({ teams, seasons, onAddTeam, onEditTeam, onDeleteTe
             <Route path="/" element={<HomePage />} />
             <Route path="/temp" element={<Temp />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route
-                path="/teams"
-                element={<Teams teams={teams} seasons={seasons} onDeleteTeam={onDeleteTeam} />}
-            />
-            <Route
-                path="/teams/add"
-                element={<AddTeam teams={teams} seasons={seasons} onAddTeam={onAddTeam} />}
-            />
+            <Route path="/teams" element={<Teams teams={teams} seasons={seasons} onDeleteTeam={onDeleteTeam} />} />
+            <Route path="/teams/add" element={<AddTeam teams={teams} seasons={seasons} onAddTeam={onAddTeam} />} />
             <Route path="/teams/edit/:id" element={<EditTeam teams={teams} onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} key={Date.now()} />} />
-            <Route path="/teams/:teamId/players" element={<Players players={teams} />} />
-            <Route
-                path="/teams/:teamId/players/:playerId"
-                element={<PlayerInfo teams={teams} />}
-                />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} />} /> {/* Removed key prop */}
+            <Route path="/teams/:teamId/players" element={<Players />} /> {/* Needs implementation */}
+            <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} /> {/* Needs implementation */}
             <Route path="/matches" element={<Matches />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="*" element={<Navigate to="/" />} />
@@ -144,7 +171,6 @@ function UnauthenticatedRoutes({ onLogin }) {
             <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
     );
-}   
+}
 
 export default App;
-
