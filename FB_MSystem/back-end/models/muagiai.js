@@ -4,8 +4,8 @@ const sequelize = require('../config/database');
 const MuaGiai = sequelize.define('MuaGiai', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10), 
-        primaryKey: true,
         allowNull: false,
+        primaryKey: true,
     },
     TenMuaGiai: {
         type: DataTypes.STRING(50),
@@ -49,7 +49,6 @@ const MuaGiai = sequelize.define('MuaGiai', {
             }
         },
     },
-}
-);
+});
 
 module.exports = MuaGiai;

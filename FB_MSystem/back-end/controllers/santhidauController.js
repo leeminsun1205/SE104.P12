@@ -14,9 +14,9 @@ const SanThiDauController = {
     async getById(req, res) {
         try {
             const { id } = req.params;
-            const sanThiDaus = await SanThiDau.findByPk(id);
-            if (!sanThiDaus) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
-            res.status(200).json(sanThiDaus);
+            const sanThiDau = await SanThiDau.findByPk(id);
+            if (!sanThiDau) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+            res.status(200).json(sanThiDau);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin sân thi đấu.' });
         }
@@ -29,14 +29,10 @@ const SanThiDauController = {
             if (isDuplicateName) {
                 return res.status(400).json({ error: `Tên sân "${TenSan}" đã tồn tại.` });
             }
-
-            // Lấy giá trị tham số từ bảng THAMSO
             const thamSo = await ThamSo.findOne();
             if (!thamSo) {
                 return res.status(500).json({ error: 'Không thể lấy giá trị tham số từ hệ thống.' });
             }
-
-            // Kiểm tra điều kiện nhập dữ liệu
             if (SucChua < thamSo.SucChuaToiThieu) {
                 return res.status(400).json({
                     error: `Sức chứa phải lớn hơn hoặc bằng ${thamSo.SucChuaToiThieu}.`
@@ -47,8 +43,6 @@ const SanThiDauController = {
                     error: `Tiêu chuẩn phải lớn hơn hoặc bằng ${thamSo.TieuChuanToiThieu}.`
                 });
             }
-
-            // Tạo sân thi đấu nếu hợp lệ
             const sanThiDaus = await SanThiDau.create({
                 MaSan, TenSan, DiaChiSan, SucChua, TieuChuan,
             });
@@ -62,39 +56,32 @@ const SanThiDauController = {
     async update(req, res) {
         try {
             const { id } = req.params;
-            const updates = req.body;
-
-            // Lấy giá trị tham số từ bảng THAMSO
+            const {TenSan, DiaChiSan, SucChua, TieuChuan } = req.body;
             const thamSo = await ThamSo.findOne();
             if (!thamSo) {
                 return res.status(500).json({ error: 'Không thể lấy giá trị tham số từ hệ thống.' });
             }
-
-            // Kiểm tra điều kiện nhập dữ liệu
-            if (updates.SucChua && updates.SucChua < thamSo.SucChuaToiThieu) {
-                return res.status(400).json({
-                    error: `Sức chứa phải lớn hơn hoặc bằng ${thamSo.SucChuaToiThieu}.`
-                });
-            }
-            if (updates.TieuChuan && updates.TieuChuan < thamSo.TieuChuanToiThieu) {
-                return res.status(400).json({
-                    error: `Tiêu chuẩn phải lớn hơn hoặc bằng ${thamSo.TieuChuanToiThieu}.`
-                });
-            }
-
-            // Tìm sân thi đấu cần cập nhật
             const sanThiDaus = await SanThiDau.findByPk(id);
             if (!sanThiDaus) {
                 return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
             }
-            if (updates.TenSan && updates.TenSan !== sanThiDaus.TenSan) {
-                const isDuplicateName = await isDuplicate(SanThiDau, 'TenSan', updates.TenSan);
+            if (TenSan && TenSan !== sanThiDaus.TenSan) {
+                const isDuplicateName = await isDuplicate(SanThiDau, 'TenSan', TenSan);
                 if (isDuplicateName) {
-                    return res.status(400).json({ error: `Tên sân "${updates.TenSan}" đã tồn tại.` });
+                    return res.status(400).json({ error: `Tên sân "${TenSan}" đã tồn tại.` });
                 }
             }
-            // Cập nhật thông tin
-            await sanThiDaus.update(updates);
+            if (SucChua != null && SucChua < thamSo.SucChuaToiThieu) {
+                return res.status(400).json({
+                    error: `Sức chứa phải lớn hơn hoặc bằng ${thamSo.SucChuaToiThieu}.`
+                });
+            }
+            if (TieuChuan != null && TieuChuan < thamSo.TieuChuanToiThieu) {
+                return res.status(400).json({
+                    error: `Tiêu chuẩn phải lớn hơn hoặc bằng ${thamSo.TieuChuanToiThieu}.`
+                });
+            }
+            await sanThiDaus.update({TenSan, DiaChiSan, SucChua, TieuChuan });
             res.status(200).json(sanThiDaus);
         } catch (error) {
             console.error('Lỗi khi cập nhật sân thi đấu:', error);

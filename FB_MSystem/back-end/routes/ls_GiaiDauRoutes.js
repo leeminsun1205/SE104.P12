@@ -1,5 +1,5 @@
 const express = require('express');
-const lichSuGiaiDauController = require('../controllers/lichSuGiaiDauController');
+const lichSuGiaiDauController = require('../controllers/ls_GiaiDauController');
 
 const router = express.Router();
 

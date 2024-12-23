@@ -3,26 +3,22 @@ const { isDuplicate } = require('../utils/isDuplicate');
 const DoiBongController = {
     async getAll(req, res) {
         try {
-            // Sử dụng include để lấy thông tin từ bảng SanThiDau
             const doiBongs = await DoiBong.findAll({
                 include: [
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['TenSan'], // Chỉ lấy cột TenSan
+                        attributes: ['TenSan'],
                     },
                 ],
             });
-    
-            // Chuyển đổi dữ liệu trả về để thay MaSan bằng TenSan
             const results = doiBongs.map((doiBong) => {
-                const { SanThiDau, MaSan, ...rest } = doiBong.get(); // Loại bỏ MaSan và SanThiDau
+                const { SanThiDau, MaSan, ...rest } = doiBong.get();
                 return {
                     ...rest,
-                    TenSan: SanThiDau ? SanThiDau.TenSan : null, // Lấy TenSan từ SanThiDau
+                    TenSan: SanThiDau ? SanThiDau.TenSan : null, 
                 };
             });
-    
             res.status(200).json(results);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng.', details: error.message });
@@ -32,34 +28,27 @@ const DoiBongController = {
     async getById(req, res) {
         try {
             const { id } = req.params;
-    
-            // Sử dụng include để lấy thông tin từ bảng SanThiDau
             const doiBong = await DoiBong.findByPk(id, {
                 include: [
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['TenSan'], // Chỉ lấy cột TenSan
+                        attributes: ['TenSan'], 
                     },
                 ],
             });
-    
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
-    
-            // Chuyển đổi dữ liệu trả về để thay MaSan bằng TenSan
-            const { SanThiDau, MaSan, ...rest } = doiBong.get(); // Loại bỏ MaSan và SanThiDau
+            const { SanThiDau, MaSan, ...rest } = doiBong.get(); 
             const result = {
                 ...rest,
-                TenSan: SanThiDau ? SanThiDau.TenSan : null, // Lấy TenSan từ SanThiDau
+                TenSan: SanThiDau ? SanThiDau.TenSan : null,
             };
-    
             res.status(200).json(result);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin đội bóng.', details: error.message });
         }
-    }
-    ,
-
+    },
+    
     async create(req, res) {
         try {
             const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin} = req.body;

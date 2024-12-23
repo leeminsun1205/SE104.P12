@@ -1,5 +1,6 @@
 const { MuaGiai } = require('../models');
 const { isDuplicate } = require('../utils/isDuplicate');
+const { isValidRange } = require('../utils/checkDate');
 
 const MuaGiaiController = {
     async getAll(req, res) {
@@ -25,6 +26,9 @@ const MuaGiaiController = {
     async create(req, res) {
         try {
             const { MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc } = req.body;
+            if (!isValidRange(NgayBatDau, NgayKetThuc)) {
+                return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.' });
+            }
             const isDuplicateName = await isDuplicate(MuaGiai, 'TenMuaGiai', TenMuaGiai);
             if (isDuplicateName) {
                 return res.status(400).json({ error: `Tên mùa giải "${TenMuaGiai}" đã tồn tại.` });
@@ -34,26 +38,37 @@ const MuaGiaiController = {
             });
             res.status(201).json(muaGiai);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi thêm mùa giải.', details: error.massages });
+            console.error('Lỗi khi thêm mùa giải:', error);
+            res.status(500).json({ error: 'Lỗi khi thêm mùa giải.', details: error.message });
         }
     },
 
     async update(req, res) {
         try {
             const { id } = req.params;
-            const updates = req.body;
+            const {TenMuaGiai, NgayBatDau, NgayKetThuc } = req.body;
             const muaGiai = await MuaGiai.findByPk(id);
-            if (!muaGiai) return res.status(404).json({ error: 'Không tìm thấy mùa giải.' });
-            if (updates.TenMuaGiai && updates.TenMuaGiai !== muaGiai.TenMuaGiai) {
-                const isDuplicateName = await isDuplicate(MuaGiai, 'TenMuaGiai', updates.TenMuaGiai);
+            if (!muaGiai) {
+                return res.status(404).json({ error: 'Không tìm thấy mùa giải.' });
+            }
+            if (TenMuaGiai && TenMuaGiai !== muaGiai.TenMuaGiai) {
+                const isDuplicateName = await isDuplicate(MuaGiai, 'TenMuaGiai', TenMuaGiai);
                 if (isDuplicateName) {
-                    return res.status(400).json({ error: `Tên mùa giải "${updates.TenMuaGiai}" đã tồn tại.` });
+                    return res.status(400).json({ error: `Tên mùa giải "${TenMuaGiai}" đã tồn tại.` });
                 }
             }
-            await muaGiai.update(updates);
+            if (NgayBatDau || NgayKetThuc) {
+                const start = NgayBatDau || muaGiai.NgayBatDau;
+                const end = NgayKetThuc || muaGiai.NgayKetThuc;
+                if (!isValidRange(start, end)) {
+                    return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.' });
+                }
+            }
+            await muaGiai.update({TenMuaGiai, NgayBatDau, NgayKetThuc });
             res.status(200).json(muaGiai);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi cập nhật mùa giải.' });
+            console.error('Lỗi khi cập nhật mùa giải:', error);
+            res.status(500).json({ error: 'Lỗi khi cập nhật mùa giải.', details: error.message });
         }
     },
 

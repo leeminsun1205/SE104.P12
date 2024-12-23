@@ -243,16 +243,19 @@ CREATE TABLE THAMSO (
     SoLuongCauThuToiThieu TINYINT NOT NULL DEFAULT 11, 
     SoLuongCauThuToiDa TINYINT NOT NULL DEFAULT 25,  
     SoCauThuNgoaiToiDa TINYINT NOT NULL DEFAULT 5,   
-    LePhi INT NOT NULL DEFAULT 1000000000,              
+    LePhi INT NOT NULL DEFAULT 1000000000,
+    NgayBatDauLePhi DATE NOT NULL DEFAULT '2024-12-23',
+    NgayHetHanLePhi DATE NOT NULL DEFAULT '2025-1-23',
     ThoiDiemGhiBanToiDa INT NOT NULL DEFAULT 90,    
     DiemThang TINYINT NOT NULL DEFAULT 3,           
     DiemHoa TINYINT NOT NULL DEFAULT 1,             
     DiemThua TINYINT NOT NULL DEFAULT 0,            
     CONSTRAINT CK_ID CHECK (id = 1),
-    CONSTRAINT CK_Tuoi CHECK (TuoiToiThieu < TuoiToiDa),
-	CONSTRAINT CK_SoLuongCauThu CHECK (SoLuongCauThuToiThieu <= SoLuongCauThuToiDa),
-	CONSTRAINT CK_SucChua CHECK (SucChuaToiThieu > 0),
-	CONSTRAINT CK_ThoiDiemGhiBan CHECK (ThoiDiemGhiBanToiDa >= 0)
+    CONSTRAINT CK_NgayBatDau_NgayHetHan_TS CHECK (NgayBatDauLePhi <= NgayHetHanLePhi),
+    CONSTRAINT CK_Tuoi_TS CHECK (TuoiToiThieu < TuoiToiDa),
+	CONSTRAINT CK_SoLuongCauThu_TS CHECK (SoLuongCauThuToiThieu <= SoLuongCauThuToiDa),
+	CONSTRAINT CK_SucChua_TS CHECK (SucChuaToiThieu > 0),
+	CONSTRAINT CK_ThoiDiemGhiBan_TS CHECK (ThoiDiemGhiBanToiDa >= 0)
 );
 INSERT INTO THAMSO (
     id,
@@ -264,16 +267,18 @@ INSERT INTO THAMSO (
     SoLuongCauThuToiDa,
     SoCauThuNgoaiToiDa,
     LePhi,
+    NgayBatDauLePhi,
+    NgayHetHanLePhi,
     ThoiDiemGhiBanToiDa,
     DiemThang,
     DiemHoa,
     DiemThua
 ) VALUES (
-    1, 5000, 3, 18, 40, 11, 25, 5, 1000000000, 90, 3, 1, 0
+    1, 5000, 3, 18, 40, 11, 25, 5, 1000000000, '2024-12-23', '2025-1-23', 90, 3, 1, 0
 );
 
 #Kiểm tra bảng
--- select * from thamso
+select * from thamso
 -- SHOW TABLES;
 -- DESCRIBE TRANDAU;
 -- select * from trandau;

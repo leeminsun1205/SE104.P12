@@ -17,7 +17,7 @@ const thePhatRoutes = require('./routes/thePhatRoutes');
 const loaiThePhatRoutes = require('./routes/loaiThePhatRoutes');
 const ds_ThePhatRoutes = require('./routes/ds_ThePhatRoutes');
 const thamSoRoutes = require('./routes/thamSoRoutes');
-const lichSuGiaiDauRoutes = require('./routes/lichSuGiaiDauRoutes');
+const ls_GiaiDauRoutes = require('./routes/ls_GiaiDauRoutes');
 const thanhTichRoutes = require('./routes/thanhTichRoutes');
 const vongDauRoutes = require('./routes/vongDauRoutes');
 const muaGiaiRoutes = require('./routes/muaGiaiRoutes');
@@ -51,7 +51,7 @@ app.use('/ds-the-phat', ds_ThePhatRoutes);
 
 // Tham số, lịch sử giải đấu, thành tích, vòng đấu, mùa giải, biên nhận
 app.use('/tham-so', thamSoRoutes);
-app.use('/lich-su-giai-dau', lichSuGiaiDauRoutes);
+app.use('/lich-su-giai-dau', ls_GiaiDauRoutes);
 app.use('/thanh-tich', thanhTichRoutes);
 app.use('/vong-dau', vongDauRoutes);
 app.use('/mua-giai', muaGiaiRoutes);

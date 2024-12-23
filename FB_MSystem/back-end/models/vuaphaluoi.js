@@ -18,6 +18,14 @@ const VuaPhaLuoi = sequelize.define('VuaPhaLuoi', {
             key: 'MaMuaGiai',
         },
     },
+    MaDoiBong: {
+        type: DataTypes.CHAR(10),
+        allowNull: false,
+        references: {
+            model: 'DoiBong',
+            key: 'MaDoiBong',
+        },
+    },
     SoTran: {
         type: DataTypes.TINYINT,
         allowNull: false,
@@ -31,7 +39,7 @@ const VuaPhaLuoi = sequelize.define('VuaPhaLuoi', {
 }, {
     tableName: 'VUAPHALUOI',
     timestamps: false,
-    primaryKey: ['MaCauThu', 'MaMuaGiai'], // Tổ hợp khóa chính
+    primaryKey: ['MaCauThu', 'MaMuaGiai'], 
 });
 
 // Thiết lập quan hệ với các bảng khác

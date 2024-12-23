@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 const { autoCreateCode } = require('../utils/autoCreateCode');
 
 const BienNhan = sequelize.define('BienNhan', {
-    MaLePhi: {
+    MaBienNhan: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
@@ -12,11 +12,11 @@ const BienNhan = sequelize.define('BienNhan', {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
-            model: 'DoiBong', // Tên bảng tham chiếu
+            model: 'DoiBong', 
             key: 'MaDoiBong',
         },
     },
-    SoTien: {
+    LePhi: {
         type: DataTypes.BIGINT,
         allowNull: false,
     },
@@ -31,12 +31,12 @@ const BienNhan = sequelize.define('BienNhan', {
     NgayThanhToan: {
         type: DataTypes.DATEONLY,
         allowNull: true,
-        defaultValue: null, // Giá trị mặc định là null
+        defaultValue: null, 
     },
     TinhTrang: {
         type: DataTypes.BOOLEAN, // true: chưa thanh toán, false: đã thanh toán
         allowNull: false,
-        defaultValue: false, // Giá trị mặc định là false
+        defaultValue: false, 
     },
 }, {
     tableName: 'BIENNHAN',
@@ -44,10 +44,9 @@ const BienNhan = sequelize.define('BienNhan', {
     hooks: {
         beforeValidate: async (record) => {
             // Tự động tạo mã biên nhận nếu chưa có
-            if (!record.MaLePhi) {
-                record.MaLePhi = await autoCreateCode(BienNhan, 'BN', 'MaLePhi', 4);
+            if (!record.MaBienNhan) {
+                record.MaBienNhan = await autoCreateCode(BienNhan, 'BN', 'MaBienNhan', 4);
             }
-
             // Tự động đặt giá trị mặc định cho NgayThanhToan và TinhTrang
             if (record.NgayThanhToan === undefined) {
                 record.NgayThanhToan = null;
@@ -59,7 +58,6 @@ const BienNhan = sequelize.define('BienNhan', {
     },
 });
 
-// Thiết lập quan hệ với bảng DoiBong
 BienNhan.associate = (models) => {
     BienNhan.belongsTo(models.DoiBong, {
         foreignKey: 'MaDoiBong',
