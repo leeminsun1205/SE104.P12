@@ -89,7 +89,6 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
     }
   };
 
-
   return (
     <div className="modal-overlay">
       <div className="add-players-modal">

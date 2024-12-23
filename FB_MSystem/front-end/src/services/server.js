@@ -99,6 +99,7 @@ let players = {
                 weight: 75,
                 bio: "Một tiền đạo tài năng của đội.",
                 season: "2023-2024",
+                playerType: "Trong nước"
             },
         ],
         2: [
@@ -113,6 +114,7 @@ let players = {
                 weight: 70,
                 bio: "Một hậu vệ chắc chắn.",
                 season: "2023-2024",
+                playerType: "Trong nước"
             },
         ],
     },
@@ -129,6 +131,7 @@ let players = {
                 weight: 78,
                 bio: "Một tiền vệ sáng tạo.",
                 season: "2022-2023",
+                playerType: "Trong nước"
             },
         ],
     },
@@ -147,6 +150,7 @@ let availablePlayers = [
         weight: 75,
         bio: "Một tiền đạo tài năng của đội.",
         season: "2023-2024",
+        playerType: "Trong nước"
     },
     {
         id: 2,
@@ -159,6 +163,7 @@ let availablePlayers = [
         weight: 70,
         bio: "Một hậu vệ chắc chắn.",
         season: "2023-2024",
+        playerType: "Trong nước"
     },
     {
         id: 3,
@@ -171,6 +176,7 @@ let availablePlayers = [
         weight: 78,
         bio: "Một tiền vệ sáng tạo.",
         season: "2022-2023",
+        playerType: "Trong nước"
     },
 ];
 
@@ -637,7 +643,7 @@ app.post("/api/players", (req, res) => {
         players["no season"]["0"] = players["no season"]["0"] || []; // 0 represents no team
         players["no season"]["0"].push(newPlayer);
     }
-
+    availablePlayers.push(newPlayer);
     res.status(201).json({ message: "Player created successfully", player: newPlayer });
 });
 
@@ -653,6 +659,8 @@ app.delete("/api/players/:playerId", (req, res) => {
             );
         }
     }
+
+    availablePlayers = availablePlayers.filter((p) => p.id !== playerIdInt)
 
     res.json({ message: "Player deleted successfully" });
 });
