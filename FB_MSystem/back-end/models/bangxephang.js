@@ -5,6 +5,7 @@ const BangXepHang = sequelize.define('BangXepHang', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        primaryKey: true,
         references: {
             model: 'MuaGiai',
             key: 'MaMuaGiai',
@@ -13,6 +14,7 @@ const BangXepHang = sequelize.define('BangXepHang', {
     MaVongDau: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        primaryKey: true,
         references: {
             model: 'VongDau',
             key: 'MaVongDau',
@@ -21,6 +23,7 @@ const BangXepHang = sequelize.define('BangXepHang', {
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         allowNull: false,
+        primaryKey: true,
         references: {
             model: 'DoiBong',
             key: 'MaDoiBong',
@@ -69,12 +72,6 @@ const BangXepHang = sequelize.define('BangXepHang', {
 }, {
     tableName: 'BANGXEPHANG',
     timestamps: false,
-    indexes: [
-        {
-            unique: false,
-            fields: ['MaMuaGiai', 'MaVongDau'],
-        },
-    ],
 });
 
 module.exports = BangXepHang;
