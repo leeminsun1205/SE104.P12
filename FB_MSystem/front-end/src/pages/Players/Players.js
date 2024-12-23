@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PlayerList from "./PlayerList";
-import CreatePlayer from "../Players/CreatePlayer";
-import AddPlayersToTeamModal from "../CreateNew/AddPlayersToTeamModal";
+import CreatePlayer from "../CreateNew/CreatePlayer";
+import AddPlayersToTeamModal from "./AddPlayersToTeamModal";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import "./Players.css";
 
@@ -145,7 +145,7 @@ function Players({ seasons }) {
   return (
     <div className="players-container">
       <button
-        className="add-players-button"
+        className="back-to-teams"
         onClick={() => handleToTeams()}
       >
         Quay lại

@@ -162,7 +162,7 @@ const CreateTeam = memo(({ onAddTeam }) => {
                     onChange={handleChange}
                 />
             </div>
-            <div>
+            <div className="create-container">
                 <button className="add" onClick={handleAdd}>
                     Thêm
                 </button>

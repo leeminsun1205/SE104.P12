@@ -128,7 +128,7 @@ function CreatePlayer({ seasons }) {
           onChange={handleInputChange}
         />
       </div>
-      <div>
+      <div className="create-container">
         <button className="add" type="submit" onClick={handleSubmit}>
           Tạo thông tin
         </button>

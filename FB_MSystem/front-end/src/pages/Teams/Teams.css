@@ -104,9 +104,19 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-around; /* Evenly spaced buttons */
+  padding: 10px 20px;
+  gap: 20px;
+  width: 250px;
 }
 
 .teams button.delete {
+  display: flex;
+  justify-content: space-around; /* Evenly spaced buttons */
+  padding: 10px 20px;
+  gap: 20px;
+  width: 100px;
   background-color: #ff7675;
   color: white;
 }
@@ -116,6 +126,11 @@
 }
 
 .teams button.edit {
+  display: flex;
+  justify-content: space-around; /* Evenly spaced buttons */
+  padding: 10px 20px;
+  gap: 20px;
+  width: 100px;
   background-color: #6c5ce7;
   color: white;
 }
@@ -125,6 +140,11 @@
 }
 
 .teams button.toplayer {
+  display: flex;
+  justify-content: space-around; /* Evenly spaced buttons */
+  padding: 10px 20px;
+  gap: 20px;
+  width: 100px;
   background-color: rgb(150, 150, 150);
   color: white;
 }

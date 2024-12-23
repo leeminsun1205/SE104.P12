@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
-import AddTeamsToSeasonModal from "./../CreateNew/AddTeamsToSeasonModal";
+import AddTeamsToSeasonModal from "./AddTeamsToSeasonModal";
 import "./Teams.css";
 
 function Teams({

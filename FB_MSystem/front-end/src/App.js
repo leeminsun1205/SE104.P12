@@ -5,14 +5,14 @@ import Sidebar from './components/Sidebar/Sidebar';
 import Footer from './components/Footer/Footer';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Teams from './pages/Teams/Teams';
-import CreateTeam from './pages/Teams/CreateTeam';
-import CreatePlayer from './pages/Players/CreatePlayer';
+import CreateTeam from './pages/CreateNew/CreateTeam';
+import CreatePlayer from './pages/CreateNew/CreatePlayer';
 import CreateNew from './pages/CreateNew/CreateNew';
 import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
 import Players from './pages/Players/Players';
 import PlayerInfo from './pages/Players/PlayerInfo';
-import OtherLeagueMatches from './pages/Teams/OtherLeagueMatches';
+import OtherLeagueMatches from './pages/Matches/OtherLeagueMatches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
@@ -20,7 +20,8 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SignUp from './pages/SignUp/SignUp';
 import MatchDetails from './pages/Matches/MatchDetails';
 import Matches from './pages/Matches/Matches';
-import Invoices from './pages/Invoices/Invoices';
+import InvoiceForm from './pages/Invoices/InvoiceForm';
+import Invoices from "./pages/Invoices/Invoices";
 import Temp from './pages/Temp/Temp';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -38,7 +39,7 @@ function App() {
     const [selectedSeason, setSelectedSeason] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [otherMatches, setOtherMatches] = useState([]);
+    const [invoices, setInvoices] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -136,6 +137,9 @@ function App() {
             console.error("Error deleting team:", error);
         }
     };
+    const handleAddInvoice = (newInvoice) => {
+        setInvoices([...invoices, newInvoice]);
+    };
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -156,6 +160,8 @@ function App() {
                                     onSeasonChange={handleSeasonChange}
                                     onEditTeam={handleEditTeam}
                                     onDeleteTeam={handleDeleteTeam}
+                                    invoices={invoices}
+                                    onAddInvoice={handleAddInvoice}
                                 />
                             </main>
                         </div>
@@ -168,7 +174,7 @@ function App() {
         </Router>
     );
 }
-function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches }) {
+function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches, invoices, onAddInvoice }) {
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
@@ -193,7 +199,8 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/teams/:id/other-matches" element={<OtherLeagueMatches teams={teams} otherMatches={otherMatches} />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="/create" element={<CreateNew />} />
-            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
+            <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );
