@@ -1,10 +1,9 @@
-
 .matchesPage {
   margin-top: 100px;
   margin-left: auto;
   margin-right: auto;
   padding: 20px;
-  font-family: "Roboto", sans-serif;
+  font-family: "Inter", sans-serif; /* Modern font */
   color: var(--text-color);
   width: 80%;
   border-radius: 10px;
@@ -14,34 +13,46 @@
 .filterContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 20px;
   margin-bottom: 20px;
   align-items: center;
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow */
 }
 
 .label {
-  font-weight: bold;
-  margin-right: 10px;
+  font-weight: 600;
+  margin-bottom: 5px; /* Space between label and input */
   font-size: 16px;
+  color: #333; /* Darker text for contrast */
 }
 
-.selectField,
-.searchField {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
+.seasonSelector,
+.roundSelector {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+.selectField {
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
   font-size: 16px;
   width: 200px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  appearance: none; /* Remove default arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 8px 10px;
 }
 
-.selectField:focus,
-.searchField:focus {
-  border-color: var(--primary-color);
+.selectField:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   outline: none;
 }
 
@@ -50,11 +61,36 @@
   align-items: center;
   gap: 10px;
   flex: 1;
+  position: relative;
+  max-width: 400px; /* Wider search field */
+}
+
+.searchField {
+  padding: 12px 20px 12px 45px; /* Space for icon */
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.searchField:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
 }
 
 .clearButton {
-  background: var(--secondary-color);
-  color: white;
+  background: transparent;
+  color: #777;
   border: none;
   border-radius: 50%;
   width: 32px;
@@ -64,19 +100,24 @@
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  transition: background 0.3s;
+  transition: color 0.3s;
+  position: absolute;
+  right: 5px;
+  top: 37%;
+  transform: translateY(-50%);
 }
 
 .clearButton:hover {
-  background: #028d8b;
+  color: red;
+  background-color: inherit;
 }
 
 .matchesTitle {
   margin-top: 20px;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   text-align: center;
-  color: var(--primary-color);
+  color: #007bff; /* Blue color for title */
 }
 
 .matchesTable {
@@ -90,33 +131,49 @@
 }
 
 .headerCell {
-  background-color: var(--header-bg);
+  background-color: #f8f9fa;
   text-align: left;
   padding: 15px;
   cursor: pointer;
   user-select: none;
-  font-weight: 500;
-  color: var(--primary-color);
+  font-weight: 600;
+  color: #333;
   transition: background-color 0.3s;
+  border-bottom: 2px solid #e9ecef;
 }
 
 .headerCell:hover {
-  background-color: var(--hover-color);
+  background-color: #e9ecef;
 }
 
 .cell {
   padding: 15px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #e9ecef;
   font-size: 15px;
   color: var(--text-color);
 }
 
 .row:hover {
-  background-color: var(--hover-color);
+  background-color: #f5f5f5; /* Lighter hover color */
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .row:nth-child(even) {
   background-color: #fafafa;
+}
+
+@media (max-width: 768px) {
+  .filterContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .searchContainer {
+    width: 100%;
+  }
+
+  .matchesPage {
+    width: 95%;
+  }
 }

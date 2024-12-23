@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './Setting.module.css'; // You'll need to style the components in this CSS file
+import './Setting.module.css';
 
 function Setting() {
     const [ticketClass, setTicketClass] = useState({
