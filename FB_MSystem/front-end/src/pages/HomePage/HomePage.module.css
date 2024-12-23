@@ -20,7 +20,7 @@
 }
 
 .banner {
-  background-color: #007bff;
+  background-color: #5ea4ee;
   color: white;
   text-align: center;
   padding: 20px 10px;
@@ -35,6 +35,8 @@
 .banner p {
   font-size: 16px;
   margin-bottom: 20px;
+  font-weight: 600;
+
 }
 
 .ctaButton {
@@ -49,7 +51,7 @@
 }
 
 .ctaButton:hover {
-  background-color: #0595c9;
+  background-color: #05a7e3;
   color: #000;
 }
 

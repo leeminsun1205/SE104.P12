@@ -1,134 +1,160 @@
 // src/pages/Dashboard/Dashboard.js
-import React, { useState, useEffect } from 'react';
-import styles from './Dashboard.module.css';
-import { Bar } from 'react-chartjs-2';
+import React, { useState, useEffect } from "react";
+import styles from "./Dashboard.module.css";
+import { Bar } from "react-chartjs-2";
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
 );
 
 function Dashboard() {
-    const [teamsData, setTeamsData] = useState(null);
-    const [matchesData, setMatchesData] = useState(null);
-    const [chartData, setChartData] = useState(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/dashboard'); 
-                if (!response.ok) {
-                    throw new Error(`Lỗi HTTP! trạng thái: ${response.status}`);
-                }
-                const data = await response.json();
-                setTeamsData(data.teams || []);
-                setMatchesData(data.matches || []);
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu bảng điều khiển:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        if (teamsData) {
-            setChartData({
-                labels: teamsData.map((team) => team.name),
-                datasets: [
-                    {
-                        label: 'Tổng số bàn thắng',
-                        data: teamsData.map((team) => team.goals || 0),
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1,
-                    },
-                ],
-            });
+  const [matchesData, setMatchesData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalTeams, setTotalTeams] = useState(0);
+  const [topScorer, setTopScorer] = useState(null);
+  const [chartData, setChartData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:5000/api/dashboard");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-    }, [teamsData]);
-
-    const topScorer = teamsData?.reduce((top, team) => (top && top.goals > (team.goals || 0) ? top : team), null);
-
-    const chartOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
+        const data = await response.json();
+        // setTeamsData(data.teams || []);
+        setMatchesData(data.matches || []);
+        setTotalTeams(data.totalTeams);
+        setTopScorer(data.topScorer);
+        const teamGoals = data.teams.map(team => ({
+          name: team.name,
+          goals: calculateGoalsForTeam(team.id, "2023-2024") 
+        }));
+  
+        setChartData({
+          labels: teamGoals.map(team => team.name),
+          datasets: [
+            {
+              label: "Tổng số bàn thắng",
+              data: teamGoals.map(team => team.goals),
+              backgroundColor: "rgba(54, 162, 235, 0.5)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
             },
-            title: {
-                display: true,
-                text: 'Số bàn thắng của các đội bóng hàng đầu',
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Số bàn thắng',
-                }
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Đội bóng',
-                }
-            }
-        },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
+  
+    fetchData();
+  }, []);
+  
+  // Hàm giả lập tính toán số bàn thắng cho mỗi đội
+  function calculateGoalsForTeam(teamId, season) {
+    const sampleGoals = {
+      1: 25,
+      2: 20,
+      3: 18,
+      4: 15,
+      5: 12,
+    }; 
+  
+    return sampleGoals[teamId] || 0;
+  }
 
-    return (
-        <div className={styles.dashboard}>
-            <h2 className={styles.title}>Bảng điều khiển</h2>
-            <div className={styles.cards}>
-                <div className={styles.card}>
-                    <h3>Tổng số đội</h3>
-                    <p>{teamsData?.length || 0}</p>
-                </div>
-                <div className={styles.card}>
-                    <h3>Trận đấu sắp tới</h3>
-                    <p>{matchesData?.filter((match) => !match.played).length || 0}</p>
-                </div>
-                <div className={styles.card}>
-                    <h3>Trận đấu đã hoàn thành</h3>
-                    <p>{matchesData?.filter((match) => match.played).length || 0}</p>
-                </div>
-                <div className={styles.card}>
-                    <h3>Vua phá lưới</h3>
-                    <p>{topScorer ? `${topScorer.name} - ${topScorer.goals || 0} Bàn thắng` : 'Không có dữ liệu'}</p>
-                </div>
-            </div>
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Số bàn thắng của các đội bóng",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Số bàn thắng",
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Đội bóng",
+        },
+      },
+    },
+  };
 
-            <div className={styles.graphs}>
-                <div className={styles.graph}>
-                    <h3>Số bàn thắng của các đội bóng hàng đầu</h3>
-                    {chartData ? (
-                        <Bar options={chartOptions} data={chartData} />
-                    ) : (
-                        <p>Đang tải dữ liệu...</p>
-                    )}
-                </div>
-                <div className={styles.graph}>
-                    <h3>Số lượng khán giả</h3>
-                    <p>Biểu đồ giữ chỗ (Triển khai biểu đồ số lượng khán giả tại đây)</p>
-                </div>
-            </div>
+  if (loading) {
+    return <div className={styles.loading}>Đang tải dữ liệu...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>Lỗi: {error}</div>;
+  }
+
+  return (
+    <div className={styles.dashboard}>
+      <h2 className={styles.title}>Bảng điều khiển</h2>
+      <div className={styles.cards}>
+        <div className={styles.card}>
+          <h3>Tổng số đội</h3>
+          <p>{totalTeams}</p>
         </div>
-    );
+        <div className={styles.card}>
+          <h3>Trận đấu sắp tới</h3>
+          <p>{matchesData?.filter((match) => !match.played).length || 0}</p>
+        </div>
+        <div className={styles.card}>
+          <h3>Trận đấu đã hoàn thành</h3>
+          <p>{matchesData?.filter((match) => match.played).length || 0}</p>
+        </div>
+        <div className={styles.card}>
+          <h3>Vua phá lưới</h3>
+          <p>
+            {topScorer
+              ? `${topScorer.name} - ${topScorer.goals || 0} Bàn thắng`
+              : "Không có dữ liệu"}
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.graphs}>
+        <div className={styles.graph}>
+          {chartData ? (
+            <Bar options={chartOptions} data={chartData} />
+          ) : (
+            <p>Đang tải biểu đồ...</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;

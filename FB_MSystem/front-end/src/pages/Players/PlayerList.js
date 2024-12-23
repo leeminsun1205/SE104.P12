@@ -22,14 +22,14 @@ function PlayerList({ players, onDelete, onNavigate, season }) {
               {player.name}
             </Link>
           </h3>
-          <p className="player-info">Position: {player.position}</p>
-          <p className="player-info">Nationality: {player.nationality}</p>
+          <p className="player-info">Vị trí: {player.position}</p>
+          <p className="player-info">Quốc tịch: {player.nationality}</p>
           <div className="player-actions">
             <button className="delete" onClick={() => onDelete(player.id)}>
-              Delete
+              Xóa
             </button>
             <button className="navigate" onClick={() => onNavigate(player)}>
-              View Details
+              Xem chi tiết
             </button>
           </div>
         </li>

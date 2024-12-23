@@ -33,6 +33,9 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/teams" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Đội bóng
                         </NavLink>
+                        <NavLink to="/stadiums" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Sân vận động
+                        </NavLink>
                         <NavLink to="/players" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                            Cầu thủ
                         </NavLink>

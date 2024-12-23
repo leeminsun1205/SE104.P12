@@ -140,6 +140,10 @@ function Teams({
                 <Link to={`/teams/${team.id}`}>{team.name}</Link>
               </h3>
               <p>Thành phố: {team.city}</p>
+              {/* Hiển thị thông tin từ team.stadium */}
+              <p>Sân nhà: {team.stadium ? team.stadium.TenSan : "Chưa xác định"}</p>
+              <p>Sức chứa: {team.stadium ? team.stadium.SucChua : "Chưa xác định"}</p>
+              <p>Tiêu chuẩn: {team.stadium ? team.stadium.TieuChuan : "Chưa xác định"} sao</p>
               <div className="actions">
                 <button
                   className="toplayer"

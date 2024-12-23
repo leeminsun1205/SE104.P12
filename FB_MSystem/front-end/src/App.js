@@ -25,6 +25,8 @@ import InvoiceForm from './pages/Invoices/InvoiceForm';
 import Invoices from "./pages/Invoices/Invoices";
 import Temp from './pages/Temp/Temp';
 import Setting from './pages/Setting/Setting'
+import Stadiums from './pages/Stadiums/Stadiums';
+import StadiumInfo from './pages/Stadiums/StadiumInfo';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -225,6 +227,8 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
             <Route path="/settings" element={<Setting />} />
+            <Route path="/stadiums" element={<Stadiums />} />
+            <Route path="/stadiums/:stadiumId" element={<StadiumInfo />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

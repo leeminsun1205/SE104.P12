@@ -12,6 +12,7 @@ function EditTeam({ onEditTeam }) {
     city: '',
     managing_body: '',
     stadium: '',
+    stadiumId: null,
     capacity: null,
     fifa_stars: null,
     home_kit_image: null,
@@ -40,7 +41,8 @@ function EditTeam({ onEditTeam }) {
           name: data.name || '',
           city: data.city || '',
           managing_body: data.managing_body || '',
-          stadium: data.stadium || '',
+          stadium: data.stadium.TenSan || '',
+          stadiumId: data.stadiumId || null,
           capacity: data.capacity || null,
           fifa_stars: data.fifa_stars || null,
           home_kit_image: data.home_kit_image || null,
@@ -173,8 +175,8 @@ function EditTeam({ onEditTeam }) {
           type: 'text',
         },
         { name: 'stadium', label: 'Địa điểm sân nhà', type: 'text' },
-        { name: 'capacity', label: 'Sức chứa', type: 'number' },
-        { name: 'fifa_stars', label: 'Đạt tiêu chuẩn (số sao)', type: 'number' },
+        // { name: 'capacity', label: 'Sức chứa', type: 'number' },
+        // { name: 'fifa_stars', label: 'Đạt tiêu chuẩn (số sao)', type: 'number' },
       ].map((input) => (
         <div key={input.name}>
           <label htmlFor={input.name}>
