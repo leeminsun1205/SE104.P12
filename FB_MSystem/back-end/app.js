@@ -22,7 +22,6 @@ const thanhTichRoutes = require('./routes/thanhTichRoutes');
 const vongDauRoutes = require('./routes/vongDauRoutes');
 const muaGiaiRoutes = require('./routes/muaGiaiRoutes');
 const bienNhanRoutes = require('./routes/bienNhanRoutes');
-const matchRoutes = require('./routes/matchRoutes');
 
 const app = express();
 
@@ -57,7 +56,7 @@ app.use('/thanh-tich', thanhTichRoutes);
 app.use('/vong-dau', vongDauRoutes);
 app.use('/mua-giai', muaGiaiRoutes);
 app.use('/bien-nhan', bienNhanRoutes);
-app.use('/match', matchRoutes)
+
 // Khởi động server
 const PORT = process.env.PORT || 3000; 
 app.listen(PORT, () => {

@@ -7,4 +7,5 @@ router.get('/', vongDauController.getAll); // Lấy danh sách tất cả vòng 
 router.get('/:id', vongDauController.getById); // Lấy vòng đấu theo ID
 router.put('/:id', vongDauController.update); // Cập nhật vòng đấu
 router.delete('/:id', vongDauController.delete); // Xóa vòng đấu
+router.post('/:maMuaGiai', vongDauController.createByMuaGiai);
 module.exports = router;
