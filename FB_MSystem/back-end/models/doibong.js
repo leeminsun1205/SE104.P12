@@ -33,10 +33,6 @@ const DoiBong = sequelize.define(
             type: DataTypes.STRING(1000),
             allowNull: true,
         },
-        Logo: {
-            type: DataTypes.STRING(200),
-            allowNull: true,
-        },
     },
     {
         tableName: 'DOIBONG',
