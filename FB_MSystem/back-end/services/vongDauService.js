@@ -1,10 +1,12 @@
-const { VongDau, DoiBong, MG_DB_CT } = require('../models');
+const { VongDau, DoiBong, MgDbCt } = require('../models');
 
 async function taoVongDau(maMuaGiai) {
     try {
         // Lấy danh sách đội bóng thuộc mùa giải
-        const doiBongTrongMua = await MG_DB_CT.findAll({
+        const doiBongTrongMua = await MgDbCt.findAll({
             where: { MaMuaGiai: maMuaGiai },
+            attributes: ['MaDoiBong'], // Chỉ lấy MaDoiBong để tránh dư thừa dữ liệu
+            group: ['MaDoiBong'], // Lọc các đội bóng duy nhất
             include: [
                 {
                     model: DoiBong,
@@ -14,7 +16,8 @@ async function taoVongDau(maMuaGiai) {
         });
 
         const soDoi = doiBongTrongMua.length;
-
+        console.log('Đội bóng trong mùa giải:', doiBongTrongMua);
+        console.log('Số đội bóng tính được:', soDoi);
         if (soDoi < 2) {
             throw new Error('Mùa giải phải có ít nhất 2 đội bóng để tạo vòng đấu.');
         }
@@ -25,17 +28,21 @@ async function taoVongDau(maMuaGiai) {
         // Tạo các vòng đấu
         const vongDauData = [];
         for (let i = 0; i < soVongDau; i++) {
-            const luotDau = i < soVongDau / 2 ? 0 : 1; // Lượt đi hoặc lượt về
+            const luotDau = i < soVongDau / 2 ? 0 : 1; // 0 = Lượt đi, 1 = Lượt về
             const soThuTu = i + 1;
             const maVongDau = `${maMuaGiai}_VD${soThuTu.toString().padStart(2, '0')}`;
+
+            // Thêm logic ngày nếu cần (ví dụ: mỗi vòng đấu cách nhau 7 ngày)
+            const ngayBatDau = null; // Hoặc logic ngày cụ thể
+            const ngayKetThuc = null;
 
             vongDauData.push({
                 MaVongDau: maVongDau,
                 MaMuaGiai: maMuaGiai,
                 LuotDau: luotDau,
                 SoThuTu: soThuTu,
-                NgayBatDau: null,
-                NgayKetThuc: null,
+                NgayBatDau: ngayBatDau,
+                NgayKetThuc: ngayKetThuc,
             });
         }
 
@@ -43,8 +50,10 @@ async function taoVongDau(maMuaGiai) {
         await VongDau.bulkCreate(vongDauData, { ignoreDuplicates: true });
 
         console.log(`Đã tạo ${soVongDau} vòng đấu cho mùa giải ${maMuaGiai}.`);
+        return vongDauData; // Trả về danh sách vòng đấu đã tạo
     } catch (error) {
         console.error('Lỗi khi tạo vòng đấu:', error.message);
+        throw error; // Ném lỗi để controller xử lý
     }
 }
 

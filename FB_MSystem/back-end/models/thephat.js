@@ -8,7 +8,7 @@ const ThePhat = sequelize.define('ThePhat', {
         allowNull: false,
     },
     MaTranDau: {
-        type: DataTypes.CHAR(10),
+        type: DataTypes.CHAR(20),
         allowNull: false,
         references: {
             model: 'TranDau',

@@ -18,9 +18,9 @@ const UtXepHangController = {
 
     async create(req, res) {
         try {
-            const { MaMuaGiai, MaLoaiUT, MucDoUT } = req.body;
+            const { MaMuaGiai, MaLoaiUuTien, MucDoUuTien } = req.body;
             const utXepHang = await UtXepHang.create({
-                MaMuaGiai, MaLoaiUT, MucDoUT,
+                MaMuaGiai, MaLoaiUuTien, MucDoUuTien,
             });
             res.status(201).json(utXepHang);
         } catch (error) {
@@ -30,9 +30,9 @@ const UtXepHangController = {
 
     async delete(req, res) {
         try {
-            const { MaMuaGiai, MaLoaiUT } = req.params;
+            const { MaMuaGiai, MaLoaiUuTien } = req.params;
             const utXepHang = await UtXepHang.findOne({
-                where: { MaMuaGiai, MaLoaiUT },
+                where: { MaMuaGiai, MaLoaiUuTien },
             });
             if (!utXepHang) return res.status(404).json({ error: 'Không tìm thấy ưu tiên xếp hạng.' });
             await utXepHang.destroy();

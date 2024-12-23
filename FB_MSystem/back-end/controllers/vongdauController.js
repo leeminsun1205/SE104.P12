@@ -1,4 +1,4 @@
-const { VongDau, MG_DB_CT } = require('../models'); 
+const { VongDau, MgDbCt} = require('../models'); 
 const { taoVongDau } = require('../services/vongDauService');
 const VongDauController = {
     async getAll(req, res) {
@@ -57,27 +57,32 @@ const VongDauController = {
             res.status(500).json({ error: 'Lỗi khi xóa vòng đấu.' });
         }
     },
+    
     async createByMuaGiai(req, res) {
         try {
             const { maMuaGiai } = req.params;
-
+            console.log('maMuaGiai:', maMuaGiai);
             // Kiểm tra số đội trong mùa giải
-            const doiBongTrongMua = await MG_DB_CT.findAll({
-                where: { MaMuaGiai: maMuaGiai },
-            });
-
-            if (doiBongTrongMua.length < 2) {
-                return res.status(400).json({ error: 'Mùa giải phải có ít nhất 2 đội bóng để tạo vòng đấu.' });
-            }
-
+            // const doiBongCount = await MgDbCt.count({
+            //     where: { MaMuaGiai: maMuaGiai },
+            // });
+        
+    
             // Gọi service để tạo vòng đấu
-            const result = await taoVongDau(maMuaGiai);
-
-            res.status(201).json(result); // Trả về thông báo và danh sách vòng đấu được tạo
+            const vongDauData = await taoVongDau(maMuaGiai);
+    
+            res.status(201).json({
+                message: `Đã tạo ${vongDauData.length} vòng đấu cho mùa giải ${maMuaGiai}.`,
+                data: vongDauData,
+            });
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi tạo vòng đấu cho mùa giải.', details: error.message });
+            console.error("Lỗi", error)
+            res.status(500).json({
+                error: 'Lỗi khi tạo vòng đấu cho mùa giải.',
+                details: error.message,
+            });
         }
-    },
+    }
 };
 
 module.exports = VongDauController;

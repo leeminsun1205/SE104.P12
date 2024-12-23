@@ -10,15 +10,15 @@ const UtXepHang = sequelize.define('UtXepHang', {
             key: 'MaMuaGiai',
         },
     },
-    MaLoaiUT: {
+    MaLoaiUuTien: {
         type: DataTypes.CHAR(10),
         allowNull: false,
         references: {
             model: 'LoaiUuTien',
-            key: 'MaLoaiUT',
+            key: 'MaLoaiUuTien',
         },
     },
-    MucDoUT: {
+    MucDoUuTien: {
         type: DataTypes.TINYINT,
         allowNull: false,
         validate: { min: 1 }, // Mức độ ưu tiên phải >= 1
@@ -40,7 +40,7 @@ UtXepHang.associate = (models) => {
 
     // Thuộc một loại ưu tiên
     UtXepHang.belongsTo(models.LoaiUuTien, {
-        foreignKey: 'MaLoaiUT',
+        foreignKey: 'MaLoaiUuTien',
         as: 'LoaiUuTien',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',

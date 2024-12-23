@@ -12,7 +12,7 @@ const BangXepHang = sequelize.define('BangXepHang', {
         },
     },
     MaVongDau: {
-        type: DataTypes.CHAR(10),
+        type: DataTypes.CHAR(15),
         allowNull: false,
         primaryKey: true,
         references: {

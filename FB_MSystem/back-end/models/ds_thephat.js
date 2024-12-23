@@ -11,7 +11,7 @@ const DsThePhat = sequelize.define('DsThePhat', {
         },
     },
     MaVongDau: {
-        type: DataTypes.CHAR(10),
+        type: DataTypes.CHAR(15),
         allowNull: false,
         references: {
             model: 'VongDau',

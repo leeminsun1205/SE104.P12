@@ -3,12 +3,12 @@ const sequelize = require('../config/database');
 
 const TranDau = sequelize.define('TranDau', {
     MaTranDau: {
-        type: DataTypes.CHAR(10),
+        type: DataTypes.CHAR(20),
         primaryKey: true,
         allowNull: false,
     },
     MaVongDau: {
-        type: DataTypes.CHAR(10),
+        type: DataTypes.CHAR(15),
         allowNull: false,
         references: {
             model: 'VongDau',

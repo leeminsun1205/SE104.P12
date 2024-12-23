@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const VongDau = sequelize.define('VongDau', {
     MaVongDau: {
-        type: DataTypes.CHAR(10),
+        type: DataTypes.CHAR(15),
         primaryKey: true,
         allowNull: false,
     },
