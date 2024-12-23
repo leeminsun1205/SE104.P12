@@ -1,139 +1,190 @@
 import React, { useState } from 'react';
-import './Setting.module.css';
+import styles from './Setting.module.css'; // Bạn cần tạo CSS cho các phần tử bên dưới
 
 function Setting() {
-    const [ticketClass, setTicketClass] = useState({
-        code: '',
-        name: '',
-        priceRatio: 0
-    });
-    
-    const [otherSettings, setOtherSettings] = useState({
-        maxIntermediateAirports: 2,
-        minFlightTime: 30,
-        minStopTime: 10,
-        maxStopTime: 20,
-        latestBookingTime: 24,
-        cancelBookingTime: 0
+    const [teamSettings, setTeamSettings] = useState({
+        minPlayers: 15,  // Số cầu thủ tối thiểu
+        maxPlayers: 22,  // Số cầu thủ tối đa
+        maxForeignPlayers: 3,  // Số cầu thủ ngoại tối đa
+        minAge: 16,  // Tuổi thi đấu tối thiểu
+        maxAge: 40,   // Tuổi thi đấu tối đa
+        minCapacity: 10000, // Sức chứa tối thiểu sân đấu
+        minStar: 2, // Đạt chuẩn sao tối thiểu
+        participationFee: 1000000000, // Lệ phí tham gia (QĐ1.3)
+        winPoints: 3, // Điểm khi thắng (QĐ5.1)
+        drawPoints: 1, // Điểm khi hòa (QĐ5.1)
+        losePoints: 0, // Điểm khi thua (QĐ5.1)
+        goalTypes: 3, // Số loại bàn thắng (QĐ3)
+        maxGoalTime: 90, // Thời điểm ghi bàn tối đa (QĐ3)
+        priorityOrder: ['Điểm số', 'Hiệu số', 'Số bàn thắng'], // Thứ tự ưu tiên khi xếp hạng (QĐ5.1)
     });
 
-    const handleChangeTicketClass = (e) => {
-        setTicketClass({ ...ticketClass, [e.target.name]: e.target.value });
+    const handleChangeTeamSettings = (e) => {
+        const { name, value } = e.target;
+        setTeamSettings({ ...teamSettings, [name]: value });
     };
 
-    const handleChangeOtherSettings = (e) => {
-        setOtherSettings({ ...otherSettings, [e.target.name]: e.target.value });
+    const handlePriorityOrderChange = (index, value) => {
+        const updatedOrder = [...teamSettings.priorityOrder];
+        updatedOrder[index] = value;
+        setTeamSettings({ ...teamSettings, priorityOrder: updatedOrder });
     };
 
     return (
         <div className="setting-container">
-            <h1>Cài Đặt</h1>
-            <div className="setting-section">
-                <div className="ticket-class-form">
-                    <h2>Thêm, Sửa, Xóa Hạng Vé</h2>
-                    <form>
-                        <label>Mã hạng vé</label>
-                        <input 
-                            type="text" 
-                            name="code" 
-                            value={ticketClass.code} 
-                            onChange={handleChangeTicketClass}
-                        />
+            <h1>Cài Đặt Giải Đấu</h1>
 
-                        <label>Tên hạng vé</label>
-                        <input 
-                            type="text" 
-                            name="name" 
-                            value={ticketClass.name} 
-                            onChange={handleChangeTicketClass}
-                        />
-
-                        <label>Tỉ lệ đơn giá</label>
-                        <input 
-                            type="number" 
-                            name="priceRatio" 
-                            value={ticketClass.priceRatio} 
-                            onChange={handleChangeTicketClass}
-                        />
-
-                        <div className="button-group">
-                            <button type="button">Thêm</button>
-                            <button type="button">Sửa</button>
-                            <button type="button">Xóa</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div className="ticket-class-list">
-                    <h2>Danh sách hạng vé</h2>
-                    <ul>
-                        <li>BC - Thương Gia - 1.05</li>
-                        <li>EC - Phổ Thông - 1.00</li>
-                    </ul>
-                </div>
-            </div>
-
-            <h2>Thay đổi các tham số khác</h2>
-            <div className="other-settings">
+            <h2>Các quy định đội bóng</h2>
+            <div className="team-settings">
                 <div className="setting-group">
-                    <label>Số sân bay trung gian tối đa</label>
-                    <input 
-                        type="number" 
-                        name="maxIntermediateAirports" 
-                        value={otherSettings.maxIntermediateAirports} 
-                        onChange={handleChangeOtherSettings}
+                    <label>Số cầu thủ tối thiểu của 1 đội</label>
+                    <input
+                        type="number"
+                        name="minPlayers"
+                        value={teamSettings.minPlayers}
+                        onChange={handleChangeTeamSettings}
                     />
                 </div>
 
                 <div className="setting-group">
-                    <label>Thời gian bay tối thiểu</label>
-                    <input 
-                        type="number" 
-                        name="minFlightTime" 
-                        value={otherSettings.minFlightTime} 
-                        onChange={handleChangeOtherSettings}
+                    <label>Số cầu thủ tối đa của 1 đội</label>
+                    <input
+                        type="number"
+                        name="maxPlayers"
+                        value={teamSettings.maxPlayers}
+                        onChange={handleChangeTeamSettings}
+                    />
+                </div>
+
+                <div className="setting-group">
+                    <label>Số cầu thủ ngoại tối đa</label>
+                    <input
+                        type="number"
+                        name="maxForeignPlayers"
+                        value={teamSettings.maxForeignPlayers}
+                        onChange={handleChangeTeamSettings}
+                    />
+                </div>
+
+                <div className="setting-group">
+                    <label>Tuổi thi đấu tối thiểu</label>
+                    <input
+                        type="number"
+                        name="minAge"
+                        value={teamSettings.minAge}
+                        onChange={handleChangeTeamSettings}
+                    /> tuổi
+                </div>
+
+                <div className="setting-group">
+                    <label>Tuổi thi đấu tối đa</label>
+                    <input
+                        type="number"
+                        name="maxAge"
+                        value={teamSettings.maxAge}
+                        onChange={handleChangeTeamSettings}
+                    /> tuổi
+                </div>
+
+                <div className="setting-group">
+                    <label>Sức chứa tối thiểu sân đấu</label>
+                    <input
+                        type="number"
+                        name="minCapacity"
+                        value={teamSettings.minCapacity}
+                        onChange={handleChangeTeamSettings}
+                    /> người
+                </div>
+
+                <div className="setting-group">
+                    <label>Số sao đạt chuẩn tối thiểu</label>
+                    <input
+                        type="number"
+                        name="minStar"
+                        value={teamSettings.minStar}
+                        onChange={handleChangeTeamSettings}
+                    /> sao
+                </div>
+
+                <div className="setting-group">
+                    <label>Lệ phí tham gia</label>
+                    <input
+                        type="number"
+                        name="participationFee"
+                        value={teamSettings.participationFee}
+                        onChange={handleChangeTeamSettings}
+                    /> VND
+                </div>
+            </div>
+
+            <h2>Quy định về trận đấu</h2>
+            <div className="match-settings">
+                <div className="setting-group">
+                    <label>Số loại bàn thắng</label>
+                    <input
+                        type="number"
+                        name="goalTypes"
+                        value={teamSettings.goalTypes}
+                        onChange={handleChangeTeamSettings}
+                    />
+                </div>
+
+                <div className="setting-group">
+                    <label>Thời điểm ghi bàn tối đa</label>
+                    <input
+                        type="number"
+                        name="maxGoalTime"
+                        value={teamSettings.maxGoalTime}
+                        onChange={handleChangeTeamSettings}
                     /> phút
                 </div>
+            </div>
 
+            <h2>Quy định về điểm số</h2>
+            <div className="points-settings">
                 <div className="setting-group">
-                    <label>Thời gian dừng tối thiểu</label>
-                    <input 
-                        type="number" 
-                        name="minStopTime" 
-                        value={otherSettings.minStopTime} 
-                        onChange={handleChangeOtherSettings}
-                    /> phút
+                    <label>Điểm khi thắng</label>
+                    <input
+                        type="number"
+                        name="winPoints"
+                        value={teamSettings.winPoints}
+                        onChange={handleChangeTeamSettings}
+                    />
                 </div>
 
                 <div className="setting-group">
-                    <label>Thời gian dừng tối đa</label>
-                    <input 
-                        type="number" 
-                        name="maxStopTime" 
-                        value={otherSettings.maxStopTime} 
-                        onChange={handleChangeOtherSettings}
-                    /> phút
+                    <label>Điểm khi hòa</label>
+                    <input
+                        type="number"
+                        name="drawPoints"
+                        value={teamSettings.drawPoints}
+                        onChange={handleChangeTeamSettings}
+                    />
                 </div>
 
                 <div className="setting-group">
-                    <label>Thời gian đặt vé chậm nhất</label>
-                    <input 
-                        type="number" 
-                        name="latestBookingTime" 
-                        value={otherSettings.latestBookingTime} 
-                        onChange={handleChangeOtherSettings}
-                    /> giờ
+                    <label>Điểm khi thua</label>
+                    <input
+                        type="number"
+                        name="losePoints"
+                        value={teamSettings.losePoints}
+                        onChange={handleChangeTeamSettings}
+                    />
                 </div>
+            </div>
 
-                <div className="setting-group">
-                    <label>Thời gian huỷ vé đặt vé</label>
-                    <input 
-                        type="number" 
-                        name="cancelBookingTime" 
-                        value={otherSettings.cancelBookingTime} 
-                        onChange={handleChangeOtherSettings}
-                    /> giờ
-                </div>
+            <h2>Thứ tự ưu tiên khi xếp hạng</h2>
+            <div className="ranking-priority">
+                {teamSettings.priorityOrder.map((priority, index) => (
+                    <div key={index} className="setting-group">
+                        <label>Ưu tiên {index + 1}</label>
+                        <input
+                            type="text"
+                            value={priority}
+                            onChange={(e) => handlePriorityOrderChange(index, e.target.value)}
+                        />
+                    </div>
+                ))}
             </div>
 
             <button className="save-button">Lưu</button>
