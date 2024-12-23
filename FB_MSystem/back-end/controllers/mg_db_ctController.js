@@ -2,35 +2,44 @@ const { MgDbCt, CauThu, DoiBong, MuaGiai } = require('../models');
 
 const MgDbCtController = {
     // Lấy danh sách đội bóng và cầu thủ theo mùa giải
+    // Lấy danh sách đội bóng theo mã mùa giải
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
             const data = await MgDbCt.findAll({
                 where: { MaMuaGiai },
                 include: [
-                    { model: DoiBong, as: 'DoiBong' },
-                    { model: CauThu, as: 'CauThu' },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBong',
+                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan'], // Các cột cần lấy của bảng DoiBong
+                    },
                 ],
             });
-            res.status(200).json(data);
+            res.status(200).json(data.map(item => item.DoiBong));
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng và cầu thủ theo mùa giải.' });
+            console.error("Lỗi khi lấy danh sách đội bóng theo mùa giải:", error);
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng theo mùa giải.' });
         }
     },
 
     // Lấy danh sách cầu thủ của đội bóng trong mùa giải
     async getByDoiBong(req, res) {
         try {
-            const { MaDoiBong } = req.params;
+            const { MaMuaGiai, MaDoiBong } = req.params;
             const data = await MgDbCt.findAll({
-                where: { MaDoiBong },
+                where: { MaMuaGiai, MaDoiBong },
                 include: [
-                    { model: CauThu, as: 'CauThu' },
-                    { model: MuaGiai, as: 'MuaGiai' },
+                    {
+                        model: CauThu,
+                        as: 'CauThu',
+                        attributes: ['MaCauThu', 'TenCauThu', 'NgaySinh', 'ViTri'], // Các cột cần lấy của bảng CauThu
+                    },
                 ],
             });
-            res.status(200).json(data);
+            res.status(200).json(data.map(item => item.CauThu));
         } catch (error) {
+            console.error("Lỗi khi lấy danh sách cầu thủ của đội bóng trong mùa giải:", error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ của đội bóng trong mùa giải.' });
         }
     },

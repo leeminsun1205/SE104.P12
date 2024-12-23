@@ -1,6 +1,6 @@
 const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
-
+const { autoCreateCode } = require('../utils/autoCreateCode')
 const CauThu = sequelize.define(
     'CauThu',
     {

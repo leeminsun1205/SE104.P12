@@ -35,5 +35,19 @@ const MgDbCt = sequelize.define('MgDbCt', {
 });
 
 // Không cần thiết lập quan hệ ở đây vì `MuaGiai`, `DoiBong`, và `CauThu` đã thiết lập quan hệ qua bảng này.
+MgDbCt.associate = (models) => {
+    MgDbCt.belongsTo(models.MuaGiai, {
+        foreignKey: 'MaMuaGiai',
+        as: 'MuaGiai', // Alias cho mùa giải
+    });
+    MgDbCt.belongsTo(models.DoiBong, {
+        foreignKey: 'MaDoiBong',
+        as: 'DoiBong', // Alias cho đội bóng
+    });
+    MgDbCt.belongsTo(models.CauThu, {
+        foreignKey: 'MaCauThu',
+        as: 'CauThu', // Alias cho cầu thủ
+    });
+};
 
 module.exports = MgDbCt;
