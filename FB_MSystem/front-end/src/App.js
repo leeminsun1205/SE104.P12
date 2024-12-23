@@ -23,6 +23,7 @@ import Matches from './pages/Matches/Matches';
 import InvoiceForm from './pages/Invoices/InvoiceForm';
 import Invoices from "./pages/Invoices/Invoices";
 import Temp from './pages/Temp/Temp';
+import Setting from './pages/Setting/Setting'
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -199,8 +200,13 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/teams/:id/other-matches" element={<OtherLeagueMatches teams={teams} otherMatches={otherMatches} />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="/create" element={<CreateNew />} />
+<<<<<<< HEAD
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
+=======
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/setting" element={<Setting />} />
+>>>>>>> f5395bf7d1ee305071dc9b0d5fb9cfc60f0b5584
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );
