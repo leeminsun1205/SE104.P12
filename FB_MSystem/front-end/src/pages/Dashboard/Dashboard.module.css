@@ -6,7 +6,10 @@
     position: relative;
     padding: 20px;
     top: var(--header-height);
-    margin: 20px;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 60px;
     background: linear-gradient(135deg, #f3f4f6, #e4e7eb);
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

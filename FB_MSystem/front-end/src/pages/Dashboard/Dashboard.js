@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Dashboard.module.css';
 import { Bar } from 'react-chartjs-2';
 import {
-    Chart as ChartJS,   
+    Chart as ChartJS,
     CategoryScale,
     LinearScale,
     BarElement,
@@ -29,15 +29,15 @@ function Dashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('/api/dashboard'); // Replace with your actual API endpoint
+                const response = await fetch('http://localhost:5000/api/dashboard'); 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`Lỗi HTTP! trạng thái: ${response.status}`);
                 }
                 const data = await response.json();
                 setTeamsData(data.teams || []);
                 setMatchesData(data.matches || []);
             } catch (error) {
-                console.error("Error fetching dashboard data:", error);
+                console.error("Lỗi khi tải dữ liệu bảng điều khiển:", error);
             }
         };
 
@@ -50,7 +50,7 @@ function Dashboard() {
                 labels: teamsData.map((team) => team.name),
                 datasets: [
                     {
-                        label: 'Total Goals',
+                        label: 'Tổng số bàn thắng',
                         data: teamsData.map((team) => team.goals || 0),
                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
                         borderColor: 'rgba(54, 162, 235, 1)',
@@ -71,7 +71,7 @@ function Dashboard() {
             },
             title: {
                 display: true,
-                text: 'Goals Scored by Top Teams',
+                text: 'Số bàn thắng của các đội bóng hàng đầu',
             },
         },
         scales: {
@@ -79,13 +79,13 @@ function Dashboard() {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Goals',
+                    text: 'Số bàn thắng',
                 }
             },
             x: {
                 title: {
                     display: true,
-                    text: 'Teams'
+                    text: 'Đội bóng',
                 }
             }
         },
@@ -93,38 +93,38 @@ function Dashboard() {
 
     return (
         <div className={styles.dashboard}>
-            <h2 className={styles.title}>Dashboard</h2>
+            <h2 className={styles.title}>Bảng điều khiển</h2>
             <div className={styles.cards}>
                 <div className={styles.card}>
-                    <h3>Total Teams</h3>
+                    <h3>Tổng số đội</h3>
                     <p>{teamsData?.length || 0}</p>
                 </div>
                 <div className={styles.card}>
-                    <h3>Upcoming Matches</h3>
+                    <h3>Trận đấu sắp tới</h3>
                     <p>{matchesData?.filter((match) => !match.played).length || 0}</p>
                 </div>
                 <div className={styles.card}>
-                    <h3>Completed Matches</h3>
+                    <h3>Trận đấu đã hoàn thành</h3>
                     <p>{matchesData?.filter((match) => match.played).length || 0}</p>
                 </div>
                 <div className={styles.card}>
-                    <h3>Top Scorer</h3>
-                    <p>{topScorer ? `${topScorer.name} - ${topScorer.goals || 0} Goals` : 'No data'}</p>
+                    <h3>Vua phá lưới</h3>
+                    <p>{topScorer ? `${topScorer.name} - ${topScorer.goals || 0} Bàn thắng` : 'Không có dữ liệu'}</p>
                 </div>
             </div>
 
             <div className={styles.graphs}>
                 <div className={styles.graph}>
-                    <h3>Goals Scored by Top Teams</h3>
+                    <h3>Số bàn thắng của các đội bóng hàng đầu</h3>
                     {chartData ? (
                         <Bar options={chartOptions} data={chartData} />
                     ) : (
-                        <p>Loading data...</p>
+                        <p>Đang tải dữ liệu...</p>
                     )}
                 </div>
                 <div className={styles.graph}>
-                    <h3>Match Attendance</h3>
-                    <p>Graph Placeholder (Implement Attendance Graph Here)</p>
+                    <h3>Số lượng khán giả</h3>
+                    <p>Biểu đồ giữ chỗ (Triển khai biểu đồ số lượng khán giả tại đây)</p>
                 </div>
             </div>
         </div>

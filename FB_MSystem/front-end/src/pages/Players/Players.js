@@ -117,16 +117,16 @@ function Players({ seasons }) {
     }
   };
 
-  const handleAddPlayersToTeam = (selectedPlayerIds) => {
-    const newPlayers = availablePlayers.filter((player) =>
-      selectedPlayerIds.includes(player.id)
+  const handleAddPlayersToTeam = (newPlayers) => {
+    // Update the players state to include the new players
+    setPlayers(prevPlayers => [...prevPlayers, ...newPlayers]);
+  
+    // Update the availablePlayers state to remove the added players
+    setAvailablePlayers(prevAvailablePlayers =>
+      prevAvailablePlayers.filter(player => !newPlayers.some(newPlayer => newPlayer.id === player.id))
     );
-    setPlayers((prevPlayers) => [...prevPlayers, ...newPlayers]);
-    setAvailablePlayers((prevAvailablePlayers) =>
-      prevAvailablePlayers.filter(
-        (player) => !selectedPlayerIds.includes(player.id)
-      )
-    );
+  
+    // Close the modal
     setShowAddPlayersModal(false);
   };
 

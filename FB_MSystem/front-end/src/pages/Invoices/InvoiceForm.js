@@ -49,7 +49,7 @@ function InvoiceForm({ onAddInvoice }) {
   return (
     <div className={styles.formContainer}>
       <form onSubmit={handleSubmit}>
-        <h2>Nhập thông tin hóa đơn</h2>
+        <h2>Nhập thông tin biên nhận</h2>
         <label>Số biên nhận:</label>
         <input
           name="receiptNumber"
