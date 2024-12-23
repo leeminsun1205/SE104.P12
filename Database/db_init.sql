@@ -402,4 +402,4 @@ VALUES
 ('MG2025_1', 'DB010', 'CT029'),
 ('MG2025_1', 'DB010', 'CT030');
 SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
-select * from trandau
+select * from vongdau
