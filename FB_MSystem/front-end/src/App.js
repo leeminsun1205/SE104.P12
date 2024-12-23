@@ -22,6 +22,7 @@ import MatchDetails from './pages/Matches/MatchDetails';
 import Matches from './pages/Matches/Matches';
 import Invoices from './pages/Invoices/Invoices';
 import Temp from './pages/Temp/Temp';
+import Setting from './pages/Setting/Setting'
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -194,6 +195,7 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/standings" element={<Standings />} />
             <Route path="/create" element={<CreateNew />} />
             <Route path="/invoices" element={<Invoices />} />
+            <Route path="/setting" element={<Setting />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

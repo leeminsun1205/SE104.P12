@@ -1,4 +1,3 @@
-// src/components/Sidebar/Sidebar.js
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
@@ -76,6 +75,16 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-file-invoice"></i> Biên nhận lệ phí
             </NavLink>
           </div>
+
+        {/* Cài đặt */}
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+          }
+        >
+          <i className="fas fa-cog"></i> Cài đặt
+        </NavLink>
         </nav>
       </aside>
     </>

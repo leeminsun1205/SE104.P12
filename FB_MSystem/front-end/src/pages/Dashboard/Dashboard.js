@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Dashboard.module.css';
 import { Bar } from 'react-chartjs-2';
 import {
-    Chart as ChartJS,
+    Chart as ChartJS,   
     CategoryScale,
     LinearScale,
     BarElement,
