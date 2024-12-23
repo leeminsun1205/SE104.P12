@@ -1,96 +1,93 @@
-/* src/pages/HomePage.module.css */
+/* HomePage.module.css */
 
-.homepage {
-  font-family: Arial, sans-serif;
-  color: #333;
-  margin-top: 100px;
-}
-
-.banner {
+.container {
+  margin-top: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 50px 50px;
-  background: #b1ceff;
-  color: white;
-}
-
-.banner h1 {
-  font-size: 3rem;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.cta-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: white;
-  background-color: #007bff; /* A more prominent button color */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold; /* Make the button text bolder */
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-}
-
-.cta-button:hover {
-  background-color: #0056b3; /* Darker shade on hover */
-  transform: translateY(-2px); /* Subtle lift on hover */
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
-}
-
-.features {
-  display: flex;
-  justify-content: space-around;
-  padding: 30px 20px;
-  background-color: #f8f9fa; /* A slightly softer background */
-  flex-wrap: wrap; /* Allow features to wrap on smaller screens */
-}
-
-.feature {
-  text-align: center;
-  width: 30%;
-  margin-bottom: 20px; /* Add spacing between features */
-}
-
-.feature img {
-  max-width: 100px; /* Set a maximum width for the images */
-  height: auto;
-  margin-bottom: 15px;
-}
-
-.feature h2 {
-  color: #007bff;
-  margin-bottom: 10px;
-}
-
-.feature p {
-  font-size: 1rem;
-  color: #555; /* Slightly darker text for better readability */
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .feature {
-    width: 45%; /* Two features per row on medium screens */
-  }
-}
-
-@media (max-width: 768px) {
-  .feature {
-    width: 100%; /* One feature per row on small screens */
-  }
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensure container takes up full viewport height */
+  padding: 20px;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
 }
 
 .content {
-    flex: 1; /* Allow content to expand and fill available space */
+  max-width: 800px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.banner {
+  background-color: #007bff;
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.banner h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.banner p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.ctaButton {
+  display: inline-block;
+  background-color: #07bdff;
+  color: #000;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.ctaButton:hover {
+  background-color: #0595c9;
+  color: #000;
+}
+
+.leagueInfo,
+.teams {
+  padding: 20px;
+}
+
+.leagueInfo h2,
+.teams h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.leagueInfo ul,
+.teams ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leagueInfo li,
+.teams li {
+  font-size: 16px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.teams li a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.teams li a:hover {
+  color: #0056b3;
 }

@@ -24,7 +24,6 @@ function PlayerList({ players, onDelete, onNavigate, season }) {
           </h3>
           <p className="player-info">Position: {player.position}</p>
           <p className="player-info">Nationality: {player.nationality}</p>
-          {/* Add other player information as needed */}
           <div className="player-actions">
             <button className="delete" onClick={() => onDelete(player.id)}>
               Delete

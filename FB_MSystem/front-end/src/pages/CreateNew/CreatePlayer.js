@@ -15,6 +15,7 @@ function CreatePlayer({ onAddPlayer, seasons }) {
     height: null,
     weight: null,
     bio: "",
+    playerType: "", // Thêm trường playerType
   });
   const [error, setError] = useState("");
 
@@ -26,7 +27,7 @@ function CreatePlayer({ onAddPlayer, seasons }) {
   const handleAdd = async () => {
     setError("");
 
-    if (!player.name.trim() || !player.position || !player.nationality.trim() || !player.dob) {
+    if (!player.name.trim() || !player.position || !player.nationality.trim() || !player.dob || !player.playerType) {
         setError("Vui lòng điền đầy đủ thông tin.");
         return;
     }
@@ -67,6 +68,7 @@ function CreatePlayer({ onAddPlayer, seasons }) {
       height: null,
       weight: null,
       bio: "",
+      playerType: "", // Reset playerType
     });
   };
 
@@ -107,6 +109,21 @@ function CreatePlayer({ onAddPlayer, seasons }) {
           <option value="Tiền vệ">Tiền vệ</option>
           <option value="Hậu vệ">Hậu vệ</option>
           <option value="Thủ môn">Thủ môn</option>
+        </select>
+      </div>
+      {/* Thêm lựa chọn loại cầu thủ */}
+      <div>
+        <label htmlFor="playerType">Loại cầu thủ <span style={{ color: "red" }}>*</span></label>
+        <select
+          id="playerType"
+          name="playerType"
+          value={player.playerType}
+          onChange={handleInputChange}
+          required
+        >
+          <option value="">Chọn loại cầu thủ</option>
+          <option value="Trong nước">Trong nước</option>
+          <option value="Ngoài nước">Ngoài nước</option>
         </select>
       </div>
       {[

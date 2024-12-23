@@ -111,6 +111,9 @@ const PlayerInfo = () => {
         <p>
           <strong>Mùa giải:</strong> {player.season}
         </p>
+        <p>
+            <strong>Loại cầu thủ:</strong> {player.playerType}
+        </p>
       </div>
     </div>
   );
