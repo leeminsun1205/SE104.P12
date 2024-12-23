@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './TeamInfo.css';
 import defaultHomeImage from '../../assets/images/teams/default_home.png';
 import defaultAwayImage from '../../assets/images/teams/default_away.png';
+import defaultThirdImage from '../../assets/images/teams/default_away.png';
 
 function TeamInfo({ teams }) {
     const { id } = useParams();
@@ -53,12 +54,13 @@ function TeamInfo({ teams }) {
                         <strong>Đạt tiêu chuẩn (số sao):</strong> {team.fifa_stars} <strong>của Liên đoàn bóng đá Thế giới</strong>
                     </li>
                 </ul>
-                <p>
-                    <strong>Giới thiệu đội:</strong> {team.description}
+                <p className="team-description">
+                    <strong>Giới thiệu đội:</strong>
+                    <span>{team.description}</span>
                 </p>
             </div>
             <div className="uniform-images">
-                <div className="kit-container"> {/* Wrap label and image */}
+                <div className="kit-container">
                     <p className="kit-label">Áo sân nhà</p>
                     <img
                         src={
@@ -71,7 +73,7 @@ function TeamInfo({ teams }) {
                         loading="lazy"
                     />
                 </div>
-                <div className="kit-container"> {/* Wrap label and image */}
+                <div className="kit-container">
                     <p className="kit-label">Áo sân khách</p>
                     <img
                         src={
@@ -84,9 +86,23 @@ function TeamInfo({ teams }) {
                         loading="lazy"
                     />
                 </div>
+                {/* Third Kit Container */}
+                <div className="kit-container">
+                    <p className="kit-label">Áo dự bị</p>
+                    <img
+                        src={
+                            team.third_kit_image instanceof File
+                                ? URL.createObjectURL(team.third_kit_image)
+                                : team.third_kit_image || defaultThirdImage
+                        }
+                        alt={`${team.name} Third Uniform`}
+                        className="uniform-image"
+                        loading="lazy"
+                    />
+                </div>
             </div>
             <div className="action">
-                <button className="toplayer" onClick={() => handleToPlayer(team.id)}>
+                <button className="to-player" onClick={() => handleToPlayer(team.id)}>
                     Cầu thủ
                 </button>
                 <button

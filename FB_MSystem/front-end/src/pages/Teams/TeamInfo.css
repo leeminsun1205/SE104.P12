@@ -1,165 +1,226 @@
-/* src/pages/Teams/TeamInfo.css */
+/* Modernized styles for TeamInfo component */
 
 .team-info {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 1200px; /* Increase max width for a wider layout */
+    padding: 25px;
+    border-radius: 15px;
+    background-color: #f8f9fa; /* Updated background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+    max-width: 850px;
     margin-top: 80px;
     margin-left: auto;
     margin-right: auto;
+    font-family: 'Poppins', sans-serif; /* Modern font */
+    color: #343a40; /* Darker text color */
 }
 
 .team-details {
     width: 100%;
     text-align: left;
-    margin-bottom: 20px;
-}
-
-.uniform-images {
-    display: flex;
-    justify-content: center;
-    gap: 20px; 
-    margin-top: 20px; 
-    margin-bottom: 20px; 
-    max-width: 45%; 
-    height: auto;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-
-.team-details { 
-    width: 100%;
-    text-align: left;
-    margin-top: 20px; 
+    margin-bottom: 25px;
+    line-height: 1.7;
 }
 
 .team-details h2 {
     text-align: center;
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 2.2rem; /* Slightly larger font size */
+    color: #007bff; /* Primary color for heading */
+    margin-bottom: 25px;
+    font-weight: 600; /* Adjusted font weight */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
 
 .team-details ul {
     list-style-type: none;
     padding: 0;
-    columns: 2;
-    gap: 20px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjusted grid columns */
+    gap: 25px;
+    margin-bottom: 25px;
 }
 
 .team-details ul li {
-    margin-bottom: 10px;
-    font-size: 1rem;
-    color: #555;
+    font-size: 1.05rem; /* Slightly larger font size */
+    color: #495057; /* Adjusted text color */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition */
+}
+
+.team-details ul li:hover {
+    transform: translateY(-3px); /* Lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
 }
 
 .team-details ul li strong {
-    color: #333;
+    color: #007bff; /* Primary color for strong text */
 }
-.to-other-matches {
-    background-color: purple;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
+
+.team-description {
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease;
 }
-.to-other-matches:hover {
-    background-color: rgb(74, 0, 74);
+
+.team-description strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+    color: #007bff;
 }
+
+.team-description span {
+    color: #343a40;
+    display: block;
+}
+
 .go-back-button {
-    background-color: #007bff;
+    background-color: #3498db;
     color: #fff;
     border: none;
-    padding: 10px 15px;
-    font-size: 1rem;
-    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 1.05rem; /* Slightly larger font size */
+    border-radius: 8px;
     cursor: pointer;
     margin-bottom: 20px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    align-self: flex-start;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
 }
 
 .go-back-button:hover {
-    background-color: #0056b3;
+    background-color: #2188c9; /* Slightly darker shade on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
 }
 
-.team-info button.toplayer {
-    background-color: rgb(150, 150, 150);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 1rem;
-    margin-top: 20px; 
-}
-
-.team-info button.toplayer:hover {
-    background-color: rgb(80, 79, 79);
-    color: white;
-}
 .uniform-images {
     display: flex;
-    justify-content: center; /* Center the kit containers horizontally */
-    gap: 20px; 
-    margin: 20px 0;
-    border: none;
+    justify-content: space-around; /* Even spacing */
+    gap: 40px; /* Increased gap */
+    margin: 25px 0;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
-/* Styles for each kit container */
 .kit-container {
     display: flex;
-    flex-direction: column; /* Stack label and image vertically */
-    align-items: center; /* Center content within the container */
-    width: fit-content; /* Adjust width based on content */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: auto;
+    max-width: 280px; /* Increased max-width */
+    flex: 1;
+    min-width: 160px; /* Increased min-width */
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
 }
 
-/* Styles for the kit label */
 .kit-label {
-    font-weight: bold;
-    margin-bottom: 5px; /* Add some space between the text and the image */
-    font-size: 1.2rem; /* Increase font size for emphasis */
-    color: #333; /* Dark grey color for the text */
+    font-weight: 700; /* Bolder font weight */
+    margin-bottom: 10px;
+    font-size: 1.15rem; /* Slightly larger font size */
+    color: #212529; /* Darker text color */
 }
 
-/* Styles for the uniform image */
 .uniform-image {
-    max-width: 100%; /* Adjust as needed for your design */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 8px; 
-    border: 1px solid #ddd; 
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid #ced4da; /* Slightly thicker border */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-@media (max-width: 900px) {
+
+.uniform-image:hover {
+    transform: scale(1.03); /* Slightly reduced scale on hover */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.action {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 25px;
+    margin-top: 35px;
+    width: 100%;
+}
+
+.action button {
+    padding: 14px 28px; /* Increased padding */
+    font-size: 1.05rem; /* Slightly larger font size */
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    flex: 1;
+    min-width: 130px; /* Increased min-width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.to-player {
+    background-color: #343a40; /* Updated color */
+    color: white;
+}
+
+.to-player:hover {
+    background-color: #23272b; /* Slightly darker shade on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+.to-other-matches {
+    background-color: #dc3545; /* Updated color */
+    color: white;
+}
+
+.to-other-matches:hover {
+    background-color: #c82333; /* Slightly darker shade on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+@media (max-width: 768px) {
     .team-info {
         padding: 15px;
-        max-width: 95%; 
+        max-width: 95%;
+    }
+
+    .team-details h2 {
+        font-size: 1.8rem;
     }
 
     .team-details ul {
-        columns: 1;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .team-details ul li {
+        font-size: 0.95rem;
     }
 
     .go-back-button,
-    .team-info button.toplayer {
-        font-size: 0.9rem; 
-        padding: 8px 12px;
+    .action button {
+        font-size: 0.9rem;
+        padding: 10px 15px;
     }
-    
+
     .uniform-images {
         flex-direction: column;
-        align-items: center; /* Center on smaller screens */
-        border: none;
+        align-items: center;
+        gap: 25px;
     }
+
     .kit-container {
-        width: 100%; /* Full width on smaller screens */
+        width: 90%;
+        max-width: none;
     }
 }

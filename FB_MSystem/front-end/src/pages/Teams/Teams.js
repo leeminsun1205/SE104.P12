@@ -102,6 +102,7 @@ function Teams({
       />
       <div className="search-container">
         <div className="search-input-wrapper">
+          <p>Tìm kiếm</p>
           <input
             type="text"
             placeholder="Tìm kiếm đội bóng..."
