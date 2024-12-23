@@ -62,13 +62,13 @@ const DoiBongController = {
 
     async create(req, res) {
         try {
-            const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin, Logo } = req.body;
+            const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin} = req.body;
             const isDuplicateName = await isDuplicate(DoiBong, 'TenDoiBong', TenDoiBong);
             if (isDuplicateName) {
                 return res.status(400).json({ error: `Tên đội bóng "${TenDoiBong}" đã tồn tại.` });
             }
             const doiBong = await DoiBong.create({
-                MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin, Logo,
+                MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin,
             });
             res.status(201).json(doiBong);
         } catch (error) {
@@ -80,19 +80,22 @@ const DoiBongController = {
     async update(req, res) {
         try {
             const { id } = req.params;
-            const updates = req.body;
+            const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin } = req.body;
             const doiBong = await DoiBong.findByPk(id);
-            if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
-            if (updates.TenDoiBong && updates.TenDoiBong !== doiBong.TenDoiBong) {
-                const isDuplicateName = await isDuplicate(DoiBong, 'TenDoiBong', updates.TenDoiBong);
+            if (!doiBong) {
+                return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
+            }
+            if (TenDoiBong && TenDoiBong !== doiBong.TenDoiBong) {
+                const isDuplicateName = await isDuplicate(DoiBong, 'TenDoiBong', TenDoiBong);
                 if (isDuplicateName) {
-                    return res.status(400).json({ error: `Tên đội bóng "${updates.TenDoiBong}" đã tồn tại.` });
+                    return res.status(400).json({ error: `Tên đội bóng "${TenDoiBong}" đã tồn tại.` });
                 }
             }
-            await doiBong.update(updates);
+            await doiBong.update({ MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin });
             res.status(200).json(doiBong);
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin đội bóng.' });
+            console.error('Lỗi khi cập nhật thông tin đội bóng:', error);
+            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin đội bóng.', details: error.message });
         }
     },
 

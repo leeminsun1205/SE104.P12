@@ -117,35 +117,36 @@ const Matches = () => {
     <div className={styles.matchesPage}>
       <div className={styles.filterContainer}>
         {/* Season Selector */}
-        <SeasonSelector
-          onSeasonChange={handleSeasonChange}
-          seasons={seasons}
-          selectedSeason={selectedSeason}
-        />
-
-        {/* Round Selector */}
-        <label htmlFor="round" className={styles.label}>
-          Vòng thi đấu:
-        </label>
-        <select
-          id="round"
-          value={selectedRound}
-          onChange={(e) => setSelectedRound(e.target.value)}
-          className={styles.selectField}
-        >
-          <option value="">Tất cả</option>
-          {rounds.map((round) => (
-            <option key={round} value={round}>
-              {round}
-            </option>
-          ))}
-        </select>
-
-        {/* Search Field */}
+        <div className={styles.seasonSelector}>
+          <SeasonSelector
+            onSeasonChange={handleSeasonChange}
+            seasons={seasons}
+            selectedSeason={selectedSeason}
+            id="season"
+          />
+        </div>
+        <div className={styles.roundSelector}>
+          <label htmlFor="round" className={styles.label}>
+            Vòng
+          </label>
+          <select
+            id="round"
+            value={selectedRound}
+            onChange={(e) => setSelectedRound(e.target.value)}
+            className={styles.selectField}
+          >
+            <option value="">Tất cả</option>
+            {rounds.map((round) => (
+              <option key={round} value={round}>
+                {round}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className={styles.searchContainer}>
           <input
             type="text"
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm trận đấu..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchField}
@@ -156,9 +157,10 @@ const Matches = () => {
               onClick={() => setSearchQuery("")}
               aria-label="Clear search"
             >
-              X
+              <i className="fas fa-times"></i>
             </button>
           )}
+          <i className={`fas fa-search ${styles.searchIcon}`}></i>
         </div>
       </div>
 
@@ -173,7 +175,8 @@ const Matches = () => {
                 className={styles.headerCell}
                 onClick={() => handleSort(key)}
               >
-                {key.charAt(0).toUpperCase() + key.slice(1)} {getSortIndicator(key)}
+                {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                {getSortIndicator(key)}
               </th>
             ))}
           </tr>

@@ -48,10 +48,6 @@ const CauThu = sequelize.define(
             type: DataTypes.STRING(1000),
             allowNull: true,
         },
-        AnhCauThu: {
-            type: DataTypes.STRING(200),
-            allowNull: true,
-        },
     },
     {
         tableName: 'CAUTHU',

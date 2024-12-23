@@ -1,4 +1,4 @@
-
+/* CSS bạn đã cung cấp (giữ nguyên) */
 .matchDetails {
   padding: 30px;
   border-radius: 10px;
@@ -83,4 +83,71 @@
 
 .backButton:hover {
   background-color: #3700b3;
+}
+
+/* CSS mới cho phần thông tin chi tiết */
+.detailsButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--secondary-color); /* Màu nền khác với backButton */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.detailsButton:hover {
+  background-color: #00629b; /* Màu nền khi hover */
+}
+
+.matchDetailsContainer {
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px var(--card-shadow);
+  padding: 20px;
+}
+
+.matchDetailsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.matchDetailsTable th,
+.matchDetailsTable td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.matchDetailsTable th {
+  color: var(--label-color);
+  font-weight: bold;
+  width: 30%; /* Cố định độ rộng cột th */
+}
+
+.goalTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.goalTable th,
+.goalTable td {
+  padding: 8px;
+  text-align: left;
+}
+
+.goalTable th {
+  color: var(--label-color);
+  font-weight: bold;
+}
+
+.goalTable td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.goalTable tr:last-child td {
+  border-bottom: none;
 }
