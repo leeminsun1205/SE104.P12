@@ -106,12 +106,35 @@
   margin: 20px 0;
 }
 
-
 .printButton:hover {
   background-color: #2980b9;
 }
 
 .printButton i {
+  margin-right: 8px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #7f8c8d; /* Màu xám */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px auto 0; /* Chỉnh margin-top nhỏ hơn */
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #606f7b; /* Màu xám đậm hơn khi hover */
+}
+
+.backButton i {
   margin-right: 8px;
 }
 
@@ -219,114 +242,5 @@
 
   .printDate {
     margin-top: 0.5cm;
-  }
-}
-
-
-@media print {
-  body * {
-      visibility: hidden;
-  }
-
-  .printable,
-  .printable *,
-  .invoicePage,
-  .invoicePage * {
-      visibility: visible;
-  }
-
-  .printable {
-      position: relative;
-      left: 0;
-      top: 0;
-      width: 100%;
-      font-size: 12pt;
-  }
-
-  .Header_header__R9KJ2,
-  .Footer_footer__sluk8,
-  .printButton,
-  .backButton {
-      display: none !important;
-  }
-
-  html,
-  body {
-      height: 100%;
-  }
-
-  @page {
-      size: A4;
-      margin: 0;
-      /* Loại bỏ margin của trang */
-  }
-
-  .invoicePage {
-      box-shadow: none;
-      padding: 0;
-      margin: 0 auto;
-      /* Căn giữa invoicePage */
-      border: 1px solid #000;
-      /* Thêm viền để dễ nhận biết */
-      max-width: 700px;
-      /* Set width cố định cho invoicePage */
-      page-break-after: auto;
-      height: 95%;
-      /* Giảm chiều cao để tránh bị tràn */
-  }
-
-  .invoiceTitle {
-      font-size: 18pt;
-      margin-bottom: 0.5cm;
-  }
-
-  .invoiceContent {
-      padding: 0.5cm;
-  }
-
-  .invoiceRow {
-      margin-bottom: 0.25cm;
-  }
-
-  .label {
-      font-weight: bold;
-  }
-
-  .value {
-      text-align: right;
-  }
-
-  .signatureSection {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1cm;
-      width: 100%;
-      /* Đảm bảo signatureSection chiếm toàn bộ chiều rộng */
-  }
-
-  .signatureBox {
-      height: auto;
-      min-height: 60px;
-      width: 45%;
-      /* Điều chỉnh lại width */
-      box-sizing: border-box;
-      text-align: center;
-      /* Căn giữa nội dung trong signatureBox */
-  }
-
-  .signatureLabel {
-      font-size: 9pt;
-      margin-bottom: 0.2cm;
-      white-space: nowrap;
-      display: block;
-      /* Thêm display: block */
-  }
-
-  .signatureLine {
-      margin: 0;
-  }
-
-  .printDate {
-      margin-top: 0.5cm;
   }
 }

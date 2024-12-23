@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toVietnameseCurrencyString } from "./utils"; // Import toVietnameseCurrencyString
 import styles from "./Invoices.module.css";
 
 const PLACEHOLDER = "..........................................................................................................";
@@ -21,7 +22,8 @@ const SignatureBox = ({ label }) => (
 function Invoices({ invoices }) {
   const { invoiceId } = useParams();
   const navigate = useNavigate();
-  const [, setInvoiceData] = useState(null);
+  // Remove the unnecessary setInvoiceData since it's not actually changing any state.
+  // const [, setInvoiceData] = useState(null); 
   const invoiceData = invoices.find((invoice) => invoice.id === invoiceId);
 
   const goBackToForm = () => {
@@ -29,45 +31,60 @@ function Invoices({ invoices }) {
   };
 
   useEffect(() => {
-    const fetchedInvoiceData = {
-      receiptNumber: invoiceId,
-      teamName: "Team A",
-      fee: "100000",
-      receivedAmount: "50000",
-      receivedDate: "2024-12-23",
-      status: "Đã nhận",
-    };
+    // This useEffect is no longer needed as we're not fetching data anymore
+    // and we're relying on the `invoices` prop passed from the parent.
 
-    setInvoiceData(fetchedInvoiceData);
+    // const fetchedInvoiceData = {
+    //   receiptNumber: invoiceId,
+    //   teamName: "Team A",
+    //   fee: "100000",
+    //   receivedAmount: "50000",
+    //   receivedDate: "2024-12-23",
+    //   status: "Đã nhận",
+    // };
+
+    // setInvoiceData(fetchedInvoiceData);
   }, [invoiceId]);
 
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
 
-  const calculateRemainingAmount = () => {
-    const fee = parseFloat(invoiceData?.fee) || 0;
-    const receivedAmount = parseFloat(invoiceData?.receivedAmount) || 0;
-    return fee - receivedAmount;
-  };
+  // This function is not used anywhere, so it can be removed.
+  // const calculateRemainingAmount = () => {
+  //   const fee = parseFloat(invoiceData?.fee) || 0;
+  //   const receivedAmount = parseFloat(invoiceData?.receivedAmount) || 0;
+  //   return fee - receivedAmount;
+  // };
 
   const handlePrint = () => window.print();
 
-  if (!invoiceData) return <div>Invoice not found.</div>;
+  // Improved error handling: Show a more user-friendly message with a button to go back
+  if (!invoiceData) {
+    return (
+      <div className={styles.errorMessage}>
+        <p>Không tìm thấy hóa đơn. Vui lòng kiểm tra lại mã hóa đơn.</p>
+        <button className={styles.backButton} onClick={goBackToForm}>
+          <i className="fas fa-arrow-left"></i> Quay lại
+        </button>
+      </div>
+    );
+  }
 
   const invoiceFields = [
     { label: "Số biên nhận", value: invoiceData?.receiptNumber },
     { label: "Tên đội bóng", value: invoiceData?.teamName },
-    { label: "Lệ phí", value: invoiceData?.fee ? formatCurrency(invoiceData.fee) : "" },
+    { label: "Số tiền", value: invoiceData?.amount ? formatCurrency(invoiceData.amount) : "" },
+    { label: "Bằng chữ", value: toVietnameseCurrencyString(invoiceData?.amount) },
     { label: "Đã nhận", value: invoiceData?.receivedAmount ? formatCurrency(invoiceData.receivedAmount) : "" },
-    { label: "Số tiền còn lại", value: invoiceData?.fee && invoiceData?.receivedAmount ? formatCurrency(invoiceData.fee - invoiceData.receivedAmount) : "" },
+    { label: "Số tiền còn lại", value: invoiceData?.amount && invoiceData?.receivedAmount ? formatCurrency(invoiceData.amount - invoiceData.receivedAmount) : "" },
     { label: "Ngày nhận", value: invoiceData?.receivedDate },
+    { label: "Lý do", value: invoiceData?.reason },
     { label: "Tình trạng", value: invoiceData?.status },
   ];
-
   return (
     <div className={styles.printable}>
       <div className={styles.invoicePage} id="invoicePage">
-        <h1 className={styles.invoiceTitle}>Biên nhận lệ phí</h1>
+        <h1 className={styles.invoiceTitle}>Biên Nhận</h1>
         <div className={styles.invoiceContent}>
           <div className={styles.invoiceSection}>
             {invoiceFields.map(({ label, value }) => (
