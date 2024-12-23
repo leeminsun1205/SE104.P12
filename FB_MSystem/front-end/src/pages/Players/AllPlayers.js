@@ -9,8 +9,6 @@ function AllPlayers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [playersPerPage] = useState(10);
 
   useEffect(() => {
     const fetchAllPlayers = async () => {
@@ -61,21 +59,11 @@ function AllPlayers() {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
   };
 
   const filteredPlayers = players.filter((player) =>
     player.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const indexOfLastPlayer = currentPage * playersPerPage;
-  const indexOfFirstPlayer = indexOfLastPlayer - playersPerPage;
-  const currentPlayers = filteredPlayers.slice(
-    indexOfFirstPlayer,
-    indexOfLastPlayer
-  );
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="players-container">
@@ -96,49 +84,16 @@ function AllPlayers() {
       {error && <p className="error-message">{error}</p>}
       {loading ? (
         <p>Loading...</p>
-      ) : currentPlayers.length > 0 ? (
-        <>
-          <PlayerList
-            players={currentPlayers}
-            onDelete={handleDeletePlayer}
-            onNavigate={handleNavigate}
-          />
-          <Pagination
-            playersPerPage={playersPerPage}
-            totalPlayers={filteredPlayers.length}
-            paginate={paginate}
-            currentPage={currentPage}
-          />
-        </>
+      ) : filteredPlayers.length > 0 ? (
+        <PlayerList
+          players={filteredPlayers}
+          onDelete={handleDeletePlayer}
+          onNavigate={handleNavigate}
+        />
       ) : (
         <p>Không tìm thấy cầu thủ phù hợp</p>
       )}
     </div>
-  );
-}
-
-function Pagination({ playersPerPage, totalPlayers, paginate, currentPage }) {
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(totalPlayers / playersPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
-  return (
-    <nav>
-      <ul className="pagination">
-        {pageNumbers.map((number) => (
-          <li key={number} className="page-item">
-            <a
-              onClick={() => paginate(number)}
-              href="#!"
-              className={`page-link ${currentPage === number ? "active" : ""}`}
-            >
-              {number}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
   );
 }
 

@@ -1,0 +1,60 @@
+.formContainer {
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+  }
+  
+  .formGroup {
+    margin-bottom: 10px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+  
+  .buttonGroup {
+    margin-top: 20px;
+  }
+  
+  .saveButton,
+  .cancelButton,
+  .addButton, .removeButton {
+    padding: 8px 15px;
+    margin-right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .cancelButton {
+    background-color: #f44336;
+  }
+  .addButton {
+    background-color: #008CBA; /* Green */
+  }
+  .removeButton {
+    background-color: #f44336;
+  }
+  .tableContainer {
+    margin-bottom: 20px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }

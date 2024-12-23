@@ -11,14 +11,17 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
     const fetchAvailablePlayers = async () => {
       setLoading(true);
       try {
-        // Correctly fetch available players from the backend
-        const response = await fetch(
-          `http://localhost:5000/api/players?season=no%20season`
-        );
+        const response = await fetch(`http://localhost:5000/api/players`);
         if (!response.ok) {
           throw new Error("Failed to fetch available players");
         }
-        const data = await response.json();
+        let data = await response.json();
+
+        // Filter out players that are already in a team for the selected season
+        if (season) {
+          data = data.filter(player => player.season !== season);
+        }
+
         setAvailablePlayers(data);
       } catch (error) {
         setError(error.message);
@@ -27,7 +30,9 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
       }
     };
 
-    fetchAvailablePlayers();
+    if (season) {
+      fetchAvailablePlayers();
+    }
   }, [teamId, season]);
 
   const handlePlayerSelection = (playerId) => {
@@ -39,7 +44,7 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
   };
 
   const handleAddPlayers = async () => {
-    setLoading(true); // Set loading to true when starting the operation
+    setLoading(true);
     try {
       // Send the request to add players to the team
       const response = await fetch(
@@ -61,11 +66,12 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
         throw new Error(errorData.message || "Failed to add players to team");
       }
 
-      // Update local state to reflect the changes
-      const updatedPlayers = availablePlayers.filter((player) =>
-        selectedPlayers.includes(player.id)
-      );
-      onAddPlayersToTeam(updatedPlayers); // Update parent component's state
+      // Assuming the backend returns the updated list of players for the team
+      const updatedPlayers = await response.json();
+
+      // Instead of updating the state directly, call onAddPlayersToTeam
+      // to let the parent component (Players.js) manage the state
+      onAddPlayersToTeam(selectedPlayers);
 
       // Remove added players from the available players list
       setAvailablePlayers((prevAvailablePlayers) =>
@@ -79,9 +85,10 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
     } catch (error) {
       setError(error.message);
     } finally {
-      setLoading(false); // Set loading to false after the operation is complete
+      setLoading(false);
     }
   };
+
 
   return (
     <div className="modal-overlay">

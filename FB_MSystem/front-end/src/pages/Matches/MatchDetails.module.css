@@ -1,153 +1,175 @@
-/* CSS bạn đã cung cấp (giữ nguyên) */
 .matchDetails {
-  padding: 30px;
+  font-family: Arial, sans-serif;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 60px;
+  padding: 20px;
+  max-width: 900px;
+  border: 1px solid #ddd;
   border-radius: 10px;
-  box-shadow: 0 4px 10px var(--card-shadow);
-  max-width: 600px;
-  margin: 40px auto;
-  text-align: center;
-  font-family: "Roboto", sans-serif;
+  background-color: #f9f9f9;
 }
 
 .matchTitle {
-  font-size: 28px;
+  text-align: center;
+  font-size: 24px;
   font-weight: bold;
-  color: var(--primary-color);
   margin-bottom: 20px;
 }
 
-.matchTitle span {
-  color: var(--secondary-color);
-  font-weight: normal;
-}
-
 .matchInfo {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px var(--card-shadow);
-  padding: 20px;
-  margin-top: 20px;
-  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .infoItem {
-  font-size: 16px;
-  margin: 10px 0;
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 8px;
-}
-
-.infoItem:last-child {
-  border-bottom: none;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .label {
-  color: var(--label-color);
   font-weight: bold;
-}
-
-.notFound {
-  text-align: center;
-  padding: 40px;
-  background-color: var(--background-color);
-  border-radius: 10px;
-  box-shadow: 0 4px 10px var(--card-shadow);
-  max-width: 600px;
-  margin: 40px auto;
-}
-
-.notFound h2 {
-  font-size: 24px;
-  color: var(--primary-color);
-  margin-bottom: 10px;
-}
-
-.notFound p {
-  font-size: 16px;
-  color: var(--text-color);
-}
-
-.backButton {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.backButton:hover {
-  background-color: #3700b3;
-}
-
-/* CSS mới cho phần thông tin chi tiết */
-.detailsButton {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: var(--secondary-color); /* Màu nền khác với backButton */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.detailsButton:hover {
-  background-color: #00629b; /* Màu nền khi hover */
 }
 
 .matchDetailsContainer {
   margin-top: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px var(--card-shadow);
-  padding: 20px;
 }
 
 .matchDetailsTable {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.matchDetailsTable td {
+  padding: 10px;
+  border: 1px solid #ddd;
   text-align: left;
 }
 
-.matchDetailsTable th,
-.matchDetailsTable td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border-color);
+.toggleButtonsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
 }
 
-.matchDetailsTable th {
-  color: var(--label-color);
-  font-weight: bold;
-  width: 30%; /* Cố định độ rộng cột th */
+.smallDetailsButton {
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.goalTable {
+.smallDetailsButton:hover {
+  background-color: #0056b3;
+}
+
+.goalTable,
+.cardTable {
   width: 100%;
   border-collapse: collapse;
+  margin: 20px 0;
 }
 
 .goalTable th,
-.goalTable td {
+.cardTable th {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.goalTable td,
+.cardTable td {
   padding: 8px;
-  text-align: left;
+  border: 1px solid #ddd;
 }
 
-.goalTable th {
-  color: var(--label-color);
-  font-weight: bold;
+.redCard {
+  color: red;
+  font-weight: 600;
 }
 
-.goalTable td {
-  border-bottom: 1px solid var(--border-color);
+.yellowCard {
+  color: rgb(255, 196, 0);
+  font-weight: 600;
 }
 
-.goalTable tr:last-child td {
-  border-bottom: none;
+.editButton,
+.addButton,
+.saveButton,
+.cancelButton,
+.removeButton {
+  padding: 8px 12px;
+  font-size: 14px;
+  margin: 5px 5px 5px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.editButton {
+  background-color: #28a745;
+  color: white;
+}
+
+.addButton {
+  background-color: #007bff;
+  color: white;
+}
+
+.saveButton {
+  background-color: #28a745;
+  color: white;
+}
+
+.cancelButton {
+  background-color: #dc3545;
+  color: white;
+}
+
+.removeButton {
+  background-color: #ffc107;
+  color: black;
+}
+
+.editButton:hover,
+.addButton:hover,
+.saveButton:hover,
+.cancelButton:hover,
+.removeButton:hover {
+  opacity: 0.9;
+}
+
+.notFound {
+  text-align: center;
+  padding: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+}
+
+.backButton {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto;
+}
+
+.backButton:hover {
+  background-color: #0056b3;
 }

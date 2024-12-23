@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./CreatePlayer.css";
 
 function CreatePlayer({ onAddPlayer, seasons }) {
+  console.log("onAddPlayer in CreatePlayer:", onAddPlayer); // Check if onAddPlayer is received
   const navigate = useNavigate();
   const [player, setPlayer] = useState({
     name: "",

@@ -182,7 +182,7 @@ function App() {
                                     onDeleteTeam={handleDeleteTeam}
                                     invoices={invoices}
                                     onAddInvoice={handleAddInvoice}
-                                    onAddPlayer={handleAddPlayer}
+                                    handleAddPlayer={handleAddPlayer}
                                     />
                             </main>
                         </div>
@@ -196,8 +196,7 @@ function App() {
     );
 }
 
-function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches, invoices, onAddInvoice, handleAddPlayer }) {
-    return (
+function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches, invoices, onAddInvoice, handleAddPlayer }) {    return (
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/temp" element={<Temp />} />

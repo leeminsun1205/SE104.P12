@@ -26,6 +26,7 @@ function EditTeam({ onEditTeam }) {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -35,7 +36,6 @@ function EditTeam({ onEditTeam }) {
           throw new Error('Failed to fetch team data');
         }
         const data = await response.json();
-        // Initialize all properties
         setTeam({
           name: data.name || '',
           city: data.city || '',
@@ -56,8 +56,6 @@ function EditTeam({ onEditTeam }) {
       } catch (error) {
         console.error('Error fetching team:', error);
         setError(error.message);
-        // Optionally redirect:
-        // navigate('/teams');
       } finally {
         setLoading(false);
       }
@@ -67,21 +65,25 @@ function EditTeam({ onEditTeam }) {
   }, [id]);
 
   const handleSave = async () => {
+    console.log('handleSave called'); 
     setLoading(true);
     setError('');
-
-    // Check if team and its required properties are defined
+    setSuccessMessage('');
     if (!team || !team.name || !team.city) {
-        setError('Team data is not fully loaded. Please wait or try again.');
-        setLoading(false);
-        return;
+      setError('Team data is not fully loaded. Please wait or try again.');
+      setLoading(false);
+      return;
+    }
+    if (!team || !team.name || !team.city) {
+      setError('Team data is not fully loaded. Please wait or try again.');
+      setLoading(false);
+      return;
     }
 
-    // Check if required fields are filled and trimmed values are not empty
     if (!team.name.trim() || !team.city.trim()) {
-        setError('Please fill in all required fields.');
-        setLoading(false);
-        return;
+      setError('Please fill in all required fields.');
+      setLoading(false);
+      return;
     }
 
     const updatedTeam = {
@@ -92,16 +94,22 @@ function EditTeam({ onEditTeam }) {
 
     const formData = new FormData();
     for (const key in updatedTeam) {
-        if (updatedTeam[key] !== null && updatedTeam[key] !== undefined) {
-          if (key === 'home_kit_image' || key === 'away_kit_image' || key === 'third_kit_image') {
-            if (updatedTeam[key] instanceof File) {
-              formData.append(key, updatedTeam[key]);
-            }
-          } else {
-            formData.append(key, updatedTeam[key]);
-          }
+      console.log(`Processing key: ${key}, value:`, updatedTeam[key]);
+      if (updatedTeam[key] !== null && updatedTeam[key] !== undefined) {
+        if (
+          (key === 'home_kit_image' ||
+            key === 'away_kit_image' ||
+            key === 'third_kit_image') &&
+          !(updatedTeam[key] instanceof File)
+        ) {
+          console.log(`Skipping key: ${key} as it's not a new file.`);
+          continue;
+        } else {
+          console.log(`Appending key: ${key} to formData`);
+          formData.append(key, updatedTeam[key]);
         }
       }
+    }
 
     try {
       const response = await fetch(`${API_URL}/teams/${id}`, {
@@ -116,10 +124,12 @@ function EditTeam({ onEditTeam }) {
 
       const updatedTeamData = await response.json();
       onEditTeam(updatedTeamData.team);
-      navigate('/teams');
-
+      setSuccessMessage('Đội bóng đã được cập nhật thành công!');
+      setTimeout(() => {
+        setSuccessMessage('');
+        navigate('/teams');
+      }, 1);
     } catch (error) {
-      console.error('Error updating team:', error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -153,10 +163,15 @@ function EditTeam({ onEditTeam }) {
     <div className="team-form-container">
       <h2>Sửa thông tin đội bóng</h2>
       {error && <p className="error-message">{error}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
       {[
         { name: 'name', label: 'Tên đội bóng', type: 'text', required: true },
         { name: 'city', label: 'Thành phố', type: 'text', required: true },
-        { name: 'managing_body', label: 'Cơ quan/Công ty chủ quản', type: 'text' },
+        {
+          name: 'managing_body',
+          label: 'Cơ quan/Công ty chủ quản',
+          type: 'text',
+        },
         { name: 'stadium', label: 'Địa điểm sân nhà', type: 'text' },
         { name: 'capacity', label: 'Sức chứa', type: 'number' },
         { name: 'fifa_stars', label: 'Đạt tiêu chuẩn (số sao)', type: 'number' },

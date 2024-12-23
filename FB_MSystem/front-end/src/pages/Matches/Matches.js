@@ -1,61 +1,32 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import styles from "./Matches.module.css";
-
-const allMatches = [
-  {
-    id: 1,
-    homeTeam: "Team A",
-    awayTeam: "Team B",
-    date: "2024-01-15",
-    time: "18:00",
-    season: "2023-2024",
-    round: "1",
-    stadium: "Sân Mỹ Đình",
-  },
-  {
-    id: 2,
-    homeTeam: "Team C",
-    awayTeam: "Team A",
-    date: "2024-01-17",
-    time: "20:00",
-    season: "2023-2024",
-    round: "1",
-    stadium: "Sân Hàng Đẫy",
-  },
-  {
-    id: 3,
-    homeTeam: "Team B",
-    awayTeam: "Team C",
-    date: "2024-01-20",
-    time: "19:00",
-    season: "2022-2023",
-    round: "2",
-    stadium: "Sân Thống Nhất",
-  },
-  // Add more matches here
-];
+import { allMatches } from "./data"
 
 const Matches = () => {
+  const [matches, setMatches] = useState(allMatches);
   const seasons = useMemo(
-    () => [...new Set(allMatches.map((match) => match.season))],
-    []
+    () => [...new Set(matches.map((match) => match.season))],
+    [matches]
   );
 
-  const [selectedSeason, setSelectedSeason] = useState(seasons[0]);
+  const [selectedSeason, setSelectedSeason] = useState(seasons[0] || "");
   const [selectedRound, setSelectedRound] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
   const [searchQuery, setSearchQuery] = useState("");
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setSelectedSeason(seasons[0] || "");
+  }, [seasons])
 
   // Filter and sort matches
   const filteredMatches = useMemo(() => {
-    return allMatches
+    return matches
       .filter(
         (match) =>
           match.season === selectedSeason &&
@@ -79,18 +50,18 @@ const Matches = () => {
         }
         return 0;
       });
-  }, [selectedSeason, selectedRound, searchQuery, sortConfig]);
+  }, [matches, selectedSeason, selectedRound, searchQuery, sortConfig]);
 
   // Compute available rounds for the selected season
   const rounds = useMemo(() => {
     return [
       ...new Set(
-        allMatches
+        matches
           .filter((match) => match.season === selectedSeason)
           .map((match) => match.round)
       ),
     ];
-  }, [selectedSeason]);
+  }, [matches, selectedSeason]);
 
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
@@ -169,16 +140,29 @@ const Matches = () => {
       <table className={styles.matchesTable}>
         <thead>
           <tr>
-            {["Ngày thi đấu", "Giờ", "Đội nhà", "Đội khách", "Sân thi đấu"].map((key) => (
-              <th
-                key={key}
-                className={styles.headerCell}
-                onClick={() => handleSort(key)}
-              >
-                {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
-                {getSortIndicator(key)}
-              </th>
-            ))}
+            {[
+              "Ngày thi đấu",
+              "Giờ",
+              "Đội nhà",
+              "Đội khách",
+              "Sân thi đấu",
+              "Hành động",
+            ].map(
+              (key) =>
+                key !== "Hành động" && (
+                  <th
+                    key={key}
+                    className={styles.headerCell}
+                    onClick={() => handleSort(key)}
+                  >
+                    {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                    {getSortIndicator(key)}
+                  </th>
+                )
+            )}
+            <th key="actions" className={styles.headerCell}>
+              Hành động
+            </th>
           </tr>
         </thead>
         <tbody>

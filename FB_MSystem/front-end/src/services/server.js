@@ -2,18 +2,85 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const PORT = 5000;
+const multer = require("multer");
+const upload = multer();
 
 app.use(cors());
 app.use(express.json());
 
 // In-memory data (replace with a database in a real application)
 let availableTeams = [
-    { id: 1, name: "Hà Nội FC", season: null },
-    { id: 2, name: "Viettel FC", season: null },
-    { id: 3, name: "Hoàng Anh Gia Lai", season: null },
-    { id: 4, name: "Becamex Bình Dương", season: null },
-    { id: 5, name: "Hải Phòng", season: null }
-]; // Teams not yet assigned to a season
+    {
+        id: 1,
+        name: "Hà Nội FC",
+        city: "Hà Nội",
+        managing_body: "Tập đoàn T&T",
+        stadium: "Hàng Đẫy",
+        capacity: 22500,
+        fifa_stars: 5,
+        home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/e/eb/Hanoi_FC.png",
+        away_kit_image: null,
+        third_kit_image: null,
+        description: "Câu lạc bộ bóng đá Hà Nội",
+        season: null,
+    },
+    {
+        id: 2,
+        name: "Viettel FC",
+        city: "Hà Nội",
+        managing_body: "Tập đoàn Công nghiệp – Viễn thông Quân đội",
+        stadium: "Hàng Đẫy",
+        capacity: 22500,
+        fifa_stars: 4,
+        home_kit_image: null,
+        away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/d/d5/Viettel_FC_logo.png/1200px-Viettel_FC_logo.png",
+        third_kit_image: null,
+        description: "Câu lạc bộ bóng đá Viettel",
+        season: null,
+    },
+    {
+        id: 3,
+        name: "Hoàng Anh Gia Lai",
+        city: "Pleiku",
+        managing_body: "Công ty Cổ phần Thể thao Hoàng Anh Gia Lai",
+        stadium: "Pleiku",
+        capacity: 12000,
+        fifa_stars: 4,
+        home_kit_image: null,
+        away_kit_image: null,
+        third_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/7/7d/Hoang_Anh_Gia_Lai_FC_logo.png/1200px-Hoang_Anh_Gia_Lai_FC_logo.png",
+        description: "Câu lạc bộ bóng đá Hoàng Anh Gia Lai",
+        season: null,
+    },
+    {
+        id: 4,
+        name: "Becamex Bình Dương",
+        city: "Thủ Dầu Một",
+        managing_body: "Công ty Cổ phần Thể thao Bóng đá Bình Dương",
+        stadium: "Gò Đậu",
+        capacity: 18250,
+        fifa_stars: 3,
+        home_kit_image: null,
+        away_kit_image: "https://upload.wikimedia.org/wikipedia/vi/thumb/0/07/Becamex_Binh_Duong_FC_logo.png/1200px-Becamex_Binh_Duong_FC_logo.png",
+        third_kit_image: null,
+        description: "Câu lạc bộ bóng đá Becamex Bình Dương",
+        season: null,
+    },
+    {
+        id: 5,
+        name: "Hải Phòng",
+        city: "Hải Phòng",
+        managing_body: "Công ty Cổ phần Thể thao Hải Phòng",
+        stadium: "Lạch Tray",
+        capacity: 26000,
+        fifa_stars: 4,
+        home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/8/85/Hai_Phong_FC_logo.png",
+        away_kit_image: null,
+        third_kit_image: null,
+        description: "Câu lạc bộ bóng đá Hải Phòng",
+        season: null,
+    },
+];
 let teamsBySeason = {
     "2023-2024": [1, 2, 3, 4, 5],
     "2024-2025": [],
@@ -66,6 +133,47 @@ let players = {
         ],
     },
 };
+
+// Khai báo availablePlayers - Danh sách cầu thủ có sẵn
+let availablePlayers = [
+    {
+        id: 1,
+        name: "Cầu thủ A1",
+        dob: "1999-03-15",
+        position: "Tiền đạo",
+        nationality: "Việt Nam",
+        birthplace: "Hà Nội",
+        height: 180,
+        weight: 75,
+        bio: "Một tiền đạo tài năng của đội.",
+        season: "2023-2024",
+    },
+    {
+        id: 2,
+        name: "Cầu thủ B2",
+        dob: "1998-05-20",
+        position: "Hậu vệ",
+        nationality: "Việt Nam",
+        birthplace: "Hồ Chí Minh",
+        height: 175,
+        weight: 70,
+        bio: "Một hậu vệ chắc chắn.",
+        season: "2023-2024",
+    },
+    {
+        id: 3,
+        name: "Cầu thủ C3",
+        dob: "1997-10-10",
+        position: "Tiền vệ",
+        nationality: "Việt Nam",
+        birthplace: "Đà Nẵng",
+        height: 182,
+        weight: 78,
+        bio: "Một tiền vệ sáng tạo.",
+        season: "2022-2023",
+    },
+];
+
 app.get("/api/dashboard", (req, res) => {
     // Tính toán tổng số đội (bao gồm cả các đội chưa có mùa giải)
     const totalTeams = availableTeams.length;
@@ -77,8 +185,8 @@ app.get("/api/dashboard", (req, res) => {
     // Lấy danh sách đội của mùa giải gần nhất
     const teamsInLatestSeason = teamsBySeason[latestSeason]
         ? teamsBySeason[latestSeason]
-              .map((teamId) => availableTeams.find((team) => team.id === teamId))
-              .filter((team) => team)
+            .map((teamId) => availableTeams.find((team) => team.id === teamId))
+            .filter((team) => team)
         : [];
 
     // Ví dụ thêm thông tin số bàn thắng cho mỗi đội (cần dữ liệu thực tế)
@@ -124,7 +232,7 @@ app.get("/api/dashboard", (req, res) => {
             season: latestSeason,
         },
     ];
-     for (let i = 0; i < teamsInLatestSeason.length; i++) {
+    for (let i = 0; i < teamsInLatestSeason.length; i++) {
         for (let j = 0; j < teamsInLatestSeason.length; j++) {
             if (i !== j) {
                 matches.push({
@@ -147,7 +255,7 @@ app.get("/api/dashboard", (req, res) => {
         totalTeams,
         completedMatches,
         upcomingMatches,
-        topScorer: topScorer.name ? topScorer : {name: "Chưa xác định", goals: 0}
+        topScorer: topScorer.name ? topScorer : { name: "Chưa xác định", goals: 0 }
     });
 });
 
@@ -166,19 +274,6 @@ function calculateGoalsForTeam(teamId, season) {
     return sampleGoals[teamId] || 0;
 }
 
-function calculateGoalsForTeam(teamId, season) {
-    // TODO: Thay thế bằng logic thực tế để tính số bàn thắng dựa trên dữ liệu trận đấu
-    // Ví dụ: Lấy dữ liệu từ một bảng `match_results` trong database
-    const sampleGoals = {
-        1: 25,
-        2: 20,
-        3: 18,
-        4: 15,
-        5: 12,
-    };
-
-    return sampleGoals[teamId] || 0;
-}
 app.get("/api/seasons", (req, res) => {
     const seasons = Object.keys(teamsBySeason);
     seasons.unshift("all");
@@ -187,23 +282,23 @@ app.get("/api/seasons", (req, res) => {
 
 app.get('/api/teams/all', (req, res) => {
     const allTeams = [];
-  
+
     for (const season in teamsBySeason) {
-      const teamIds = teamsBySeason[season];
-  
-      teamIds.forEach((teamId) => {
-        const team = availableTeams.find((t) => t.id === teamId);
-        if (team) {
-          const teamExists = allTeams.some((existingTeam) => existingTeam.id === team.id);
-          if (!teamExists) {
-            allTeams.push({ ...team, season });
-          }
-        }
-      });
+        const teamIds = teamsBySeason[season];
+
+        teamIds.forEach((teamId) => {
+            const team = availableTeams.find((t) => t.id === teamId);
+            if (team) {
+                const teamExists = allTeams.some((existingTeam) => existingTeam.id === team.id);
+                if (!teamExists) {
+                    allTeams.push({ ...team, season });
+                }
+            }
+        });
     }
-  
+
     res.json({ teams: allTeams });
-  });
+});
 
 app.get("/api/teams", (req, res) => {
     const season = req.query.season;
@@ -235,7 +330,7 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
     const { teamIds } = req.body;
 
     console.log("Received seasonId:", seasonId);
-    console.log("Received teamIds:", teamIds); 
+    console.log("Received teamIds:", teamIds);
 
     if (!Array.isArray(teamIds)) {
         return res.status(400).json({ message: "teamIds must be an array" });
@@ -270,12 +365,12 @@ app.get("/api/seasons/:seasonId/teams", (req, res) => {
     const teamsInSeason =
         teamsBySeason[seasonId]
             ?.map((teamId) => availableTeams.find((team) => team.id === teamId))
-            .filter((team) => team) || []; 
+            .filter((team) => team) || [];
     res.json({ teams: teamsInSeason });
 });
-
 // Update a team
-app.put("/api/teams/:id", (req, res) => {
+app.put("/api/teams/:id", upload.none(), (req, res) => {
+    console.log("Data received in PUT /api/teams/:id:", req.body);
     const { id } = req.params;
     const updatedTeamData = req.body;
     const teamIndex = availableTeams.findIndex(
@@ -286,11 +381,12 @@ app.put("/api/teams/:id", (req, res) => {
         return res.status(404).json({ message: "Team not found" });
     }
 
-    // Update the team in availableTeams
     availableTeams[teamIndex] = {
         ...availableTeams[teamIndex],
         ...updatedTeamData,
     };
+
+    console.log("Updated availableTeams:", availableTeams);
 
     res.json({
         message: "Team updated successfully",
@@ -370,16 +466,81 @@ app.get("/api/teams/:teamId/players", (req, res) => {
     }
 });
 
+// Sửa lại app.post để sử dụng playerIds và tìm cầu thủ trong availablePlayers
 app.post("/api/teams/:teamId/players", (req, res) => {
     const { teamId } = req.params;
-    const { season, player } = req.body;
+    const { season, playerIds } = req.body;
+    const teamIdNum = Number(teamId); // Convert teamId to a number
 
-    players[season] = players[season] || {};
-    players[season][teamId] = players[season][teamId] || [];
+    console.log("Received teamId:", teamIdNum); // Log as a number
+    console.log("Received season:", season);
+    console.log("Received playerIds:", playerIds);
 
-    const newPlayer = { id: Date.now(), ...player };
-    players[season][teamId].push(newPlayer);
-    res.status(201).json({ message: "Player added successfully", player: newPlayer });
+    if (!Array.isArray(playerIds)) {
+        return res.status(400).json({ message: "playerIds must be an array" });
+    }
+
+    if (playerIds.length === 0) {
+        return res.status(400).json({ message: "playerIds must not be empty" });
+    }
+
+    if (!players[season]) {
+        players[season] = {};
+    }
+
+    if (!players[season][teamIdNum]) {
+        players[season][teamIdNum] = [];
+    }
+
+    const updatedPlayers = [];
+
+    try {
+        for (const playerId of playerIds) {
+            const playerIdNum = Number(playerId);
+            console.log("Processing playerId:", playerIdNum);
+
+            // Find the player in availablePlayers
+            const player = availablePlayers.find((p) => p.id === playerIdNum);
+            console.log("Found player:", player);
+
+            if (player) {
+                // Check if the player already exists in the team for the current season
+                const playerExists = players[season][teamIdNum].some(
+                    (p) => p.id === playerIdNum
+                );
+                if (!playerExists) {
+                    players[season][teamIdNum].push({
+                        ...player,
+                        season: season,
+                        teamId: teamIdNum,
+                    });
+                    updatedPlayers.push({
+                        ...player,
+                        season: season,
+                        teamId: teamIdNum,
+                    });
+                } else {
+                    console.log(
+                        `Player ${playerIdNum} already exists in team ${teamIdNum} for season ${season}`
+                    );
+                }
+            } else {
+                console.error(`Player with id ${playerIdNum} not found`);
+                return res
+                    .status(404)
+                    .json({ message: `Player with id ${playerIdNum} not found` });
+            }
+        }
+    } catch (error) {
+        console.error("Error in adding players:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+
+    console.log("Players after adding:", players);
+    res.status(200).json({
+        message: `Players added to season ${season}`,
+        updatedPlayers,
+    });
 });
 
 app.put("/api/teams/:teamId/players/:playerId", (req, res) => {
@@ -534,6 +695,7 @@ app.put("/api/players/:playerId", (req, res) => {
 
     res.json({ message: "Player updated successfully", player: players[season][teamId][playerIndex] });
 });
+
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
