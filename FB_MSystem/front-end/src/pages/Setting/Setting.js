@@ -25,11 +25,34 @@ function Setting() {
     };
 
     const handlePriorityOrderChange = (index, value) => {
-        const updatedOrder = [...teamSettings.priorityOrder];
-        updatedOrder[index] = value;
-        setTeamSettings({ ...teamSettings, priorityOrder: updatedOrder });
+        const newPriorityOrder = [...teamSettings.priorityOrder];
+        
+        // Cập nhật phần tử hiện tại
+        newPriorityOrder[index] = value;
+
+        // Kiểm tra xem có phần tử trùng với giá trị mới không
+        newPriorityOrder.forEach((item, i) => {
+            if (item === value && i !== index) {
+                newPriorityOrder[i] = getNewValue(value, newPriorityOrder);
+            }
+        });
+
+        setTeamSettings({
+            ...teamSettings,
+            priorityOrder: newPriorityOrder,
+        });
     };
 
+    // Hàm lấy giá trị mới thay thế nếu giá trị trùng
+    const getNewValue = (currentValue, priorityOrder) => {
+        const allValues = ['Điểm số', 'Hiệu số', 'Số bàn thắng'];
+    
+        // Lọc các giá trị còn lại trong mảng mà không trùng với currentValue
+        const availableValues = allValues.filter(val => !priorityOrder.includes(val) && val !== currentValue);
+    
+        return availableValues[0]; // Trả về giá trị thay thế đầu tiên
+    };
+  
     return (
         <div className="setting-container">
             <h1>Cài Đặt Giải Đấu</h1>
@@ -178,11 +201,14 @@ function Setting() {
                 {teamSettings.priorityOrder.map((priority, index) => (
                     <div key={index} className="setting-group">
                         <label>Ưu tiên {index + 1}</label>
-                        <input
-                            type="text"
+                        <select
                             value={priority}
                             onChange={(e) => handlePriorityOrderChange(index, e.target.value)}
-                        />
+                        >
+                            <option value="Điểm số">Điểm số</option>
+                            <option value="Hiệu số">Hiệu số</option>
+                            <option value="Số bàn thắng">Số bàn thắng</option>
+                        </select>
                     </div>
                 ))}
             </div>
