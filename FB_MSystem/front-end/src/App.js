@@ -18,6 +18,7 @@ import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SignUp from './pages/SignUp/SignUp';
+import AllPlayers from './pages/Players/AllPlayers';
 import MatchDetails from './pages/Matches/MatchDetails';
 import Matches from './pages/Matches/Matches';
 import InvoiceForm from './pages/Invoices/InvoiceForm';
@@ -103,7 +104,25 @@ function App() {
         localStorage.removeItem('isAuthenticated');
     };
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+    const handleAddPlayer = async (newPlayer) => {
+        try {
+            const response = await fetch(`${API_URL}/players`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPlayer),
+            });
 
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Player added:", data.player);
+
+        } catch (error) {
+            console.error("Error adding player:", error);
+        }
+    };
     const handleEditTeam = async (updatedTeam) => {
         try {
             const response = await fetch(`${API_URL}/teams/${updatedTeam.id}`, {
@@ -163,7 +182,8 @@ function App() {
                                     onDeleteTeam={handleDeleteTeam}
                                     invoices={invoices}
                                     onAddInvoice={handleAddInvoice}
-                                />
+                                    onAddPlayer={handleAddPlayer}
+                                    />
                             </main>
                         </div>
                         <Footer />
@@ -175,7 +195,8 @@ function App() {
         </Router>
     );
 }
-function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches, invoices, onAddInvoice }) {
+
+function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches, invoices, onAddInvoice, handleAddPlayer }) {
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
@@ -190,11 +211,13 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
                     onDeleteTeam={onDeleteTeam} />}
             />
             <Route path="/create/team" element={<CreateTeam />} />
-            <Route path="/create/player" element={<CreatePlayer />} />
+            <Route path="/create/player" element={<CreatePlayer onAddPlayer={handleAddPlayer} />} />
             <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
             <Route path="/teams/:id" element={<TeamInfo teams={teams} otherMatches={otherMatches} />} />
             <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
             <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
+            <Route path="/players" element={<AllPlayers />} />
+            <Route path="/players/:playerId" element={<PlayerInfo />} /> 
             <Route path="/matches" element={<Matches />} />
             <Route path="/match/:season/:round/:id" element={<MatchDetails />} />
             <Route path="/teams/:id/other-matches" element={<OtherLeagueMatches teams={teams} otherMatches={otherMatches} />} />

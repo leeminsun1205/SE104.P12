@@ -7,9 +7,15 @@ app.use(cors());
 app.use(express.json());
 
 // In-memory data (replace with a database in a real application)
-let availableTeams = []; // Teams not yet assigned to a season
+let availableTeams = [
+    { id: 1, name: "Hà Nội FC", season: null },
+    { id: 2, name: "Viettel FC", season: null },
+    { id: 3, name: "Hoàng Anh Gia Lai", season: null },
+    { id: 4, name: "Becamex Bình Dương", season: null },
+    { id: 5, name: "Hải Phòng", season: null }
+]; // Teams not yet assigned to a season
 let teamsBySeason = {
-    "2023-2024": [],
+    "2023-2024": [1, 2, 3, 4, 5],
     "2024-2025": [],
 };
 let players = {
@@ -60,7 +66,119 @@ let players = {
         ],
     },
 };
+app.get("/api/dashboard", (req, res) => {
+    // Tính toán tổng số đội (bao gồm cả các đội chưa có mùa giải)
+    const totalTeams = availableTeams.length;
 
+    // Lấy mùa giải gần nhất từ teamsBySeason
+    const seasons = Object.keys(teamsBySeason).sort(); // Sắp xếp các mùa giải
+    const latestSeason = seasons[seasons.length - 1]; // Lấy mùa giải cuối cùng (mới nhất)
+
+    // Lấy danh sách đội của mùa giải gần nhất
+    const teamsInLatestSeason = teamsBySeason[latestSeason]
+        ? teamsBySeason[latestSeason]
+              .map((teamId) => availableTeams.find((team) => team.id === teamId))
+              .filter((team) => team)
+        : [];
+
+    // Ví dụ thêm thông tin số bàn thắng cho mỗi đội (cần dữ liệu thực tế)
+    const teamsWithGoals = teamsInLatestSeason.map((team) => {
+        const goals = calculateGoalsForTeam(team.id, latestSeason);
+        return { ...team, goals };
+    });
+
+    // Tìm đội có số bàn thắng cao nhất (Vua phá lưới)
+    const topScorer = teamsWithGoals.reduce(
+        (top, team) => (top.goals > team.goals ? top : team),
+        { goals: 0 }
+    );
+
+    // Dữ liệu mẫu cho các trận đấu (cần thay thế bằng dữ liệu thực tế)
+    const matches = [
+        {
+            homeTeam: "Team A",
+            awayTeam: "Team B",
+            played: true,
+            homeScore: 2,
+            awayScore: 1,
+            season: latestSeason,
+        },
+        {
+            homeTeam: "Team C",
+            awayTeam: "Team D",
+            played: true,
+            homeScore: 3,
+            awayScore: 3,
+            season: latestSeason,
+        },
+        {
+            homeTeam: "Team A",
+            awayTeam: "Team C",
+            played: false,
+            season: latestSeason,
+        },
+        {
+            homeTeam: "Team B",
+            awayTeam: "Team D",
+            played: false,
+            season: latestSeason,
+        },
+    ];
+     for (let i = 0; i < teamsInLatestSeason.length; i++) {
+        for (let j = 0; j < teamsInLatestSeason.length; j++) {
+            if (i !== j) {
+                matches.push({
+                    homeTeam: teamsInLatestSeason[i].name,
+                    awayTeam: teamsInLatestSeason[j].name,
+                    played: false,
+                    season: latestSeason,
+                });
+            }
+        }
+    }
+    // Lọc ra các trận đấu đã chơi và chưa chơi
+    const completedMatches = matches.filter((match) => match.played).length;
+    const upcomingMatches = matches.filter((match) => !match.played).length;
+
+    // Trả về dữ liệu cho Dashboard
+    res.json({
+        teams: teamsWithGoals,
+        matches: matches,
+        totalTeams,
+        completedMatches,
+        upcomingMatches,
+        topScorer: topScorer.name ? topScorer : {name: "Chưa xác định", goals: 0}
+    });
+});
+
+// Hàm giả lập tính toán số bàn thắng cho mỗi đội
+function calculateGoalsForTeam(teamId, season) {
+    // TODO: Thay thế bằng logic thực tế để tính số bàn thắng dựa trên dữ liệu trận đấu
+    // Ví dụ: Lấy dữ liệu từ một bảng `KETQUATRANDAU` trong database
+    const sampleGoals = {
+        1: 25,
+        2: 20,
+        3: 18,
+        4: 15,
+        5: 12,
+    }; // Số bàn thắng giả định cho mỗi đội
+
+    return sampleGoals[teamId] || 0;
+}
+
+function calculateGoalsForTeam(teamId, season) {
+    // TODO: Thay thế bằng logic thực tế để tính số bàn thắng dựa trên dữ liệu trận đấu
+    // Ví dụ: Lấy dữ liệu từ một bảng `match_results` trong database
+    const sampleGoals = {
+        1: 25,
+        2: 20,
+        3: 18,
+        4: 15,
+        5: 12,
+    };
+
+    return sampleGoals[teamId] || 0;
+}
 app.get("/api/seasons", (req, res) => {
     const seasons = Object.keys(teamsBySeason);
     seasons.unshift("all");
@@ -87,7 +205,6 @@ app.get('/api/teams/all', (req, res) => {
     res.json({ teams: allTeams });
   });
 
-
 app.get("/api/teams", (req, res) => {
     const season = req.query.season;
     if (season && teamsBySeason[season]) {
@@ -99,7 +216,6 @@ app.get("/api/teams", (req, res) => {
         res.status(400).json({ message: "Season parameter is required or season not found" });
     }
 });
-
 
 app.post("/api/teams/available", (req, res) => {
     console.log("Request Body:", req.body);
@@ -148,7 +264,6 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
         updatedTeams,
     });
 });
-
 
 app.get("/api/seasons/:seasonId/teams", (req, res) => {
     const { seasonId } = req.params;
@@ -231,12 +346,24 @@ app.get("/api/teams/:teamId/players", (req, res) => {
         if (!players[season] || !players[season][teamIdInt]) {
             return res.json({ players: [] });
         }
-        return res.json({ players: players[season][teamIdInt] });
+        // Thêm thông tin season và teamId cho mỗi player
+        const teamPlayers = players[season][teamIdInt].map(player => ({
+            ...player,
+            season: season,
+            teamId: teamId
+        }));
+        return res.json({ players: teamPlayers });
     } else {
         const allPlayers = [];
         for (const seasonKey in players) {
             if (players[seasonKey] && players[seasonKey][teamIdInt]) {
-                allPlayers.push(...players[seasonKey][teamIdInt]);
+                // Thêm thông tin season và teamId cho mỗi player
+                const teamPlayers = players[seasonKey][teamIdInt].map(player => ({
+                    ...player,
+                    season: seasonKey,
+                    teamId: teamId
+                }));
+                allPlayers.push(...teamPlayers);
             }
         }
         return res.json({ players: allPlayers });
@@ -306,12 +433,67 @@ app.get("/api/teams/:teamId/players/:playerId", (req, res) => {
                 (p) => p.id === playerIdInt
             );
             if (player) {
-                return res.json(player);
+                return res.json({ ...player, season, teamId });
             }
         }
     }
 
     res.status(404).json({ message: "Player not found in this team" });
+});
+app.get("/api/players", (req, res) => {
+    const allPlayers = [];
+    for (const season in players) {
+        for (const teamId in players[season]) {
+            const teamPlayers = players[season][teamId].map(player => ({
+                ...player,
+                season: season,
+                teamId: teamId
+            }));
+            allPlayers.push(...teamPlayers);
+        }
+    }
+    res.json(allPlayers);
+});
+app.post("/api/players", (req, res) => {
+    const newPlayer = { id: Date.now(), ...req.body };
+
+    // Kiểm tra xem cầu thủ đã được thêm vào đội nào trong mùa giải nào chưa
+    let addedToTeam = false;
+    for (const season in players) {
+        for (const teamId in players[season]) {
+            const existingPlayer = players[season][teamId].find(p => p.id === newPlayer.id);
+            if (existingPlayer) {
+                addedToTeam = true;
+                break;
+            }
+        }
+        if (addedToTeam) break;
+    }
+
+    // Nếu cầu thủ chưa được thêm vào đội nào, thêm vào "no season"
+    if (!addedToTeam) {
+        players["no season"] = players["no season"] || {};
+        players["no season"]["0"] = players["no season"]["0"] || []; // 0 represents no team
+        players["no season"]["0"].push(newPlayer);
+    }
+
+    res.status(201).json({ message: "Player created successfully", player: newPlayer });
+});
+
+// Delete a player
+app.delete("/api/players/:playerId", (req, res) => {
+    const { playerId } = req.params;
+    const playerIdInt = parseInt(playerId);
+
+    for (const season in players) {
+        for (const teamId in players[season]) {
+            players[season][teamId] = players[season][teamId].filter(
+                (p) => p.id !== playerIdInt
+            );
+        }
+    }
+
+    res.json({ message: "Player deleted successfully" });
 });
 
 app.get("/api/players/:playerId", (req, res) => {
@@ -324,14 +506,34 @@ app.get("/api/players/:playerId", (req, res) => {
                 (p) => p.id === playerIdInt
             );
             if (player) {
-                return res.json(player);
+                return res.json({ ...player, season, teamId });
             }
         }
     }
 
     res.status(404).json({ message: "Player not found" });
 });
+app.put("/api/players/:playerId", (req, res) => {
+    const { playerId } = req.params;
+    const { season, teamId, updatedPlayer } = req.body;
+    const playerIdInt = parseInt(playerId);
 
+    if (!players[season] || !players[season][teamId]) {
+        return res.status(404).json({ message: "Player not found in the specified team and season" });
+    }
+
+    const playerIndex = players[season][teamId].findIndex(p => p.id === playerIdInt);
+    if (playerIndex === -1) {
+        return res.status(404).json({ message: "Player not found" });
+    }
+
+    players[season][teamId][playerIndex] = {
+        ...players[season][teamId][playerIndex],
+        ...updatedPlayer
+    };
+
+    res.json({ message: "Player updated successfully", player: players[season][teamId][playerIndex] });
+});
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

@@ -86,7 +86,6 @@ function TeamInfo({ teams }) {
                         loading="lazy"
                     />
                 </div>
-                {/* Third Kit Container */}
                 <div className="kit-container">
                     <p className="kit-label">Áo dự bị</p>
                     <img

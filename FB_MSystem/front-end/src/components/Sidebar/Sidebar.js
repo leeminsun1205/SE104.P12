@@ -11,7 +11,9 @@ function Sidebar({ isOpen, onToggleSidebar }) {
 
   return (
     <>
-      {isOpen && <div className={styles.overlay} onClick={onToggleSidebar}></div>}
+      {isOpen && (
+        <div className={styles.overlay} onClick={onToggleSidebar}></div>
+      )}
       <aside className={`${styles.sidebar} ${isOpen ? styles.active : ""}`}>
         <div className={styles.logo}>
           <h2>Football Management</h2>
@@ -28,11 +30,17 @@ function Sidebar({ isOpen, onToggleSidebar }) {
 
           {/* Nhóm Quản lý giải đấu */}
           <div className={styles.navLink} onClick={toggleManagement}>
-            <i className={`fas ${showManagement ? 'fa-caret-down' : 'fa-caret-right'}`}></i>
+            <i
+              className={`fas ${
+                showManagement ? "fa-caret-down" : "fa-caret-right"
+              }`}
+            ></i>
             Quản lý giải đấu
           </div>
           <div
-            className={`${styles.management} ${showManagement ? styles.show : ""}`}
+            className={`${styles.management} ${
+              showManagement ? styles.show : ""
+            }`}
           >
             <NavLink
               to="/teams"
@@ -41,6 +49,14 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               }
             >
               <i className="fas fa-users"></i> Đội bóng
+            </NavLink>
+            <NavLink
+              to="/players"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+              }
+            >
+              <i className="fas fa-user"></i> Cầu thủ {/* Add link to All Players */}
             </NavLink>
             <NavLink
               to="/matches"
@@ -76,15 +92,15 @@ function Sidebar({ isOpen, onToggleSidebar }) {
             </NavLink>
           </div>
 
-        {/* Cài đặt */}
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
-          }
-        >
-          <i className="fas fa-cog"></i> Cài đặt
-        </NavLink>
+          {/* Cài đặt */}
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-cog"></i> Cài đặt
+          </NavLink>
         </nav>
       </aside>
     </>

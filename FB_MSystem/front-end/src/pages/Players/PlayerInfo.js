@@ -9,7 +9,28 @@ const PlayerInfo = () => {
   const location = useLocation();
   const [player, setPlayer] = useState(location.state?.player || null);
   const [error, setError] = useState("");
+  useEffect(() => {
+    if (!player) {
+      const fetchPlayerFromAPI = async () => {
+        try {
+          const url = teamId
+            ? `http://localhost:5000/api/teams/${teamId}/players/${playerId}`
+            : `http://localhost:5000/api/players/${playerId}`;
+          
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("Player not found");
+          }
+          const data = await response.json();
+          setPlayer(data);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
 
+      fetchPlayerFromAPI();
+    }
+  }, [teamId, playerId, player]);
   useEffect(() => {
     if (!player) {
       const fetchPlayerFromAPI = async () => {

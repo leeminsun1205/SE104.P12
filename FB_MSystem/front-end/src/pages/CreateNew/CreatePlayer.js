@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreatePlayer.css";
 
-function CreatePlayer({ seasons }) {
+function CreatePlayer({ onAddPlayer, seasons }) {
   const navigate = useNavigate();
   const [player, setPlayer] = useState({
     name: "",
@@ -22,29 +22,33 @@ function CreatePlayer({ seasons }) {
     setPlayer((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     setError("");
 
-    if (!player.name.trim() || !player.position || player.nationality) {
-      setError("Vui lòng điền đầy đủ thông tin.");
-      return;
+    if (!player.name.trim() || !player.position || !player.nationality.trim() || !player.dob) {
+        setError("Vui lòng điền đầy đủ thông tin.");
+        return;
     }
 
     const newPlayer = {
-      ...player,
-      id: Date.now(),
-      height: player.height ? parseInt(player.height, 10) : null,
-      weight: player.weight ? parseInt(player.weight, 10) : null,
+        ...player,
+        id: Date.now(),
+        height: player.height ? parseInt(player.height, 10) : null,
+        weight: player.weight ? parseInt(player.weight, 10) : null,
     };
 
     console.log("New Player to Add:", newPlayer);
-    alert(
-      "Đã nhập, thông tin hệ thống nhận được:\n" +
-        JSON.stringify(newPlayer, null, 2)
-    );
 
-    navigate("/create");
-  };
+    try {
+        await onAddPlayer(newPlayer);
+        alert("Đã thêm cầu thủ thành công!");
+        navigate("/create");
+    } catch (error) {
+        console.error("Error adding player:", error);
+        setError("Failed to add player.");
+    }
+    navigate("/create")
+};
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -71,9 +75,9 @@ function CreatePlayer({ seasons }) {
       {error && <p className="error-message">{error}</p>}
       {[
         { name: "name", label: "Họ tên", type: "text", required: true },
-        { name: "dob", label: "Ngày sinh", type: "date" },
-        { name: "nationality", label: "Quốc tịch", type: "text" , required: true },
-        { name: "birthplace", label: "Nơi sinh", type: "text"},
+        { name: "dob", label: "Ngày sinh", type: "date", required: true},
+        { name: "nationality", label: "Quốc tịch", type: "text", required: true },
+        { name: "birthplace", label: "Nơi sinh", type: "text" },
       ].map((input) => (
         <div key={input.name}>
           <label htmlFor={input.name}>

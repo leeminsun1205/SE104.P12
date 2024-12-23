@@ -1,6 +1,6 @@
 /* src/pages/Teams/EditTeam.css */
 
-.form-container {
+.team-form-container {
   max-width: 600px;
   margin-top: 80px;
   margin-left: auto;
@@ -61,12 +61,16 @@ button.save {
   background-color: #4caf50;
   color: white;
 }
-
+button.save:hover {
+  background-color: #357b38;
+}
 button.cancel {
   background-color: #f44336;
   color: white;
 }
-
+button.cancel:hover {
+  background-color: #af3229;
+}
 button:hover {
   opacity: 0.9;
 }
