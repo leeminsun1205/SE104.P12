@@ -202,7 +202,7 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/create" element={<CreateNew />} />
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
-            <Route path="/setting" element={<Setting />} />
+            <Route path="/settings" element={<Setting />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );
