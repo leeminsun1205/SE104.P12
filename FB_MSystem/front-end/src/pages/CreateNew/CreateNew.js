@@ -21,6 +21,10 @@ function CreateNew() {
         navigate('/create/stadium');
     };
 
+    const handleToCreateSeason = () => {
+        navigate('/create/season');
+    };
+
     return (
         <div className="create-new-container">
             <button onClick={handleToCreateTeam}>
@@ -31,6 +35,9 @@ function CreateNew() {
             </button>
             <button onClick={handleToCreateStadium}>
                 Thêm sân vận động
+            </button>
+            <button onClick={handleToCreateSeason}>
+                Thêm mùa giải
             </button>
             <button onClick={handleBackToDashboard}>
                 Quay lại bảng điều khiển

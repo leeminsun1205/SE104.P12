@@ -1,0 +1,67 @@
+/* SeasonList.module.css */
+
+.seasons-list-container {
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+}
+
+.seasons-list-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: blue;
+}
+
+.error-message {
+    color: #d9534f;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.seasons-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.season-item {
+    margin: 10px 0;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.season-item:hover {
+    transform: translateY(-2px);
+    background-color: #f1f1f1;
+}
+
+.season-link {
+    text-decoration: none;
+    color: #007bff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.season-link:hover {
+    text-decoration: underline;
+}
+
+.season-name {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.season-dates {
+    font-size: 14px;
+    color: #6c757d;
+}

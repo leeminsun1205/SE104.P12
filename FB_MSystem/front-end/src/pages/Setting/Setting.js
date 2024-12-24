@@ -1,61 +1,82 @@
 import React, { useState } from 'react';
-import styles from './Setting.module.css'; 
-function Setting() {
-    const [teamSettings, setTeamSettings] = useState({
-        minPlayers: 15,
-        maxPlayers: 22, 
-        maxForeignPlayers: 3, 
-        minAge: 16, 
-        maxAge: 40,  
-        minCapacity: 10000, 
-        minStar: 2, 
-        participationFee: 1000000000, 
-        winPoints: 3,
-        drawPoints: 1, 
-        losePoints: 0,
-        goalTypes: 3,
-        maxGoalTime: 90, 
-        priorityOrder: ['Điểm số', 'Hiệu số', 'Số bàn thắng'], // Thứ tự ưu tiên khi xếp hạng (QĐ5.1)
+import styles from './Setting.module.css';
+
+function Setting({ API_URL }) {
+const [teamSettings, setTeamSettings] = useState({
+minPlayers: 15,
+maxPlayers: 22,
+maxForeignPlayers: 3,
+minAge: 16,
+maxAge: 40,
+minCapacity: 10000,
+minStar: 2,
+participationFee: 1000000000,
+winPoints: 3,
+drawPoints: 1,
+losePoints: 0,
+goalTypes: 3,
+maxGoalTime: 90,
+priorityOrder: ['Điểm số', 'Hiệu số', 'Số bàn thắng'],
+});
+const [saveStatus, setSaveStatus] = useState(null); // 'success', 'error', null
+const handleChangeTeamSettings = (e) => {
+    const { name, value } = e.target;
+    setTeamSettings({ ...teamSettings, [name]: value });
+};
+
+const handlePriorityOrderChange = (index, value) => {
+    const newPriorityOrder = [...teamSettings.priorityOrder];
+    newPriorityOrder[index] = value;
+
+    newPriorityOrder.forEach((item, i) => {
+        if (item === value && i !== index) {
+            newPriorityOrder[i] = getNewValue(value, newPriorityOrder);
+        }
     });
 
-    const handleChangeTeamSettings = (e) => {
-        const { name, value } = e.target;
-        setTeamSettings({ ...teamSettings, [name]: value });
-    };
+    setTeamSettings({
+        ...teamSettings,
+        priorityOrder: newPriorityOrder,
+    });
+};
 
-    const handlePriorityOrderChange = (index, value) => {
-        const newPriorityOrder = [...teamSettings.priorityOrder];
-        
-        // Cập nhật phần tử hiện tại
-        newPriorityOrder[index] = value;
+const getNewValue = (currentValue, priorityOrder) => {
+    const allValues = ['Điểm số', 'Hiệu số', 'Số bàn thắng'];
+    const availableValues = allValues.filter(val => !priorityOrder.includes(val) && val !== currentValue);
+    return availableValues[0];
+};
 
-        // Kiểm tra xem có phần tử trùng với giá trị mới không
-        newPriorityOrder.forEach((item, i) => {
-            if (item === value && i !== index) {
-                newPriorityOrder[i] = getNewValue(value, newPriorityOrder);
-            }
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaveStatus('loading');
+
+    try {
+        const response = await fetch(`${API_URL}/settings`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(teamSettings),
         });
 
-        setTeamSettings({
-            ...teamSettings,
-            priorityOrder: newPriorityOrder,
-        });
-    };
+        if (!response.ok) {
+            throw new Error(`Failed to save settings. HTTP status: ${response.status}`);
+        }
 
-    // Hàm lấy giá trị mới thay thế nếu giá trị trùng
-    const getNewValue = (currentValue, priorityOrder) => {
-        const allValues = ['Điểm số', 'Hiệu số', 'Số bàn thắng'];
-    
-        // Lọc các giá trị còn lại trong mảng mà không trùng với currentValue
-        const availableValues = allValues.filter(val => !priorityOrder.includes(val) && val !== currentValue);
-    
-        return availableValues[0]; // Trả về giá trị thay thế đầu tiên
-    };
-  
-    return (
-        <div className={styles["setting-container"]}>
-            <h1>Cài Đặt Giải Đấu</h1>
+        setSaveStatus('success');
+        // Optionally, you can handle the response data if the server sends any back
+        // const data = await response.json();
+        // console.log("Settings saved successfully:", data);
+    } catch (error) {
+        console.error("Error saving settings:", error);
+        setSaveStatus('error');
+    }
+};
 
+return (
+    <div className={styles["setting-container"]}>
+        <h1>Cài Đặt Giải Đấu</h1>
+        <form onSubmit={handleSubmit}>
             <h2>Các quy định đội bóng</h2>
             <div className={styles["team-settings"]}>
                 <div className={styles["setting-group"]}>
@@ -212,9 +233,18 @@ function Setting() {
                 ))}
             </div>
 
-            <button className={styles["save-button"]}>Lưu</button>
-        </div>
-    );
-}
+            <button type="submit" className={styles["save-button"]} disabled={saveStatus === 'loading'}>
+                {saveStatus === 'loading' ? 'Đang lưu...' : 'Lưu'}
+            </button>
 
+            {saveStatus === 'success' && (
+                <p style={{ color: 'green' }}>Cài đặt đã được lưu thành công!</p>
+            )}
+            {saveStatus === 'error' && (
+                <p style={{ color: 'red' }}>Có lỗi xảy ra khi lưu cài đặt.</p>
+            )}
+        </form>
+    </div>
+);
+}
 export default Setting;

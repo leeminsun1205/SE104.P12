@@ -30,6 +30,9 @@ function Header({ onLogout, onToggleSidebar }) {
                         Quản lý giải đấu <i className="fa fa-caret-down"></i>
                     </button>
                     <div className={`${styles.dropdownContent} ${showDropdown ? styles.show : ''}`}>
+                        <NavLink to="/seasons" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Mùa giải
+                        </NavLink>
                         <NavLink to="/teams" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Đội bóng
                         </NavLink>

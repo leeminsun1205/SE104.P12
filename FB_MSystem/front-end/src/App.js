@@ -28,6 +28,10 @@ import Temp from './pages/Temp/Temp';
 import Setting from './pages/Setting/Setting'
 import Stadiums from './pages/Stadiums/Stadiums';
 import StadiumInfo from './pages/Stadiums/StadiumInfo';
+import SeasonDetails from './pages/Seasons/SeasonDetails'; 
+import CreateSeason from './pages/CreateNew/CreateSeason'; 
+import SeasonList from './pages/Seasons/SeasonList';
+
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 import './assets/styles/global.css';
@@ -48,41 +52,38 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch available seasons
                 const seasonsResponse = await fetch(`${API_URL}/seasons`);
                 if (!seasonsResponse.ok) {
                     throw new Error(`Failed to fetch seasons: ${seasonsResponse.status}`);
                 }
                 const seasonsData = await seasonsResponse.json();
-
-                // Add 'all' to the beginning of the seasons array
                 const updatedSeasons = ['all', ...seasonsData.seasons];
                 setSeasons(updatedSeasons);
-
-                // Set the default season to 'all'
-                setSelectedSeason('all');
-
-                // Fetch teams for the default season
-                await handleSeasonChange('all');
+    
+                if (seasonsData.seasons.length > 0) { // Check if there are seasons
+                    setSelectedSeason('all');
+                    await handleSeasonChange('all');
+                }
             } catch (error) {
                 setError(error);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, []);
 
     const handleSeasonChange = async (newSeason) => {
+        if (!newSeason) {
+            console.warn("handleSeasonChange called with an empty season value.");
+            return;
+        }
         setSelectedSeason(newSeason);
         try {
             let teamsResponse;
             if (newSeason === "all") {
-                // Fetch all teams when 'all' is selected
                 teamsResponse = await fetch(`${API_URL}/teams/all`);
             } else {
-                // Fetch teams for a specific season
                 teamsResponse = await fetch(`${API_URL}/teams?season=${newSeason}`);
             }
             if (!teamsResponse.ok) {
@@ -222,7 +223,7 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/players/:playerId" element={<PlayerInfo />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/match/:season/:round/:id" element={<MatchDetails />} />
-            <Route path="/standings" element={<Standings API_URL = {API_URL} /> } /> 
+            <Route path="/standings" element={<Standings API_URL = {API_URL} /> } />
             <Route path="/create" element={<CreateNew />} />
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
@@ -230,6 +231,9 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/stadiums" element={<Stadiums />} />
             <Route path="/create/stadium" element={<CreateStadium />} />
             <Route path="/stadiums/:stadiumId" element={<StadiumInfo />} />
+            <Route path="/seasons/:seasonId" element={<SeasonDetails API_URL={API_URL}/>} /> 
+            <Route path="/create/season" element={<CreateSeason API_URL={API_URL} />} />
+            <Route path="/seasons" element={<SeasonList API_URL={API_URL} />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

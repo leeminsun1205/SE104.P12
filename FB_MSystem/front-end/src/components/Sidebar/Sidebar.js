@@ -41,6 +41,14 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               }`}
           >
             <NavLink
+              to="/seasons"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+              }
+            >
+              <i className="fas fa-calendar"></i> Mùa giải
+            </NavLink>
+            <NavLink
               to="/teams"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
@@ -60,7 +68,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
             >
-              <i className="fas fa-user"></i> Cầu thủ 
+              <i className="fas fa-user"></i> Cầu thủ
             </NavLink>
             <NavLink
               to="/matches"

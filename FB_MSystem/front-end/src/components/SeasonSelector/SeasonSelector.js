@@ -34,24 +34,19 @@ const Option = styled.option`
     padding: 0.5rem;
 `;
 
-function SeasonSelector({ onSeasonChange, seasons, selectedSeason }) {
-    const handleChange = (event) => {
-        onSeasonChange(event.target.value);
-    };
-
+function SeasonSelector({ seasons, onSeasonChange, selectedSeason }) {
+    const filteredSeasons = seasons.filter(season => season.name);
     return (
-        <Container>
-            <Label htmlFor="season">Mùa giải:</Label>
-            <Select value={selectedSeason || ''} onChange={handleChange}>
-                <Option value="all">Chọn mùa giải</Option>
-                {seasons.filter(season => season !== 'all').map(season => (
-                    <Option key={season} value={season}>
-                        {season}
-                    </Option>
-                ))}
-            </Select>
-        </Container>
+      <div>
+        <select value={selectedSeason} onChange={(e) => onSeasonChange(e.target.value)}>
+          <option value="">Chọn mùa giải</option>
+          {filteredSeasons.map(season => (
+            <option key={season.id} value={season.id}>
+              {season.name}
+            </option>
+          ))}
+        </select>
+      </div>
     );
-}
-
+  }
 export default SeasonSelector;

@@ -1,85 +1,70 @@
 .standingsContainer {
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #f4f4f9;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-medium);
-  max-width: 90%;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  max-width: 1200px;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .standingsTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
   text-align: center;
-  font-size: var(--font-size-large);
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-lg);
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  margin-bottom: 16px;
 }
 
 .tableWrapper {
   overflow-x: auto;
+  margin-top: 16px;
 }
 
 .standingsTable {
   width: 100%;
   border-collapse: collapse;
-  overflow: hidden;
-  border-radius: var(--border-radius);
+  text-align: left;
 }
 
-.standingsTable th,
+.standingsTable th, 
 .standingsTable td {
-  padding: var(--spacing-sm) var(--spacing-md);
-  text-align: center;
-  border-bottom: 1px solid var(--color-divider);
-  font-size: var(--font-size-base);
+  padding: 8px 12px;
+  border: 1px solid #ddd;
 }
 
 .standingsTable th {
-  background-color: var(--color-primary);
+  background-color: #007bff;
   color: white;
   font-weight: bold;
-  text-transform: uppercase;
-  position: sticky;
-  top: 0;
-  z-index: 1;
 }
 
-.standingsTable tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.standingsTable tbody tr:hover {
-  background-color: var(--color-secondary);
-  color: white;
-  cursor: pointer;
-  transform: scale(1.02);
-  transition: transform 0.2s ease, background-color 0.3s ease;
+.standingsTable tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 
 .teamName {
-  text-align: left;
-  padding-left: 15px;
   font-weight: bold;
-  color: var(--color-text-primary);
-  text-transform: capitalize;
+  color: #007bff;
 }
 
 .points {
   font-weight: bold;
-  color: var(--color-accent);
-  font-size: var(--font-size-large);
+  color: #28a745;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .standingsTitle {
-    font-size: var(--font-size-base);
-  }
+.notFoundMessage {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #dc3545;
+  text-align: center;
+}
+.standingsRow {
+  cursor: pointer;
+}
 
-  .standingsTable th,
-  .standingsTable td {
-    padding: var(--spacing-xs);
-    font-size: var(--font-size-sm);
-  }
+.standingsRow:hover {
+  background-color: #f0f0f0; /* Example hover effect */
 }
