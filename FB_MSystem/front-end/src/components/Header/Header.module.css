@@ -54,6 +54,14 @@
   align-items: center;
 }
 
+.setting-button {
+  font-weight: 0;
+}
+
+.setting-button::after {
+  font-weight: 600;
+}
+
 .logout-button {
   font-weight: 600;
 }
@@ -101,7 +109,7 @@
 .userMenu {
   display: flex;
   align-items: center;
-  /* gap: 10px; */
+  gap: 10px;
 }
 
 .avatar {

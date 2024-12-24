@@ -53,8 +53,10 @@ function Header({ onLogout, onToggleSidebar }) {
                         </NavLink>
                     </div>
                 </div>
+                <NavLink to="/settings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                    Cài đặt
+                </NavLink>
             </nav>
-
             <div className={styles.userMenu}>
                 <Button className="logout-button" onClick={onLogout}> Thoát</Button>
             </div>

@@ -95,7 +95,6 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-file-invoice"></i> Biên nhận lệ phí
             </NavLink>
           </div>
-          {/* Cài đặt */}
           <NavLink
             to="/settings"
             className={({ isActive }) =>
