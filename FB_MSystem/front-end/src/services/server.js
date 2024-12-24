@@ -1,14 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
-const PORT = 5000;
 const multer = require("multer");
 const upload = multer();
+const app = express();
+const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-// In-memory data (replace with a database in a real application)
 let availableTeams = [
   {
     id: 1,
@@ -89,10 +88,24 @@ let availableTeams = [
     season: null,
   },
 ];
-let teamsBySeason = {
-  "2023-2024": [1, 2, 3, 4, 5],
-  "2024-2025": [],
-};
+
+let seasons = [
+  {
+    id: "2023-2024",
+    name: "Mùa giải 2023-2024",
+    startDate: "2023-08-01",
+    endDate: "2024-05-30",
+    teams: [1, 2, 3, 4, 5],
+  },
+  {
+    id: "2024-2025",
+    name: "Mùa giải 2024-2025",
+    startDate: "2024-08-01",
+    endDate: "2025-05-30",
+    teams: [],
+  },
+];
+
 let players = {
   "2023-2024": {
     1: [
@@ -188,76 +201,86 @@ let availablePlayers = [
   },
 ];
 let stadiums = [
-    {
-      stadiumId: 1,
-      stadiumName: "Hàng Đẫy",
-      address: "Trịnh Hoài Đức, Cát Linh, Đống Đa, Hà Nội",
-      capacity: 22500,
-      standard: 5,
-    },
-    {
-      stadiumId: 2,
-      stadiumName: "Pleiku",
-      address: "Đường Quang Trung, Phường Hội Thương, Thành phố Pleiku, Gia Lai",
-      capacity: 12000,
-      standard: 4,
-    },
-    {
-      stadiumId: 3,
-      stadiumName: "Gò Đậu",
-      address: "Đường 30 Tháng 4, Phú Thọ, Thủ Dầu Một, Bình Dương",
-      capacity: 18250,
-      standard: 3,
-    },
-    {
-      stadiumId: 4,
-      stadiumName: "Lạch Tray",
-      address: "Đường Chu Văn An, Đằng Giang, Ngô Quyền, Hải Phòng",
-      capacity: 26000,
-      standard: 4,
-    },
-  ];
+  {
+    stadiumId: 1,
+    stadiumName: "Hàng Đẫy",
+    address: "Trịnh Hoài Đức, Cát Linh, Đống Đa, Hà Nội",
+    capacity: 22500,
+    standard: 5,
+  },
+  {
+    stadiumId: 2,
+    stadiumName: "Pleiku",
+    address: "Đường Quang Trung, Phường Hội Thương, Thành phố Pleiku, Gia Lai",
+    capacity: 12000,
+    standard: 4,
+  },
+  {
+    stadiumId: 3,
+    stadiumName: "Gò Đậu",
+    address: "Đường 30 Tháng 4, Phú Thọ, Thủ Dầu Một, Bình Dương",
+    capacity: 18250,
+    standard: 3,
+  },
+  {
+    stadiumId: 4,
+    stadiumName: "Lạch Tray",
+    address: "Đường Chu Văn An, Đằng Giang, Ngô Quyền, Hải Phòng",
+    capacity: 26000,
+    standard: 4,
+  },
+];
 
-  // New data structure for matches
-  let matchesData = [
-    {
-      matchId: 1,
-      season: "2023-2024",
-      homeTeamId: 1, // Reference to Hà Nội FC
-      awayTeamId: 2, // Reference to Viettel FC
-      date: "2023-08-05",
-      homeScore: 2,
-      awayScore: 1,
-    },
-    {
-      matchId: 2,
-      season: "2023-2024",
-      homeTeamId: 3, // Reference to Hoàng Anh Gia Lai
-      awayTeamId: 4, // Reference to Becamex Bình Dương
-      date: "2023-08-06",
-      homeScore: 0,
-      awayScore: 0,
-    },
-    // ... more matches
-  ];
+// New data structure for matches
+let matchesData = [
+  {
+    matchId: 1,
+    season: "2023-2024",
+    homeTeamId: 1, // Reference to Hà Nội FC
+    awayTeamId: 2, // Reference to Viettel FC
+    date: "2023-08-05",
+    homeScore: 2,
+    awayScore: 1,
+  },
+  {
+    matchId: 2,
+    season: "2023-2024",
+    homeTeamId: 3, // Reference to Hoàng Anh Gia Lai
+    awayTeamId: 4, // Reference to Becamex Bình Dương
+    date: "2023-08-06",
+    homeScore: 0,
+    awayScore: 0,
+  },
+  // ... more matches
+];
 
-  app.get("/api/stadiums", (req, res) => {
-    res.json(stadiums);
-  });
+// Helper function to get team details with stadium info
+const getTeamWithStadium = (teamId) => {
+  const team = availableTeams.find((t) => t.id === teamId);
+  const stadium = stadiums.find((s) => s.stadiumId === team?.stadiumId);
+  return team ? { ...team, stadium } : null;
+};
 
-  app.get("/api/stadiums/:stadiumId", (req, res) => {
-    const { stadiumId } = req.params;
-    const stadiumIdNum = parseInt(stadiumId);
-    const stadium = stadiums.find((s) => s.stadiumId === stadiumIdNum);
-    if (stadium) {
-      res.json(stadium);
-    } else {
-      res.status(404).json({ message: "Stadium not found" });
-    }
-  });
+app.get("/api/stadiums", (req, res) => {
+  res.json(stadiums);
+});
+
+app.get("/api/stadiums/:stadiumId", (req, res) => {
+  const { stadiumId } = req.params;
+  const stadiumIdNum = parseInt(stadiumId);
+  const stadium = stadiums.find((s) => s.stadiumId === stadiumIdNum);
+  if (stadium) {
+    res.json(stadium);
+  } else {
+    res.status(404).json({ message: "Stadium not found" });
+  }
+});
 app.post("/api/stadiums", (req, res) => {
   const newStadium = {
-    stadiumId: stadiums.length > 0 ? Math.max(...stadiums.map(s => s.stadiumId)) + 1 : 1, // Generate a new unique ID
+    stadiumId:
+      stadiums.length > 0
+        ? Math.max(...stadiums.map((s) => s.stadiumId)) + 1
+        : 1, // Generate a new unique ID
     stadiumName: req.body.stadiumName,
     address: req.body.address,
     capacity: parseInt(req.body.capacity), // Ensure capacity is a number
@@ -265,44 +288,48 @@ app.post("/api/stadiums", (req, res) => {
   };
 
   stadiums.push(newStadium);
-  res.status(201).json({ message: "Stadium created successfully", stadium: newStadium });
+  res
+    .status(201)
+    .json({ message: "Stadium created successfully", stadium: newStadium });
 });
 
-  app.put("/api/stadiums/:stadiumId", (req, res) => {
-    const { stadiumId } = req.params;
-    const stadiumIdNum = parseInt(stadiumId);
-    const updatedStadiumData = req.body;
-    const stadiumIndex = stadiums.findIndex((s) => s.stadiumId === stadiumIdNum);
+app.put("/api/stadiums/:stadiumId", (req, res) => {
+  const { stadiumId } = req.params;
+  const stadiumIdNum = parseInt(stadiumId);
+  const updatedStadiumData = req.body;
+  const stadiumIndex = stadiums.findIndex((s) => s.stadiumId === stadiumIdNum);
 
-    if (stadiumIndex === -1) {
-      return res.status(404).json({ message: "Stadium not found" });
-    }
+  if (stadiumIndex === -1) {
+    return res.status(404).json({ message: "Stadium not found" });
+  }
 
-    stadiums[stadiumIndex] = {
-      ...stadiums[stadiumIndex],
-      ...updatedStadiumData,
-    };
+  stadiums[stadiumIndex] = {
+    ...stadiums[stadiumIndex],
+    ...updatedStadiumData,
+  };
 
-    res.json({
-      message: "Stadium updated successfully",
-      stadium: stadiums[stadiumIndex],
-    });
+  res.json({
+    message: "Stadium updated successfully",
+    stadium: stadiums[stadiumIndex],
   });
+});
 
 app.get("/api/dashboard", (req, res) => {
   const totalTeams = availableTeams.length;
-  const seasons = Object.keys(teamsBySeason).sort();
-  const latestSeason = seasons[seasons.length - 1];
+  const sortedSeasons = [...seasons].sort(
+    (a, b) => new Date(b.startDate) - new Date(a.startDate)
+  );
+  const latestSeason = sortedSeasons[0];
 
-  const teamsInLatestSeason = teamsBySeason[latestSeason]
-    ? teamsBySeason[latestSeason]
-        .map((teamId) => availableTeams.find((team) => team.id === teamId))
-        .filter((team) => team)
+  const teamsInLatestSeason = latestSeason
+    ? latestSeason.teams
+      .map(getTeamWithStadium)
+      .filter((team) => team)
     : [];
 
-  const matchesInLatestSeason = matchesData.filter(
-    (match) => match.season === latestSeason
-  );
+  const matchesInLatestSeason = latestSeason
+    ? matchesData.filter((match) => match.season === latestSeason.id)
+    : [];
   const completedMatches = matchesInLatestSeason.filter(
     (match) => match.homeScore !== null && match.awayScore !== null
   ).length;
@@ -312,7 +339,7 @@ app.get("/api/dashboard", (req, res) => {
 
   const topScorer = teamsInLatestSeason.reduce((top, team) => {
     // Placeholder: Needs actual goal calculation logic
-    const goals = calculateGoalsForTeam(team.id, latestSeason);
+    const goals = calculateGoalsForTeam(team.id, latestSeason.id);
     return goals > (top.goals || 0) ? { name: team.name, goals } : top;
   }, {});
 
@@ -342,48 +369,81 @@ function calculateGoalsForTeam(teamId, season) {
 }
 
 app.get("/api/seasons", (req, res) => {
-  const seasons = Object.keys(teamsBySeason);
-  seasons.unshift("all");
   res.json({ seasons: seasons });
 });
 
+app.get("/api/seasons/:seasonId", (req, res) => {
+  const { seasonId } = req.params;
+  const season = seasons.find((s) => s.id === seasonId);
+  if (season) {
+    res.json(season);
+  } else {
+    res.status(404).json({ message: "Season not found" });
+  }
+});
+
+app.post("/api/seasons", (req, res) => {
+  const newSeason = {
+    id: req.body.name.toLowerCase().replace(/ /g, '-'), // Generate ID from name
+    name: req.body.name,
+    startDate: req.body.startDate,
+    endDate: req.body.endDate,
+    teams: [],
+  };
+  seasons.push(newSeason);
+  res
+    .status(201)
+    .json({ message: "Season created successfully", season: newSeason });
+});
+
 app.get("/api/teams/all", (req, res) => {
+  const allTeamsWithStadiums = availableTeams.map((team) => {
+    const stadium = stadiums.find((s) => s.stadiumId === team.stadiumId);
+    return { ...team, stadium };
+  });
+
+  res.json({ teams: allTeamsWithStadiums });
+});
+
+app.get("/api/teams", (req, res) => {
+  const season = req.query.season;
+  if (season === 'all') {
     const allTeamsWithStadiums = availableTeams.map((team) => {
       const stadium = stadiums.find((s) => s.stadiumId === team.stadiumId);
       return { ...team, stadium };
     });
-
-    res.json({ teams: allTeamsWithStadiums });
-  });
-
-  app.get("/api/teams", (req, res) => {
-    const season = req.query.season;
-    if (season && teamsBySeason[season]) {
-      const teamsInSeason = teamsBySeason[season]
-        .map((teamId) => availableTeams.find((team) => team.id === teamId))
-        .filter((team) => team)
-        .map((team) => {
-          const stadium = stadiums.find((s) => s.stadiumId === team.stadiumId);
-          return { ...team, stadium };
-        });
+    return res.json({ teams: allTeamsWithStadiums });
+  }
+  if (season) {
+    const selectedSeason = seasons.find(s => s.id === season);
+    if (selectedSeason) {
+      const teamsInSeason = selectedSeason.teams
+        .map(getTeamWithStadium)
+        .filter((team) => team);
       res.json({ teams: teamsInSeason });
     } else {
-      res.status(400).json({
-        message: "Season parameter is required or season not found",
-      });
+      res.status(404).json({ message: "Season not found" });
     }
-  });
+  } else {
+    res
+      .status(400)
+      .json({ message: "Season parameter is required or season not found" });
+  }
+});
 
 app.post("/api/teams/available", (req, res) => {
-  console.log("Request Body:", req.body);
   const newTeam = { id: Date.now(), ...req.body, season: null };
-  console.log("New Team Object:", newTeam);
   availableTeams.push(newTeam);
-  res.status(201).json({ message: "Team created successfully", team: newTeam });
+  res
+    .status(201)
+    .json({ message: "Team created successfully", team: { ...newTeam, stadium: stadiums.find(s => s.stadiumId === newTeam.stadiumId) } });
 });
 
 app.get("/api/teams/available", (req, res) => {
-  const availableTeamsOnly = availableTeams.filter((team) => !team.season);
+  const availableTeamsOnly = availableTeams.filter((team) => !team.season).map(team => ({
+    ...team,
+    stadium: stadiums.find(s => s.stadiumId === team.stadiumId)
+  }));
   res.json({ teams: availableTeamsOnly });
 });
 
@@ -391,15 +451,13 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
   const { seasonId } = req.params;
   const { teamIds } = req.body;
 
-  console.log("Received seasonId:", seasonId);
-  console.log("Received teamIds:", teamIds);
-
   if (!Array.isArray(teamIds)) {
     return res.status(400).json({ message: "teamIds must be an array" });
   }
 
-  if (!teamsBySeason[seasonId]) {
-    teamsBySeason[seasonId] = [];
+  const season = seasons.find((s) => s.id === seasonId);
+  if (!season) {
+    return res.status(404).json({ message: `Season ${seasonId} not found` });
   }
 
   const updatedTeams = [];
@@ -408,11 +466,10 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
     const teamIdNum = Number(teamId);
     const team = availableTeams.find((t) => t.id === teamIdNum);
     if (team) {
-      if (!teamsBySeason[seasonId].includes(teamIdNum)) {
-        teamsBySeason[seasonId].push(teamIdNum);
+      if (!season.teams.includes(teamIdNum)) {
+        season.teams.push(teamIdNum);
       }
-
-      updatedTeams.push(team);
+      updatedTeams.push(getTeamWithStadium(teamIdNum));
     }
   });
 
@@ -424,9 +481,10 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
 
 app.get("/api/seasons/:seasonId/teams", (req, res) => {
   const { seasonId } = req.params;
+  const season = seasons.find((s) => s.id === seasonId);
   const teamsInSeason =
-    teamsBySeason[seasonId]
-      ?.map((teamId) => availableTeams.find((team) => team.id === teamId))
+    season?.teams
+      ?.map(getTeamWithStadium)
       .filter((team) => team) || [];
   res.json({ teams: teamsInSeason });
 });
@@ -439,18 +497,6 @@ app.put("/api/teams/:id", upload.none(), (req, res) => {
     return res.status(404).json({ message: "Team not found" });
   }
 
-  // Update stadium information
-  const stadiumId = parseInt(updatedTeamData.stadiumId);
-  const stadium = stadiums.find((s) => s.stadiumId === stadiumId);
-
-  if (stadium) {
-    updatedTeamData.stadium = stadium.stadiumName;
-    updatedTeamData.stadiumId = stadium.stadiumId;
-  } else {
-    updatedTeamData.stadium = null;
-    updatedTeamData.stadiumId = null;
-  }
-
   availableTeams[teamIndex] = {
     ...availableTeams[teamIndex],
     ...updatedTeamData,
@@ -458,7 +504,7 @@ app.put("/api/teams/:id", upload.none(), (req, res) => {
 
   res.json({
     message: "Team updated successfully",
-    team: availableTeams[teamIndex],
+    team: getTeamWithStadium(parseInt(id)),
   });
 });
 
@@ -470,12 +516,18 @@ app.delete("/api/teams/:id", (req, res) => {
   // Remove the team from availableTeams
   availableTeams = availableTeams.filter((team) => team.id !== teamId);
 
-  // Remove the team from all seasons in teamsBySeason
-  for (const season in teamsBySeason) {
-    teamsBySeason[season] = teamsBySeason[season].filter(
-      (id) => id !== teamId
-    );
+  // Remove the team from all seasons
+  seasons.forEach(season => {
+    season.teams = season.teams.filter(teamIdInSeason => teamIdInSeason !== teamId);
+  });
+
+  // Remove the team from players data
+  for (const seasonKey in players) {
+    delete players[seasonKey][teamId];
   }
+
+  // Remove the team from matches
+  matchesData = matchesData.filter(match => match.homeTeamId !== teamId && match.awayTeamId !== teamId);
 
   res.json({ message: "Team deleted successfully" });
 });
@@ -485,10 +537,7 @@ app.get("/api/teams/:id", (req, res) => {
   const { id } = req.params;
   const team = availableTeams.find((team) => team.id === parseInt(id));
   if (team) {
-    const stadium = stadiums.find((s) => s.stadiumId === team.stadiumId);
-    console.log("Team Data:", team);
-    console.log("Stadium Data:", stadium);
-    res.json({ ...team, stadium });
+    res.json(getTeamWithStadium(parseInt(id)));
   } else {
     res.status(404).json({ message: "Team not found" });
   }
@@ -497,9 +546,10 @@ app.get("/api/teams/:id", (req, res) => {
 // New endpoint to get teams not in a specific season (Might not be needed)
 app.get("/api/teams/not-in-season/:season", (req, res) => {
   const { season } = req.params;
-  const teamsNotInSeason = availableTeams.filter(
-    (team) => team.season !== season
-  );
+  const selectedSeason = seasons.find(s => s.id === season);
+  const teamsNotInSeason = selectedSeason
+    ? availableTeams.filter((team) => !selectedSeason.teams.includes(team.id))
+    : [];
   res.json({ teams: teamsNotInSeason });
 });
 
@@ -513,7 +563,6 @@ app.get("/api/teams/:teamId/players", (req, res) => {
     if (!players[season] || !players[season][teamIdInt]) {
       return res.json({ players: [] });
     }
-    // Thêm thông tin season và teamId cho mỗi player
     const teamPlayers = players[season][teamIdInt].map((player) => ({
       ...player,
       season: season,
@@ -524,7 +573,6 @@ app.get("/api/teams/:teamId/players", (req, res) => {
     const allPlayers = [];
     for (const seasonKey in players) {
       if (players[seasonKey] && players[seasonKey][teamIdInt]) {
-        // Thêm thông tin season và teamId cho mỗi player
         const teamPlayers = players[seasonKey][teamIdInt].map((player) => ({
           ...player,
           season: seasonKey,
@@ -541,11 +589,7 @@ app.get("/api/teams/:teamId/players", (req, res) => {
 app.post("/api/teams/:teamId/players", (req, res) => {
   const { teamId } = req.params;
   const { season, playerIds } = req.body;
-  const teamIdNum = Number(teamId); // Convert teamId to a number
-
-  console.log("Received teamId:", teamIdNum); // Log as a number
-  console.log("Received season:", season);
-  console.log("Received playerIds:", playerIds);
+  const teamIdNum = Number(teamId);
 
   if (!Array.isArray(playerIds)) {
     return res.status(400).json({ message: "playerIds must be an array" });
@@ -565,49 +609,34 @@ app.post("/api/teams/:teamId/players", (req, res) => {
 
   const updatedPlayers = [];
 
-  try {
-    for (const playerId of playerIds) {
-      const playerIdNum = Number(playerId);
-      console.log("Processing playerId:", playerIdNum);
+  for (const playerId of playerIds) {
+    const playerIdNum = Number(playerId);
 
-      // Find the player in availablePlayers
-      const player = availablePlayers.find((p) => p.id === playerIdNum);
-      console.log("Found player:", player);
+    const player = availablePlayers.find((p) => p.id === playerIdNum);
 
-      if (player) {
-        // Check if the player already exists in the team for the current season
-        const playerExists = players[season][teamIdNum].some(
-          (p) => p.id === playerIdNum
-        );
-        if (!playerExists) {
-          players[season][teamIdNum].push({
-            ...player,
-            season: season,
-            teamId: teamIdNum,
-          });
-          updatedPlayers.push({
-            ...player,
-            season: season,
-            teamId: teamIdNum,
-          });
-        } else {
-          console.log(
-            `Player ${playerIdNum} already exists in team ${teamIdNum} for season ${season}`
-          );
-        }
-      } else {
-        console.error(`Player with id ${playerIdNum} not found`);
-        return res
-          .status(404)
-          .json({ message: `Player with id ${playerIdNum} not found` });
+    if (player) {
+      const playerExists = players[season][teamIdNum].some(
+        (p) => p.id === playerIdNum
+      );
+      if (!playerExists) {
+        players[season][teamIdNum].push({
+          ...player,
+          season: season,
+          teamId: teamIdNum,
+        });
+        updatedPlayers.push({
+          ...player,
+          season: season,
+          teamId: teamIdNum,
+        });
       }
+    } else {
+      return res
+        .status(404)
+        .json({ message: `Player with id ${playerIdNum} not found` });
     }
-  } catch (error) {
-    console.error("Error in adding players:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
   }
 
-  console.log("Players after adding:", players);
   res.status(200).json({
     message: `Players added to season ${season}`,
     updatedPlayers,
@@ -617,20 +646,22 @@ app.post("/api/teams/:teamId/players", (req, res) => {
 app.put("/api/teams/:teamId/players/:playerId", (req, res) => {
   const { teamId, playerId } = req.params;
   const { season, updatedPlayer } = req.body;
+  const teamIdInt = parseInt(teamId);
+  const playerIdInt = parseInt(playerId);
 
-  if (!players[season] || !players[season][teamId]) {
+  if (!players[season] || !players[season][teamIdInt]) {
     return res.status(404).json({ message: "Player not found" });
   }
 
-  const playerIndex = players[season][teamId].findIndex(
-    (p) => p.id === parseInt(playerId)
+  const playerIndex = players[season][teamIdInt].findIndex(
+    (p) => p.id === playerIdInt
   );
   if (playerIndex === -1) {
     return res.status(404).json({ message: "Player not found" });
   }
 
-  players[season][teamId][playerIndex] = {
-    ...players[season][teamId][playerIndex],
+  players[season][teamIdInt][playerIndex] = {
+    ...players[season][teamIdInt][playerIndex],
     ...updatedPlayer,
   };
   res.json({ message: "Player updated successfully" });
@@ -639,19 +670,21 @@ app.put("/api/teams/:teamId/players/:playerId", (req, res) => {
 app.delete("/api/teams/:teamId/players/:playerId", (req, res) => {
   const { teamId, playerId } = req.params;
   const { season } = req.body;
+  const teamIdInt = parseInt(teamId);
+  const playerIdInt = parseInt(playerId);
 
-  if (!players[season] || !players[season][teamId]) {
+  if (!players[season] || !players[season][teamIdInt]) {
     return res.status(404).json({ message: "Player not found" });
   }
 
-  const playerIndex = players[season][teamId].findIndex(
-    (p) => p.id === parseInt(playerId)
+  const playerIndex = players[season][teamIdInt].findIndex(
+    (p) => p.id === playerIdInt
   );
   if (playerIndex === -1) {
     return res.status(404).json({ message: "Player not found" });
   }
 
-  players[season][teamId].splice(playerIndex, 1);
+  players[season][teamIdInt].splice(playerIndex, 1);
   res.json({ message: "Player deleted successfully" });
 });
 app.get("/api/teams/:teamId/players/:playerId", (req, res) => {
@@ -688,28 +721,6 @@ app.get("/api/players", (req, res) => {
 });
 app.post("/api/players", (req, res) => {
   const newPlayer = { id: Date.now(), ...req.body };
-
-  // Kiểm tra xem cầu thủ đã được thêm vào đội nào trong mùa giải nào chưa
-  let addedToTeam = false;
-  for (const season in players) {
-    for (const teamId in players[season]) {
-      const existingPlayer = players[season][teamId].find(
-        (p) => p.id === newPlayer.id
-      );
-      if (existingPlayer) {
-        addedToTeam = true;
-        break;
-      }
-    }
-    if (addedToTeam) break;
-  }
-
-  // Nếu cầu thủ chưa được thêm vào đội nào, thêm vào "no season"
-  if (!addedToTeam) {
-    players["no season"] = players["no season"] || {};
-    players["no season"]["0"] = players["no season"]["0"] || []; // 0 represents no team
-    players["no season"]["0"].push(newPlayer);
-  }
   availablePlayers.push(newPlayer);
   res
     .status(201)
@@ -721,6 +732,7 @@ app.delete("/api/players/:playerId", (req, res) => {
   const { playerId } = req.params;
   const playerIdInt = parseInt(playerId);
 
+  // Remove player from all team rosters
   for (const season in players) {
     for (const teamId in players[season]) {
       players[season][teamId] = players[season][teamId].filter(
@@ -729,6 +741,7 @@ app.delete("/api/players/:playerId", (req, res) => {
     }
   }
 
+  // Remove player from available players
   availablePlayers = availablePlayers.filter((p) => p.id !== playerIdInt);
 
   res.json({ message: "Player deleted successfully" });
@@ -755,28 +768,29 @@ app.put("/api/players/:playerId", (req, res) => {
   const { playerId } = req.params;
   const { season, teamId, updatedPlayer } = req.body;
   const playerIdInt = parseInt(playerId);
+  const teamIdInt = parseInt(teamId);
 
-  if (!players[season] || !players[season][teamId]) {
+  if (!players[season] || !players[season][teamIdInt]) {
     return res
       .status(404)
       .json({ message: "Player not found in the specified team and season" });
   }
 
-  const playerIndex = players[season][teamId].findIndex(
+  const playerIndex = players[season][teamIdInt].findIndex(
     (p) => p.id === playerIdInt
   );
   if (playerIndex === -1) {
     return res.status(404).json({ message: "Player not found" });
   }
 
-  players[season][teamId][playerIndex] = {
-    ...players[season][teamId][playerIndex],
+  players[season][teamIdInt][playerIndex] = {
+    ...players[season][teamIdInt][playerIndex],
     ...updatedPlayer,
   };
 
   res.json({
     message: "Player updated successfully",
-    player: players[season][teamId][playerIndex],
+    player: players[season][teamIdInt][playerIndex],
   });
 });
 
@@ -788,10 +802,15 @@ app.get("/api/standings", (req, res) => {
       .json({ message: "Vui lòng cung cấp tham số mùa giải." });
   }
 
-  const teamsInSeason = teamsBySeason[season]
-    ? teamsBySeason[season].map((id) =>
-        availableTeams.find((team) => team.id === id)
-      )
+  const seasonData = seasons.find(s => s.id === season);
+  if (!seasonData) {
+    return res.status(404).json({ message: `Không tìm thấy mùa giải ${season}.` });
+  }
+
+  const teamsInSeason = seasonData.teams
+    ? seasonData.teams.map((id) =>
+      availableTeams.find((team) => team.id === id)
+    )
     : [];
 
   if (!teamsInSeason || teamsInSeason.length === 0) {
@@ -802,6 +821,7 @@ app.get("/api/standings", (req, res) => {
 
   const standings = teamsInSeason.reduce((acc, team) => {
     acc[team.id] = {
+      id: team.id,
       name: team.name,
       played: 0,
       won: 0,
@@ -856,7 +876,7 @@ app.get("/api/standings", (req, res) => {
 
   const rankedStandings = standingsArray.map((team, index) => ({
     ...team,
-    rank: index+ 1,
+    rank: index + 1,
   }));
 
   res.json(rankedStandings);
@@ -869,7 +889,7 @@ app.post("/api/matches", (req, res) => {
     homeTeamId: parseInt(req.body.homeTeamId),
     awayTeamId: parseInt(req.body.awayTeamId),
     date: req.body.date,
-    homeScore: null, // Initially null, updated later
+    homeScore: null,
     awayScore: null,
   };
   matchesData.push(newMatch);
@@ -891,6 +911,11 @@ app.put("/api/matches/:matchId", (req, res) => {
     ...updatedMatchData,
   };
   res.json({ message: "Match updated", match: matchesData[matchIndex] });
+});
+app.post('/api/settings', (req, res) => {
+  const newSettings = req.body;
+  console.log('Received settings from frontend:', newSettings);
+  res.status(200).json({ message: 'Settings saved successfully' });
 });
 
 // Start Server
