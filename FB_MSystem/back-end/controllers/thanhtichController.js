@@ -32,6 +32,53 @@ const ThanhTichController = {
             res.status(500).json({ error: 'Lỗi khi lấy thành tích của đội bóng.' });
         }
     },
+
+    async create(req, res) {
+        try {
+            const { MaDoiBong, MaMuaGiai, SoTranDaThiDau, SoTranThang, SoTranHoa, SoTranThua, XepHang } = req.body;
+            const thanhTich = await ThanhTich.create({
+                MaDoiBong, MaMuaGiai, SoTranDaThiDau, SoTranThang, SoTranHoa, SoTranThua, XepHang
+            });
+            res.status(201).json(thanhTich);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi thêm thành tích mới.' });
+        }
+    },
+
+    async update(req, res) {
+        try {
+            const { madoibong, mamuagiai } = req.params;
+            const updates = req.body;
+            const thanhTich = await ThanhTich.findOne({
+                where: {
+                    madoibong, // Điều kiện đầu tiên
+                    mamuagiai  // Điều kiện thứ hai
+                }
+            });
+            if (!thanhTich) return res.status(404).json({ error: 'Không tìm thấy thành tích.' });
+            await thanhTich.update(updates);
+            res.status(200).json(thanhTich);
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin thành tích.' });
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { madoibong, mamuagiai } = req.params;
+            const thanhTich = await ThanhTich.findOne({
+                where: {
+                    madoibong, // Điều kiện đầu tiên
+                    mamuagiai  // Điều kiện thứ hai
+                }
+            });
+            if (!thanhTich) return res.status(404).json({ error: 'Không tìm thấy thông tin thành tích.' });
+            await thanhTich.destroy();
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi xóa thành tích.' });
+        }
+    },
 };
 
 module.exports = ThanhTichController;

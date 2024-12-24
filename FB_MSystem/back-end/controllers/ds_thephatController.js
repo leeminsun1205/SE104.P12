@@ -34,7 +34,7 @@ const DsThePhatController = {
 
     async create(req, res) {
         try {
-            const { MaCauThu, MaVongDau, SoTheVang, SoTheDo, TinhTrangThiDau } = req.body;
+            const { MaCauThu, MaVongDau, SoTheVang, SoTheDo } = req.body;
 
             // Kiểm tra điều kiện số thẻ vàng và thẻ đỏ
             let tinhTrangThiDau = 1; // Mặc định là có thể thi đấu
