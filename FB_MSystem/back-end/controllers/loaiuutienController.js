@@ -13,13 +13,13 @@ const LoaiUuTienController = {
 
     async create(req, res) {
         try {
-            const { MaLoaiUT, TenLoaiUT } = req.body;
-            const isDuplicateName = await isDuplicate(LoaiUuTien, 'TenLoaiUT', TenLoaiUT);
+            const { MaLoaiUuTien, TenLoaiUuTien } = req.body;
+            const isDuplicateName = await isDuplicate(LoaiUuTien, 'TenLoaiUuTien', TenLoaiUuTien);
             if (isDuplicateName) {
-                return res.status(400).json({ error: `Tên loại ưu tiên "${TenLoaiUT}" đã tồn tại.` });
+                return res.status(400).json({ error: `Tên loại ưu tiên "${TenLoaiUuTien}" đã tồn tại.` });
             }
             const loaiUuTien = await LoaiUuTien.create({
-                MaLoaiUT, TenLoaiUT,
+                MaLoaiUuTien, TenLoaiUuTien,
             });
             res.status(201).json(loaiUuTien);
         } catch (error) {
@@ -34,10 +34,10 @@ const LoaiUuTienController = {
             const updates = req.body;
             const loaiUuTien = await LoaiUuTien.findByPk(id);
             if (!loaiUuTien) return res.status(404).json({ error: 'Không tìm thấy loại ưu tiên.' });
-            if (updates.TenLoaiUT && updates.TenLoaiUT !== loaiUuTien.TenLoaiUT) {
-                const isDuplicateName = await isDuplicate(LoaiUuTien, 'TenLoaiUT', updates.TenLoaiUT);
+            if (updates.TenLoaiUuTien && updates.TenLoaiUuTien !== loaiUuTien.TenLoaiUuTien) {
+                const isDuplicateName = await isDuplicate(LoaiUuTien, 'TenLoaiUuTien', updates.TenLoaiUuTien);
                 if (isDuplicateName) {
-                    return res.status(400).json({ error: `Tên loại ưu tiên "${updates.TenLoaiUT}" đã tồn tại.` });
+                    return res.status(400).json({ error: `Tên loại ưu tiên "${updates.TenLoaiUuTien}" đã tồn tại.` });
                 }
             }
             await loaiUuTien.update(updates);

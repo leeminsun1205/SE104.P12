@@ -3,12 +3,12 @@ const sequelize = require('../config/database');
 const { autoCreateCode } = require('../utils/autoCreateCode');
 
 const LoaiUuTien = sequelize.define('LoaiUuTien', {
-    MaLoaiUT: {
+    MaLoaiUuTien: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
     },
-    TenLoaiUT: {
+    TenLoaiUuTien: {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
@@ -17,8 +17,8 @@ const LoaiUuTien = sequelize.define('LoaiUuTien', {
     timestamps: false,
     hooks: {
         beforeValidate: async (record) => {
-            if (!record.MaLoaiUT) {
-                record.MaLoaiUT = await autoCreateCode(LoaiUuTien, 'LUT', 'MaLoaiUT', 1);
+            if (!record.MaLoaiUuTien) {
+                record.MaLoaiUuTien = await autoCreateCode(LoaiUuTien, 'LUT', 'MaLoaiUuTien', 1);
             }
         },
     },

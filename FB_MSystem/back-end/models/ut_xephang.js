@@ -4,6 +4,7 @@ const sequelize = require('../config/database');
 const UtXepHang = sequelize.define('UtXepHang', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
         references: {
             model: 'MuaGiai',
@@ -12,6 +13,7 @@ const UtXepHang = sequelize.define('UtXepHang', {
     },
     MaLoaiUuTien: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
         references: {
             model: 'LoaiUuTien',

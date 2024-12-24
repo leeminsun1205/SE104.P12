@@ -12,6 +12,7 @@ const UtXepHangController = {
             });
             res.status(200).json(data);
         } catch (error) {
+            console.error('Lỗi khi lấy danh sách ưu tiên xếp hạng theo mùa giải:', error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách ưu tiên xếp hạng theo mùa giải.' });
         }
     },
@@ -24,6 +25,7 @@ const UtXepHangController = {
             });
             res.status(201).json(utXepHang);
         } catch (error) {
+            console.error('Lỗi khi thêm ưu tiên xếp hạng:', error);
             res.status(500).json({ error: 'Lỗi khi thêm ưu tiên xếp hạng.' });
         }
     },

@@ -98,7 +98,7 @@ CREATE TABLE TRANDAU (
 	GioThiDau TIME,
     BanThangDoiNha INT,
 	BanThangDoiKhach INT,
-    TinhTrang BIT, # true: đang đá, false: chưa đá hoặc kết thúc 
+    TinhTrang BIT NOT NULL, # true: đang đá, false: chưa đá hoặc kết thúc 
     CONSTRAINT CK_DoiKhacNhau CHECK (MaDoiBongNha <> MaDoiBongKhach),
     CONSTRAINT CK_BanThangDoiNha CHECK (BanThangDoiNha >= 0),
 	CONSTRAINT CK_BanThangDoiKhach CHECK (BanThangDoiKhach >= 0),
