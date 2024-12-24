@@ -10,7 +10,7 @@ function EditTeam({ onEditTeam }) {
   const [team, setTeam] = useState({
     name: '',
     city: '',
-    managing_body: '',
+    coach: '',
     stadium: '', // For display name
     stadiumId: null, // Store the ID
     capacity: null,
@@ -41,7 +41,7 @@ function EditTeam({ onEditTeam }) {
         setTeam({
           name: data.name || '',
           city: data.city || '',
-          managing_body: data.managing_body || '',
+          coach: data.coach || '',
           stadium: data.stadium ? data.stadium.TenSan : '',
           stadiumId: data.stadiumId || null,
           capacity: data.capacity || null,
@@ -183,7 +183,7 @@ function EditTeam({ onEditTeam }) {
         { name: 'name', label: 'Tên đội bóng', type: 'text', required: true },
         { name: 'city', label: 'Thành phố', type: 'text', required: true },
         {
-          name: 'managing_body',
+          name: 'coach',
           label: 'Cơ quan/Công ty chủ quản',
           type: 'text',
         },

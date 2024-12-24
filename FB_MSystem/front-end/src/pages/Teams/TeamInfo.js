@@ -12,11 +12,11 @@ function TeamInfo({ teams }) {
   const team = teams.find((t) => t.id === teamId);
 
   const handleToPlayer = (id) => {
-      navigate(`/teams/${id}/players`);
+    navigate(`/teams/${id}/players`);
   };
 
   const handleToOtherMatches = (id) => {
-      navigate(`/teams/${id}/other-matches`);
+    navigate(`/teams/${id}/other-matches`);
   };
 
   const handleStadiumClick = (stadiumId) => {
@@ -24,14 +24,14 @@ function TeamInfo({ teams }) {
   };
 
   if (!team) {
-      return (
-          <div className="team-info">
-              <p>Không tìm thấy đội bóng.</p>
-              <button className="go-back-button" onClick={() => navigate(-1)}>
-                  Quay lại
-              </button>
-          </div>
-      );
+    return (
+      <div className="team-info">
+        <p>Không tìm thấy đội bóng.</p>
+        <button className="go-back-button" onClick={() => navigate(-1)}>
+          Quay lại
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -46,7 +46,7 @@ function TeamInfo({ teams }) {
             <strong>Thành phố:</strong> {team.city}
           </li>
           <li>
-            <strong>Cơ quan/Công ty chủ quản:</strong> {team.managing_body}
+            <strong>Huấn luyện viên:</strong> {team.coach}
           </li>
           <li>
             <strong>Sân nhà:</strong>{" "}
@@ -54,7 +54,7 @@ function TeamInfo({ teams }) {
               onClick={() => handleStadiumClick(team.stadiumId)}
               style={{ cursor: 'pointer', textDecoration: 'underline' }}
             >
-              {team.stadium}
+              {team.stadium ? team.stadium.TenSan : 'N/A'} {/* Access TenSan property */}
             </span>
           </li>
           <li>
@@ -126,4 +126,5 @@ function TeamInfo({ teams }) {
   );
 }
 
-export default TeamInfo;
+
+export default TeamInfo

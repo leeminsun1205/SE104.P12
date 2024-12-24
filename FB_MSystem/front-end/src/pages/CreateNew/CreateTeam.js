@@ -8,7 +8,7 @@ const CreateTeam = memo(({ onAddTeam }) => {
     const [team, setTeam] = useState({
         name: '',
         city: '',
-        managing_body: '',
+        coach: '',
         stadium: '',
         capacity: '',
         fifa_stars: '',
@@ -88,7 +88,7 @@ const CreateTeam = memo(({ onAddTeam }) => {
         setTeam({
             name: '',
             city: '',
-            managing_body: '',
+            coach: '',
             stadium: '',
             capacity: '',
             fifa_stars: '',
@@ -111,7 +111,7 @@ const CreateTeam = memo(({ onAddTeam }) => {
             {[
                 { name: 'name', label: 'Tên đội bóng', type: 'text', required: true },
                 { name: 'city', label: 'Thành phố', type: 'text', required: true },
-                { name: 'managing_body', label: 'Cơ quan/Công ty chủ quản', type: 'text' },
+                { name: 'coach', label: 'Cơ quan/Công ty chủ quản', type: 'text' },
                 { name: 'stadium', label: 'Địa điểm sân nhà', type: 'text' },
                 { name: 'capacity', label: 'Sức chứa', type: 'number' },
                 { name: 'fifa_stars', label: 'Đạt tiêu chuẩn (số sao)', type: 'number' },
