@@ -226,7 +226,7 @@
 
   .teams .search-container {
     position: relative;
-    max-width: 500px;
+    max-width: 1000px;
     top: -20px;
   }
 
@@ -235,7 +235,7 @@
   }
 
   .search-input-wrapper input[type="text"] {
-    width: 100%;
+    max-width: 1000px;
     padding-right: 40px;
   }
 

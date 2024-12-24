@@ -139,6 +139,9 @@ function Teams({
   return (
     <div className="teams">
       <h2>Danh sách đội bóng</h2>
+      <Link to="/create/team" className="add-player-button">
+        Thêm đội bóng mới
+      </Link>
       <SeasonSelector
         seasons={seasons}
         selectedSeason={selectedSeason}

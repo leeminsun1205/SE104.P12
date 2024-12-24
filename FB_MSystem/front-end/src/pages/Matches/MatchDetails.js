@@ -1,11 +1,13 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./MatchDetails.module.css";
-import { allMatches } from "./data";
 
-function MatchDetails() {
-  const { season, round, id } = useParams();
+function MatchDetails({API_URL}){
+  const { season, id } = useParams();
   const navigate = useNavigate();
+  const [match, setMatch] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showGoals, setShowGoals] = useState(false);
   const [showCards, setShowCards] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -21,13 +23,30 @@ function MatchDetails() {
     direction: "ascending",
   });
 
-  const match = allMatches.find(
-    (m) => m.id.toString() === id && m.season === season && m.round === round
-  );
+  useEffect(() => {
+    const fetchMatchDetails = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${API_URL}/matches/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMatch(data);
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatchDetails();
+  }, [id]);
 
   // Sắp xếp danh sách bàn thắng
   const sortedGoals = useMemo(() => {
-    const sortableGoals = match
+    const sortableGoals = match && match.goals
       ? [...(isEditingGoals ? editedMatch.goals : match.goals)]
       : [];
     if (goalSortConfig.key !== null) {
@@ -46,7 +65,7 @@ function MatchDetails() {
 
   // Sắp xếp danh sách thẻ phạt
   const sortedCards = useMemo(() => {
-    const sortableCards = match
+    const sortableCards = match && match.cards
       ? [...(isEditingCards ? editedMatch.cards : match.cards || [])]
       : [];
     if (cardSortConfig.key !== null) {
@@ -62,6 +81,25 @@ function MatchDetails() {
     }
     return sortableCards;
   }, [match, isEditingCards, editedMatch, cardSortConfig]);
+
+  if (loading) {
+    return <div>Đang tải thông tin trận đấu...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className={styles.notFound}>
+        <h2>Lỗi khi tải dữ liệu trận đấu</h2>
+        <p>{error.message}</p>
+        <button
+          className={styles.backButton}
+          onClick={() => navigate("/matches")}
+        >
+          Quay lại danh sách trận đấu
+        </button>
+      </div>
+    );
+  }
 
   // Nếu không tìm thấy trận đấu, hiển thị thông báo lỗi
   if (!match) {
@@ -154,20 +192,44 @@ function MatchDetails() {
     });
   };
 
-  const handleSaveGoals = () => {
-    const matchIndex = allMatches.findIndex((m) => m.id === editedMatch.id);
-    if (matchIndex !== -1) {
-      allMatches[matchIndex] = editedMatch;
+  const handleSaveGoals = async () => {
+    try {
+      const response = await fetch(`${API_URL}/matches/${match.matchId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ goals: editedMatch.goals }),
+      });
+      if (!response.ok) {
+        throw new Error(`Could not update goals: ${response.statusText}`);
+      }
+      setMatch(prevMatch => ({ ...prevMatch, goals: editedMatch.goals }));
+      setIsEditingGoals(false);
+    } catch (error) {
+      console.error("Error updating goals:", error);
+      // Optionally set an error state to display a message to the user
     }
-    setIsEditingGoals(false);
   };
 
-  const handleSaveCards = () => {
-    const matchIndex = allMatches.findIndex((m) => m.id === editedMatch.id);
-    if (matchIndex !== -1) {
-      allMatches[matchIndex] = editedMatch;
+  const handleSaveCards = async () => {
+    try {
+      const response = await fetch(`${API_URL}/matches/${match.matchId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cards: editedMatch.cards }),
+      });
+      if (!response.ok) {
+        throw new Error(`Could not update cards: ${response.statusText}`);
+      }
+      setMatch(prevMatch => ({ ...prevMatch, cards: editedMatch.cards }));
+      setIsEditingCards(false);
+    } catch (error) {
+      console.error("Error updating cards:", error);
+      // Optionally set an error state to display a message to the user
     }
-    setIsEditingCards(false);
   };
 
   const handleCancelGoals = () => {
@@ -215,7 +277,7 @@ function MatchDetails() {
   return (
     <div className={styles.matchDetails}>
       <h1 className={styles.matchTitle}>
-        {match.homeTeam} <span>vs</span> {match.awayTeam}
+        {match.homeTeamName} <span>vs</span> {match.awayTeamName}
       </h1>
       <div className={styles.matchInfo}>
         <div className={styles.infoItem}>
@@ -231,7 +293,7 @@ function MatchDetails() {
           <span className={styles.label}>Giờ:</span> {match.time}
         </div>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Sân vận động:</span> {match.stadium}
+          <span className={styles.label}>Sân vận động:</span> {match.stadiumName}
         </div>
       </div>
 
@@ -251,10 +313,10 @@ function MatchDetails() {
             <tbody>
               <tr>
                 <td>
-                  <span className={styles.label}>Đội 1:</span> {match.homeTeam}
+                  <span className={styles.label}>Đội 1:</span> {match.homeTeamName}
                 </td>
                 <td>
-                  <span className={styles.label}>Đội 2:</span> {match.awayTeam}
+                  <span className={styles.label}>Đội 2:</span> {match.awayTeamName}
                 </td>
               </tr>
               <tr>
@@ -263,7 +325,7 @@ function MatchDetails() {
                   {match.homeScore} - {match.awayScore}
                 </td>
                 <td>
-                  <span className={styles.label}>Sân đấu:</span> {match.stadium}
+                  <span className={styles.label}>Sân đấu:</span> {match.stadiumName}
                 </td>
               </tr>
               <tr>

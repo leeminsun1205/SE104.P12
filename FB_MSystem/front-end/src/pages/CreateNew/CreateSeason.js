@@ -30,7 +30,7 @@ function CreateSeason({ API_URL }) {
     };
 
     const handleCancel = () => {
-        navigate('/create');
+        navigate(-1);
     };
 
     const handleReset = () => {

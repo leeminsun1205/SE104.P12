@@ -2,16 +2,17 @@ import React, { useState, useMemo, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import styles from "./Matches.module.css";
-import { allMatches } from "./data"
 
-const Matches = () => {
-  const [matches, setMatches] = useState(allMatches);
+const Matches = ({API_URL}) => {
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const seasons = useMemo(
     () => [...new Set(matches.map((match) => match.season))],
     [matches]
   );
 
-  const [selectedSeason, setSelectedSeason] = useState(seasons[0] || "");
+  const [selectedSeason, setSelectedSeason] = useState("");
   const [selectedRound, setSelectedRound] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -21,8 +22,30 @@ const Matches = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setSelectedSeason(seasons[0] || "");
-  }, [seasons])
+    const fetchMatches = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/matches`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMatches(data);
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatches();
+  }, []);
+
+  useEffect(() => {
+    if (seasons.length > 0) {
+      setSelectedSeason(seasons[0]);
+    }
+  }, [seasons]);
 
   // Filter and sort matches
   const filteredMatches = useMemo(() => {
@@ -35,9 +58,9 @@ const Matches = () => {
       .filter((match) => {
         const query = searchQuery.toLowerCase();
         return (
-          match.homeTeam.toLowerCase().includes(query) ||
-          match.awayTeam.toLowerCase().includes(query) ||
-          match.stadium.toLowerCase().includes(query) ||
+          match.homeTeamName.toLowerCase().includes(query) ||
+          match.awayTeamName.toLowerCase().includes(query) ||
+          match.stadiumName.toLowerCase().includes(query) ||
           match.date.includes(query)
         );
       })
@@ -83,6 +106,14 @@ const Matches = () => {
     }
     return "";
   };
+
+  if (loading) {
+    return <div>Đang tải danh sách trận đấu...</div>;
+  }
+
+  if (error) {
+    return <div>Lỗi khi tải dữ liệu: {error.message}</div>;
+  }
 
   return (
     <div className={styles.matchesPage}>
@@ -168,17 +199,17 @@ const Matches = () => {
         <tbody>
           {filteredMatches.map((match) => (
             <tr
-              key={match.id}
+              key={match.matchId}
               className={styles.row}
               onClick={() =>
-                navigate(`/match/${match.season}/${match.round}/${match.id}`)
+                navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
               }
             >
               <td className={styles.cell}>{match.date}</td>
               <td className={styles.cell}>{match.time}</td>
-              <td className={styles.cell}>{match.homeTeam}</td>
-              <td className={styles.cell}>{match.awayTeam}</td>
-              <td className={styles.cell}>{match.stadium}</td>
+              <td className={styles.cell}>{match.homeTeamName}</td>
+              <td className={styles.cell}>{match.awayTeamName}</td>
+              <td className={styles.cell}>{match.stadiumName}</td>
             </tr>
           ))}
         </tbody>

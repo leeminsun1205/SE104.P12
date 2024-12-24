@@ -221,8 +221,8 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
             <Route path="/players" element={<AllPlayers />} />
             <Route path="/players/:playerId" element={<PlayerInfo />} />
-            <Route path="/matches" element={<Matches />} />
-            <Route path="/match/:season/:round/:id" element={<MatchDetails />} />
+            <Route path="/matches" element={<Matches API_URL = {API_URL}/>} />
+            <Route path="/match/:season/:round/:id" element={<MatchDetails API_URL = {API_URL}/>} />
             <Route path="/standings" element={<Standings API_URL = {API_URL} /> } />
             <Route path="/create" element={<CreateNew />} />
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />

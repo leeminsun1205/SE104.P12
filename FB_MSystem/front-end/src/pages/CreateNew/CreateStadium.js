@@ -29,7 +29,7 @@ function CreateStadium({ onAddStadium }) {
     };
 
     const handleCancel = () => {
-        navigate('/create');
+        navigate(-1);
     };
 
     const handleReset = () => {

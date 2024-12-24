@@ -236,20 +236,41 @@ let matchesData = [
   {
     matchId: 1,
     season: "2023-2024",
+    round: "1",
     homeTeamId: 1, // Reference to Hà Nội FC
     awayTeamId: 2, // Reference to Viettel FC
     date: "2023-08-05",
+    time: "19:15",
     homeScore: 2,
     awayScore: 1,
+    stadiumId: 1,
+    isFinished: true,
+    goals: [
+      { player: "Văn Quyết", team: "Hà Nội FC", type: "penalty", time: "30'" },
+      { player: "Geovane", team: "Hà Nội FC", type: "own goal", time: "45'" },
+      { player: "Tuấn Hải", team: "Viettel FC", type: "normal", time: "75'" },
+    ],
+    cards: [
+      { player: "Hùng Dũng", team: "Hà Nội FC", type: "Yellow", time: "60'" },
+      { player: "Hoàng Đức", team: "Viettel FC", type: "Yellow", time: "80'" },
+    ],
   },
   {
     matchId: 2,
     season: "2023-2024",
+    round: "1",
     homeTeamId: 3, // Reference to Hoàng Anh Gia Lai
     awayTeamId: 4, // Reference to Becamex Bình Dương
     date: "2023-08-06",
+    time: "17:00",
     homeScore: 0,
     awayScore: 0,
+    stadiumId: 2,
+    isFinished: true,
+    goals: [],
+    cards: [
+      { player: "Công Phượng", team: "Hoàng Anh Gia Lai", type: "Yellow", time: "25'" },
+    ],
   },
   // ... more matches
 ];
@@ -259,6 +280,18 @@ const getTeamWithStadium = (teamId) => {
   const team = availableTeams.find((t) => t.id === teamId);
   const stadium = stadiums.find((s) => s.stadiumId === team?.stadiumId);
   return team ? { ...team, stadium } : null;
+};
+
+// Helper function to get team name by ID
+const getTeamName = (teamId) => {
+  const team = availableTeams.find((t) => t.id === teamId);
+  return team ? team.name : "Unknown Team";
+};
+
+// Helper function to get stadium name by ID
+const getStadiumName = (stadiumId) => {
+  const stadium = stadiums.find((s) => s.stadiumId === stadiumId);
+  return stadium ? stadium.stadiumName : "Unknown Stadium";
 };
 
 app.get("/api/stadiums", (req, res) => {
@@ -882,15 +915,58 @@ app.get("/api/standings", (req, res) => {
   res.json(rankedStandings);
 });
 
+app.get("/api/matches", (req, res) => {
+  const { season } = req.query;
+  let filteredMatches = matchesData;
+
+  if (season) {
+    filteredMatches = filteredMatches.filter(match => match.season === season);
+  }
+
+  const matchesWithDetails = filteredMatches.map(match => ({
+    ...match,
+    homeTeamName: getTeamName(match.homeTeamId),
+    awayTeamName: getTeamName(match.awayTeamId),
+    stadiumName: getStadiumName(match.stadiumId),
+  }));
+
+  res.json(matchesWithDetails);
+});
+
+app.get("/api/matches/:matchId", (req, res) => {
+  const { matchId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const match = matchesData.find(m => m.matchId === matchIdNum);
+
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const matchWithDetails = {
+    ...match,
+    homeTeamName: getTeamName(match.homeTeamId),
+    awayTeamName: getTeamName(match.awayTeamId),
+    stadiumName: getStadiumName(match.stadiumId),
+  };
+
+  res.json(matchWithDetails);
+});
+
 app.post("/api/matches", (req, res) => {
   const newMatch = {
     matchId: matchesData.length > 0 ? Math.max(...matchesData.map(m => m.matchId)) + 1 : 1,
     season: req.body.season,
+    round: req.body.round,
     homeTeamId: parseInt(req.body.homeTeamId),
     awayTeamId: parseInt(req.body.awayTeamId),
     date: req.body.date,
+    time: req.body.time,
     homeScore: null,
     awayScore: null,
+    stadiumId: parseInt(req.body.stadiumId),
+    isFinished: false,
+    goals: [],
+    cards: [],
   };
   matchesData.push(newMatch);
   res.status(201).json({ message: "Match created", match: newMatch });
