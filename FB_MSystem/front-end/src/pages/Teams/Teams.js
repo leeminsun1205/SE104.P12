@@ -23,7 +23,7 @@ function Teams({
         const url = selectedSeason === 'all'
           ? 'http://localhost:5000/api/teams/all'
           : `http://localhost:5000/api/teams?season=${selectedSeason}`;
-  
+
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error('Failed to fetch teams');
@@ -35,7 +35,7 @@ function Teams({
         // Handle error appropriately
       }
     };
-  
+
     fetchTeamsForSelectedSeason();
   }, [selectedSeason]);
 
@@ -53,7 +53,7 @@ function Teams({
         const url = selectedSeason === 'all'
           ? 'http://localhost:5000/api/teams/all'
           : `http://localhost:5000/api/teams?season=${selectedSeason}`;
-  
+
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error('Failed to fetch teams');
@@ -65,7 +65,7 @@ function Teams({
         // Handle error appropriately
       }
     };
-  
+
     fetchTeamsForSelectedSeason();
   };
 
@@ -83,12 +83,12 @@ function Teams({
   };
 
   const handleEdit = (id) => {
-    navigate(`/teams/edit/${id}`); 
+    navigate(`/teams/edit/${id}`);
 };
 
   const handleAddTeamsToSeason = async (selectedTeamIds, season) => {
     setShowAddTeamsModal(false);
-  
+
     for (const teamId of selectedTeamIds) {
       try {
         const response = await fetch(
@@ -110,7 +110,7 @@ function Teams({
         console.error("Error fetching team data:", error);
       }
     }
-  
+
     try {
       const response = await fetch(
         `http://localhost:5000/api/seasons/${season}/teams`,
@@ -122,12 +122,12 @@ function Teams({
           body: JSON.stringify({ teamIds: selectedTeamIds }),
         }
       );
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add teams to season");
       }
-  
+
       await onSeasonChange(season);
     } catch (error) {
       console.error("Error adding teams to season:", error);
@@ -161,18 +161,21 @@ function Teams({
         </div>
       </div>
 
-      <button
-        className="add-to-season-button"
-        onClick={() => setShowAddTeamsModal(true)}
-      >
-        Thêm đội bóng vào mùa giải
-      </button>
+      {/* Chỉ hiển thị nút khi selectedSeason không phải là 'all' */}
+      {selectedSeason !== 'all' && (
+        <button
+          className="add-to-season-button"
+          onClick={() => setShowAddTeamsModal(true)}
+        >
+          Thêm đội bóng vào mùa giải
+        </button>
+      )}
 
       {showAddTeamsModal && (
         <AddTeamsToSeasonModal
           season={selectedSeason}
           onAddTeamsToSeason={handleAddTeamsToSeason}
-          onClose={() => setShowAddTeamsModal(false)} 
+          onClose={() => setShowAddTeamsModal(false)}
         />
       )}
 
@@ -184,7 +187,7 @@ function Teams({
                 <Link to={`/teams/${team.id}`}>{team.name}</Link>
               </h3>
               <p>Thành phố: {team.city}</p>
-              <p>Sân nhà: {team.stadium ? team.stadium.TenSan : "Chưa xác định"}</p>
+              <p>Sân nhà: {team.stadium ? team.stadium.stadiumName : "Chưa xác định"}</p>
               <div className="actions">
                 <button
                   className="toplayer"

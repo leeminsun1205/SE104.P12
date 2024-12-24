@@ -18,7 +18,7 @@ let availableTeams = [
     stadium: "Hàng Đẫy",
     stadiumId: 1,
     capacity: 22500,
-    fifa_stars: 5,
+    standard: 5,
     home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/e/eb/Hanoi_FC.png",
     away_kit_image: null,
     third_kit_image: null,
@@ -33,7 +33,7 @@ let availableTeams = [
     stadium: "Hàng Đẫy",
     stadiumId: 1,
     capacity: 22500,
-    fifa_stars: 4,
+    standard: 4,
     home_kit_image: null,
     away_kit_image:
       "https://upload.wikimedia.org/wikipedia/vi/thumb/d/d5/Viettel_FC_logo.png/1200px-Viettel_FC_logo.png",
@@ -49,7 +49,7 @@ let availableTeams = [
     stadium: "Pleiku",
     stadiumId: 2,
     capacity: 12000,
-    fifa_stars: 4,
+    standard: 4,
     home_kit_image: null,
     away_kit_image: null,
     third_kit_image:
@@ -65,7 +65,7 @@ let availableTeams = [
     stadium: "Gò Đậu",
     stadiumId: 3,
     capacity: 18250,
-    fifa_stars: 3,
+    standard: 3,
     home_kit_image: null,
     away_kit_image:
       "https://upload.wikimedia.org/wikipedia/vi/thumb/0/07/Becamex_Binh_Duong_FC_logo.png/1200px-Becamex_Binh_Duong_FC_logo.png",
@@ -81,7 +81,7 @@ let availableTeams = [
     stadium: "Lạch Tray",
     stadiumId: 4,
     capacity: 26000,
-    fifa_stars: 4,
+    standard: 4,
     home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/8/85/Hai_Phong_FC_logo.png",
     away_kit_image: null,
     third_kit_image: null,
@@ -190,31 +190,31 @@ let availablePlayers = [
 let stadiums = [
     {
       stadiumId: 1, 
-      TenSan: "Hàng Đẫy",
-      DiaChiSan: "Trịnh Hoài Đức, Cát Linh, Đống Đa, Hà Nội",
-      SucChua: 22500,
-      TieuChuan: 5,
+      stadiumName: "Hàng Đẫy",
+      address: "Trịnh Hoài Đức, Cát Linh, Đống Đa, Hà Nội",
+      capacity: 22500,
+      standard: 5,
     },
     {
       stadiumId: 2, 
-      TenSan: "Pleiku",
-      DiaChiSan: "Đường Quang Trung, Phường Hội Thương, Thành phố Pleiku, Gia Lai",
-      SucChua: 12000,
-      TieuChuan: 4,
+      stadiumName: "Pleiku",
+      address: "Đường Quang Trung, Phường Hội Thương, Thành phố Pleiku, Gia Lai",
+      capacity: 12000,
+      standard: 4,
     },
     {
       stadiumId: 3, 
-      TenSan: "Gò Đậu",
-      DiaChiSan: "Đường 30 Tháng 4, Phú Thọ, Thủ Dầu Một, Bình Dương",
-      SucChua: 18250,
-      TieuChuan: 3,
+      stadiumName: "Gò Đậu",
+      address: "Đường 30 Tháng 4, Phú Thọ, Thủ Dầu Một, Bình Dương",
+      capacity: 18250,
+      standard: 3,
     },
     {
       stadiumId: 4, 
-      TenSan: "Lạch Tray",
-      DiaChiSan: "Đường Chu Văn An, Đằng Giang, Ngô Quyền, Hải Phòng",
-      SucChua: 26000,
-      TieuChuan: 4,
+      stadiumName: "Lạch Tray",
+      address: "Đường Chu Văn An, Đằng Giang, Ngô Quyền, Hải Phòng",
+      capacity: 26000,
+      standard: 4,
     },
   ];
 
@@ -232,8 +232,30 @@ let stadiums = [
       res.status(404).json({ message: "Stadium not found" });
     }
   });
-  app.get("/api/stadiums", (req, res) => {
-  res.json(stadiums);
+app.post("/api/stadiums", (req, res) => {
+  const newStadium = {
+    stadiumId: stadiums.length > 0 ? Math.max(...stadiums.map(s => s.stadiumId)) + 1 : 1, // Generate a new unique ID
+    stadiumName: req.body.stadiumName,
+    address: req.body.address,
+    capacity: parseInt(req.body.capacity), // Ensure capacity is a number
+    standard: parseInt(req.body.standard), // Ensure standard is a number
+  };
+
+  stadiums.push(newStadium);
+  res.status(201).json({ message: "Stadium created successfully", stadium: newStadium });
+});  
+
+app.post("/api/stadiums", (req, res) => {
+  const newStadium = {
+    stadiumId: stadiums.length > 0 ? Math.max(...stadiums.map(s => s.stadiumId)) + 1 : 1, // Generate a new unique ID
+    stadiumName: req.body.stadiumName,
+    address: req.body.address,
+    capacity: parseInt(req.body.capacity), // Ensure capacity is a number
+    standard: parseInt(req.body.standard), // Ensure standard is a number
+  };
+
+  stadiums.push(newStadium);
+  res.status(201).json({ message: "Stadium created successfully", stadium: newStadium });
 });
   app.put("/api/stadiums/:stadiumId", (req, res) => {
     const { stadiumId } = req.params;
@@ -460,7 +482,7 @@ app.put("/api/teams/:id", upload.none(), (req, res) => {
   const stadium = stadiums.find((s) => s.stadiumId === stadiumId);
 
   if (stadium) {
-    updatedTeamData.stadium = stadium.TenSan; 
+    updatedTeamData.stadium = stadium.stadiumName; 
     updatedTeamData.stadiumId = stadium.stadiumId;
   } else {
     updatedTeamData.stadium = null;

@@ -34,10 +34,6 @@ button {
   color: #333;
 }
 
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
 input:focus,
 select:focus,
 button:focus {

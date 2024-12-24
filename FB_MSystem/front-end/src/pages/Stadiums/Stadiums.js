@@ -38,7 +38,7 @@ function Stadiums() {
     };
 
     const filteredStadiums = stadiums.filter((stadium) =>
-        stadium.TenSan.toLowerCase().includes(searchTerm.toLowerCase())
+        stadium.stadiumName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) {
@@ -49,13 +49,18 @@ function Stadiums() {
         return <div>Error: {error}</div>;
     }
 
-    return (
+     return (
         <div className={styles['stadium-container']}>
             <div className={styles["stadiums-list"]}>
                 <h2>Danh sách sân vận động</h2>
+                <div className={styles['actions']}>
+                    <Link to="/create/stadium" className={styles['add-stadium-button']}>
+                        Thêm sân vận động
+                    </Link>
+                </div>
 
                 <div className={styles['search-container']}>
-                <div className="search-input-wrapper">
+                    <div className="search-input-wrapper">
                         <p>Tìm kiếm</p>
                         <input
                             type="text"
@@ -75,7 +80,7 @@ function Stadiums() {
                     {filteredStadiums.map((stadium) => (
                         <li key={stadium.stadiumId}>
                             <Link to={`/stadiums/${stadium.stadiumId}`}>
-                                {stadium.TenSan}
+                                {stadium.stadiumName}
                             </Link>
                         </li>
                     ))}
@@ -84,5 +89,4 @@ function Stadiums() {
         </div>
     );
 }
-
 export default Stadiums;

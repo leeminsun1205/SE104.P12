@@ -2,59 +2,93 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreatePlayer.css";
 
-function CreatePlayer({ onAddPlayer, seasons }) {
-  console.log("onAddPlayer in CreatePlayer:", onAddPlayer); // Check if onAddPlayer is received
+function CreatePlayer({ API_URL, onAddPlayer }) {
+  console.log("onAddPlayer in CreatePlayer:", onAddPlayer);
   const navigate = useNavigate();
   const [player, setPlayer] = useState({
     name: "",
     dob: "",
     nationality: "",
     position: "",
-    season: "",
     birthplace: "",
-    height: null,
-    weight: null,
+    height: "",
+    weight: "",
     bio: "",
-    playerType: "", // Thêm trường playerType
+    playerType: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPlayer((prev) => ({ ...prev, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); 
   };
 
-  const handleAdd = async () => {
-    setError("");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let isValid = true;
+    const newErrors = {};
 
-    if (!player.name.trim() || !player.position || !player.nationality.trim() || !player.dob || !player.playerType) {
-        setError("Vui lòng điền đầy đủ thông tin.");
-        return;
+    if (!player.name.trim()) {
+      newErrors.name = "Tên cầu thủ không được để trống";
+      isValid = false;
+    }
+    if (!player.position) {
+      newErrors.position = "Vị trí thi đấu không được để trống";
+      isValid = false;
+    }
+    if (!player.nationality.trim()) {
+      newErrors.nationality = "Quốc tịch không được để trống";
+      isValid = false;
+    }
+    if (!player.dob) {
+      newErrors.dob = "Ngày tháng năm sinh không được để trống";
+      isValid = false;
+    }
+    if (!player.playerType) {
+      newErrors.playerType = "Loại cầu thủ không được để trống";
+      isValid = false;
     }
 
-    const newPlayer = {
+    setErrors(newErrors);
+
+    if (isValid) {
+      const newPlayer = {
         ...player,
-        id: Date.now(),
         height: player.height ? parseInt(player.height, 10) : null,
         weight: player.weight ? parseInt(player.weight, 10) : null,
-    };
+      };
 
-    console.log("New Player to Add:", newPlayer);
+      console.log("New Player to Add:", newPlayer);
 
-    try {
-        await onAddPlayer(newPlayer);
-        alert("Đã thêm cầu thủ thành công!");
-        navigate("/create");
-    } catch (error) {
+      try {
+        const response = await fetch(`${API_URL}/players`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newPlayer),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Player added successfully:", data.player);
+          alert("Đã thêm cầu thủ thành công!");
+          navigate("/create");
+          // If you need to update the parent's state with the new player
+          if (onAddPlayer) {
+            onAddPlayer(data.player);
+          }
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to add player:", errorData);
+          setErrors(errorData.message || "Failed to add player.");
+        }
+      } catch (error) {
         console.error("Error adding player:", error);
-        setError("Failed to add player.");
+        setErrors({ general: "Có lỗi xảy ra khi thêm cầu thủ." }); // General error
+      }
     }
-    navigate("/create")
-};
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    handleAdd();
   };
 
   const resetForm = () => {
@@ -63,41 +97,72 @@ function CreatePlayer({ onAddPlayer, seasons }) {
       dob: "",
       nationality: "",
       position: "",
-      season: "",
       birthplace: "",
-      height: null,
-      weight: null,
+      height: "",
+      weight: "",
       bio: "",
-      playerType: "", // Reset playerType
+      playerType: "",
     });
+    setErrors({});
   };
 
   return (
     <div className="form-container">
       <h2>Thêm cầu thủ</h2>
-      {error && <p className="error-message">{error}</p>}
-      {[
-        { name: "name", label: "Họ tên", type: "text", required: true },
-        { name: "dob", label: "Ngày sinh", type: "date", required: true},
-        { name: "nationality", label: "Quốc tịch", type: "text", required: true },
-        { name: "birthplace", label: "Nơi sinh", type: "text" },
-      ].map((input) => (
-        <div key={input.name}>
-          <label htmlFor={input.name}>
-            {input.label} {input.required && <span style={{ color: "red" }}>*</span>}
-          </label>
-          <input
-            type={input.type}
-            name={input.name}
-            id={input.name}
-            value={player[input.name] || ""}
-            onChange={handleInputChange}
-            required={input.required}
-          />
-        </div>
-      ))}
+      {errors.general && <p className="error-message">{errors.general}</p>}
       <div>
-        <label htmlFor="position">Vị trí thi đấu <span style={{ color: "red" }}>*</span></label>
+        <label htmlFor="name">
+          Họ tên <span style={{ color: "red" }}>*</span>
+        </label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value={player.name}
+          onChange={handleInputChange}
+        />
+        {errors.name && <p className="error-message">{errors.name}</p>}
+      </div>
+      <div>
+        <label htmlFor="dob">
+          Ngày sinh <span style={{ color: "red" }}>*</span>
+        </label>
+        <input
+          type="date"
+          name="dob"
+          id="dob"
+          value={player.dob}
+          onChange={handleInputChange}
+        />
+        {errors.dob && <p className="error-message">{errors.dob}</p>}
+      </div>
+      <div>
+        <label htmlFor="nationality">
+          Quốc tịch <span style={{ color: "red" }}>*</span>
+        </label>
+        <input
+          type="text"
+          name="nationality"
+          id="nationality"
+          value={player.nationality}
+          onChange={handleInputChange}
+        />
+        {errors.nationality && <p className="error-message">{errors.nationality}</p>}
+      </div>
+      <div>
+        <label htmlFor="birthplace">Nơi sinh</label>
+        <input
+          type="text"
+          name="birthplace"
+          id="birthplace"
+          value={player.birthplace}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label htmlFor="position">
+          Vị trí thi đấu <span style={{ color: "red" }}>*</span>
+        </label>
         <select
           id="position"
           name="position"
@@ -110,37 +175,44 @@ function CreatePlayer({ onAddPlayer, seasons }) {
           <option value="Hậu vệ">Hậu vệ</option>
           <option value="Thủ môn">Thủ môn</option>
         </select>
+        {errors.position && <p className="error-message">{errors.position}</p>}
       </div>
-      {/* Thêm lựa chọn loại cầu thủ */}
       <div>
-        <label htmlFor="playerType">Loại cầu thủ <span style={{ color: "red" }}>*</span></label>
+        <label htmlFor="playerType">
+          Loại cầu thủ <span style={{ color: "red" }}>*</span>
+        </label>
         <select
           id="playerType"
           name="playerType"
           value={player.playerType}
           onChange={handleInputChange}
-          required
         >
           <option value="">Chọn loại cầu thủ</option>
           <option value="Trong nước">Trong nước</option>
           <option value="Ngoài nước">Ngoài nước</option>
         </select>
+        {errors.playerType && <p className="error-message">{errors.playerType}</p>}
       </div>
-      {[
-        { name: "height", label: "Chiều cao (cm)", type: "number" },
-        { name: "weight", label: "Cân nặng (kg)", type: "number" },
-      ].map((input) => (
-        <div key={input.name}>
-          <label htmlFor={input.name}>{input.label}</label>
-          <input
-            type={input.type}
-            name={input.name}
-            id={input.name}
-            value={player[input.name] || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-      ))}
+      <div>
+        <label htmlFor="height">Chiều cao (cm)</label>
+        <input
+          type="number"
+          name="height"
+          id="height"
+          value={player.height}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label htmlFor="weight">Cân nặng (kg)</label>
+        <input
+          type="number"
+          name="weight"
+          id="weight"
+          value={player.weight}
+          onChange={handleInputChange}
+        />
+      </div>
       <div>
         <label htmlFor="bio">Tiểu sử:</label>
         <textarea
@@ -151,7 +223,7 @@ function CreatePlayer({ onAddPlayer, seasons }) {
         />
       </div>
       <div className="create-container">
-        <button className="add" type="submit" onClick={handleSubmit}>
+        <button className="add" type="button" onClick={handleSubmit}>
           Tạo thông tin
         </button>
         <button className="cancel" type="button" onClick={() => navigate(`/create`)}>

@@ -1,180 +1,252 @@
-// src/pages/Teams/CreateTeam.js
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateTeam.css';
 
-const CreateTeam = memo(({ onAddTeam }) => {
+const CreateTeam = ({ API_URL }) => {
     const navigate = useNavigate();
-    const [team, setTeam] = useState({
+    const [team, setteam] = useState({
         name: '',
         city: '',
         coach: '',
-        stadium: '',
+        stadiumId: '',
         capacity: '',
-        fifa_stars: '',
-        home_kit_image: null,
-        away_kit_image: null,
-        third_kit_image: null,
+        standard: '',
+        home_kit_image: '',
+        away_kit_image: '',
+        third_kit_image: '',
         description: '',
     });
-    const [imagePreviews, setImagePreviews] = useState({
-        home_kit_image: null,
-        away_kit_image: null,
-        third_kit_image: null,
-    });
-    const [error, setError] = useState('');
+    const [stadiums, setStadiums] = useState([]);
+    const [selectedStadium, setSelectedStadium] = useState(null);
+    const [errors, setErrors] = useState({});
 
-    const handleAdd = async () => {
-        setError('');
-    
-        if (!team.name.trim() || !team.city.trim()) {
-            setError('Vui lòng điền đầy đủ thông tin.');
-            return;
-        }
-    
-        const newTeam = {
-            ...team,
-            id: Date.now(), // Temporary ID, server will likely assign a proper one
-            capacity: team.capacity ? parseInt(team.capacity, 10) : null,
-            fifa_stars: team.fifa_stars ? parseInt(team.fifa_stars, 10) : null,
+    useEffect(() => {
+        const fetchStadiums = async () => {
+            try {
+                const response = await fetch(`${API_URL}/stadiums`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch stadiums: ${response.status}`);
+                }
+                const data = await response.json();
+                setStadiums(data);
+            } catch (error) {
+                console.error("Error fetching stadiums:", error);
+            }
         };
-    
-        console.log('Creating Team:', newTeam);
-    
-        try {
-            const response = await fetch('http://localhost:5000/api/teams/available', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newTeam),
-            });
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to create team');
-            }
-    
-            const data = await response.json();
-            console.log("Calling onAddTeam with:", data.team)
-            if (typeof onAddTeam === 'function') {
-                onAddTeam(data.team);
-            }
-            navigate('/create');
-    
-        } catch (error) {
-            console.error('Error creating team:', error);
-            setError(error.message);
-        }
-    };
+
+        fetchStadiums();
+    }, [API_URL]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTeam((prev) => ({ ...prev, [name]: value }));
+        setteam(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+        setErrors(prevState => ({ ...prevState, [name]: '' }));
     };
 
-    const handleFileChange = (e) => {
-        const { name, files } = e.target;
-        if (files && files[0]) {
-            const file = files[0];
-            setTeam((prev) => ({ ...prev, [name]: file }));
-
-            const previewUrl = URL.createObjectURL(file);
-            setImagePreviews((prev) => ({ ...prev, [name]: previewUrl }));
+    const handleStadiumChange = (e) => {
+        const stadiumId = parseInt(e.target.value);
+        setteam(prevState => ({
+            ...prevState,
+            stadiumId: stadiumId,
+        }));
+        const selected = stadiums.find(stadium => stadium.stadiumId === stadiumId);
+        setSelectedStadium(selected);
+        if (selected) {
+            setteam(prevState => ({
+                ...prevState,
+                capacity: selected.capacity,
+                standard: selected.standard,
+            }));
+        } else {
+            setteam(prevState => ({
+                ...prevState,
+                capacity: '',
+                standard: '',
+            }));
         }
     };
 
-    const resetForm = () => {
-        setTeam({
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        let isValid = true;
+        const newErrors = {};
+        if (!team.name) {
+            newErrors.name = 'Tên đội bóng không được để trống';
+            isValid = false;
+        }
+        if (!team.city) {
+            newErrors.city = 'Thành pho không được để trống';
+            isValid = false;
+        }
+        if (!team.stadiumId) {
+            newErrors.stadiumId = 'Sân vận động không được để trống';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+
+        if (isValid) {
+            try {
+                const response = await fetch(`${API_URL}/teams/available`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(team),
+                });
+
+                if (response.ok) {
+                    console.log('Team created successfully');
+                    navigate('/teams');
+                } else {
+                    console.error('Failed to create team');
+                }
+            } catch (error) {
+                console.error('Error creating team:', error);
+            }
+        }
+    };
+
+    const handleCancel = () => {
+        navigate('/create');
+    };
+
+    const handleReset = () => {
+        setteam({
             name: '',
             city: '',
             coach: '',
-            stadium: '',
+            stadiumId: '',
             capacity: '',
-            fifa_stars: '',
-            home_kit_image: null,
-            away_kit_image: null,
-            third_kit_image: null,
+            standard: '',
+            home_kit_image: '',
+            away_kit_image: '',
+            third_kit_image: '',
             description: '',
         });
-        setImagePreviews({
-            home_kit_image: null,
-            away_kit_image: null,
-            third_kit_image: null,
-        });
+        setSelectedStadium(null);
+        setErrors({});
     };
 
     return (
         <div className="form-container">
             <h2>Thêm đội bóng mới</h2>
-            {error && <p className="error-message">{error}</p>}
-            {[
-                { name: 'name', label: 'Tên đội bóng', type: 'text', required: true },
-                { name: 'city', label: 'Thành phố', type: 'text', required: true },
-                { name: 'coach', label: 'Cơ quan/Công ty chủ quản', type: 'text' },
-                { name: 'stadium', label: 'Địa điểm sân nhà', type: 'text' },
-                { name: 'capacity', label: 'Sức chứa', type: 'number' },
-                { name: 'fifa_stars', label: 'Đạt tiêu chuẩn (số sao)', type: 'number' },
-            ].map((input) => (
-                <div key={input.name}>
-                    <label htmlFor={input.name}>
-                        {input.label} {input.required && <span style={{ color: 'red' }}>*</span>}
-                    </label>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="name">Tên đội bóng:</label>
                     <input
-                        type={input.type}
-                        name={input.name}
-                        id={input.name}
-                        value={team[input.name] || ''}
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={team.name}
                         onChange={handleChange}
-                        required={input.required}
                     />
+                    {errors.name && <p className="error-message">{errors.name}</p>}
                 </div>
-            ))}
-            {[
-                { name: 'home_kit_image', label: 'Quần áo sân nhà' },
-                { name: 'away_kit_image', label: 'Quần áo sân khách' },
-                { name: 'third_kit_image', label: 'Quần áo dự bị' },
-            ].map((fileInput) => (
-                <div key={fileInput.name}>
-                    <label htmlFor={fileInput.name}>{fileInput.label}</label>
+                <div>
+                    <label htmlFor="city">Thành phố:</label>
                     <input
-                        type="file"
-                        name={fileInput.name}
-                        id={fileInput.name}
-                        onChange={handleFileChange}
-                        accept="image/*"
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={team.city}
+                        onChange={handleChange}
                     />
-                    {imagePreviews[fileInput.name] && (
-                        <img
-                            src={imagePreviews[fileInput.name]}
-                            alt={`${fileInput.label} preview`}
-                            className="image-preview"
-                        />
-                    )}
+                    {errors.city && <p className="error-message">{errors.city}</p>}
                 </div>
-            ))}
-            <div>
-                <label htmlFor="description">Giới thiệu đội</label>
-                <textarea
-                    name="description"
-                    id="description"
-                    value={team.description || ''}
-                    onChange={handleChange}
-                />
-            </div>
-            <div className="create-container">
-                <button className="add" onClick={handleAdd}>
-                    Thêm
-                </button>
-                <button className="cancel" onClick={() => navigate('/create')}>
-                    Hủy
-                </button>
-                <button className="reset" onClick={resetForm}>
-                    Xóa
-                </button>
-            </div>
+                <div>
+                    <label htmlFor="coach">Huấn luyện viên:</label>
+                    <input
+                        type="text"
+                        id="coach"
+                        name="coach"
+                        value={team.coach}
+                        onChange={handleChange}
+                    />
+                    {errors.coach && <p className="error-message">{errors.coach}</p>}
+                </div>
+                <div>
+                    <label htmlFor="stadiumId">Sân nhà:</label>
+                    <select id="stadiumId" name="stadiumId" onChange={handleStadiumChange} value={team.stadiumId}>
+                        <option value="">Lựa chọn sân vận động</option>
+                        {stadiums.map(stadium => (
+                            <option key={stadium.stadiumId} value={stadium.stadiumId}>
+                                {stadium.stadiumName}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.stadiumId && <p className="error-message">{errors.stadiumId}</p>}
+                </div>
+                <div>
+                    <label htmlFor="capacity">Sức chứa:</label>
+                    <input
+                        type="number"
+                        id="capacity"
+                        name="capacity"
+                        value={team.capacity}
+                        readOnly
+                    />
+                </div>
+                <div>
+                    <label htmlFor="standard">Tiêu chuẩn (số sao):</label>
+                    <input
+                        type="number"
+                        id="standard"
+                        name="standard"
+                        value={team.standard}
+                        readOnly
+                    />
+                </div>
+                <div>
+                    <label htmlFor="home_kit_image">Áo sân nhà:</label>
+                    <input
+                        type="text"
+                        id="home_kit_image"
+                        name="home_kit_image"
+                        value={team.home_kit_image}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="away_kit_image">Áo sân khách:</label>
+                    <input
+                        type="text"
+                        id="away_kit_image"
+                        name="away_kit_image"
+                        value={team.away_kit_image}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="third_kit_image">Áo dự bị:</label>
+                    <input
+                        type="text"
+                        id="third_kit_image"
+                        name="third_kit_image"
+                        value={team.third_kit_image}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="description">Mô tả đội bóng:</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        value={team.description}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="create-container">
+                    <button type="submit" className="add">Thêm đội bóng</button>
+                    <button type="button" className="cancel" onClick={handleCancel}>Hủy</button>
+                    <button type="button" className="reset" onClick={handleReset}>Reset</button>
+                </div>
+            </form>
         </div>
     );
-});
+};
 
 export default CreateTeam;

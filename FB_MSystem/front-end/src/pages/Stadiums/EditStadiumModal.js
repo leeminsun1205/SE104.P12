@@ -9,9 +9,6 @@ function EditStadiumModal({ show, onHide, children }) {
   return (
     <div className={styles["modal-backdrop"]}>
       <div className={styles["modal-content"]}>
-        <button className={styles["close-button"]} onClick={onHide}>
-          ×
-        </button>
         {children}
       </div>
     </div>

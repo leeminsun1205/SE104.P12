@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Teams from './pages/Teams/Teams';
 import CreateTeam from './pages/CreateNew/CreateTeam';
 import CreatePlayer from './pages/CreateNew/CreatePlayer';
+import CreateStadium from './pages/CreateNew/CreateStadium';
 import CreateNew from './pages/CreateNew/CreateNew';
 import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
@@ -27,7 +28,6 @@ import Temp from './pages/Temp/Temp';
 import Setting from './pages/Setting/Setting'
 import Stadiums from './pages/Stadiums/Stadiums';
 import StadiumInfo from './pages/Stadiums/StadiumInfo';
-
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 import './assets/styles/global.css';
@@ -211,8 +211,8 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
                     onSeasonChange={onSeasonChange}
                     onDeleteTeam={onDeleteTeam} />}
             />
-            <Route path="/create/team" element={<CreateTeam />} />
-            <Route path="/create/player" element={<CreatePlayer onAddPlayer={handleAddPlayer} />} />
+            <Route path="/create/team" element={<CreateTeam API_URL={API_URL} />} />
+            <Route path="/create/player" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
             <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
             <Route path="/teams/:id" element={<TeamInfo teams={teams} otherMatches={otherMatches} />} />
             <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
@@ -228,6 +228,7 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
             <Route path="/settings" element={<Setting />} />
             <Route path="/stadiums" element={<Stadiums />} />
+            <Route path="/create/stadium" element={<CreateStadium />} />
             <Route path="/stadiums/:stadiumId" element={<StadiumInfo />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>

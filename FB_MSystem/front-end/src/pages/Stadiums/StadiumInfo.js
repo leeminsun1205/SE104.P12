@@ -103,18 +103,18 @@ function StadiumInfo() {
       <button className={styles['go-back-button']} onClick={() => navigate(-1)}>
         Quay lại
       </button>
-      <h2>Thông tin sân vận động {stadium.TenSan}</h2>
+      <h2>Thông tin sân vận động {stadium.stadiumName}</h2>
 
       <div className={styles['stadium-details']}>
         <ul>
           <li>
-            <strong>Địa chỉ:</strong> {stadium.DiaChiSan}
+            <strong>Địa chỉ:</strong> {stadium.address}
           </li>
           <li>
-            <strong>Sức chứa:</strong> {stadium.SucChua}
+            <strong>Sức chứa:</strong> {stadium.capacity}
           </li>
           <li>
-            <strong>Tiêu chuẩn:</strong> {stadium.TieuChuan} sao
+            <strong>Tiêu chuẩn:</strong> {stadium.standard} sao
           </li>
         </ul>
         <button className={styles['edit-button']} onClick={handleEdit}>
@@ -125,33 +125,33 @@ function StadiumInfo() {
       <EditStadiumModal show={showModal} onHide={handleCloseModal}>
         {isEditing && (
           <div className={styles['stadium-edit-form']}>
-            <h3>Sửa thông tin sân vận động</h3>
-            <label htmlFor="DiaChiSan">Địa chỉ:</label>
+            <h3>Sửa thông tin sân vận động {stadium.stadiumName}</h3>
+            <label htmlFor="address">Địa chỉ:</label>
             <input
               type="text"
-              id="DiaChiSan"
-              name="DiaChiSan"
-              value={editedStadium.DiaChiSan}
+              id="address"
+              name="address"
+              value={editedStadium.address}
               onChange={handleInputChange}
             />
 
-            <label htmlFor="SucChua">Sức chứa:</label>
+            <label htmlFor="capacity">Sức chứa:</label>
             <input
               type="number"
-              id="SucChua"
-              name="SucChua"
-              value={editedStadium.SucChua}
+              id="capacity"
+              name="capacity"
+              value={editedStadium.capacity}
               onChange={handleInputChange}
             />
 
-            <label htmlFor="TieuChuan">Tiêu chuẩn (sao):</label>
+            <label htmlFor="standard">Tiêu chuẩn (sao):</label>
             <input
               type="number"
-              id="TieuChuan"
-              name="TieuChuan"
+              id="standard"
+              name="standard"
               min="1"
               max="5"
-              value={editedStadium.TieuChuan}
+              value={editedStadium.standard}
               onChange={handleInputChange}
             />
 

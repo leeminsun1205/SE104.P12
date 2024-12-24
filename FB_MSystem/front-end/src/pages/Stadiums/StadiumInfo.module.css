@@ -95,6 +95,8 @@
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 250px;
+  margin-left: 85px;
 }
 
 .save-button:hover {
@@ -108,10 +110,32 @@
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
-  margin-left: 10px;
   transition: background-color 0.3s ease;
+  width: 250px;
+  margin-left: 85px;
+
 }
 
 .cancel-button:hover {
   background-color: #c82333;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.add-stadium-button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.add-stadium-button:hover {
+  background-color: #218838;
 }

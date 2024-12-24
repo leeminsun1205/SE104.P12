@@ -6,7 +6,7 @@ function CreateNew() {
     const navigate = useNavigate();
 
     const handleBackToDashboard = () => {
-        navigate('/dashboard'); 
+        navigate('/dashboard');
     };
 
     const handleToCreateTeam = () => {
@@ -17,6 +17,10 @@ function CreateNew() {
         navigate('/create/player');
     };
 
+    const handleToCreateStadium = () => {
+        navigate('/create/stadium');
+    };
+
     return (
         <div className="create-new-container">
             <button onClick={handleToCreateTeam}>
@@ -24,6 +28,9 @@ function CreateNew() {
             </button>
             <button onClick={handleToCreatePlayer}>
                 Thêm cầu thủ
+            </button>
+            <button onClick={handleToCreateStadium}>
+                Thêm sân vận động
             </button>
             <button onClick={handleBackToDashboard}>
                 Quay lại bảng điều khiển

@@ -54,14 +54,14 @@ function TeamInfo({ teams }) {
               onClick={() => handleStadiumClick(team.stadiumId)}
               style={{ cursor: 'pointer', textDecoration: 'underline' }}
             >
-              {team.stadium ? team.stadium.TenSan : 'N/A'} {/* Access TenSan property */}
+              {team.stadium ? team.stadium.stadiumName : 'N/A'}
             </span>
           </li>
           <li>
             <strong>Sức chứa:</strong> {team.capacity}
           </li>
           <li>
-            <strong>Đạt tiêu chuẩn (số sao):</strong> {team.fifa_stars}{" "}
+            <strong>Đạt tiêu chuẩn (số sao):</strong> {team.standard}{" "}
             <strong>của Liên đoàn bóng đá Thế giới</strong>
           </li>
         </ul>
