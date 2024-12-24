@@ -185,7 +185,7 @@ function App() {
                                     invoices={invoices}
                                     onAddInvoice={handleAddInvoice}
                                     handleAddPlayer={handleAddPlayer}
-                                    />
+                                />
                             </main>
                         </div>
                         <Footer />
@@ -198,7 +198,8 @@ function App() {
     );
 }
 
-function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onAddTeam, onEditTeam, onDeleteTeam, otherMatches, invoices, onAddInvoice, handleAddPlayer }) {    return (
+function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, onEditTeam, onDeleteTeam, invoices, onAddInvoice, handleAddPlayer }) {
+    return (
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/temp" element={<Temp />} />
@@ -214,15 +215,14 @@ function AuthenticatedRoutes({ teams, seasons, selectedSeason, onSeasonChange, o
             <Route path="/create/team" element={<CreateTeam API_URL={API_URL} />} />
             <Route path="/create/player" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
             <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} otherMatches={otherMatches} />} />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} />} />
             <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
             <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
             <Route path="/players" element={<AllPlayers />} />
-            <Route path="/players/:playerId" element={<PlayerInfo />} /> 
+            <Route path="/players/:playerId" element={<PlayerInfo />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/match/:season/:round/:id" element={<MatchDetails />} />
-            <Route path="/teams/:id/other-matches" element={<OtherLeagueMatches teams={teams} otherMatches={otherMatches} />} />
-            <Route path="/standings" element={<Standings />} />
+            <Route path="/standings" element={<Standings API_URL = {API_URL} /> } /> 
             <Route path="/create" element={<CreateNew />} />
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
