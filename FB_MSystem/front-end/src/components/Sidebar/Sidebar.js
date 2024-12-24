@@ -1,3 +1,5 @@
+// --- START OF FILE Sidebar.js ---
+
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
@@ -109,7 +111,15 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
           >
-            <i className="fas fa-cog"></i> Cài đặt
+            <i className="fas fa-cog"></i> Cài đặt chung
+          </NavLink>
+          <NavLink
+            to="/settings/types"
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
+            <i className="fas fa-sliders-h"></i> Cài đặt các loại
           </NavLink>
         </nav>
       </aside>

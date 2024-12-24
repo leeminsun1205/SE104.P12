@@ -81,7 +81,7 @@
 
 .nav {
   display: flex;
-  gap: 15px;
+  gap: 5px;
   align-items: center; /* Thêm phần này */
 }
 
@@ -109,7 +109,7 @@
 .userMenu {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
 .avatar {
@@ -145,7 +145,7 @@
 
   .nav {
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     margin-top: 10px;
   }
 

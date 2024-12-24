@@ -5,10 +5,23 @@ import styles from './Header.module.css';
 import Button from '../Button/Button';
 
 function Header({ onLogout, onToggleSidebar }) {
-    const [showDropdown, setShowDropdown] = useState(false);
+    const [showLeagueDropdown, setShowLeagueDropdown] = useState(false);
+    const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
 
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
+    const toggleLeagueDropdown = () => {
+        setShowLeagueDropdown(!showLeagueDropdown);
+        // Close the settings dropdown when opening the league dropdown
+        if (showSettingsDropdown) {
+            setShowSettingsDropdown(false);
+        }
+    };
+
+    const toggleSettingsDropdown = () => {
+        setShowSettingsDropdown(!showSettingsDropdown);
+        // Close the league dropdown when opening the settings dropdown
+        if (showLeagueDropdown) {
+            setShowLeagueDropdown(false);
+        }
     };
 
     return (
@@ -26,10 +39,10 @@ function Header({ onLogout, onToggleSidebar }) {
                     Bảng điều khiển
                 </NavLink>
                 <div className={styles.dropdown}>
-                    <button className={styles.dropbtn} onClick={toggleDropdown}>
+                    <button className={styles.dropbtn} onClick={toggleLeagueDropdown}>
                         Quản lý giải đấu <i className="fa fa-caret-down"></i>
                     </button>
-                    <div className={`${styles.dropdownContent} ${showDropdown ? styles.show : ''}`}>
+                    <div className={`${styles.dropdownContent} ${showLeagueDropdown ? styles.show : ''}`}>
                         <NavLink to="/seasons" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Mùa giải
                         </NavLink>
@@ -56,9 +69,19 @@ function Header({ onLogout, onToggleSidebar }) {
                         </NavLink>
                     </div>
                 </div>
-                <NavLink to="/settings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                    Cài đặt
-                </NavLink>
+                <div className={styles.dropdown}>
+                    <button className={styles.dropbtn} onClick={toggleSettingsDropdown}>
+                        Cài đặt <i className="fa fa-caret-down"></i>
+                    </button>
+                    <div className={`${styles.dropdownContent} ${showSettingsDropdown ? styles.show : ''}`}>
+                        <NavLink to="/settings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Cài đặt chung
+                        </NavLink>
+                        <NavLink to="/settings/types" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Cài đặt các loại
+                        </NavLink>
+                    </div>
+                </div>
             </nav>
             <div className={styles.userMenu}>
                 <Button className="logout-button" onClick={onLogout}> Thoát</Button>

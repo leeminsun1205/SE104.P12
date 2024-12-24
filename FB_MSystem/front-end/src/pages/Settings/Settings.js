@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './Setting.module.css';
+import styles from './Settings.module.css';
 
 function Setting({ API_URL }) {
 const [teamSettings, setTeamSettings] = useState({
@@ -215,24 +215,6 @@ return (
                     />
                 </div>
             </div>
-
-            <h2>Thứ tự ưu tiên khi xếp hạng</h2>
-            <div className={styles["ranking-priority"]}>
-                {teamSettings.priorityOrder.map((priority, index) => (
-                    <div key={index} className={styles["setting-group"]}>
-                        <label>Ưu tiên {index + 1}</label>
-                        <select
-                            value={priority}
-                            onChange={(e) => handlePriorityOrderChange(index, e.target.value)}
-                        >
-                            <option value="Điểm số">Điểm số</option>
-                            <option value="Hiệu số">Hiệu số</option>
-                            <option value="Số bàn thắng">Số bàn thắng</option>
-                        </select>
-                    </div>
-                ))}
-            </div>
-
             <button type="submit" className={styles["save-button"]} disabled={saveStatus === 'loading'}>
                 {saveStatus === 'loading' ? 'Đang lưu...' : 'Lưu'}
             </button>

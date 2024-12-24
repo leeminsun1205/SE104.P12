@@ -47,7 +47,7 @@ function MatchDetails({API_URL}){
   // Sắp xếp danh sách bàn thắng
   const sortedGoals = useMemo(() => {
     const sortableGoals = match && match.goals
-      ? [...(isEditingGoals ? editedMatch.goals : match.goals)]
+      ? [...(isEditingGoals ? editedMatch?.goals || [] : match.goals)]
       : [];
     if (goalSortConfig.key !== null) {
       sortableGoals.sort((a, b) => {
@@ -66,7 +66,7 @@ function MatchDetails({API_URL}){
   // Sắp xếp danh sách thẻ phạt
   const sortedCards = useMemo(() => {
     const sortableCards = match && match.cards
-      ? [...(isEditingCards ? editedMatch.cards : match.cards || [])]
+      ? [...(isEditingCards ? editedMatch?.cards || [] : match.cards || [])]
       : [];
     if (cardSortConfig.key !== null) {
       sortableCards.sort((a, b) => {
@@ -119,18 +119,10 @@ function MatchDetails({API_URL}){
 
   const toggleGoals = () => {
     setShowGoals(!showGoals);
-    if (!showGoals) {
-      setIsEditingGoals(false);
-      setEditedMatch(null);
-    }
   };
 
   const toggleCards = () => {
     setShowCards(!showCards);
-    if (!showCards) {
-      setIsEditingCards(false);
-      setEditedMatch(null);
-    }
   };
 
   const toggleResult = () => {
@@ -206,6 +198,7 @@ function MatchDetails({API_URL}){
       }
       setMatch(prevMatch => ({ ...prevMatch, goals: editedMatch.goals }));
       setIsEditingGoals(false);
+      setEditedMatch(null);
     } catch (error) {
       console.error("Error updating goals:", error);
       // Optionally set an error state to display a message to the user
@@ -226,6 +219,7 @@ function MatchDetails({API_URL}){
       }
       setMatch(prevMatch => ({ ...prevMatch, cards: editedMatch.cards }));
       setIsEditingCards(false);
+      setEditedMatch(null);
     } catch (error) {
       console.error("Error updating cards:", error);
       // Optionally set an error state to display a message to the user
