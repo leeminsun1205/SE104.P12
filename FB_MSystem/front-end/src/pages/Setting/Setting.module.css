@@ -1,156 +1,85 @@
-/* src/pages/SignUp/SignUp.module.css */
-
-.signUpContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f0f4f8; /* Màu nền nhẹ nhàng */
+.setting-container {
   padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
-.signUpBox {
-  width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  background-color: #fff;
-  border-radius: 12px; /* Bo góc nhẹ */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+h1, h2 {
   text-align: center;
-  transition: transform 0.3s;
+  color: rgb(0, 0, 255);
+  margin-bottom: 20px;
 }
 
-.signUpBox:hover {
-  transform: translateY(-5px); /* Hiệu ứng hover nâng nhẹ */
+.team-settings, .match-settings, .points-settings, .ranking-priority {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
 
-.title {
-  font-size: 2rem;
-  color: #333;
+.setting-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-group label {
+  margin-bottom: 5px;
   font-weight: bold;
-  margin-bottom: 20px;
+  color: #555;
 }
 
-.inputGroup {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.inputGroup label {
-  display: block;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.inputGroup input {
+.setting-group input, 
+.setting-group select {
   width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); /* Không có viền */
-}
-
-.inputGroup input:focus {
-  border-color: #4caf50;
-  outline: none;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4); /* Hiệu ứng khi focus */
-}
-
-.submitButton {
-  width: 100%;
-  padding: 15px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #4caf50; /* Màu nút */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.submitButton:hover {
-  background-color: #45a049;
-  transform: translateY(-2px); /* Hiệu ứng hover nút */
-}
-
-.goBackButton {
-  margin-top: 15px;
-  background-color: #e2e2e2;
-  color: #333;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  text-align: center;
-  transition: background-color 0.3s;
-}
-
-.goBackButton:hover {
-  background-color: #cbcaca;
-}
-
-.passwordWrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.togglePassword {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
-}
-
-.passwordStrength {
-  margin-top: 10px;
-}
-
-.strengthBar {
-  height: 6px;
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  transition: width 0.3s;
+  box-sizing: border-box;
 }
 
-.weak {
-  width: 33%;
-  background-color: red;
+.setting-group input:focus, 
+.setting-group select:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
-.medium {
-  width: 66%;
-  background-color: orange;
-}
-
-.strong {
+.save-button {
+  display: block;
   width: 100%;
-  background-color: green;
+  max-width: 200px;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 20px auto;
+  transition: background-color 0.3s;
+  text-align: center;
 }
 
-.strengthText {
-  margin-top: 5px;
-  font-size: 0.9rem;
-  color: #666;
+.save-button:hover {
+  background-color: #0056b3;
 }
 
-.footer {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #666;
+h2 {
+  margin-top: 30px;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 5px;
 }
 
-.footer a {
-  color: #4caf50;
-  text-decoration: none;
-}
+@media (max-width: 600px) {
+  .team-settings, .match-settings, .points-settings, .ranking-priority {
+      grid-template-columns: 1fr;
+  }
 
-.footer a:hover {
-  text-decoration: underline;
+  .save-button {
+      width: 100%;
+  }
 }

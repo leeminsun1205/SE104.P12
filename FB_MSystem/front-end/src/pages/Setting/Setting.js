@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import styles from './Setting.module.css'; // Bạn cần tạo CSS cho các phần tử bên dưới
-
+import styles from './Setting.module.css'; 
 function Setting() {
     const [teamSettings, setTeamSettings] = useState({
-        minPlayers: 15,  // Số cầu thủ tối thiểu
-        maxPlayers: 22,  // Số cầu thủ tối đa
-        maxForeignPlayers: 3,  // Số cầu thủ ngoại tối đa
-        minAge: 16,  // Tuổi thi đấu tối thiểu
-        maxAge: 40,   // Tuổi thi đấu tối đa
-        minCapacity: 10000, // Sức chứa tối thiểu sân đấu
-        minStar: 2, // Đạt chuẩn sao tối thiểu
-        participationFee: 1000000000, // Lệ phí tham gia (QĐ1.3)
-        winPoints: 3, // Điểm khi thắng (QĐ5.1)
-        drawPoints: 1, // Điểm khi hòa (QĐ5.1)
-        losePoints: 0, // Điểm khi thua (QĐ5.1)
-        goalTypes: 3, // Số loại bàn thắng (QĐ3)
-        maxGoalTime: 90, // Thời điểm ghi bàn tối đa (QĐ3)
+        minPlayers: 15,
+        maxPlayers: 22, 
+        maxForeignPlayers: 3, 
+        minAge: 16, 
+        maxAge: 40,  
+        minCapacity: 10000, 
+        minStar: 2, 
+        participationFee: 1000000000, 
+        winPoints: 3,
+        drawPoints: 1, 
+        losePoints: 0,
+        goalTypes: 3,
+        maxGoalTime: 90, 
         priorityOrder: ['Điểm số', 'Hiệu số', 'Số bàn thắng'], // Thứ tự ưu tiên khi xếp hạng (QĐ5.1)
     });
 
@@ -54,12 +53,12 @@ function Setting() {
     };
   
     return (
-        <div className="setting-container">
+        <div className={styles["setting-container"]}>
             <h1>Cài Đặt Giải Đấu</h1>
 
             <h2>Các quy định đội bóng</h2>
-            <div className="team-settings">
-                <div className="setting-group">
+            <div className={styles["team-settings"]}>
+                <div className={styles["setting-group"]}>
                     <label>Số cầu thủ tối thiểu của 1 đội</label>
                     <input
                         type="number"
@@ -69,7 +68,7 @@ function Setting() {
                     />
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Số cầu thủ tối đa của 1 đội</label>
                     <input
                         type="number"
@@ -79,7 +78,7 @@ function Setting() {
                     />
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Số cầu thủ ngoại tối đa</label>
                     <input
                         type="number"
@@ -89,7 +88,7 @@ function Setting() {
                     />
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Tuổi thi đấu tối thiểu</label>
                     <input
                         type="number"
@@ -99,7 +98,7 @@ function Setting() {
                     /> tuổi
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Tuổi thi đấu tối đa</label>
                     <input
                         type="number"
@@ -109,7 +108,7 @@ function Setting() {
                     /> tuổi
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Sức chứa tối thiểu sân đấu</label>
                     <input
                         type="number"
@@ -119,7 +118,7 @@ function Setting() {
                     /> người
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Số sao đạt chuẩn tối thiểu</label>
                     <input
                         type="number"
@@ -129,7 +128,7 @@ function Setting() {
                     /> sao
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Lệ phí tham gia</label>
                     <input
                         type="number"
@@ -141,8 +140,8 @@ function Setting() {
             </div>
 
             <h2>Quy định về trận đấu</h2>
-            <div className="match-settings">
-                <div className="setting-group">
+            <div className={styles["match-settings"]}>
+                <div className={styles["setting-group"]}>
                     <label>Số loại bàn thắng</label>
                     <input
                         type="number"
@@ -152,7 +151,7 @@ function Setting() {
                     />
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Thời điểm ghi bàn tối đa</label>
                     <input
                         type="number"
@@ -164,8 +163,8 @@ function Setting() {
             </div>
 
             <h2>Quy định về điểm số</h2>
-            <div className="points-settings">
-                <div className="setting-group">
+            <div className={styles["points-settings"]}>
+                <div className={styles["setting-group"]}>
                     <label>Điểm khi thắng</label>
                     <input
                         type="number"
@@ -175,7 +174,7 @@ function Setting() {
                     />
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Điểm khi hòa</label>
                     <input
                         type="number"
@@ -185,7 +184,7 @@ function Setting() {
                     />
                 </div>
 
-                <div className="setting-group">
+                <div className={styles["setting-group"]}>
                     <label>Điểm khi thua</label>
                     <input
                         type="number"
@@ -197,9 +196,9 @@ function Setting() {
             </div>
 
             <h2>Thứ tự ưu tiên khi xếp hạng</h2>
-            <div className="ranking-priority">
+            <div className={styles["ranking-priority"]}>
                 {teamSettings.priorityOrder.map((priority, index) => (
-                    <div key={index} className="setting-group">
+                    <div key={index} className={styles["setting-group"]}>
                         <label>Ưu tiên {index + 1}</label>
                         <select
                             value={priority}
@@ -213,7 +212,7 @@ function Setting() {
                 ))}
             </div>
 
-            <button className="save-button">Lưu</button>
+            <button className={styles["save-button"]}>Lưu</button>
         </div>
     );
 }
