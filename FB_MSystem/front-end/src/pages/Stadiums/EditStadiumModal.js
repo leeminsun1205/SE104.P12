@@ -1,5 +1,5 @@
 import React from 'react';
-import './EditStadiumModal.module.css';
+import styles from './EditStadiumModal.module.css';
 
 function EditStadiumModal({ show, onHide, children }) {
   if (!show) {
@@ -7,9 +7,9 @@ function EditStadiumModal({ show, onHide, children }) {
   }
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <button className="close-button" onClick={onHide}>
+    <div className={styles["modal-backdrop"]}>
+      <div className={styles["modal-content"]}>
+        <button className={styles["close-button"]} onClick={onHide}>
           ×
         </button>
         {children}

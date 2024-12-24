@@ -446,25 +446,31 @@ app.get("/api/seasons/:seasonId/teams", (req, res) => {
       .filter((team) => team) || [];
   res.json({ teams: teamsInSeason });
 });
-// Update a team
 app.put("/api/teams/:id", upload.none(), (req, res) => {
-  console.log("Data received in PUT /api/teams/:id:", req.body);
   const { id } = req.params;
   const updatedTeamData = req.body;
-  const teamIndex = availableTeams.findIndex(
-    (team) => team.id === parseInt(id)
-  );
+  const teamIndex = availableTeams.findIndex((team) => team.id === parseInt(id));
 
   if (teamIndex === -1) {
     return res.status(404).json({ message: "Team not found" });
+  }
+
+  // Update stadium information
+  const stadiumId = parseInt(updatedTeamData.stadiumId);
+  const stadium = stadiums.find((s) => s.stadiumId === stadiumId);
+
+  if (stadium) {
+    updatedTeamData.stadium = stadium.TenSan; 
+    updatedTeamData.stadiumId = stadium.stadiumId;
+  } else {
+    updatedTeamData.stadium = null;
+    updatedTeamData.stadiumId = null;
   }
 
   availableTeams[teamIndex] = {
     ...availableTeams[teamIndex],
     ...updatedTeamData,
   };
-
-  console.log("Updated availableTeams:", availableTeams);
 
   res.json({
     message: "Team updated successfully",
@@ -492,15 +498,17 @@ app.delete("/api/teams/:id", (req, res) => {
 
 // Get a specific team
 app.get("/api/teams/:id", (req, res) => {
-    const { id } = req.params;
-    const team = availableTeams.find((team) => team.id === parseInt(id));
-    if (team) {
-      const stadium = stadiums.find((s) => s.stadiumId === team.stadiumId);
-      res.json({ ...team, stadium });
-    } else {
-      res.status(404).json({ message: "Team not found" });
-    }
-  });
+  const { id } = req.params;
+  const team = availableTeams.find((team) => team.id === parseInt(id));
+  if (team) {
+    const stadium = stadiums.find((s) => s.stadiumId === team.stadiumId);
+    console.log("Team Data:", team);
+    console.log("Stadium Data:", stadium);
+    res.json({ ...team, stadium });
+  } else {
+    res.status(404).json({ message: "Team not found" });
+  }
+});
 
 // New endpoint to get teams not in a specific season (Might not be needed)
 app.get("/api/teams/not-in-season/:season", (req, res) => {

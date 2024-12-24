@@ -47,27 +47,33 @@ function StadiumInfo() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/stadiums/${stadiumId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editedStadium),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update stadium data');
-      }
-      const updatedStadium = await response.json();
-      setStadium(updatedStadium);
-      setIsEditing(false);
-      setShowModal(false);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        const response = await fetch(`http://localhost:5000/api/stadiums/${stadiumId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(editedStadium),
+        });
 
+        if (!response.ok) {
+            throw new Error('Failed to update stadium data');
+        }
+
+        const refetchResponse = await fetch(`http://localhost:5000/api/stadiums/${stadiumId}`);
+        if (!refetchResponse.ok) {
+            throw new Error('Failed to refetch stadium data');
+        }
+        const updatedStadium = await refetchResponse.json();
+
+        setStadium(updatedStadium);
+        setIsEditing(false);
+        setShowModal(false);
+    } catch (error) {
+        setError(error.message);
+    } finally {
+        setIsLoading(false);
+    }
+};
   const handleCancel = () => {
     setIsEditing(false);
     setEditedStadium(stadium);

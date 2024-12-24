@@ -11,8 +11,8 @@ function EditTeam({ onEditTeam }) {
     name: '',
     city: '',
     managing_body: '',
-    stadium: '',
-    stadiumId: null,
+    stadium: '', // For display name
+    stadiumId: null, // Store the ID
     capacity: null,
     fifa_stars: null,
     home_kit_image: null,
@@ -28,6 +28,7 @@ function EditTeam({ onEditTeam }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [availableStadiums, setAvailableStadiums] = useState([]);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -41,7 +42,7 @@ function EditTeam({ onEditTeam }) {
           name: data.name || '',
           city: data.city || '',
           managing_body: data.managing_body || '',
-          stadium: data.stadium.TenSan || '',
+          stadium: data.stadium ? data.stadium.TenSan : '',
           stadiumId: data.stadiumId || null,
           capacity: data.capacity || null,
           fifa_stars: data.fifa_stars || null,
@@ -63,80 +64,23 @@ function EditTeam({ onEditTeam }) {
       }
     };
 
-    fetchTeam();
-  }, [id]);
-
-  const handleSave = async () => {
-    console.log('handleSave called'); 
-    setLoading(true);
-    setError('');
-    setSuccessMessage('');
-    if (!team || !team.name || !team.city) {
-      setError('Team data is not fully loaded. Please wait or try again.');
-      setLoading(false);
-      return;
-    }
-    if (!team || !team.name || !team.city) {
-      setError('Team data is not fully loaded. Please wait or try again.');
-      setLoading(false);
-      return;
-    }
-
-    if (!team.name.trim() || !team.city.trim()) {
-      setError('Please fill in all required fields.');
-      setLoading(false);
-      return;
-    }
-
-    const updatedTeam = {
-      ...team,
-      capacity: team.capacity ? parseInt(team.capacity, 10) : null,
-      fifa_stars: team.fifa_stars ? parseInt(team.fifa_stars, 10) : null,
+    const fetchStadiums = async () => {
+      try {
+        const response = await fetch(`${API_URL}/stadiums`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch stadiums');
+        }
+        const data = await response.json();
+        setAvailableStadiums(data);
+      } catch (error) {
+        console.error('Error fetching stadiums:', error);
+        setError('Failed to fetch stadiums'); // Update error state
+      }
     };
 
-    const formData = new FormData();
-    for (const key in updatedTeam) {
-      console.log(`Processing key: ${key}, value:`, updatedTeam[key]);
-      if (updatedTeam[key] !== null && updatedTeam[key] !== undefined) {
-        if (
-          (key === 'home_kit_image' ||
-            key === 'away_kit_image' ||
-            key === 'third_kit_image') &&
-          !(updatedTeam[key] instanceof File)
-        ) {
-          console.log(`Skipping key: ${key} as it's not a new file.`);
-          continue;
-        } else {
-          console.log(`Appending key: ${key} to formData`);
-          formData.append(key, updatedTeam[key]);
-        }
-      }
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/teams/${id}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update team');
-      }
-
-      const updatedTeamData = await response.json();
-      onEditTeam(updatedTeamData.team);
-      setSuccessMessage('Đội bóng đã được cập nhật thành công!');
-      setTimeout(() => {
-        setSuccessMessage('');
-        navigate('/teams');
-      }, 1);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchTeam();
+    fetchStadiums();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,10 +99,77 @@ function EditTeam({ onEditTeam }) {
     }
   };
 
+  const handleStadiumChange = (e) => {
+    const selectedStadiumId = parseInt(e.target.value, 10);
+    const selectedStadium = availableStadiums.find(
+      (s) => s.stadiumId === selectedStadiumId
+    );
+
+    setTeam((prev) => ({
+      ...prev,
+      stadiumId: selectedStadiumId,
+      stadium: selectedStadium ? selectedStadium.TenSan : '',
+    }));
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    setError('');
+    setSuccessMessage('');
+
+    if (!team.name.trim() || !team.city.trim()) {
+      setError('Please fill in all required fields.');
+      setLoading(false);
+      return;
+    }
+
+    const updatedTeam = {
+      ...team,
+      capacity: team.capacity ? parseInt(team.capacity, 10) : null,
+      fifa_stars: team.fifa_stars ? parseInt(team.fifa_stars, 10) : null,
+    };
+  
+    const formData = new FormData();
+    for (const key in updatedTeam) {
+      formData.append(key, updatedTeam[key]);
+    }
+  
+    try {
+      const response = await fetch(`${API_URL}/teams/${id}`, {
+        method: 'PUT',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update team');
+      }
+  
+      const updatedTeamData = await response.json();
+      console.log("Updated Team Data from Server:", updatedTeamData);
+  
+      setTeam({
+        ...updatedTeamData.team,
+        stadium: updatedTeamData.team.stadium ? updatedTeamData.team.stadium.TenSan : '',
+      });
+  
+      onEditTeam(updatedTeamData.team);
+  
+      setSuccessMessage('Đội bóng đã được cập nhật thành công!');
+      setTimeout(() => {
+        setSuccessMessage('');
+        navigate('/teams');
+      }, 1000);
+    } catch (error) {
+      console.error("Error updating team:", error); // Log the error
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <div className="loader">Đang tải...</div>;
-
   if (error) return <div>Error: {error}</div>;
-
   if (!team) return <div>Đội bóng không tồn tại.</div>;
 
   return (
@@ -166,6 +177,8 @@ function EditTeam({ onEditTeam }) {
       <h2>Sửa thông tin đội bóng</h2>
       {error && <p className="error-message">{error}</p>}
       {successMessage && <p className="success-message">{successMessage}</p>}
+
+      {/* Text Inputs */}
       {[
         { name: 'name', label: 'Tên đội bóng', type: 'text', required: true },
         { name: 'city', label: 'Thành phố', type: 'text', required: true },
@@ -174,9 +187,6 @@ function EditTeam({ onEditTeam }) {
           label: 'Cơ quan/Công ty chủ quản',
           type: 'text',
         },
-        { name: 'stadium', label: 'Địa điểm sân nhà', type: 'text' },
-        // { name: 'capacity', label: 'Sức chứa', type: 'number' },
-        // { name: 'fifa_stars', label: 'Đạt tiêu chuẩn (số sao)', type: 'number' },
       ].map((input) => (
         <div key={input.name}>
           <label htmlFor={input.name}>
@@ -192,6 +202,24 @@ function EditTeam({ onEditTeam }) {
           />
         </div>
       ))}
+
+      <div>
+        <label htmlFor="stadium">Địa điểm sân nhà</label>
+        <select
+          name="stadiumId"
+          id="stadium"
+          value={team.stadiumId || ''}
+          onChange={handleStadiumChange}
+        >
+          <option value="">Chọn sân vận động</option>
+          {availableStadiums.map((stadium) => (
+            <option key={stadium.stadiumId} value={stadium.stadiumId}>
+              {stadium.TenSan}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Image Uploads */}
       {[
         { name: 'home_kit_image', label: 'Quần áo sân nhà' },
         { name: 'away_kit_image', label: 'Quần áo sân khách' },
@@ -222,6 +250,7 @@ function EditTeam({ onEditTeam }) {
         onChange={handleChange}
         aria-label="Giới thiệu đội"
       />
+
       <div>
         <button className="save" onClick={handleSave} disabled={loading}>
           {loading ? 'Đang lưu...' : 'Lưu'}
