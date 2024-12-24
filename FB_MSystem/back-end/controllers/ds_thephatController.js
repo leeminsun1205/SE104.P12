@@ -13,6 +13,7 @@ const DsThePhatController = {
             });
             res.status(200).json(dsThePhat);
         } catch (error) {
+            console.error('Lỗi khi lấy danh sách thẻ phạt theo vòng đấu.',error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách thẻ phạt theo vòng đấu.' });
         }
     },
