@@ -36,12 +36,53 @@ const BanThangController = {
 
     async create(req, res) {
         try {
-            const { MaBanThang, MaTranDau, MaDoiBong, MaCauThu, MaLoaiBanThang, ThoiDiem } = req.body;
+            // Lấy MaTranDau và MaDoiBong từ URL params
+            const { MaTranDau, MaDoiBong } = req.params;
+    
+            // Lấy các trường còn lại từ body
+            const { MaBanThang, MaCauThu, MaLoaiBanThang, ThoiDiem } = req.body;
+    
+            // Kiểm tra dữ liệu đầu vào (nếu cần thiết)
+            if (!MaCauThu || !MaLoaiBanThang || !ThoiDiem) {
+                return res.status(400).json({ error: 'Thiếu dữ liệu cần thiết để tạo bàn thắng.' });
+            }
+    
+            // Tìm thông tin trận đấu từ MaTranDau
+            const tranDau = await TranDau.findOne({
+                where: { MaTranDau }
+            });
+    
+            // Kiểm tra xem trận đấu có tồn tại không
+            if (!tranDau) {
+                return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
+            }
+    
+            // Kiểm tra xem MaDoiBong có phải là đội nhà hoặc đội khách
+            if (MaDoiBong !== tranDau.MaDoiBongNha && MaDoiBong !== tranDau.MaDoiBongKhach) {
+                return res.status(400).json({ error: 'Đội bóng không thuộc trận đấu này.' });
+            }
+    
+            // Cập nhật số bàn thắng cho đội nhà hoặc đội khách
+            if (MaDoiBong === tranDau.MaDoiBongNha) {
+                // Tăng số bàn thắng cho đội nhà
+                tranDau.BanThangDoiNha = tranDau.BanThangDoiNha ? tranDau.BanThangDoiNha + 1 : 1;
+            } else if (MaDoiBong === tranDau.MaDoiBongKhach) {
+                // Tăng số bàn thắng cho đội khách
+                tranDau.BanThangDoiKhach = tranDau.BanThangDoiKhach ? tranDau.BanThangDoiKhach + 1 : 1;
+            }
+    
+            // Lưu thay đổi của trận đấu
+            await tranDau.save();
+    
+            // Tạo bàn thắng mới
             const banThang = await BanThang.create({
                 MaBanThang, MaTranDau, MaDoiBong, MaCauThu, MaLoaiBanThang, ThoiDiem,
             });
-            res.status(201).json(banThang);
+    
+            // Trả về kết quả thành công
+            res.status(201).json({ banThang, tranDau });
         } catch (error) {
+            // Xử lý lỗi
             res.status(500).json({ error: 'Lỗi khi thêm bàn thắng.' });
         }
     },
