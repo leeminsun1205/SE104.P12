@@ -1,5 +1,6 @@
 const { TranDau } = require('../models');
-const { taoTranDau} = require('../services/tranDauService')
+const { taoTranDau } = require('../services/tranDauService')
+const { BangXepHang } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
@@ -48,11 +49,13 @@ const TranDauController = {
                 tranDau.BanThangDoiNha = 0;
                 tranDau.BanThangDoiKhach = 0;
             }
+            
     
             // Nếu trận đấu đã kết thúc và thời gian trận đấu nhỏ hơn thời gian hiện tại
-            if (!playing && tranDau.GioThiDau < now) {
-                const doiNha = await BangXepHang.findOne({ where: { MaDoiBong: tranDau.MaDoiNha } });
-                const doiKhach = await BangXepHang.findOne({ where: { MaDoiBong: tranDau.MaDoiKhach } });
+            if (!playing && new Date(tranDau.GioThiDau) < now) {
+                const doiNha = await BangXepHang.findOne({ where: { MaDoiBong: tranDau.MaDoiBongNha } });
+                const doiKhach = await BangXepHang.findOne({ where: { MaDoiBong: tranDau.MaDoiBongKhach } });
+
     
                 // Nếu không tìm thấy đội trong bảng xếp hạng, trả về lỗi
                 if (!doiNha || !doiKhach) {
@@ -107,7 +110,7 @@ const TranDauController = {
             res.status(200).json(tranDau);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Lỗi khi cập nhật thông tin trận đấu.' });
+            res.status(500).json({ error: error });
         }
     },
 

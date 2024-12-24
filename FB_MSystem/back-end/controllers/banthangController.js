@@ -37,7 +37,6 @@ const BanThangController = {
     async create(req, res) {
         try {
             const { MaTranDau, MaDoiBong } = req.params;
-    
             const { MaBanThang, MaCauThu, MaLoaiBanThang, ThoiDiem } = req.body;
     
             if (!MaCauThu || !MaLoaiBanThang || !ThoiDiem) {
@@ -52,10 +51,14 @@ const BanThangController = {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
             }
     
+            if (tranDau.TinhTrang !== true) {
+                return res.status(400).json({ error: 'Trận đấu không ở trạng thái đang diễn ra.' });
+            }
+    
             if (MaDoiBong !== tranDau.MaDoiBongNha && MaDoiBong !== tranDau.MaDoiBongKhach) {
                 return res.status(400).json({ error: 'Đội bóng không thuộc trận đấu này.' });
             }
-    
+
             if (MaDoiBong === tranDau.MaDoiBongNha) {
                 tranDau.BanThangDoiNha = tranDau.BanThangDoiNha ? tranDau.BanThangDoiNha + 1 : 1;
             } else if (MaDoiBong === tranDau.MaDoiBongKhach) {
