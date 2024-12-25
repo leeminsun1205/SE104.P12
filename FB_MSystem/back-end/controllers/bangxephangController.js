@@ -19,6 +19,7 @@ const BangXepHangController = {
 
             res.status(200).json(bangXepHang);
         } catch (error) {
+            console.error(error);
             res.status(500).json({ error: error.message });
         }
     },
