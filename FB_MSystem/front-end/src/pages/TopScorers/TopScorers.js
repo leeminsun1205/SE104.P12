@@ -9,6 +9,29 @@ function TopScorers({ API_URL }) {
     const [topScorers, setTopScorers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [teams, setTeams] = useState({}); // To store team names by ID
+
+    useEffect(() => {
+        const fetchSeasonTeams = async () => {
+            try {
+                const response = await fetch(`${API_URL}/teams?season=${seasonId}`);
+                if (!response.ok) {
+                    throw new Error(`Could not fetch teams for season: ${response.status}`);
+                }
+                const data = await response.json();
+                const teamsMap = {};
+                data.teams.forEach(team => {
+                    teamsMap[team.id] = team.name;
+                });
+                setTeams(teamsMap);
+            } catch (error) {
+                console.error("Error fetching teams:", error);
+                setError(error);
+            }
+        };
+
+        fetchSeasonTeams();
+    }, [API_URL, seasonId]);
 
     useEffect(() => {
         const fetchTopScorers = async () => {
@@ -34,13 +57,17 @@ function TopScorers({ API_URL }) {
                 if (match.goals) {
                     match.goals.forEach(goal => {
                         const playerName = goal.player;
-                        playerGoals[playerName] = (playerGoals[playerName] || 0) + 1;
+                        const teamId = goal.teamId; 
+                        playerGoals[playerName] = {
+                            goals: (playerGoals[playerName]?.goals || 0) + 1,
+                            teamId: teamId
+                        };
                     });
                 }
             });
 
             const scorersArray = Object.entries(playerGoals)
-                .map(([playerName, goals]) => ({ playerName, goals }))
+                .map(([playerName, data]) => ({ playerName, goals: data.goals, teamId: data.teamId }))
                 .sort((a, b) => b.goals - a.goals);
 
             setTopScorers(scorersArray);
@@ -66,6 +93,7 @@ function TopScorers({ API_URL }) {
                         <tr>
                             <th>Hạng</th>
                             <th>Cầu thủ</th>
+                            <th>Đội</th>
                             <th>Số bàn thắng</th>
                         </tr>
                     </thead>
@@ -74,6 +102,7 @@ function TopScorers({ API_URL }) {
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{scorer.playerName}</td>
+                                <td>{teams[scorer.teamId] || 'Unknown Team'}</td>
                                 <td>{scorer.goals}</td>
                             </tr>
                         ))}

@@ -1,33 +1,125 @@
-/* Base styles for the container */
+/* General styling */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #2d3748;
+}
+
+/* Container styles */
 .container {
     margin: 60px auto;
-    max-width: 750px;
-    padding: 24px;
+    max-width: 800px;
+    padding: 30px;
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Roboto', sans-serif;
-    color: #1a202c;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Title styling */
 .title {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 600;
     color: blue;
-    margin-bottom: 20px;
     text-align: center;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Paragraph styling */
 .paragraph {
     font-size: 16px;
-    line-height: 1.7;
-    color: #4a5568;
+    line-height: 1.8;
     margin-bottom: 16px;
+    color: #4a5568;
 }
 
+/* Link styles */
+.navigationLinks a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    margin-right: 16px;
+    transition: color 0.3s ease;
+}
+
+
+/* List styling */
+.list {
+    list-style: none;
+    padding: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.list-item:hover {
+    background: #edf2f7;
+    transform: scale(1.02);
+}
+
+/* Button styling */
+.button {
+    display: inline-block;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(90deg, #3182ce, #2b6cb0);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #2b6cb0, #2a4365);
+}
+
+/* Edit button styling */
+.editButton {
+    padding: 8px 12px;
+    font-size: 14px;
+    background: #68d391;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    max-width: 200px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.editButton:hover {
+    background: #48bb78;
+    transform: scale(1.05);
+}
+
+/* Modal overlay */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
 .missing {
     color: #e53e3e;
     font-weight: 500;
@@ -47,152 +139,88 @@
     background: #f0fff4;
     border: 1px solid #9ae6b4;
 }
-
-/* List styling */
-.list {
-    list-style: none;
-    padding: 0;
-}
-
-.list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background: #f7fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    transition: background 0.2s ease;
-}
-
-.list-item:hover {
-    background: #edf2f7;
-}
-
-/* Button styling */
-.button {
-    display: inline-block;
-    padding: 12px 20px;
-    font-size: 15px;
-    color: #ffffff;
-    background: #3182ce;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-    font-weight: 500;
-}
-
-.button:hover {
-    background: #2b6cb0;
-    transform: translateY(-2px);
-}
-
-.button:active {
-    background: #2a4365;
-    transform: translateY(0);
-}
-
-/* Edit button */
-.editButton {
-    padding: 8px 14px;
-    font-size: 14px;
-    color: #ffffff;
-    background: #63b3ed;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.editButton:hover {
-    background: #4299e1;
-    transform: scale(1.05);
-}
-
-.editButton:active {
-    background: #2b6cb0;
-}
-
-/* Modal overlay */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
 /* Modal content */
 .modal-content {
     background: #ffffff;
     padding: 24px;
     border-radius: 12px;
-    width: 400px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 450px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     position: relative;
-    animation: fadeIn 0.3s ease;
+    animation: slideDown 0.4s ease;
 }
 
-/* Input fields inside the modal */
+/* Input fields in modal */
 .modal-input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
     border: 1px solid #cbd5e0;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 15px;
 }
 
-.modal .error {
-    color: #e53e3e;
-    margin-bottom: 8px;
-    padding: 10px 14px;
-    background: #fff5f5;
-    border-radius: 8px;
-    border: 1px solid #fc8181;
-}
-
+/* Close button */
 .close {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 12px;
+    right: 12px;
     font-size: 20px;
-    color: #718096;
+    color: #a0aec0;
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .close:hover {
-    color: #e53e3e;
+    color: #718096;
+}
+.navigationLinks {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    color:white;
 }
 
-/* Links for teams */
-.teamLink {
-    text-decoration: none;
+.link {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 15px;
     font-weight: 500;
-    color: #3182ce;
-    transition: color 0.3s ease;
+    text-align: center;
+    color: #ffffff;
+    background-color: #4caf50; /* Green color */
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.teamLink:hover {
-    color: #2b6cb0;
+.link:hover {
+    background-color: #45a049; /* Darker green */
+    transform: translateY(-2px);
 }
 
-/* Animations */
+.link:active {
+    background-color: #357a38;
+    transform: translateY(0);
+}
+/* Keyframes for animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

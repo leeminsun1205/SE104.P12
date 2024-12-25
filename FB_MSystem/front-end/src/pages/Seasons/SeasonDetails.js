@@ -250,6 +250,15 @@ function SeasonDetails({ API_URL }) {
             <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong><strong></strong> {new Date(season.startDate).toLocaleDateString()}</p>
             <p className={styles.paragraph}><strong>Ngày kết thúc:</strong><strong></strong> {new Date(season.endDate).toLocaleDateString()}</p>
 
+            <div className={styles.navigationLinks}>
+                <Link to={`/seasons/${seasonId}/standings`} className={styles.link}>
+                    Xem Bảng Xếp Hạng
+                </Link>
+                <Link to={`/seasons/${seasonId}/top-scorers`} className={styles.link}>
+                    Xem Vua Phá Lưới
+                </Link>
+            </div>
+
             <div>
                 <h3 className={styles.title} style={{ fontSize: '20px' }}>Vòng đấu:</h3>
                 {rounds.length > 0 ? (

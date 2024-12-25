@@ -12,6 +12,9 @@ function TopScorersStandings({ API_URL }) {
     const [error, setError] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'descending' });
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6; // You can adjust this value
+    const [teams, setTeams] = useState({}); // To store team names by ID
 
     useEffect(() => {
         const fetchSeasons = async () => {
@@ -30,6 +33,32 @@ function TopScorersStandings({ API_URL }) {
 
         fetchSeasons();
     }, [API_URL]);
+
+    useEffect(() => {
+        const fetchSeasonTeams = async () => {
+            if (selectedSeason) {
+                try {
+                    const response = await fetch(`${API_URL}/teams?season=${selectedSeason}`);
+                    if (!response.ok) {
+                        throw new Error(`Could not fetch teams for season: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    const teamsMap = {};
+                    data.teams.forEach(team => {
+                        teamsMap[team.id] = team.name;
+                    });
+                    setTeams(teamsMap);
+                } catch (error) {
+                    console.error("Error fetching teams:", error);
+                    setError(error);
+                }
+            } else {
+                setTeams({}); // Clear teams if no season is selected
+            }
+        };
+
+        fetchSeasonTeams();
+    }, [API_URL, selectedSeason]);
 
     useEffect(() => {
         if (!selectedSeason) {
@@ -63,6 +92,7 @@ function TopScorersStandings({ API_URL }) {
                 setTopScorers([]);
             } finally {
                 setLoading(false);
+                setCurrentPage(1); // Reset to first page when season changes
             }
         };
 
@@ -72,13 +102,17 @@ function TopScorersStandings({ API_URL }) {
                 if (match.goals) {
                     match.goals.forEach(goal => {
                         const playerName = goal.player;
-                        playerGoals[playerName] = (playerGoals[playerName] || 0) + 1;
+                        const teamId = goal.teamId;
+                        playerGoals[playerName] = {
+                            goals: (playerGoals[playerName]?.goals || 0) + 1,
+                            teamId: teamId
+                        };
                     });
                 }
             });
 
             const scorersArray = Object.entries(playerGoals)
-                .map(([playerName, goals]) => ({ playerName, goals }))
+                .map(([playerName, data]) => ({ playerName, goals: data.goals, teamId: data.teamId }))
                 .sort((a, b) => b.goals - a.goals);
 
             setTopScorers(scorersArray);
@@ -130,6 +164,17 @@ function TopScorersStandings({ API_URL }) {
         return "";
     };
 
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = sortedTopScorers.slice(indexOfFirstItem, indexOfLastItem);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(sortedTopScorers.length / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
+
     if (loading) {
         return <div>Đang tải dữ liệu vua phá lưới...</div>;
     }
@@ -155,34 +200,51 @@ function TopScorersStandings({ API_URL }) {
                         <tr>
                             <th>Hạng</th>
                             <th onClick={() => requestSort('playerName')}>Cầu thủ {getSortIndicator('playerName')}</th>
+                            <th>Đội</th>
                             <th onClick={() => requestSort('goals')}>Bàn thắng {getSortIndicator('goals')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedSeason ? (
-                            sortedTopScorers.length > 0 ? (
-                                sortedTopScorers.map((scorer, index) => (
+                            currentItems.length > 0 ? (
+                                currentItems.map((scorer, index) => (
                                     <tr key={`${index}-${scorer.playerName}`}>
-                                        <td>{index + 1}</td>
+                                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                         <td className={styles.playerName}>{scorer.playerName}</td>
+                                        <td>{teams[scorer.teamId] || 'Unknown Team'}</td>
                                         <td>{scorer.goals}</td>
                                     </tr>
                                 ))
                             ) : loading ? (
-                                <tr><td colSpan="3" style={{ textAlign: 'center' }}>Đang tải dữ liệu vua phá lưới...</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Đang tải dữ liệu vua phá lưới...</td></tr>
                             ) : notFound ? (
-                                <tr><td colSpan="3" style={{ textAlign: 'center' }}>Không tìm thấy dữ liệu vua phá lưới cho mùa giải này.</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Không tìm thấy dữ liệu vua phá lưới cho mùa giải này.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="3" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="3" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="3" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
                         )}
                     </tbody>
                 </table>
             </div>
+            {sortedTopScorers.length > itemsPerPage && (
+                <div className={styles.pagination}>
+                    <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>
+                        Trước
+                    </button>
+                    {pageNumbers.map(number => (
+                        <button key={number} onClick={() => paginate(number)} className={currentPage === number ? styles.active : ''}>
+                            {number}
+                        </button>
+                    ))}
+                    <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === pageNumbers.length}>
+                        Sau
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
