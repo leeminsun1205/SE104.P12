@@ -1,0 +1,53 @@
+/* LookUp.css */
+
+.look-up-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .look-up-container button {
+    width: 100%; /* Make buttons fill the container width */
+    padding: 15px 20px;
+    margin-bottom: 10px; /* Space between buttons */
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .look-up-container button:first-of-type {
+    background-color: #008CBA; /* Back to Dashboard button color */
+  }
+  
+  .look-up-container button:nth-of-type(2) {
+    background-color: #4CAF50; /* LookUp Match button color */
+  }
+  
+  .look-up-container button:nth-of-type(3) {
+    background-color: #3f8bb1; /* LookUp Season button color */
+  }
+  
+  .look-up-container button:last-of-type {
+    background-color: #717d96; /* LookUp Achievements button color */
+  }
+  
+  .look-up-container button:hover {
+    opacity: 0.8;
+  }
