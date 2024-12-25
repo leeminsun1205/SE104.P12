@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
-import styles from "./PlayerCardList.module.css";
+import styles from "./PlayerCardList.Module.css";
 
 function PlayerCardList({ API_URL }) {
   const [cardList, setCardList] = useState([]);
