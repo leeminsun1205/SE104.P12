@@ -35,6 +35,7 @@ import SeasonList from './pages/Seasons/SeasonList';
 import LookUp from './pages/LookUp/LookUp';
 import LookUpMatch from './pages/LookUp/LookUpMatch';
 import LookUpSeason from './pages/LockUp/LookUpSeason';
+import LookUpAchievements from './pages/LockUp/LookUpAchievements';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -244,6 +245,7 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/lookup" element={<LookUp />} /> 
             <Route path="/lookup/match" element={<LookUpMatch />} /> 
             <Route path="/lookup/season" element={<LookUpSeason />} /> 
+            <Route path="/lookup/achievements" element={<LookUpAchievements />} /> 
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );
