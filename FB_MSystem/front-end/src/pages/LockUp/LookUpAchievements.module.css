@@ -1,0 +1,72 @@
+.standingsContainer {
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    max-width: 1200px;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .standingsTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .tableWrapper {
+    overflow-x: auto;
+    margin-top: 16px;
+  }
+  
+  .standingsTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  
+  .standingsTable th, 
+  .standingsTable td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .standingsTable th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .standingsTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+
+  .teamName {
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .points {
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  .notFoundMessage {
+    margin-top: 16px;
+    font-size: 16px;
+    color: #dc3545;
+    text-align: center;
+  }
+  .standingsRow {
+    cursor: pointer;
+  }
+  
+  .standingsRow:hover {
+    background-color: #f0f0f0; /* Example hover effect */
+  }
