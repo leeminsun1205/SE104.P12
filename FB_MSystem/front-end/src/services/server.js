@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
@@ -13,8 +12,23 @@ let {
   availablePlayers,
   stadiums,
   matchesData,
-  typeSettings
-} = require("./data"); // Chuyển qua ./lite_data cho dễ làm
+  typeSettings,
+} = require("./data"); // Ensure your data file is correctly linked
+
+let settingsData = { // Initialize settings data
+    minPlayers: 15,
+    maxPlayers: 22,
+    maxForeignPlayers: 3,
+    minAge: 16,
+    maxAge: 40,
+    minCapacity: 10000,
+    minStar: 2,
+    participationFee: 1000000000,
+    winPoints: 3,
+    drawPoints: 1,
+    losePoints: 0,
+    maxGoalTime: 90,
+};
 
 app.use(cors());
 app.use(express.json());
@@ -619,7 +633,7 @@ app.get("/api/players/:playerId", (req, res) => {
 
   res.status(404).json({ message: "Player not found" });
 });
-app.put("/api/players/:playerId", (req, res) => {
+app.put("/api/players/:playerId", (req, res) =>{
   const { playerId } = req.params;
   const { season, teamId, updatedPlayer } = req.body;
   const playerIdInt = parseInt(playerId);
@@ -848,10 +862,14 @@ app.delete("/api/matches/:matchId", (req, res) => {
 });
 app.post('/api/settings', (req, res) => {
   const newSettings = req.body;
+  settingsData = newSettings; // Update the settings data
   console.log('Received settings from frontend:', newSettings);
   res.status(200).json({ message: 'Settings saved successfully' });
 });
 
+app.get('/api/settings', (req, res) => {
+    res.status(200).json(settingsData); // Send the current settings data
+});
 // Endpoint to get types settings
 app.get('/api/types-settings', (req, res) => {
   res.json(typeSettings);

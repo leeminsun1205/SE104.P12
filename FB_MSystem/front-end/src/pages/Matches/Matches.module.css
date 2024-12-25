@@ -180,3 +180,33 @@
   background-color: #f44336;
   color: white;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.pageButton {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pageButton:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.activePage {
+  background-color: #0056b3;
+  color: #fff;
+  border: 1px solid #0056b3;
+  font-weight: bold;
+}

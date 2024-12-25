@@ -145,12 +145,6 @@ const seasons = [
         startDate: "2023-08-12",
         endDate: "2023-08-14",
       },
-      {
-        roundId: "2023-2024-ROUND3",
-        name: "Lượt đi",
-        startDate: "2023-08-19",
-        endDate: "2023-08-21",
-      },
     ],
   },
   {
@@ -170,13 +164,13 @@ const seasons = [
     rounds: [
       {
         roundId: "2022-2023-ROUND1",
-        name: "Vòng 1",
+        name: "Lượt đi",
         startDate: "2022-08-05",
         endDate: "2022-08-07",
       },
       {
         roundId: "2022-2023-ROUND2",
-        name: "Vòng 2",
+        name: "Lượt về",
         startDate: "2022-08-12",
         endDate: "2022-08-14",
       },
@@ -775,7 +769,7 @@ const matchesData = [
   {
     matchId: 9,
     season: "2023-2024",
-    round: "2023-2024-ROUND3",
+    round: "2023-2024-ROUND1",
     homeTeamId: 1,
     awayTeamId: 3,
     date: "2023-08-19",
@@ -790,7 +784,7 @@ const matchesData = [
   {
     matchId: 10,
     season: "2023-2024",
-    round: "2023-2024-ROUND3",
+    round: "2023-2024-ROUND1",
     homeTeamId: 2,
     awayTeamId: 4,
     date: "2023-08-20",
@@ -805,7 +799,7 @@ const matchesData = [
   {
     matchId: 11,
     season: "2023-2024",
-    round: "2023-2024-ROUND3",
+    round: "2023-2024-ROUND2",
     homeTeamId: 5,
     awayTeamId: 7,
     date: "2023-08-20",
@@ -820,7 +814,7 @@ const matchesData = [
   {
     matchId: 12,
     season: "2023-2024",
-    round: "2023-2024-ROUND3",
+    round: "2023-2024-ROUND2",
     homeTeamId: 6,
     awayTeamId: 8,
     date: "2023-08-21",

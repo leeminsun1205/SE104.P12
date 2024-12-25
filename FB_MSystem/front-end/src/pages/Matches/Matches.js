@@ -17,6 +17,10 @@ const Matches = ({ API_URL }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const matchesPerPage = 4;
+
   // State for modal and editing
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
@@ -71,7 +75,7 @@ const Matches = ({ API_URL }) => {
   }, [API_URL, selectedSeason]);
 
   // Filter and sort matches
-  const filteredMatches = useMemo(() => {
+  const filteredAndSortedMatches = useMemo(() => {
     return matches
       .filter(
         (match) =>
@@ -99,6 +103,31 @@ const Matches = ({ API_URL }) => {
       });
   }, [matches, selectedSeason, selectedRound, searchQuery, sortConfig]);
 
+  // Pagination logic
+  const indexOfLastMatch = currentPage * matchesPerPage;
+  const indexOfFirstMatch = indexOfLastMatch - matchesPerPage;
+  const currentMatches = filteredAndSortedMatches.slice(indexOfFirstMatch, indexOfLastMatch);
+
+  const totalPages = Math.ceil(filteredAndSortedMatches.length / matchesPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={currentPage === i ? styles.activePage : styles.pageButton}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+
   const rounds = useMemo(() => {
     const seasonData = availableSeasons.find(s => s.id === selectedSeason);
     return seasonData?.rounds?.map(round => ({ id: round.roundId, name: round.name })) || [];
@@ -107,6 +136,7 @@ const Matches = ({ API_URL }) => {
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
     setSelectedRound("");
+    setCurrentPage(1); // Reset to the first page when season changes
   };
   const handleMatchClick = (match) => {
     const { season, round, matchId } = match;
@@ -211,7 +241,10 @@ const Matches = ({ API_URL }) => {
           <select
             id="round"
             value={selectedRound}
-            onChange={(e) => setSelectedRound(e.target.value)}
+            onChange={(e) => {
+              setSelectedRound(e.target.value);
+              setCurrentPage(1); // Reset page when round changes
+            }}
             className={styles.selectField}
           >
             <option value="">Chọn vòng đấu</option>
@@ -227,7 +260,10 @@ const Matches = ({ API_URL }) => {
             type="text"
             placeholder="Tìm kiếm trận đấu..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1); // Reset page when search query changes
+            }}
             className={styles.searchField}
           />
           {searchQuery && (
@@ -247,79 +283,86 @@ const Matches = ({ API_URL }) => {
       ) : (
         <>
           <h2 className={styles.matchesTitle}>Danh sách trận đấu</h2>
-          {filteredMatches.length === 0 ? (
+          {filteredAndSortedMatches.length === 0 ? (
             <div className={styles.noMatches}>
               Không tìm thấy trận đấu nào trong mùa giải này.
             </div>
           ) : (
-            <table className={styles.matchesTable}>
-              <thead>
-                <tr>
-                  {[
-                    "Ngày thi đấu",
-                    "Giờ",
-                    "Đội nhà",
-                    "Đội khách",
-                    "Sân thi đấu",
-                    "Vòng đấu", // Display round name
-                    "Hành động",
-                  ].map(
-                    (key) =>
-                      key !== "Hành động" && (
-                        <th
-                          key={key}
-                          className={styles.headerCell}
-                          onClick={() => handleSort(key)}
-                        >
-                          {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
-                          {getSortIndicator(key)}
-                        </th>
-                      )
-                  )}
-                  <th key="actions" className={styles.headerCell}>
-                    Hành động
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredMatches.map((match) => (
-                  <tr
-                    key={match.matchId}
-                    className={styles.row}
-                    onClick={() =>
-                      navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
-                    }
-                  >
-                    <td className={styles.cell}>{match.date}</td>
-                    <td className={styles.cell}>{match.time}</td>
-                    <td className={styles.cell}>{match.homeTeamName}</td>
-                    <td className={styles.cell}>{match.awayTeamName}</td>
-                    <td className={styles.cell}>{match.stadiumName}</td>
-                    <td className={styles.cell}>{match.roundName}</td>
-                    <td>
-                      <button
-                        className={styles.editButton}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditMatch(match);
-                        }}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className={styles.deleteButton}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteMatch(match.matchId);
-                        }}
-                      >
-                        Xóa
-                      </button>
-                    </td>
+            <>
+              <table className={styles.matchesTable}>
+                <thead>
+                  <tr>
+                    {[
+                      "Ngày thi đấu",
+                      "Giờ",
+                      "Đội nhà",
+                      "Đội khách",
+                      "Sân thi đấu",
+                      "Vòng đấu", // Display round name
+                      "Hành động",
+                    ].map(
+                      (key) =>
+                        key !== "Hành động" && (
+                          <th
+                            key={key}
+                            className={styles.headerCell}
+                            onClick={() => handleSort(key)}
+                          >
+                            {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                            {getSortIndicator(key)}
+                          </th>
+                        )
+                    )}
+                    <th key="actions" className={styles.headerCell}>
+                      Hành động
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentMatches.map((match) => (
+                    <tr
+                      key={match.matchId}
+                      className={styles.row}
+                      onClick={() =>
+                        navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
+                      }
+                    >
+                      <td className={styles.cell}>{match.date}</td>
+                      <td className={styles.cell}>{match.time}</td>
+                      <td className={styles.cell}>{match.homeTeamName}</td>
+                      <td className={styles.cell}>{match.awayTeamName}</td>
+                      <td className={styles.cell}>{match.stadiumName}</td>
+                      <td className={styles.cell}>{match.roundName}</td>
+                      <td>
+                        <button
+                          className={styles.editButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditMatch(match);
+                          }}
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          className={styles.deleteButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteMatch(match.matchId);
+                          }}
+                        >
+                          Xóa
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  {renderPageNumbers()}
+                </div>
+              )}
+            </>
           )}
         </>
       )}
