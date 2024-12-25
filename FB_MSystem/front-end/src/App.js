@@ -39,8 +39,8 @@ import CombinedStandingsPage from './pages/Standings/CombinedStandingsPage';
 import SeasonalStandings from './pages/SeasonalStandings/SeasonalStandings'; 
 import LookUp from './pages/LookUp/LookUp';
 import LookUpMatch from './pages/LookUp/LookUpMatch';
-import LookUpSeason from './pages/LockUp/LookUpSeason';
-import LookUpAchievements from './pages/LockUp/LookUpAchievements';
+import LookUpSeason from './pages/LookUp/LookUpSeason';
+import LookUpAchievements from './pages/LookUp/LookUpAchievements';
 
 
 import '@fortawesome/fontawesome-free/css/all.min.css';

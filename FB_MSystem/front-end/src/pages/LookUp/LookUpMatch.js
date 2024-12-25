@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TeamSelector from "../../components/TeamSelector.js/TeamSelector";
 import styles from "./LookUpMatch.module.css";
 
@@ -10,7 +10,7 @@ function LookUpMatch({ API_URL }) {
   const [availableTeams, setAvailableTeams] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState("");
   const [sortConfig, setSortConfig] = useState({
-    key: "Ngày thi đấu",
+    key: "date",
     direction: "ascending",
   });
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,7 +120,7 @@ function LookUpMatch({ API_URL }) {
   if (error) {
     return <div>Lỗi khi tải dữ liệu: {error.message}</div>;
   }
-  
+
   return (
     <div className={styles.matchesPage}>
       <div className={styles.filterContainer}>
@@ -167,22 +167,29 @@ function LookUpMatch({ API_URL }) {
               <thead>
                 <tr>
                   {[
-                    "Ngày thi đấu",
-                    "Giờ",
-                    "Đội nhà",
-                    "Đội khách",
-                    "Sân thi đấu",
-                    "Vòng đấu", // Display round name
-                    "Hành động",
+                    "date",
+                    "time",
+                    "homeTeamName",
+                    "awayTeamName",
+                    "stadiumName",
+                    "roundName", // Display round name
+                    "actions",
                   ].map(
                     (key) =>
-                      key !== "Hành động" && (
+                      key !== "actions" && (
                         <th
                           key={key}
                           className={styles.headerCell}
                           onClick={() => handleSort(key)}
                         >
-                          {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                          {key === 'date' ? 'Ngày thi đấu' :
+                           key === 'time' ? 'Giờ' :
+                           key === 'homeTeamName' ? 'Đội nhà' :
+                           key === 'awayTeamName' ? 'Đội khách' :
+                           key === 'stadiumName' ? 'Sân thi đấu' :
+                           key === 'roundName' ? 'Vòng đấu' : ''
+                          }
+                          {" "}
                           {getSortIndicator(key)}
                         </th>
                       )

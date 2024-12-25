@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TeamSelector from "../../components/TeamSelector.js/TeamSelector";
 import styles from "./LookUpSeason.module.css";
 
@@ -32,7 +32,7 @@ function LookUpSeason({ API_URL }) {
     }, [API_URL]);
 
     useEffect(() => {
-        if (!setSelectedTeam) {
+        if (!selectedTeam) {
             setStandings([]);
             setSortConfig({ key: 'season', direction: 'ascending' });
             setNotFound(false);
@@ -74,11 +74,11 @@ function LookUpSeason({ API_URL }) {
         };
 
         fetchStandings();
-    }, [selectedTeam]);
+    }, [selectedTeam, API_URL]);
 
-    const handleTeamChange = (team) => {
-        console.log("Đội được chọn:", team); // Debug team selection
-        setSelectedTeam(season);
+    const handleTeamChange = (teamId) => {
+        console.log("Đội được chọn:", teamId); // Debug team selection
+        setSelectedTeam(teamId);
     };
 
     const requestSort = (key) => {
@@ -120,18 +120,18 @@ function LookUpSeason({ API_URL }) {
         return <div>Lỗi: {error}</div>;
     }
 
-    const handleRowClick = (seasonId, teamId) => {
-        console.log(`handleRowClick Season ID: ${seasonId}, - Team ID: ${teamId}`); // Debug handleRowClick
-        navigate(`/teams/${teamId}?season=${seasonId}`);
+    const handleRowClick = (seasonId) => {
+        console.log(`handleRowClick Season ID: ${seasonId}`); // Debug handleRowClick
+        navigate(`/season/${seasonId}`);
     };
-    
+
     return (
         <div className={styles.standingsContainer}>
             <h2 className={styles.standingsTitle}>Lịch sử giải đấu</h2>
             {availableTeams.length > 0 && (
                 <TeamSelector
                     onTeamsChange={handleTeamChange}
-                    teams={availableTeams.map(teams => ({ id: teams.id, name: teams.name }))}
+                    teams={availableTeams.map(team => ({ id: team.id, name: team.name }))}
                     selectedTeam={selectedTeam}
                     id="teams"
                 />
@@ -141,7 +141,7 @@ function LookUpSeason({ API_URL }) {
                 <table className={styles.standingsTable}>
                     <thead>
                         <tr>
-                            <th onClick={() => requestSort('season')}>Mùa giải {getSortIndicator('rank')}</th>
+                            <th onClick={() => requestSort('season')}>Mùa giải {getSortIndicator('season')}</th>
                             <th onClick={() => requestSort('win')}>Thắng {getSortIndicator('win')}</th>
                             <th onClick={() => requestSort('loss')}>Thua {getSortIndicator('loss')}</th>
                             <th onClick={() => requestSort('draw')}>Hòa {getSortIndicator('draw')}</th>
@@ -159,9 +159,10 @@ function LookUpSeason({ API_URL }) {
                                     return (
                                         <tr
                                             key={`${item.season}`}
-                                            onClick={() => handleRowClick(item.season, selectedSeason)}
+                                            onClick={() => handleRowClick(item.season)}
                                             className={styles.standingsRow}
                                         >
+                                            <td>{item.season}</td>
                                             <td>{item.win}</td>
                                             <td>{item.loss}</td>
                                             <td>{item.draw}</td>
@@ -173,16 +174,16 @@ function LookUpSeason({ API_URL }) {
                                     );
                                 })
                             ) : loading ? (
-                                <tr><td colSpan="7" style={{ textAlign: 'center' }}>Đang tải dữ liệu lịch sử giải...</td></tr>
-                            ) : notFound ? ( // Changed colspan to 9
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
+                                <tr><td colSpan="8" style={{ textAlign: 'center' }}>Đang tải dữ liệu lịch sử giải...</td></tr>
+                            ) : notFound ? (
+                                <tr><td colSpan="8" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="8" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
+                                <tr><td colSpan="8" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Vui lòng chọn một đội</td></tr>
+                            <tr><td colSpan="8" style={{ textAlign: 'center' }}>Vui lòng chọn một đội</td></tr>
                         )}
                     </tbody>
                 </table>
