@@ -253,9 +253,9 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/seasons/:seasonId/standings" element={<SeasonalStandings API_URL={API_URL} />} />
             <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
             <Route path="/lookup" element={<LookUp />} />
-            <Route path="/lookup/match" element={<LookUpMatch />} />
-            <Route path="/lookup/season" element={<LookUpSeason />} />
-            <Route path="/lookup/achievements" element={<LookUpAchievements />} />
+            <Route path="/lookup/match" element={<LookUpMatch API_URL={API_URL}/>} />
+            <Route path="/lookup/season" element={<LookUpSeason API_URL={API_URL}/>} />
+            <Route path="/lookup/achievements" element={<LookUpAchievements API_URL={API_URL}/>} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

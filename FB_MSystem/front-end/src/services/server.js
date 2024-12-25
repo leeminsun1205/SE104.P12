@@ -13,7 +13,7 @@ let {
   stadiums,
   matchesData,
   typeSettings,
-} = require("./lite_data");
+} = require("./data");
 
 let settingsData = {
   minPlayers: 15,
@@ -1089,8 +1089,16 @@ app.get('/api/types-settings', (req, res) => {
 app.post('/api/types-settings', (req, res) => {
   typeSettings = req.body;
   res.json({ message: 'Types settings saved successfully' });
-});
+})
 
+app.get("/api/teams/position", (req, res) =>{
+  const teamId = req.query.teamId;
+  if (!teamId) {
+    return res.status(402).json({ message: "teamId not found" });
+  }
+  const teamPosition = teamsPosition[teamId]
+  res.json({ teams: teamPosition });
+});
 // Start Server
 app.listen(PORT, () => {
 });
