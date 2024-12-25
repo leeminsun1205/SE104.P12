@@ -47,8 +47,11 @@ const MgDbCtController = {
     // Thêm liên kết mới giữa mùa giải, đội bóng, và cầu thủ
     async create(req, res) {
         try {
-            const { MaMuaGiai, MaDoiBong, MaCauThu } = req.body;
-            const existingLink = await MgDbCt.findOne({
+            // Lấy các tham số từ URL
+            const { MaMuaGiai, MaDoiBong, MaCauThu } = req.params;
+
+            // Kiểm tra xem liên kết giữa mùa giải, đội bóng, cầu thủ đã tồn tại chưa
+            const existingLink = await MG_DB_CT.findOne({
                 where: { MaMuaGiai, MaDoiBong, MaCauThu },
             });
 
@@ -56,17 +59,36 @@ const MgDbCtController = {
                 return res.status(400).json({ error: 'Liên kết này đã tồn tại.' });
             }
 
-            const newLink = await MgDbCt.create({
+            // Tạo liên kết mới giữa mùa giải, đội bóng và cầu thủ
+            const newLink = await MG_DB_CT.create({
                 MaMuaGiai,
                 MaDoiBong,
                 MaCauThu,
             });
 
+            // Kiểm tra xem đội bóng đã có trong bảng xếp hạng của mùa giải chưa
+            const existingRank = await BangXepHang.findOne({
+                where: { MaMuaGiai, MaDoiBong },
+            });
+
+            // Nếu đội bóng chưa có trong bảng xếp hạng, thêm đội bóng với các giá trị mặc định
+            if (!existingRank) {
+                await BangXepHang.create({
+                    MaMuaGiai,
+                    MaDoiBong,
+                    DiemSo: 0, // Điểm ban đầu là 0
+                    SoTran: 0,  // Số trận ban đầu là 0
+                    HieuSo: 0   // Hiệu số ban đầu là 0
+                });
+            }
+
+            // Trả về thông tin liên kết mới tạo
             res.status(201).json(newLink);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi thêm liên kết mới.' });
         }
     },
+
 
     // Cập nhật liên kết giữa mùa giải, đội bóng, và cầu thủ
     async update(req, res) {

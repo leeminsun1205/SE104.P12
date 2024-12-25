@@ -1,6 +1,6 @@
 const { TranDau } = require('../models');
 const { taoTranDau } = require('../services/tranDauService')
-const { BangXepHang } = require('../models');
+const { BangXepHang, MG_DB_CT } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
@@ -53,9 +53,8 @@ const TranDauController = {
     
             // Nếu trận đấu đã kết thúc và thời gian trận đấu nhỏ hơn thời gian hiện tại
             if (!playing && new Date(tranDau.GioThiDau) < now) {
-                const doiNha = await BangXepHang.findOne({ where: { MaDoiBong: tranDau.MaDoiBongNha } });
-                const doiKhach = await BangXepHang.findOne({ where: { MaDoiBong: tranDau.MaDoiBongKhach } });
-
+                const doiNha = await MG_DB_CT.findOne({ where: { MaDoiBong: tranDau.MaDoiBongNha, MaMuaGiai: tranDau.MaMuaGiai } });
+                const doiKhach = await MG_DB_CT.findOne({ where: { MaDoiBong: tranDau.MaDoiBongKhach, MaMuaGiai: tranDau.MaMuaGiai } });
     
                 // Nếu không tìm thấy đội trong bảng xếp hạng, trả về lỗi
                 if (!doiNha || !doiKhach) {
