@@ -59,7 +59,7 @@ function Header({ onLogout, onToggleSidebar }) {
                             Trận đấu
                         </NavLink>
                         <NavLink to="/combined-standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                            Bảng xếp hạng
+                            Danh sách
                         </NavLink>
                         <NavLink to="/create" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Thêm mới

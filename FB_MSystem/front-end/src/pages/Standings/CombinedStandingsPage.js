@@ -2,15 +2,18 @@
 import React, { useState } from 'react';
 import Standings from './Standings';
 import TopScorersStandings from './TopScorersStandings';
+import CardsList from './CardsList'; // Import CardsList
 import styles from './CombinedStandingsPage.module.css'; // Import CSS module
 
 function CombinedStandingsPage({ API_URL }) {
     const [showStandings, setShowStandings] = useState(true);
+    const [showTopScorers, setShowTopScorers] = useState(false);
+    const [showCardsList, setShowCardsList] = useState(false);
 
     const handleToggleView = (view) => {
-        console.log('handleToggleView called with:', view);
         setShowStandings(view === 'standings');
-        console.log('showStandings is now:', view === 'standings');
+        setShowTopScorers(view === 'topScorers');
+        setShowCardsList(view === 'cards');
     };
 
     return (
@@ -25,14 +28,20 @@ function CombinedStandingsPage({ API_URL }) {
                 </button>
                 <button
                     onClick={() => handleToggleView('topScorers')}
-                    className={`${styles.button} ${!showStandings ? styles.active : ''}`}
+                    className={`${styles.button} ${showTopScorers ? styles.active : ''}`}
                 >
                     Vua phá lưới
                 </button>
+                <button
+                    onClick={() => handleToggleView('cards')}
+                    className={`${styles.button} ${showCardsList ? styles.active : ''}`}
+                >
+                    Danh sách thẻ phạt
+                </button>
             </div>
-                {console.log('Rendering content with showStandings:', showStandings)}
                 {showStandings && <Standings API_URL={API_URL} />}
-                {!showStandings && <TopScorersStandings API_URL={API_URL} />}
+                {showTopScorers && <TopScorersStandings API_URL={API_URL} />}
+                {showCardsList && <CardsList API_URL={API_URL} />}
             </div>
         </div>
     );

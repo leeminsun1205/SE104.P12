@@ -143,6 +143,7 @@ button.primary:hover {
 }
 
 main {
+  background-color: #ecececfd;
   flex: 1;
 }
 

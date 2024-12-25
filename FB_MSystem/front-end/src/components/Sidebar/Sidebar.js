@@ -89,7 +89,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
             >
-              <i className="fas fa-list-ol"></i> Bảng xếp hạng
+              <i className="fas fa-list-ol"></i> Danh sách
             </NavLink>
             <NavLink
               to="/create"

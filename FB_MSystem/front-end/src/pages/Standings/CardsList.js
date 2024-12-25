@@ -1,20 +1,21 @@
+// CardsList.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './TopScorersStandings.module.css';
+import styles from './CardsList.module.css';
 import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
 
-function TopScorersStandings({ API_URL }) {
+function CardsList({ API_URL }) {
     const navigate = useNavigate();
     const [selectedSeason, setSelectedSeason] = useState('');
-    const [topScorers, setTopScorers] = useState([]);
+    const [cards, setCards] = useState([]);
     const [availableSeasons, setAvailableSeasons] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'descending' });
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6;
-    const [teams, setTeams] = useState({});
+    const itemsPerPage = 10;
+    const [players, setPlayers] = useState({});
 
     useEffect(() => {
         const fetchSeasons = async () => {
@@ -35,40 +36,38 @@ function TopScorersStandings({ API_URL }) {
     }, [API_URL]);
 
     useEffect(() => {
-        const fetchSeasonTeams = async () => {
+        const fetchPlayersData = async () => {
             if (selectedSeason) {
                 try {
-                    const response = await fetch(`${API_URL}/teams?season=${selectedSeason}`);
+                    const response = await fetch(`${API_URL}/players`);
                     if (!response.ok) {
-                        throw new Error(`Could not fetch teams for season: ${response.status}`);
+                        throw new Error(`Could not fetch players: ${response.status}`);
                     }
                     const data = await response.json();
-                    const teamsMap = {};
-                    data.teams.forEach(team => {
-                        teamsMap[team.id] = team.name;
-                    });
-                    setTeams(teamsMap);
+                    const playersMap = {};
+                    data.forEach(player => playersMap[player.id] = player);
+                    setPlayers(playersMap);
                 } catch (error) {
-                    console.error("Error fetching teams:", error);
-                    setError(error);
+                    console.error("Error fetching players:", error);
+                    setError("Failed to load players.");
                 }
             } else {
-                setTeams({});
+                setPlayers({});
             }
         };
 
-        fetchSeasonTeams();
+        fetchPlayersData();
     }, [API_URL, selectedSeason]);
 
     useEffect(() => {
         if (!selectedSeason) {
-            setTopScorers([]);
+            setCards([]);
             setSortConfig({ key: null, direction: 'descending' });
             setNotFound(false);
             return;
         }
 
-        const fetchTopScorers = async () => {
+        const fetchCardsData = async () => {
             setLoading(true);
             setError(null);
             setNotFound(false);
@@ -78,7 +77,7 @@ function TopScorersStandings({ API_URL }) {
                     if (response.status === 404) {
                         console.log(`Matches not found for season: ${selectedSeason}`);
                         setNotFound(true);
-                        setTopScorers([]);
+                        setCards([]);
                     } else {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -88,70 +87,43 @@ function TopScorersStandings({ API_URL }) {
                 processMatchData(data);
             } catch (error) {
                 console.error("Error fetching match data:", error);
-                setError("Failed to load top scorers.");
-                setTopScorers([]);
+                setError("Failed to load match data.");
+                setCards([]);
             } finally {
                 setLoading(false);
                 setCurrentPage(1);
             }
         };
 
-        const processMatchData = async (matches) => {
-            const playerGoals = {};
+        const processMatchData = (matches) => {
+            const playerCards = {};
             matches.forEach(match => {
-                if (match.goals) {
-                    match.goals.forEach(goal => {
-                        const playerId = goal.player;
-                        const teamId = goal.team;
-                        playerGoals[playerId] = {
-                            goals: (playerGoals[playerId]?.goals || 0) + 1,
-                            teamId: teamId
+                if (match.cards) {
+                    match.cards.forEach(card => {
+                        const playerId = card.playerId;
+                        playerCards[playerId] = {
+                            numCards: (playerCards[playerId]?.numCards || 0) + 1,
                         };
                     });
                 }
             });
 
-            const scorersArray = Object.entries(playerGoals)
-                .map(([playerId, data]) => ({ playerId: parseInt(playerId), goals: data.goals, teamId: data.teamId }))
-                .sort((a, b) => b.goals - a.goals);
+            const playerCardDetails = Object.entries(playerCards).map(([playerId, cardData]) => ({
+                playerId: parseInt(playerId),
+                numCards: cardData.numCards,
+            }));
 
-            if (selectedSeason) {
-                try {
-                    const response = await fetch(`${API_URL}/teams?season=${selectedSeason}`);
-                    if (!response.ok) {
-                        throw new Error(`Could not fetch teams for season: ${response.status}`);
-                    }
-                    const teamsData = await response.json();
-                    let allPlayers = [];
-                    for (const team of teamsData.teams) {
-                        const playersResponse = await fetch(`${API_URL}/teams/${team.id}/players?season=${selectedSeason}`);
-                        if (playersResponse.ok) {
-                            const playersData = await playersResponse.json();
-                            allPlayers = [...allPlayers, ...playersData.players];
-                        }
-                    }
+            const cardsWithDetails = playerCardDetails.map(card => ({
+                ...card,
+                playerName: players[card.playerId]?.name || 'Không rõ',
+                playerType: players[card.playerId]?.playerType || 'Không rõ', 
+            })).sort((a, b) => b.numCards - a.numCards);
 
-                    const playerMap = new Map();
-                    allPlayers.forEach(player => playerMap.set(player.id, player.name));
-
-                    const scorersWithNames = scorersArray.map(scorer => ({
-                        ...scorer,
-                        playerName: playerMap.get(scorer.playerId) || 'Unknown Player'
-                    }));
-                    setTopScorers(scorersWithNames);
-
-                } catch (error) {
-                    console.error("Error fetching players for top scorers:", error);
-                    setError("Failed to load player names for top scorers.");
-                    setTopScorers(scorersArray);
-                }
-            } else {
-                setTopScorers(scorersArray);
-            }
+            setCards(cardsWithDetails);
         };
 
-        fetchTopScorers();
-    }, [selectedSeason, API_URL]);
+        fetchCardsData();
+    }, [selectedSeason, API_URL, players]);
 
     const handleSeasonChange = (season) => {
         setSelectedSeason(season);
@@ -167,10 +139,10 @@ function TopScorersStandings({ API_URL }) {
         setSortConfig({ key, direction });
     };
 
-    const sortedTopScorers = useMemo(() => {
-        const sortableScorers = [...topScorers];
+    const sortedCards = useMemo(() => {
+        const sortableCards = [...cards];
         if (sortConfig.key !== null) {
-            sortableScorers.sort((a, b) => {
+            sortableCards.sort((a, b) => {
                 const aValue = a[sortConfig.key];
                 const bValue = b[sortConfig.key];
                 if (typeof aValue === 'number' && typeof bValue === 'number') {
@@ -186,8 +158,8 @@ function TopScorersStandings({ API_URL }) {
                 }
             });
         }
-        return sortableScorers;
-    }, [topScorers, sortConfig]);
+        return sortableCards;
+    }, [cards, sortConfig]);
 
     const getSortIndicator = (key) => {
         if (sortConfig.key === key) {
@@ -198,17 +170,17 @@ function TopScorersStandings({ API_URL }) {
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = sortedTopScorers.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = sortedCards.slice(indexOfFirstItem, indexOfLastItem);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const pageNumbers = [];
-    for (let i = 1; i <= Math.ceil(sortedTopScorers.length / itemsPerPage); i++) {
+    for (let i = 1; i <= Math.ceil(sortedCards.length / itemsPerPage); i++) {
         pageNumbers.push(i);
     }
 
     if (loading) {
-        return <div>Đang tải dữ liệu vua phá lưới...</div>;
+        return <div>Đang tải dữ liệu thẻ phạt...</div>;
     }
 
     if (error) {
@@ -216,8 +188,8 @@ function TopScorersStandings({ API_URL }) {
     }
 
     return (
-        <div className={styles.topScorersStandingsContainer}>
-            <h2 className={styles.topScorersStandingsTitle}>Vua phá lưới</h2>
+        <div className={styles.cardsListContainer}>
+            <h2 className={styles.cardsListTitle}>Danh sách thẻ phạt</h2>
             {availableSeasons.length > 0 && (
                 <SeasonSelector
                     onSeasonChange={handleSeasonChange}
@@ -227,42 +199,44 @@ function TopScorersStandings({ API_URL }) {
             )}
 
             <div className={styles.tableWrapper}>
-                <table className={styles.topScorersTable}>
+                <table className={styles.cardsTable}>
                     <thead>
                         <tr>
                             <th>Hạng</th>
                             <th onClick={() => requestSort('playerName')}>Cầu thủ {getSortIndicator('playerName')}</th>
-                            <th onClick={() => requestSort('teamId')}>Đội {getSortIndicator('teamId')}</th>
-                            <th onClick={() => requestSort('goals')}>Bàn thắng {getSortIndicator('goals')}</th>
+                            <th onClick={() => requestSort('playerType')}>Loại cầu thủ {getSortIndicator('playerType')}</th>
+                            <th onClick={() => requestSort('numCards')}>Số thẻ phạt {getSortIndicator('numCards')}</th>
+                            <th onClick={() => requestSort('numgGames')}>Số trận thi đấu {getSortIndicator('numgGames')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedSeason ? (
                             currentItems.length > 0 ? (
-                                currentItems.map((scorer, index) => (
-                                    <tr key={`${index}-${scorer.playerId}`}>
+                                currentItems.map((card, index) => (
+                                    <tr key={`${index}-${card.playerId}`}>
                                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                        <td className={styles.playerName}>{scorer.playerName}</td>
-                                        <td>{teams[scorer.teamId] || 'Unknown Team'}</td>
-                                        <td>{scorer.goals}</td>
+                                        <td>{card.playerName}</td>
+                                        <td>{card.playerType}</td>
+                                        <td>{card.numCards}</td>
+                                        <td>{card.numGames}</td>
                                     </tr>
                                 ))
                             ) : loading ? (
-                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Đang tải dữ liệu vua phá lưới...</td></tr>
+                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Đang tải dữ liệu thẻ phạt...</td></tr>
                             ) : notFound ? (
-                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Không tìm thấy dữ liệu vua phá lưới cho mùa giải này.</td></tr>
+                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Không tìm thấy dữ liệu thẻ phạt cho mùa giải này.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
+                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
                         )}
                     </tbody>
                 </table>
             </div>
-            {sortedTopScorers.length > itemsPerPage && (
+            {sortedCards.length > itemsPerPage && (
                 <div className={styles.pagination}>
                     <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>
                         Trước
@@ -281,4 +255,4 @@ function TopScorersStandings({ API_URL }) {
     );
 }
 
-export default TopScorersStandings;
+export default CardsList;

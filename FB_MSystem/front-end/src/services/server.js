@@ -17,7 +17,6 @@ let {
   teamsPosition
 } = require("./data");
 
-
 app.use(cors());
 app.use(express.json());
 
@@ -733,7 +732,7 @@ app.get("/api/standings", (req, res) => {
     )
     : [];
 
-  if (!teamsInSeason || teamsInSeason.length === 0) {
+  if (!teamsInSeason || teamsInSeason.length=== 0) {
     return res
       .status(404)
       .json({ message: `Không tìm thấy đội nào cho mùa giải ${season}.` });
@@ -786,7 +785,9 @@ app.get("/api/standings", (req, res) => {
       if (standings[homeTeamId]) standings[homeTeamId].lost++;
     } else {
       if (standings[homeTeamId]) standings[homeTeamId].drawn++;
-      if (standings[homeTeamId]) standings[homeTeamId].points += 1;     
+      if (standings[homeTeamId]) standings[homeTeamId].points += 1;
+      if (standings[awayTeamId]) standings[awayTeamId].drawn++;
+      if (standings[awayTeamId]) standings[awayTeamId].points += 1;
     }
   });
 
@@ -946,14 +947,15 @@ app.post("/api/matches/:matchId/goals", (req, res) => {
   res.status(201).json({ message: "Goal added successfully", goal: newGoal });
 });
 app.put("/api/matches/:matchId/goals/:goalId", (req, res) => {
+
   const { matchId, goalId } = req.params;
   const matchIdNum = parseInt(matchId);
   const goalIdNum = parseInt(goalId);
   const updatedGoalData = {
     time: req.body.time,
     team: req.body.team,
-    player: parseInt(req.body.playerId), // Thay playerName bằng playerId
-    // ... các thông tin khác muốn cập nhật
+    player: parseInt(req.body.player),
+    type: req.body.type,
   };
 
   const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
@@ -972,7 +974,6 @@ app.put("/api/matches/:matchId/goals/:goalId", (req, res) => {
     ...matchesData[matchIndex].goals[goalIndex],
     ...updatedGoalData,
   };
-
   res.json({ message: "Goal updated successfully", goal: matchesData[matchIndex].goals[goalIndex] });
 });
 app.delete("/api/matches/:matchId/goals/:goalId", (req, res) => {
@@ -996,6 +997,101 @@ app.delete("/api/matches/:matchId/goals/:goalId", (req, res) => {
     res.status(404).json({ message: "Goal not found" });
   }
 });
+
+app.get("/api/matches/:matchId/cards/:cardId", (req, res) => {
+  const { matchId, cardId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const cardIdNum = parseInt(cardId);
+
+  const match = matchesData.find((m) => m.matchId === matchIdNum);
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const card = match.cards?.find((c) => c.cardId === cardIdNum);
+  if (!card) {
+    return res.status(404).json({ message: "Card not found" });
+  }
+
+  res.json(card);
+});
+
+// POST a new card to a match
+app.post("/api/matches/:matchId/cards", (req, res) => {
+  const { matchId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const newCard = {
+    cardId: Date.now(),
+    time: req.body.time,
+    type: req.body.type,
+    teamId: parseInt(req.body.teamId),
+    playerId: parseInt(req.body.player),
+  };
+
+  const match = matchesData.find((m) => m.matchId === matchIdNum);
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  match.cards = [...(match.cards || []), newCard];
+  res.status(201).json({ message: "Card added successfully", card: newCard });
+});
+
+// PUT (update) an existing card of a match
+app.put("/api/matches/:matchId/cards/:cardId", (req, res) => {
+  const { matchId, cardId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const cardIdNum = parseInt(cardId);
+  const updatedCardData = {
+    time: req.body.time,
+    type: req.body.type,
+    teamId: parseInt(req.body.teamId),
+    playerId: parseInt(req.body.player),
+  };
+
+  const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
+  if (matchIndex === -1) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const cardIndex = matchesData[matchIndex].cards.findIndex(
+    (c) => c.cardId === cardIdNum
+  );
+  if (cardIndex === -1) {
+    return res.status(404).json({ message: "Card not found" });
+  }
+
+  matchesData[matchIndex].cards[cardIndex] = {
+    ...matchesData[matchIndex].cards[cardIndex],
+    ...updatedCardData,
+  };
+
+  res.json({ message: "Card updated successfully", card: matchesData[matchIndex].cards[cardIndex] });
+});
+
+// DELETE a specific card of a match
+app.delete("/api/matches/:matchId/cards/:cardId", (req, res) => {
+  const { matchId, cardId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const cardIdNum = parseInt(cardId);
+
+  const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
+  if (matchIndex === -1) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const initialLength = matchesData[matchIndex].cards.length;
+  matchesData[matchIndex].cards = matchesData[matchIndex].cards.filter(
+    (c) => c.cardId !== cardIdNum
+  );
+
+  if (matchesData[matchIndex].cards.length < initialLength) {
+    res.json({ message: "Card deleted successfully" });
+  } else {
+    res.status(404).json({ message: "Card not found" });
+  }
+});
+
 app.post('/api/settings', (req, res) => {
   const newSettings = req.body;
   settingsData = newSettings; // Update the settings data
@@ -1024,6 +1120,7 @@ app.get("/api/teams/position", (req, res) =>{
   const teamPosition = teamsPosition[teamId]
   res.json({ teams: teamPosition });
 });
+
 // Start Server
 app.listen(PORT, () => {
 });

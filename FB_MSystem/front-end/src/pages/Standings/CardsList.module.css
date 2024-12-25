@@ -1,0 +1,145 @@
+/* CardsList.module.css */
+.cardsListContainer {
+    padding: 24px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .cardsListContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .cardsListTitle {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    text-align: center;
+    color: #333;
+    border-bottom: 2px solid #007bff; /* Màu vàng cam tương ứng với thẻ vàng */
+    display: inline-block;
+    padding-bottom: 8px;
+  }
+  
+  .tableWrapper {   
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+  
+  .cardsTable {
+    width: 95%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+    background-color: #fdfdfd;
+  }
+  
+  .cardsTable thead {
+    background-color: #007bff; /* Màu vàng cam */
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+  
+  .cardsTable th {
+    padding: 14px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    background-color: #007bff;
+  }
+  
+  .cardsTable th:hover {
+    background-color: #0056b3; /* Màu vàng cam đậm hơn */
+    transition: background-color 0.2s ease;
+  }
+
+  .cardsTable td {
+    padding: 14px;
+    text-align: center;
+    background-color: #ffffff;
+    color: #555;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .cardsTable tbody tr {
+    margin-bottom: 10px;
+    display: table-row;
+  }
+  
+  .cardsTable tbody tr:hover td {
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .yellowCard {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #ffc107;
+    color: #333;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  
+  .redCard {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #dc3545;
+    color: #ffffff;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+  }
+  
+  .pagination button {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    max-width: 100px;
+  }
+  
+  .pagination button:hover {
+    background-color: #007bff;
+    color: #ffffff;
+    border-color: #007bff;
+  }
+  
+  .pagination button:disabled {
+    color: #aaa;
+    background-color: #f8f9fa;
+    border-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  .pagination button.active {
+    background-color: #007bff;
+    color: #ffffff;
+    border-color: #007bff;
+  }
+  
+  .pagination button:first-child,
+  .pagination button:last-child {
+    font-weight: 700;
+  }
