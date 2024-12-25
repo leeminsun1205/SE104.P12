@@ -34,7 +34,7 @@ function LookUpSeason({ API_URL }) {
     useEffect(() => {
         if (!setSelectedTeam) {
             setStandings([]);
-            setSortConfig({ key: season, direction: 'ascending' });
+            setSortConfig({ key: 'season', direction: 'ascending' });
             setNotFound(false);
             return;
         }
