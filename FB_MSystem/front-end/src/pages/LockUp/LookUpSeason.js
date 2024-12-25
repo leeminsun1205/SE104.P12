@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import TeamSelector from "../../components/TeamSelector.js/TeamSelector";
 import styles from "./LookUpSeason.module.css";
 
 function LookUpSeason({ API_URL }) {
