@@ -76,8 +76,8 @@ function LookUpSeason({ API_URL }) {
         fetchStandings();
     }, [selectedTeam]);
 
-    const handleTeamChange = (season) => {
-        console.log("Mùa giải được chọn:", season); // Debug season selection
+    const handleTeamChange = (team) => {
+        console.log("Đội được chọn:", team); // Debug team selection
         setSelectedTeam(season);
     };
 
