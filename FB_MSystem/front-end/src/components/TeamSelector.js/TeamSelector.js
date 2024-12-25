@@ -39,7 +39,7 @@ function TeamSelector({ teams, onTeamsChange, selectedTeam }) {
     return (
       <div>
         <select value={selectedTeam} onChange={(e) => onTeamsChange(e.target.value)}>
-          <option value="">Chọn mùa giải</option>
+          <option value="">Chọn đội bóng</option>
           {filteredTeams.map(team => (
             <option key={team.id} value={team.id}>
               {team.name}
