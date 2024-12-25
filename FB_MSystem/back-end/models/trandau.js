@@ -10,34 +10,18 @@ const TranDau = sequelize.define('TranDau', {
     MaVongDau: {
         type: DataTypes.CHAR(15),
         allowNull: false,
-        references: {
-            model: 'VongDau',
-            key: 'MaVongDau',
-        },
     },
     MaDoiBongNha: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     MaDoiBongKhach: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     MaSan: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'SanThiDau',
-            key: 'MaSan',
-        },
     },
     NgayThiDau: {
         type: DataTypes.DATEONLY,
@@ -97,14 +81,6 @@ TranDau.associate = (models) => {
         foreignKey: 'MaSan',
         as: 'SanThiDau',
         onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-    });
-
-    // Một trận đấu có thể có nhiều bàn thắng
-    TranDau.hasMany(models.BanThang, {
-        foreignKey: 'MaTranDau',
-        as: 'BanThang',
-        onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     });
 };

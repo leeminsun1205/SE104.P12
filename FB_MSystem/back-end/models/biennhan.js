@@ -11,10 +11,6 @@ const BienNhan = sequelize.define('BienNhan', {
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'DoiBong', 
-            key: 'MaDoiBong',
-        },
     },
     LePhi: {
         type: DataTypes.BIGINT,

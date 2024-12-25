@@ -6,19 +6,11 @@ const UtXepHang = sequelize.define('UtXepHang', {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
     },
     MaLoaiUuTien: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'LoaiUuTien',
-            key: 'MaLoaiUuTien',
-        },
     },
     MucDoUuTien: {
         type: DataTypes.TINYINT,

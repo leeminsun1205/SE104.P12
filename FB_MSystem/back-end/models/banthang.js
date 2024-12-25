@@ -10,34 +10,18 @@ const BanThang = sequelize.define('BanThang', {
     MaTranDau: {
         type: DataTypes.CHAR(20),
         allowNull: false,
-        references: {
-            model: 'TranDau',
-            key: 'MaTranDau',
-        },
     },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     MaCauThu: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'CauThu',
-            key: 'MaCauThu',
-        },
     },
     MaLoaiBanThang: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'LoaiBanThang',
-            key: 'MaLoaiBanThang',
-        },
     },
     ThoiDiem: {
         type: DataTypes.TINYINT,

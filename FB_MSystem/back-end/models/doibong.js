@@ -20,10 +20,6 @@ const DoiBong = sequelize.define(
         MaSan: {
             type: DataTypes.CHAR(10),
             allowNull: false,
-            references: {
-                model: 'SanThiDau',
-                key: 'MaSan',
-            },
         },
         TenHLV: {
             type: DataTypes.STRING(50),

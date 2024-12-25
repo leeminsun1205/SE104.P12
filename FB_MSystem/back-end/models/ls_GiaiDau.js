@@ -6,10 +6,6 @@ const LichSuGiaiDau = sequelize.define('LichSuGiaiDau', {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     SoLanThamGia: {
         type: DataTypes.TINYINT,
@@ -47,8 +43,6 @@ LichSuGiaiDau.associate = (models) => {
     LichSuGiaiDau.belongsTo(models.DoiBong, {
         foreignKey: 'MaDoiBong',
         as: 'DoiBong',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     });
 };
 

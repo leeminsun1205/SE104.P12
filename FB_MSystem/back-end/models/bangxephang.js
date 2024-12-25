@@ -4,69 +4,65 @@ const sequelize = require('../config/database');
 const BangXepHang = sequelize.define('BangXepHang', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
-        allowNull: false,
         primaryKey: true,
-        references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
+        allowNull: false,
     },
     MaVongDau: {
         type: DataTypes.CHAR(15),
-        allowNull: false,
         primaryKey: true,
-        references: {
-            model: 'VongDau',
-            key: 'MaVongDau',
-        },
+        allowNull: false,
     },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
-        allowNull: false,
         primaryKey: true,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
+        allowNull: false,
     },
     SoTran: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     SoTranThang: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     SoTranHoa: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     SoTranThua: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     SoBanThang: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     SoBanThua: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     DiemSo: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
     HieuSo: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        defaultValue: 0,
         validate: { min: 0 },
     },
 }, {
@@ -76,28 +72,23 @@ const BangXepHang = sequelize.define('BangXepHang', {
 
 // Thiết lập quan hệ với các bảng khác
 BangXepHang.associate = (models) => {
-    // Một bảng xếp hạng thuộc về một mùa giải
-    BangXepHang.belongsTo(models.MuaGiai, {
-        foreignKey: 'MaMuaGiai',
-        as: 'MuaGiai',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
-
-    // Một bảng xếp hạng thuộc về một vòng đấu
-    BangXepHang.belongsTo(models.VongDau, {
-        foreignKey: 'MaVongDau',
-        as: 'VongDau',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
-
-    // Một bảng xếp hạng thuộc về một đội bóng
+    // Liên kết với bảng DOIBONG (thông qua MaDoiBong)
     BangXepHang.belongsTo(models.DoiBong, {
         foreignKey: 'MaDoiBong',
         as: 'DoiBong',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
+    });
+
+    // Liên kết với bảng MUAGIAI (thông qua MaMuaGiai)
+    BangXepHang.belongsTo(models.MuaGiai, {
+        foreignKey: 'MaMuaGiai',
+        as: 'MuaGiai',
+    });
+
+    // Liên kết với bảng VONGDAU (thông qua MaMuaGiai và MaVongDau)
+    BangXepHang.belongsTo(models.VongDau, {
+        foreignKey: 'MaVongDau',
+        targetKey: 'MaVongDau',
+        as: 'VongDau',
     });
 };
 

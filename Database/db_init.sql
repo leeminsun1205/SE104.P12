@@ -118,12 +118,12 @@ CREATE TABLE LOAIBANTHANG (
 );
 
 CREATE TABLE BANTHANG (
-	MaBanThang CHAR(10) NOT NULL,
-	MaTranDau CHAR(20) NOT NULL,
-	MaDoiBong CHAR(10) NOT NULL,
-	MaCauThu CHAR(10) NOT NULL,
-	MaLoaiBanThang CHAR(10) NOT NULL,
-	ThoiDiem TINYINT NOT NULL,
+    MaBanThang CHAR(10) NOT NULL,
+    MaTranDau CHAR(20) NOT NULL,
+    MaDoiBong CHAR(10) NOT NULL,
+    MaCauThu CHAR(10) NOT NULL,
+    MaLoaiBanThang CHAR(10) NOT NULL,
+    ThoiDiem TINYINT NOT NULL,
     CONSTRAINT CK_ThoiDiem CHECK (ThoiDiem > 0 AND ThoiDiem <= 90),
     CONSTRAINT PK_BANTHANG PRIMARY KEY (MaBanThang),
     CONSTRAINT FK_BANTHANG_TRANDAU FOREIGN KEY (MaTranDau) REFERENCES TRANDAU(MaTranDau),
@@ -133,20 +133,19 @@ CREATE TABLE BANTHANG (
 );
 
 CREATE TABLE BANGXEPHANG (
-	MaMuaGiai CHAR(10) NOT NULL,
-	MaVongDau CHAR (15) NOT NULL,
-	MaDoiBong CHAR(10) NOT NULL,
-	SoTran TINYINT NOT NULL,
-	SoTranThang	TINYINT NOT NULL,
-	SoTranHoa TINYINT NOT NULL,
-	SoTranThua TINYINT NOT NULL,
-	SoBanThang TINYINT NOT NULL,
-	SoBanThua TINYINT NOT NULL,
-    DiemSo TINYINT NOT NULL,
-	HieuSo TINYINT NOT NULL,
-    CONSTRAINT CK_SoTran_BXH CHECK (SoTran = SoTranThang + SoTranHoa + SoTranThua),
-    CONSTRAINT CK_HieuSo_BXH CHECK (HieuSo = SoBanThang - SoBanThua),
+    MaMuaGiai CHAR(10) NOT NULL,
+    MaVongDau CHAR (15) NOT NULL,
+    MaDoiBong CHAR(10) NOT NULL,
+    SoTran TINYINT NOT NULL DEFAULT 0,
+	SoTranThang TINYINT NOT NULL DEFAULT 0,
+	SoTranHoa TINYINT NOT NULL DEFAULT 0,
+	SoTranThua TINYINT NOT NULL DEFAULT 0,
+	SoBanThang TINYINT NOT NULL DEFAULT 0,
+	SoBanThua TINYINT NOT NULL DEFAULT 0,
+	DiemSo TINYINT NOT NULL DEFAULT 0,
+	HieuSo TINYINT NOT NULL DEFAULT 0,
     CONSTRAINT PK_BANGXEPHANG PRIMARY KEY (MaMuaGiai, MaVongDau, MaDoiBong),
+    CONSTRAINT FK_BANGXEPHANG_DOIBONG FOREIGN KEY (MaDoiBong) REFERENCES DOIBONG(MaDoiBong),
     CONSTRAINT FK_BANGXEPHANG_MUAGIAI FOREIGN KEY (MaMuaGiai) REFERENCES MUAGIAI(MaMuaGiai),
     CONSTRAINT FK_BANGXEPHANG_VONGDAU FOREIGN KEY (MaVongDau) REFERENCES VONGDAU(MaVongDau)
 );
@@ -402,5 +401,25 @@ VALUES
 ('MG2025_1', 'DB010', 'CT000028'),
 ('MG2025_1', 'DB010', 'CT000029'),
 ('MG2025_1', 'DB010', 'CT000030');
+
+INSERT INTO LOAIBANTHANG (MaLoaiBanThang, TenLoaiBanThang, MoTa)
+VALUES
+    ('LBT01', 'Bình thường', 'Bàn thắng ghi bình thường'),
+    ('LBT02', 'Phạt đền', 'Bàn thắng từ quả phạt đền'),
+    ('LBT03', 'Phản lưới nhà', 'Bàn thắng phản lưới nhà');
+
+INSERT INTO LOAIUUTIEN (MaLoaiUuTien, TenLoaiUuTien)
+VALUES
+    ('LUT01', 'Hiệu số'),
+    ('LUT02', 'Số bàn thắng'),
+    ('LUT03', 'Đối đầu');
+
+INSERT INTO LOAITHEPHAT (MaLoaiThePhat, TenLoaiThePhat, MoTa)
+VALUES
+    ('TP01', 'Thẻ vàng', 'Thẻ cảnh cáo cầu thủ'),
+    ('TP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
+    ('TP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
+
+
 SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
 select * from vongdau

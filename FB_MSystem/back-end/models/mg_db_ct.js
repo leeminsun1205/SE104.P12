@@ -6,28 +6,16 @@ const MgDbCt = sequelize.define('MgDbCt', {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
     },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     MaCauThu: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'CauThu',
-            key: 'MaCauThu',
-        },
     },
 }, {
     tableName: 'MG_DB_CT',

@@ -5,26 +5,16 @@ const VuaPhaLuoi = sequelize.define('VuaPhaLuoi', {
     MaCauThu: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'CauThu',
-            key: 'MaCauThu',
-        },
+        primaryKey: true,
     },
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
+        primaryKey: true,
     },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     SoTran: {
         type: DataTypes.TINYINT,
@@ -39,7 +29,6 @@ const VuaPhaLuoi = sequelize.define('VuaPhaLuoi', {
 }, {
     tableName: 'VUAPHALUOI',
     timestamps: false,
-    primaryKey: ['MaCauThu', 'MaMuaGiai'], 
 });
 
 // Thiết lập quan hệ với các bảng khác
@@ -56,6 +45,14 @@ VuaPhaLuoi.associate = (models) => {
     VuaPhaLuoi.belongsTo(models.MuaGiai, {
         foreignKey: 'MaMuaGiai',
         as: 'MuaGiai',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Thuộc về một đội bóng
+    VuaPhaLuoi.belongsTo(models.DoiBong, {
+        foreignKey: 'MaDoiBong',
+        as: 'DoiBong',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     });

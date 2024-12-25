@@ -4,19 +4,13 @@ const sequelize = require('../config/database');
 const ThanhTich = sequelize.define('ThanhTich', {
     MaDoiBong: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'DoiBong',
-            key: 'MaDoiBong',
-        },
     },
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
+        primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
     },
     SoTranDaThiDau: {
         type: DataTypes.TINYINT,
@@ -46,7 +40,6 @@ const ThanhTich = sequelize.define('ThanhTich', {
 }, {
     tableName: 'THANHTICH',
     timestamps: false,
-    primaryKey: ['MaDoiBong', 'MaMuaGiai'], // Tổ hợp khóa chính
 });
 
 // Thiết lập quan hệ với các bảng khác

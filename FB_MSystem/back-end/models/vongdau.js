@@ -10,10 +10,6 @@ const VongDau = sequelize.define('VongDau', {
     MaMuaGiai: {
         type: DataTypes.CHAR(10),
         allowNull: false,
-        references: {
-            model: 'MuaGiai',
-            key: 'MaMuaGiai',
-        },
     },
     LuotDau: {
         type: DataTypes.BOOLEAN, // 0: Lượt đi, 1: Lượt về
@@ -52,14 +48,6 @@ VongDau.associate = (models) => {
     VongDau.belongsTo(models.MuaGiai, {
         foreignKey: 'MaMuaGiai',
         as: 'MuaGiai',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    });
-
-    // Một vòng đấu có nhiều trận đấu
-    VongDau.hasMany(models.TranDau, {
-        foreignKey: 'MaVongDau',
-        as: 'TranDau',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     });
