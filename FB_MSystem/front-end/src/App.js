@@ -34,7 +34,9 @@ import SeasonDetails from './pages/Seasons/SeasonDetails';
 import CreateSeason from './pages/CreateNew/CreateSeason';
 import SeasonList from './pages/Seasons/SeasonList';
 import TopScorers from './pages/TopScorers/TopScorers';
-import TopScorersStandings from './pages/Standings/TopScorersStandings'; // Import the new component
+import TopScorersStandings from './pages/Standings/TopScorersStandings';
+import CombinedStandingsPage from './pages/Standings/CombinedStandingsPage'; 
+import SeasonalStandings from './pages/SeasonalStandings/SeasonalStandings'; 
 import LookUp from './pages/LookUp/LookUp';
 import LookUpMatch from './pages/LookUp/LookUpMatch';
 import LookUpSeason from './pages/LookUp/LookUpSeason';
@@ -246,11 +248,13 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/seasons" element={<SeasonList API_URL={API_URL} />} />
             <Route path="/teams/:teamId/other-matches" element={<OtherLeagueMatches />} /> 
             <Route path="/seasons/:seasonId/top-scorers" element={<TopScorers API_URL={API_URL} />} />
-            <Route path="/top-scorers" element={<TopScorersStandings API_URL={API_URL} />} /> {/* Add the new route */}
+            <Route path="/top-scorers" element={<TopScorersStandings API_URL={API_URL} />} />
+            <Route path="/seasons/:seasonId/standings" element={<SeasonalStandings API_URL={API_URL} />} />
+            <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
             <Route path="/lookup" element={<LookUp />} />
-            <Route path="/lookup/match" element={<LookUpMatch />} />
-            <Route path="/lookup/season" element={<LookUpSeason />} />
-            <Route path="/lookup/achievements" element={<LookUpAchievements />} />
+            <Route path="/lookup/match" element={<LookUpMatch API_URL={API_URL}/>} />
+            <Route path="/lookup/season" element={<LookUpSeason API_URL={API_URL}/>} />
+            <Route path="/lookup/achievements" element={<LookUpAchievements API_URL={API_URL}/>} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

@@ -1,5 +1,3 @@
-// --- START OF FILE Sidebar.js ---
-
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
@@ -86,7 +84,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-futbol"></i> Trận đấu
             </NavLink>
             <NavLink
-              to="/standings"
+              to="/combined-standings"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
@@ -108,6 +106,14 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               }
             >
               <i className="fas fa-file-invoice"></i> Biên nhận lệ phí
+            </NavLink>
+            <NavLink
+              to="/lookup"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+              }
+            >
+              <i className="fas fa-search"></i> Tra cứu
             </NavLink>
           </div>
 

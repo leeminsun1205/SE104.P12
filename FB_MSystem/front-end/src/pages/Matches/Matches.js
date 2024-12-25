@@ -10,6 +10,7 @@ const Matches = ({ API_URL }) => {
   const [availableSeasons, setAvailableSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState("");
   const [selectedRound, setSelectedRound] = useState("");
+  const [players, setPlayers] = useState({}); // Initialize players state here
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
@@ -69,8 +70,23 @@ const Matches = ({ API_URL }) => {
       }
     };
 
+    const fetchPlayersForSeason = async () => {
+      try {
+        const response = await fetch(`${API_URL}/players`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Assuming the API returns players grouped by season and team
+        setPlayers(data);
+      } catch (error) {
+        console.error("Error fetching players:", error);
+      }
+    };
+
     if (selectedSeason) {
       fetchMatches();
+      fetchPlayersForSeason(); // Fetch players when season changes
     }
   }, [API_URL, selectedSeason]);
 
@@ -371,12 +387,13 @@ const Matches = ({ API_URL }) => {
         <div className={styles.modalOverlay}> {/* Lớp overlay */}
           <div className={styles.modalContent}>
             <h3 className={styles.modalTitle}>Sửa trận đấu</h3>
-            {/* Form for editing match details */}
+            {/* Pass players data as a prop to EditMatchForm */}
             <EditMatchForm
               match={editingMatch}
               onSave={handleSaveEditedMatch}
               onCancel={handleCloseEditModal}
               API_URL={API_URL}
+              players={players}
             />
           </div>
         </div>
@@ -386,9 +403,11 @@ const Matches = ({ API_URL }) => {
 };
 
 // Create a separate component for the Edit Match Form
-const EditMatchForm = ({ match, onSave, onCancel, API_URL }) => {
+const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
   const [editedMatch, setEditedMatch] = useState({ ...match });
   const [availableTeams, setAvailableTeams] = useState([]);
+  const [availablePlayers, setAvailablePlayers] = useState([]); // To select goal scorers
+  const [goals, setGoals] = useState(match.goals || []); // State for managing goals
   const [availableStadiums, setAvailableStadiums] = useState([]);
 
   useEffect(() => {
@@ -405,6 +424,18 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL }) => {
       }
     };
 
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch(`${API_URL}/players`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAvailablePlayers(data);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách cầu thủ:", error);
+      }
+    };
     const fetchStadiums = async () => {
       try {
         const response = await fetch(`${API_URL}/stadiums`);
@@ -419,6 +450,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL }) => {
     };
 
     fetchTeams();
+    // fetchPlayers(); // No need to fetch players here, it's passed as props
     fetchStadiums();
   }, [API_URL]);
 
@@ -430,9 +462,57 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL }) => {
     }));
   };
 
+  const handleGoalChange = (index, event) => {
+    const { name, value } = event.target;
+    const newGoals = [...goals];
+    newGoals[index][name] = name === 'player' ? parseInt(value) : value;
+    setGoals(newGoals);
+  };
+
+  const addGoal = () => {
+    setGoals([...goals, { time: '', team: '', player: '' }]);
+  };
+
+  const removeGoal = (index) => {
+    setGoals(goals.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(editedMatch);
+    // Include the goals in the updated match data
+    onSave({ ...editedMatch, goals });
+  };
+
+  useEffect(() => {
+    setGoals(match.goals || []);
+  }, [match.goals]);
+
+  const TeamSelect = ({ value, onChange, homeTeamId, awayTeamId }) => (
+    <select name="team" value={value} onChange={onChange}>
+      <option value="">Chọn đội</option>
+      {availableTeams.map(team => {
+        if (team.id === parseInt(homeTeamId)) {
+          return <option key={team.id} value={team.id}>{team.name} (Home)</option>;
+        } else if (team.id === parseInt(awayTeamId)) {
+          return <option key={team.id} value={team.id}>{team.name} (Away)</option>;
+        }
+        return null;
+      })}
+    </select>
+  );
+
+  const PlayerSelect = ({ value, onChange, teamId }) => {
+    const playersInTeam = Object.values(players) // Iterate through seasons
+      .flatMap(seasonPlayers => Object.values(seasonPlayers)) // Iterate through teams in a season
+      .flat() // Flatten the array of players
+      .filter(player => player && parseInt(player.teamId) === parseInt(teamId));
+
+    return (
+      <select name="player" value={value} onChange={onChange}>
+        <option value="">Chọn cầu thủ</option>
+        {playersInTeam.map(player => <option key={player.id} value={player.id}>{player.name}</option>)}
+      </select>
+    );
   };
 
   return (
@@ -472,6 +552,35 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL }) => {
           ))}
         </select>
       </div>
+
+      <div className={styles.formGroup}>
+        <label>Bàn thắng:</label>
+        {goals.map((goal, index) => (
+          <div key={index} className={styles.goalEntry}>
+            <input
+              type="text"
+              name="time"
+              placeholder="Phút"
+              value={goal.time}
+              onChange={(e) => handleGoalChange(index, e)}
+            />
+            <TeamSelect
+              value={goal.team}
+              onChange={(e) => handleGoalChange(index, e)}
+              homeTeamId={editedMatch.homeTeamId}
+              awayTeamId={editedMatch.awayTeamId}
+            />
+            <PlayerSelect
+              value={goal.player}
+              onChange={(e) => handleGoalChange(index, e)}
+              teamId={goal.team}
+            />
+            <button type="button" onClick={() => removeGoal(index)}>Xóa</button>
+          </div>
+        ))}
+        <button type="button" onClick={addGoal}>Thêm bàn thắng</button>
+      </div>
+
       <div className={styles.formActions}>
         <button type="submit" className={styles.saveButton}>Lưu</button>
         <button type="button" className={styles.cancelButton} onClick={onCancel}>Hủy</button>

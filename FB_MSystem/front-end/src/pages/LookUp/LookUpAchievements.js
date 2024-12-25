@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TeamSelector from "../../components/TeamSelector.js/TeamSelector";
 import styles from "./LookUpAchievements.module.css";
 
@@ -11,7 +11,8 @@ function LookUpAchievements({ API_URL }) {
     const [error, setError] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [achievements, setAchievements] = useState([]);
-    
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
     useEffect(() => {
     const fetchTeams = async () => {
         try {
@@ -31,7 +32,7 @@ function LookUpAchievements({ API_URL }) {
     }, [API_URL]);
 
     useEffect(() => {
-        if (!setSelectedTeam) {
+        if (!selectedTeam) {
             setAchievements([]);
             setNotFound(false);
             return;
@@ -55,10 +56,8 @@ function LookUpAchievements({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("Dữ liệu giải đấu từ API:", data); // Debug API response
-                // Lọc các phần tử có posiotion = 1
-                const result = data.filter(team => team.posiotion === 1);
-
-                // Liệt kê tên các phần tử
+                // Access the array from the 'teams' property
+                const result = data.teams.filter(team => team.posiotion === 1);
                 const seasonsWinner = result.map(team => team.season);
                 setAchievements(seasonsWinner);
             } catch (error) {
@@ -71,24 +70,57 @@ function LookUpAchievements({ API_URL }) {
         };
 
         fetchStandings();
-    }, [selectedTeam]);
+    }, [selectedTeam, API_URL]);
 
-    const handleTeamChange = (team) => {
-        console.log("Đội được chọn:", team); // Debug team selection
-        setSelectedTeam(season);
+    const handleTeamChange = (teamId) => {
+        console.log("Đội được chọn:", teamId); // Debug team selection
+        setSelectedTeam(teamId);
     };
 
-    const handleRowClick = (seasonId, teamId) => {
-        console.log(`handleRowClick Season ID: ${seasonId}, - Team ID: ${teamId}`); // Debug handleRowClick
-        navigate(`/teams/${teamId}?season=${seasonId}`);
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
     };
+
+    const sortedAchievements = useMemo(() => {
+        const sortableAchievements = [...achievements];
+        if (sortConfig.key !== null) {
+            sortableAchievements.sort((a, b) => {
+                if (a < b) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a > b) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableAchievements;
+    }, [achievements, sortConfig]);
+
+    const getSortIndicator = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ? "↑" : "↓";
+        }
+        return "";
+    };
+
+    const handleRowClick = (seasonId) => {
+        console.log(`handleRowClick Season ID: ${seasonId}`); // Debug handleRowClick
+        // Assuming you want to navigate to the season details page
+        navigate(`/season/${seasonId}`);
+    };
+
     return (
         <div className={styles.standingsContainer}>
             <h2 className={styles.standingsTitle}>Thành tích</h2>
             {availableTeams.length > 0 && (
                 <TeamSelector
                     onTeamsChange={handleTeamChange}
-                    teams={availableTeams.map(teams => ({ id: teams.id, name: teams.name }))}
+                    teams={availableTeams.map(team => ({ id: team.id, name: team.name }))}
                     selectedTeam={selectedTeam}
                     id="teams"
                 />
@@ -98,42 +130,35 @@ function LookUpAchievements({ API_URL }) {
                 <table className={styles.standingsTable}>
                     <thead>
                         <tr>
-                            <th onClick={() => requestSort('season')}>Mùa giải {getSortIndicator('rank')}</th>
-                            <th onClick={() => requestSort('win')}>Thắng {getSortIndicator('win')}</th>
-                            <th onClick={() => requestSort('loss')}>Thua {getSortIndicator('loss')}</th>
-                            <th onClick={() => requestSort('draw')}>Hòa {getSortIndicator('draw')}</th>
-                            <th onClick={() => requestSort('difference')}>Hiệu số {getSortIndicator('difference')}</th>
-                            <th onClick={() => requestSort('point')}>Điểm {getSortIndicator('point')}</th>
-                            <th onClick={() => requestSort('posiotion')}>Hạng {getSortIndicator('posiotion')}</th>
-                            <th onClick={() => requestSort('winner')}>Vô địch {getSortIndicator('winner')}</th>
+                            <th onClick={() => requestSort('season')}>Mùa giải {getSortIndicator('season')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedTeam ? (
-                            sortedStandings.length > 0 ? (
-                                sortedStandings.map((item) => {
-                                    console.log("Mùa giải trong map:", item); // Debug object in map
+                            sortedAchievements.length > 0 ? (
+                                sortedAchievements.map((season) => {
+                                    console.log("Mùa giải trong map:", season); // Debug object in map
                                     return (
                                         <tr
-                                            key={`${item.season}`}
-                                            onClick={() => handleRowClick(item.season, selectedSeason)}
+                                            key={season}
+                                            onClick={() => handleRowClick(season)}
                                             className={styles.standingsRow}
                                         >
-                                            <td>{item.season}</td>
+                                            <td>{season}</td>
                                         </tr>
                                     );
                                 })
                             ) : loading ? (
-                                <tr><td colSpan="7" style={{ textAlign: 'center' }}>Đang tải dữ liệu lịch sử giải...</td></tr>
-                            ) : notFound ? ( // Changed colspan to 9
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào đội vô địch.</td></tr>
+                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Đang tải dữ liệu thành tích...</td></tr>
+                            ) : notFound ? (
+                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Không tìm thấy thành tích nào cho đội này.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
+                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Không có dữ liệu thành tích.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Vui lòng chọn một đội</td></tr>
+                            <tr><td colSpan="1" style={{ textAlign: 'center' }}>Vui lòng chọn một đội</td></tr>
                         )}
                     </tbody>
                 </table>
