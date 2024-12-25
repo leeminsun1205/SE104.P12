@@ -278,7 +278,7 @@ function MatchDetails({API_URL}){
           <span className={styles.label}>Mùa giải:</span> {match.season}
         </div>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Vòng đấu:</span> {match.round}
+          <span className={styles.label}>Vòng đấu:</span> {match.roundName}
         </div>
         <div className={styles.infoItem}>
           <span className={styles.label}>Ngày:</span> {match.date}

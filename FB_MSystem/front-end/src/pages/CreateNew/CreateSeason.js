@@ -137,10 +137,10 @@ function CreateSeason({ API_URL }) {
                     />
                     {errors.endDate && <p className={styles['error-message']}>{errors.endDate}</p>}
                 </div>
-                <div className="create-container">
-                    <button type="submit" className={styles['submit-button']}>Tạo mùa giải</button>
+                <div className={styles["create-container"]}>
+                    <button className={styles['submit-button']} type="submit" >Tạo mùa giải</button>
                     <button type="button" onClick={handleCancel} className={styles['cancel-button']}>Hủy</button>
-                    <button type="button" className={styles['reset-button']} onClick={handleReset}>Reset</button>
+                    <button className={styles['reset-button']} type="button" onClick={handleReset}>Reset</button>
                 </div>
             </form>
         </div>

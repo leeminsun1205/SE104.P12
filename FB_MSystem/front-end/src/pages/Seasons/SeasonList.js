@@ -1,7 +1,7 @@
 // src/pages/Seasons/SeasonList.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './SeasonList.module.css'; 
+import styles from './SeasonList.module.css';
 
 function SeasonsList({ API_URL }) {
     const [seasons, setSeasons] = useState([]);
@@ -39,8 +39,12 @@ function SeasonsList({ API_URL }) {
     }
 
     return (
+
         <div className={styles['seasons-list-container']}>
             <h2>Danh sách các mùa giải</h2>
+            <Link to="/create/season" className="add-player-button">
+                Thêm mùa giải mới
+            </Link>
             {seasons.length === 0 ? (
                 <p>Không có mùa giải nào được tạo.</p>
             ) : (

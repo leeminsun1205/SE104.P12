@@ -5,8 +5,6 @@ const router = express.Router();
 
 router.get('/vong-dau/:MaVongDau', ds_ThePhatController.getByVongDau); // Lấy danh sách thẻ phạt theo vòng đấu
 router.get('/mua-giai/:MaMuaGiai', ds_ThePhatController.getByMuaGiai); // Lấy danh sách thẻ phạt theo mùa giải
-router.post('/', ds_ThePhatController.create);
-router.put('/update/:macauthu/:mavongdau', ds_ThePhatController.update);
-router.delete('/delete/:macauthu/:mavongdau', ds_ThePhatController.delete);
+router.put('/update', ds_ThePhatController.update);
 
 module.exports = router;

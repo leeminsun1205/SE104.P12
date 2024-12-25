@@ -162,7 +162,7 @@ function CreateStadium({ onAddStadium }) {
                     />
                     {errors.standard && <p className={styles['error-message']}>{errors.standard}</p>}
                 </div>
-                <div className="create-container">
+                <div className={styles["create-container"]}>
                     <button type="submit" className={styles['submit-button']}>Thêm sân vận động</button>
                     <button type="button" onClick={handleCancel} className={styles['cancel-button']}>Hủy</button>
                     <button type="button" className={styles['reset-button']} onClick={handleReset}>Reset</button>

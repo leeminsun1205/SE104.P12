@@ -82,10 +82,9 @@ button:hover {
   margin-top: 2rem;
 }
 .success-message {
-  color: green; /* Sets the text color to green */
-  background-color: #d4edda; /* Optional: light green background */
-  border: 1px solid #c3e6cb; /* Optional: green border */
-  padding: 10px;
+  color: green; 
+  background-color: #d4edda; 
+  border: 1px solid #c3e6cb; 
   margin-bottom: 10px;
-  border-radius: 4px; /* Optional: rounded corners */
+  border-radius: 4px;
 }
