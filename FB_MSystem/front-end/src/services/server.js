@@ -494,6 +494,76 @@ app.post("/api/teams/available", (req, res) => {
     .status(201)
     .json({ message: "Team created successfully", team: { ...newTeam, stadium: stadiums.find(s => s.stadiumId === newTeam.stadiumId) } });
 });
+let teamsPosition = {
+  1: [
+    {
+      season: "2022-2023",
+      win: 2,
+      loss: 0,
+      draw: 0,
+      difference: 2,
+      point: 6,
+      posiotion: 1,
+    },
+    {
+      season: "2023-2024",
+      win: 1,
+      loss: 1,
+      draw: 0,
+      point: 3,
+      difference: 1,
+      posiotion: 2,
+    },
+  ],
+  2: [
+    {
+      season: "2022-2023",
+      win: 1,
+      loss: 1,
+      draw: 0,
+      difference: 1,
+      point: 3,
+      posiotion: 2,
+    },
+    {
+      season: "2023-2024",
+      win: 0,
+      loss: 1,
+      draw: 1,
+      point: 1,
+      difference: -2,
+      posiotion: 3,
+    },
+  ],
+  3: [
+    {
+      season: "2022-2023",
+      win: 0,
+      loss: 2,
+      draw: 0,
+      difference: -3,
+      point: 0,
+      posiotion: 3,
+    },
+    {
+      season: "2023-2024",
+      win: 1,
+      loss: 0,
+      draw: 1,
+      point: 4,
+      difference: 1,
+      posiotion: 1,
+    },
+  ],
+};
+app.get("/api/teams/position", (req, res) =>{
+  const teamId = req.query.teamId;
+  if (!teamId) {
+    return res.status(402).json({ message: "teamId not found" });
+  }
+  const teamPosition = teamsPosition[teamId]
+  res.json({ teams: teamPosition });
+});
 
 app.get("/api/teams/available", (req, res) => {
   const availableTeamsOnly = availableTeams.filter((team) => !team.season).map(team => ({
@@ -1017,7 +1087,8 @@ app.get("/api/standings", (req, res) => {
 });
 
 app.get("/api/matches", (req, res) => {
-  const { season, team } = req.query;
+  const season = req.query.season;
+  const team = req.query.team;
   let filteredMatches = matchesData;
 
   if (season) {
