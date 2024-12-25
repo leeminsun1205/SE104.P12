@@ -140,6 +140,9 @@ function Standings({ API_URL }) {
                             <th onClick={() => requestSort('won')}>Thắng {getSortIndicator('won')}</th>
                             <th onClick={() => requestSort('drawn')}>Hòa {getSortIndicator('drawn')}</th>
                             <th onClick={() => requestSort('lost')}>Thua {getSortIndicator('lost')}</th>
+                            <th onClick={() => requestSort('goalsFor')}>Bàn thắng {getSortIndicator('goalsFor')}</th>
+                            <th onClick={() => requestSort('goalsAgainst')}>Bàn thua {getSortIndicator('goalsAgainst')}</th>
+                            <th onClick={() => requestSort('goalDifference')}>Hiệu số {getSortIndicator('goalDifference')}</th>
                             <th onClick={() => requestSort('points')}>Điểm {getSortIndicator('points')}</th>
                         </tr>
                     </thead>
@@ -160,18 +163,21 @@ function Standings({ API_URL }) {
                                             <td>{team.won}</td>
                                             <td>{team.drawn}</td>
                                             <td>{team.lost}</td>
+                                            <td>{team.goalsFor}</td>
+                                            <td>{team.goalsAgainst}</td>
+                                            <td>{team.goalDifference}</td>
                                             <td>{team.points}</td>
                                         </tr>
                                     );
                                 })
                             ) : loading ? (
                                 <tr><td colSpan="7" style={{ textAlign: 'center' }}>Đang tải dữ liệu bảng xếp hạng...</td></tr>
-                            ) : notFound ? (
-                                <tr><td colSpan="7" style={{ textAlign: 'center' }}>Không tìm thấy bảng xếp hạng cho mùa giải này.</td></tr>
+                            ) : notFound ? ( // Changed colspan to 9
+                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không tìm thấy bảng xếp hạng cho mùa giải này.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="7" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="7" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
+                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
                             )
                         ) : (
                             <tr><td colSpan="7" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>

@@ -96,14 +96,29 @@ let seasons = [
     startDate: "2023-08-01",
     endDate: "2024-05-30",
     teams: [1, 2, 3, 4, 5],
+    rounds: [
+      {
+        roundId: "2023-2024-ROUND1",
+        name: "Lượt đi",
+        startDate: "2023-08-05",
+        endDate: "2023-08-07",
+      },
+      {
+        roundId: "2023-2024-ROUND2",
+        name: "Lượt về",
+        startDate: "2023-08-12",
+        endDate: "2023-08-14",
+      },
+    ],
   },
   {
-    id: "2024-2025",
-    name: "Mùa giải 2024-2025",
-    startDate: "2024-08-01",
-    endDate: "2025-05-30",
-    teams: [],
-  },
+     id: "2024-2025",
+     name: "Mùa giải 2024-2025",
+     startDate: "2024-08-01",
+     endDate: "2025-05-30",
+     teams: [],
+     rounds: [],
+   },
 ];
 
 let players = {
@@ -236,7 +251,7 @@ let matchesData = [
   {
     matchId: 1,
     season: "2023-2024",
-    round: "1",
+    round: "2023-2024-ROUND1",
     homeTeamId: 1, // Reference to Hà Nội FC
     awayTeamId: 2, // Reference to Viettel FC
     date: "2023-08-05",
@@ -258,7 +273,7 @@ let matchesData = [
   {
     matchId: 2,
     season: "2023-2024",
-    round: "1",
+    round: "2023-2024-ROUND1",
     homeTeamId: 3, // Reference to Hoàng Anh Gia Lai
     awayTeamId: 4, // Reference to Becamex Bình Dương
     date: "2023-08-06",
@@ -292,6 +307,13 @@ const getTeamName = (teamId) => {
 const getStadiumName = (stadiumId) => {
   const stadium = stadiums.find((s) => s.stadiumId === stadiumId);
   return stadium ? stadium.stadiumName : "Unknown Stadium";
+};
+
+// Helper function to get round name by seasonId and roundId
+const getRoundName = (seasonId, roundId) => {
+  const season = seasons.find(s => s.id === seasonId);
+  const round = season?.rounds.find(r => r.roundId === roundId);
+  return round ? round.name : "Unknown Round";
 };
 
 app.get("/api/stadiums", (req, res) => {
@@ -422,6 +444,7 @@ app.post("/api/seasons", (req, res) => {
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     teams: [],
+    rounds: [], // Initialize rounds array
   };
   seasons.push(newSeason);
   res
@@ -521,6 +544,76 @@ app.get("/api/seasons/:seasonId/teams", (req, res) => {
       .filter((team) => team) || [];
   res.json({ teams: teamsInSeason });
 });
+
+// New endpoint to get rounds for a specific season
+app.get("/api/seasons/:seasonId/rounds", (req, res) => {
+    const { seasonId } = req.params;
+    const season = seasons.find(s => s.id === seasonId);
+    if (season) {
+        return res.json({ rounds: season.rounds || [] });
+    }
+    return res.status(404).json({ message: "Season not found" });
+});
+
+// Endpoint to get a specific round of a season
+app.get("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
+    const { seasonId, roundId } = req.params;
+    const season = seasons.find(s => s.id === seasonId);
+    if (season) {
+        const round = season.rounds.find(r => r.roundId === roundId);
+        if (round) {
+            return res.json(round);
+        } else {
+            return res.status(404).json({ message: "Round not found" });
+        }
+    }
+    return res.status(404).json({ message: "Season not found" });
+});
+
+// New endpoint to add rounds to a specific season
+app.post("/api/seasons/:seasonId/rounds", (req, res) => {
+    const { seasonId } = req.params;
+    const newRounds = req.body;
+    const season = seasons.find(s => s.id === seasonId);
+
+    if (!season) {
+        return res.status(404).json({ message: "Season not found" });
+    }
+
+    if (!Array.isArray(newRounds) || newRounds.length !== 2) {
+        return res.status(400).json({ message: "Must provide exactly two rounds (Lượt đi and Lượt về)." });
+    }
+
+    // Check if roundIds already exist for this season
+    for (const newRound of newRounds) {
+        if (season.rounds && season.rounds.some(round => round.roundId === newRound.roundId)) {
+            return res.status(400).json({ message: `Round ID ${newRound.roundId} already exists for this season.` });
+        }
+    }
+
+    season.rounds = [...(season.rounds || []), ...newRounds];
+    res.status(201).json({ message: "Rounds added successfully", rounds: newRounds });
+});
+
+// Endpoint to update a specific round of a season
+app.put("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
+    const { seasonId, roundId } = req.params;
+    const updatedRound = req.body;
+    const season = seasons.find(s => s.id === seasonId);
+
+    if (!season) {
+        return res.status(404).json({ message: "Season not found" });
+    }
+
+    const roundIndex = season.rounds.findIndex(r => r.roundId === roundId);
+    if (roundIndex === -1) {
+        return res.status(404).json({ message: "Round not found" });
+    }
+
+    season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
+    res.json(season.rounds[roundIndex]);
+});
+
 app.put("/api/teams/:id", upload.none(), (req, res) => {
   const { id } = req.params;
   const updatedTeamData = req.body;
@@ -862,6 +955,7 @@ app.get("/api/standings", (req, res) => {
       lost: 0,
       goalsFor: 0,
       goalsAgainst: 0,
+      goalDifference: 0, // Added goalDifference
       points: 0,
       season: season,
     };
@@ -877,11 +971,15 @@ app.get("/api/standings", (req, res) => {
       standings[homeTeamId].played++;
       standings[homeTeamId].goalsFor += homeScore;
       standings[homeTeamId].goalsAgainst += awayScore;
+      standings[homeTeamId].goalDifference = standings[homeTeamId].goalsFor - standings[homeTeamId].goalsAgainst; // Calculate goalDifference
+
     }
     if (standings[awayTeamId]) {
       standings[awayTeamId].played++;
       standings[awayTeamId].goalsFor += awayScore;
       standings[awayTeamId].goalsAgainst += homeScore;
+      standings[awayTeamId].goalDifference = standings[awayTeamId].goalsFor - standings[awayTeamId].goalsAgainst; // Calculate goalDifference
+
     }
 
     if (homeScore > awayScore) {
@@ -903,6 +1001,9 @@ app.get("/api/standings", (req, res) => {
   const standingsArray = Object.values(standings).sort((a, b) => {
     if (b.points !== a.points) {
       return b.points - a.points;
+    }
+    if (b.goalDifference !== a.goalDifference) {
+      return b.goalDifference - a.goalDifference;
     }
     return b.goalsFor - a.goalsFor;
   });
@@ -928,6 +1029,7 @@ app.get("/api/matches", (req, res) => {
     homeTeamName: getTeamName(match.homeTeamId),
     awayTeamName: getTeamName(match.awayTeamId),
     stadiumName: getStadiumName(match.stadiumId),
+    roundName: getRoundName(match.season, match.round), // Add roundName
   }));
 
   res.json(matchesWithDetails);
@@ -947,6 +1049,7 @@ app.get("/api/matches/:matchId", (req, res) => {
     homeTeamName: getTeamName(match.homeTeamId),
     awayTeamName: getTeamName(match.awayTeamId),
     stadiumName: getStadiumName(match.stadiumId),
+    roundName: getRoundName(match.season, match.round), // Add roundName
   };
 
   res.json(matchWithDetails);

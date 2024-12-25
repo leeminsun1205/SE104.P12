@@ -1,17 +1,31 @@
-.formContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+/* Matches.module.css */
+
+.matchesPage {
   padding: 20px;
   background-color: #f9f9f9;
-  border-radius: 8px;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+  max-width: 1000px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.formGroup {
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.seasonSelector,
+.roundSelector,
+.searchContainer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
+  flex: 1;
 }
 
 .label {
@@ -19,81 +33,70 @@
   color: #333;
 }
 
-.input {
-  padding: 8px;
+.selectField {
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
 }
 
-.tableContainer {
-  margin-top: 20px;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.table th,
-.table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-.addButton,
-.removeButton {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
+.searchField {
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  cursor: pointer;
   font-size: 14px;
 }
 
-.addButton:hover,
-.removeButton:hover {
+.clearButton {
+  background: none;
+  max-width: 0px;
+  border: none;
+  color: #ff5a5a;
+  font-size: 16px;
+  cursor: pointer;
+  top: -62px;
+  right: -265px;
+  position: relative;
+}
+.clearButton:hover {
+  color:red;
+  background-color: transparent;
+}
+
+
+.matchesTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.matchesTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.headerCell {
+  text-align: left;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.headerCell:hover {
   background-color: #0056b3;
 }
 
-.saveButton {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+.cell {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
   cursor: pointer;
-  font-size: 16px;
 }
 
-.cancelButton {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.saveButton:hover {
-  background-color: #218838;
-}
-
-.cancelButton:hover {
-  background-color: #c82333;
-}
-
-.buttonGroup {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-end;
+.row:hover {
+  background-color: #f1f1f1;
 }

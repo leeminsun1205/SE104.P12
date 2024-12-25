@@ -39,6 +39,7 @@
   background-color: #007bff;
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .standingsTable tr:nth-child(even) {

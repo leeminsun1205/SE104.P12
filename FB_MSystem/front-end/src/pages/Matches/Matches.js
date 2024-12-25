@@ -3,15 +3,11 @@ import { NavLink, useNavigate } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import styles from "./Matches.module.css";
 
-const Matches = ({API_URL}) => {
+const Matches = ({ API_URL }) => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const seasons = useMemo(
-    () => [...new Set(matches.map((match) => match.season))],
-    [matches]
-  );
-
+  const [availableSeasons, setAvailableSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState("");
   const [selectedRound, setSelectedRound] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -22,10 +18,37 @@ const Matches = ({API_URL}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        const response = await fetch(`${API_URL}/seasons`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Dữ liệu mùa giải từ API:", data);
+        setAvailableSeasons(data.seasons);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách mùa giải:", error);
+      }
+    };
+
+    fetchSeasons();
+  }, [API_URL]);
+
+  useEffect(() => {
+    console.log("Danh sách mùa giải có sẵn:", availableSeasons);
+    if (availableSeasons.length > 0) {
+      setSelectedSeason(availableSeasons[0].id);
+    }
+  }, [availableSeasons]);
+
+  useEffect(() => {
     const fetchMatches = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_URL}/matches`);
+        const response = await fetch(
+          `${API_URL}/matches?season=${selectedSeason}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -38,14 +61,10 @@ const Matches = ({API_URL}) => {
       }
     };
 
-    fetchMatches();
-  }, []);
-
-  useEffect(() => {
-    if (seasons.length > 0) {
-      setSelectedSeason(seasons[0]);
+    if (selectedSeason) {
+      fetchMatches();
     }
-  }, [seasons]);
+  }, [API_URL, selectedSeason]);
 
   // Filter and sort matches
   const filteredMatches = useMemo(() => {
@@ -61,7 +80,8 @@ const Matches = ({API_URL}) => {
           match.homeTeamName.toLowerCase().includes(query) ||
           match.awayTeamName.toLowerCase().includes(query) ||
           match.stadiumName.toLowerCase().includes(query) ||
-          match.date.includes(query)
+          match.date.includes(query) ||
+          match.roundName.toLowerCase().includes(query) // Search by round name
         );
       })
       .sort((a, b) => {
@@ -75,16 +95,10 @@ const Matches = ({API_URL}) => {
       });
   }, [matches, selectedSeason, selectedRound, searchQuery, sortConfig]);
 
-  // Compute available rounds for the selected season
   const rounds = useMemo(() => {
-    return [
-      ...new Set(
-        matches
-          .filter((match) => match.season === selectedSeason)
-          .map((match) => match.round)
-      ),
-    ];
-  }, [matches, selectedSeason]);
+    const seasonData = availableSeasons.find(s => s.id === selectedSeason);
+    return seasonData?.rounds?.map(round => ({ id: round.roundId, name: round.name })) || [];
+  }, [availableSeasons, selectedSeason]);
 
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
@@ -122,25 +136,22 @@ const Matches = ({API_URL}) => {
         <div className={styles.seasonSelector}>
           <SeasonSelector
             onSeasonChange={handleSeasonChange}
-            seasons={seasons}
+            seasons={availableSeasons.map(season => ({ id: season.id, name: season.name }))}
             selectedSeason={selectedSeason}
             id="season"
           />
         </div>
         <div className={styles.roundSelector}>
-          <label htmlFor="round" className={styles.label}>
-            Vòng
-          </label>
           <select
             id="round"
             value={selectedRound}
             onChange={(e) => setSelectedRound(e.target.value)}
             className={styles.selectField}
           >
-            <option value="">Tất cả</option>
+            <option value="">Chọn vòng đấu</option>
             {rounds.map((round) => (
-              <option key={round} value={round}>
-                {round}
+              <option key={round.id} value={round.id}>
+                {round.name}
               </option>
             ))}
           </select>
@@ -162,58 +173,70 @@ const Matches = ({API_URL}) => {
               <i className="fas fa-times"></i>
             </button>
           )}
-          <i className={`fas fa-search ${styles.searchIcon}`}></i>
         </div>
       </div>
 
-      {/* Matches List */}
-      <h2 className={styles.matchesTitle}>Danh sách trận đấu</h2>
-      <table className={styles.matchesTable}>
-        <thead>
-          <tr>
-            {[
-              "Ngày thi đấu",
-              "Giờ",
-              "Đội nhà",
-              "Đội khách",
-              "Sân thi đấu",
-              "Hành động",
-            ].map(
-              (key) =>
-                key !== "Hành động" && (
-                  <th
-                    key={key}
-                    className={styles.headerCell}
-                    onClick={() => handleSort(key)}
-                  >
-                    {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
-                    {getSortIndicator(key)}
+      {selectedSeason === "" ? (
+        <h2 className={styles.matchesTitle}>Vui lòng chọn một mùa giải</h2>
+      ) : (
+        <>
+          <h2 className={styles.matchesTitle}>Danh sách trận đấu</h2>
+          {filteredMatches.length === 0 ? (
+            <div className={styles.noMatches}>
+              Không tìm thấy trận đấu nào trong mùa giải này.
+            </div>
+          ) : (
+            <table className={styles.matchesTable}>
+              <thead>
+                <tr>
+                  {[
+                    "Ngày thi đấu",
+                    "Giờ",
+                    "Đội nhà",
+                    "Đội khách",
+                    "Sân thi đấu",
+                    "Vòng đấu", // Display round name
+                    "Hành động",
+                  ].map(
+                    (key) =>
+                      key !== "Hành động" && (
+                        <th
+                          key={key}
+                          className={styles.headerCell}
+                          onClick={() => handleSort(key)}
+                        >
+                          {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                          {getSortIndicator(key)}
+                        </th>
+                      )
+                  )}
+                  <th key="actions" className={styles.headerCell}>
+                    Hành động
                   </th>
-                )
-            )}
-            <th key="actions" className={styles.headerCell}>
-              Hành động
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredMatches.map((match) => (
-            <tr
-              key={match.matchId}
-              className={styles.row}
-              onClick={() =>
-                navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
-              }
-            >
-              <td className={styles.cell}>{match.date}</td>
-              <td className={styles.cell}>{match.time}</td>
-              <td className={styles.cell}>{match.homeTeamName}</td>
-              <td className={styles.cell}>{match.awayTeamName}</td>
-              <td className={styles.cell}>{match.stadiumName}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMatches.map((match) => (
+                  <tr
+                    key={match.matchId}
+                    className={styles.row}
+                    onClick={() =>
+                      navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
+                    }
+                  >
+                    <td className={styles.cell}>{match.date}</td>
+                    <td className={styles.cell}>{match.time}</td>
+                    <td className={styles.cell}>{match.homeTeamName}</td>
+                    <td className={styles.cell}>{match.awayTeamName}</td>
+                    <td className={styles.cell}>{match.stadiumName}</td>
+                    <td className={styles.cell}>{match.roundName}</td> {/* Display round name */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
+      )}
     </div>
   );
 };

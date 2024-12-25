@@ -47,7 +47,6 @@ function Teams({
     );
   }, [teams, searchTerm]);
 
-  const handleTeamUpdated = () => {
     const fetchTeamsForSelectedSeason = async () => {
       try {
         const url = selectedSeason === 'all'
@@ -59,12 +58,10 @@ function Teams({
           throw new Error('Failed to fetch teams');
         }
         const data = await response.json();
-        setFilteredTeams(data.teams); // Update the state with the newly fetched teams
+        setFilteredTeams(data.teams);
       } catch (error) {
         console.error('Error fetching teams:', error);
-        // Handle error appropriately
       }
-    };
 
     fetchTeamsForSelectedSeason();
   };
