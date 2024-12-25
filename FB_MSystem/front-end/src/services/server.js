@@ -13,22 +13,10 @@ let {
   stadiums,
   matchesData,
   typeSettings,
+  settingsData,
+  teamsPosition
 } = require("./data");
 
-let settingsData = {
-  minPlayers: 15,
-  maxPlayers: 22,
-  maxForeignPlayers: 3,
-  minAge: 16,
-  maxAge: 40,
-  minCapacity: 10000,
-  minStar: 2,
-  participationFee: 1000000000,
-  winPoints: 3,
-  drawPoints: 1,
-  losePoints: 0,
-  maxGoalTime: 90,
-};
 
 app.use(cors());
 app.use(express.json());
@@ -264,68 +252,7 @@ app.post("/api/teams/available", (req, res) => {
     .status(201)
     .json({ message: "Team created successfully", team: { ...newTeam, stadium: stadiums.find(s => s.stadiumId === newTeam.stadiumId) } });
 });
-let teamsPosition = {
-  1: [
-    {
-      season: "2022-2023",
-      win: 2,
-      loss: 0,
-      draw: 0,
-      difference: 2,
-      point: 6,
-      posiotion: 1,
-    },
-    {
-      season: "2023-2024",
-      win: 1,
-      loss: 1,
-      draw: 0,
-      point: 3,
-      difference: 1,
-      posiotion: 2,
-    },
-  ],
-  2: [
-    {
-      season: "2022-2023",
-      win: 1,
-      loss: 1,
-      draw: 0,
-      difference: 1,
-      point: 3,
-      posiotion: 2,
-    },
-    {
-      season: "2023-2024",
-      win: 0,
-      loss: 1,
-      draw: 1,
-      point: 1,
-      difference: -2,
-      posiotion: 3,
-    },
-  ],
-  3: [
-    {
-      season: "2022-2023",
-      win: 0,
-      loss: 2,
-      draw: 0,
-      difference: -3,
-      point: 0,
-      posiotion: 3,
-    },
-    {
-      season: "2023-2024",
-      win: 1,
-      loss: 0,
-      draw: 1,
-      point: 4,
-      difference: 1,
-      posiotion: 1,
-    },
-  ],
-};
+
 app.get("/api/teams/position", (req, res) =>{
   const teamId = req.query.teamId;
   if (!teamId) {
@@ -859,9 +786,7 @@ app.get("/api/standings", (req, res) => {
       if (standings[homeTeamId]) standings[homeTeamId].lost++;
     } else {
       if (standings[homeTeamId]) standings[homeTeamId].drawn++;
-      if (standings[homeTeamId]) standings[homeTeamId].points += 1;
-      if (standings[awayTeamId]) standings[awayTeamId].drawn++;
-      if (standings[awayTeamId]) standings[awayTeamId].points += 1;
+      if (standings[homeTeamId]) standings[homeTeamId].points += 1;     
     }
   });
 

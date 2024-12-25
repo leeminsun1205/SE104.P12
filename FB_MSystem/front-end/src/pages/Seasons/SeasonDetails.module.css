@@ -129,7 +129,20 @@ body {
     background: #fff5f5;
     border: 1px solid #fc8181;
 }
-
+.addbutton {
+    display: inline-block;
+    max-width: 200px;
+    margin-left: 269px;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(90deg, #3182ce, #2b6cb0);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
 .sufficient {
     color: #38a169;
     font-weight: 500;
