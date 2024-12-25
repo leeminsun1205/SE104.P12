@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
@@ -16,18 +17,18 @@ let {
 } = require("./data"); // Ensure your data file is correctly linked
 
 let settingsData = { // Initialize settings data
-    minPlayers: 15,
-    maxPlayers: 22,
-    maxForeignPlayers: 3,
-    minAge: 16,
-    maxAge: 40,
-    minCapacity: 10000,
-    minStar: 2,
-    participationFee: 1000000000,
-    winPoints: 3,
-    drawPoints: 1,
-    losePoints: 0,
-    maxGoalTime: 90,
+  minPlayers: 15,
+  maxPlayers: 22,
+  maxForeignPlayers: 3,
+  minAge: 16,
+  maxAge: 40,
+  minCapacity: 10000,
+  minStar: 2,
+  participationFee: 1000000000,
+  winPoints: 3,
+  drawPoints: 1,
+  losePoints: 0,
+  maxGoalTime: 90,
 };
 
 app.use(cors());
@@ -290,71 +291,71 @@ app.get("/api/seasons/:seasonId/teams", (req, res) => {
 
 // New endpoint to get rounds for a specific season
 app.get("/api/seasons/:seasonId/rounds", (req, res) => {
-    const { seasonId } = req.params;
-    const season = seasons.find(s => s.id === seasonId);
-    if (season) {
-        return res.json({ rounds: season.rounds || [] });
-    }
-    return res.status(404).json({ message: "Season not found" });
+  const { seasonId } = req.params;
+  const season = seasons.find(s => s.id === seasonId);
+  if (season) {
+    return res.json({ rounds: season.rounds || [] });
+  }
+  return res.status(404).json({ message: "Season not found" });
 });
 
 // Endpoint to get a specific round of a season
 app.get("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
-    const { seasonId, roundId } = req.params;
-    const season = seasons.find(s => s.id === seasonId);
-    if (season) {
-        const round = season.rounds.find(r => r.roundId === roundId);
-        if (round) {
-            return res.json(round);
-        } else {
-            return res.status(404).json({ message: "Round not found" });
-        }
+  const { seasonId, roundId } = req.params;
+  const season = seasons.find(s => s.id === seasonId);
+  if (season) {
+    const round = season.rounds.find(r => r.roundId === roundId);
+    if (round) {
+      return res.json(round);
+    } else {
+      return res.status(404).json({ message: "Round not found" });
     }
-    return res.status(404).json({ message: "Season not found" });
+  }
+  return res.status(404).json({ message: "Season not found" });
 });
 
 // New endpoint to add rounds to a specific season
 app.post("/api/seasons/:seasonId/rounds", (req, res) => {
-    const { seasonId } = req.params;
-    const newRounds = req.body;
-    const season = seasons.find(s => s.id === seasonId);
+  const { seasonId } = req.params;
+  const newRounds = req.body;
+  const season = seasons.find(s => s.id === seasonId);
 
-    if (!season) {
-        return res.status(404).json({ message: "Season not found" });
+  if (!season) {
+    return res.status(404).json({ message: "Season not found" });
+  }
+
+  if (!Array.isArray(newRounds) || newRounds.length !== 2) {
+    return res.status(400).json({ message: "Must provide exactly two rounds (Lượt đi and Lượt về)." });
+  }
+
+  // Check if roundIds already exist for this season
+  for (const newRound of newRounds) {
+    if (season.rounds && season.rounds.some(round => round.roundId === newRound.roundId)) {
+      return res.status(400).json({ message: `Round ID ${newRound.roundId} already exists for this season.` });
     }
+  }
 
-    if (!Array.isArray(newRounds) || newRounds.length !== 2) {
-        return res.status(400).json({ message: "Must provide exactly two rounds (Lượt đi and Lượt về)." });
-    }
-
-    // Check if roundIds already exist for this season
-    for (const newRound of newRounds) {
-        if (season.rounds && season.rounds.some(round => round.roundId === newRound.roundId)) {
-            return res.status(400).json({ message: `Round ID ${newRound.roundId} already exists for this season.` });
-        }
-    }
-
-    season.rounds = [...(season.rounds || []), ...newRounds];
-    res.status(201).json({ message: "Rounds added successfully", rounds: newRounds });
+  season.rounds = [...(season.rounds || []), ...newRounds];
+  res.status(201).json({ message: "Rounds added successfully", rounds: newRounds });
 });
 
 // Endpoint to update a specific round of a season
 app.put("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
-    const { seasonId, roundId } = req.params;
-    const updatedRound = req.body;
-    const season = seasons.find(s => s.id === seasonId);
+  const { seasonId, roundId } = req.params;
+  const updatedRound = req.body;
+  const season = seasons.find(s => s.id === seasonId);
 
-    if (!season) {
-        return res.status(404).json({ message: "Season not found" });
-    }
+  if (!season) {
+    return res.status(404).json({ message: "Season not found" });
+  }
 
-    const roundIndex = season.rounds.findIndex(r => r.roundId === roundId);
-    if (roundIndex === -1) {
-        return res.status(404).json({ message: "Round not found" });
-    }
+  const roundIndex = season.rounds.findIndex(r => r.roundId === roundId);
+  if (roundIndex === -1) {
+    return res.status(404).json({ message: "Round not found" });
+  }
 
-    season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
-    res.json(season.rounds[roundIndex]);
+  season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
+  res.json(season.rounds[roundIndex]);
 });
 
 app.put("/api/teams/:id", upload.none(), (req, res) => {
@@ -633,7 +634,7 @@ app.get("/api/players/:playerId", (req, res) => {
 
   res.status(404).json({ message: "Player not found" });
 });
-app.put("/api/players/:playerId", (req, res) =>{
+app.put("/api/players/:playerId", (req, res) => {
   const { playerId } = req.params;
   const { season, teamId, updatedPlayer } = req.body;
   const playerIdInt = parseInt(playerId);
@@ -837,38 +838,30 @@ app.put("/api/matches/:matchId", (req, res) => {
   res.json({ message: "Match updated", match: matchesData[matchIndex] });
 });
 app.delete("/api/matches/:matchId", (req, res) => {
-  console.log("Received DELETE request for match ID:", req.params.matchId);
   const { matchId } = req.params;
   const matchIdNum = parseInt(matchId);
-  console.log("Parsed matchIdNum:", matchIdNum);
-
-  console.log("matchesData before filter:", JSON.stringify(matchesData, null, 2));
 
   try {
-      const initialLength = matchesData.length;
-      matchesData = matchesData.filter(match => match.matchId !== matchIdNum);
+    const initialLength = matchesData.length;
+    matchesData = matchesData.filter(match => match.matchId !== matchIdNum);
 
-      if (matchesData.length < initialLength) {
-          console.log("Match deleted successfully");
-          res.json({ message: "Match deleted successfully" });
-      } else {
-          console.log("Match not found for deletion");
-          res.status(404).json({ message: "Match not found" });
-      }
+    if (matchesData.length < initialLength) {
+      res.json({ message: "Match deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Match not found" });
+    }
   } catch (error) {
-      console.error("Error during match deletion:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 app.post('/api/settings', (req, res) => {
   const newSettings = req.body;
   settingsData = newSettings; // Update the settings data
-  console.log('Received settings from frontend:', newSettings);
   res.status(200).json({ message: 'Settings saved successfully' });
 });
 
 app.get('/api/settings', (req, res) => {
-    res.status(200).json(settingsData); // Send the current settings data
+  res.status(200).json(settingsData); // Send the current settings data
 });
 // Endpoint to get types settings
 app.get('/api/types-settings', (req, res) => {
@@ -883,5 +876,4 @@ app.post('/api/types-settings', (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
 });
