@@ -152,23 +152,23 @@ function LookUpSeason({ API_URL }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {selectedSeason ? (
+                        {selectedTeam ? (
                             sortedStandings.length > 0 ? (
-                                sortedStandings.map((team) => {
-                                    console.log("Đội trong map:", team); // Debug team object in map
+                                sortedStandings.map((item) => {
+                                    console.log("Mùa giải trong map:", item); // Debug object in map
                                     return (
                                         <tr
-                                            key={`${team.season}`}
-                                            onClick={() => handleRowClick(team.id, selectedSeason)}
+                                            key={`${item.season}`}
+                                            onClick={() => handleRowClick(item.season, selectedSeason)}
                                             className={styles.standingsRow}
                                         >
-                                            <td>{team.win}</td>
-                                            <td>{team.loss}</td>
-                                            <td>{team.draw}</td>
-                                            <td>{team.difference}</td>
-                                            <td>{team.point}</td>
-                                            <td>{team.posiotion}</td>
-                                            <td>{team.winner}</td>
+                                            <td>{item.win}</td>
+                                            <td>{item.loss}</td>
+                                            <td>{item.draw}</td>
+                                            <td>{item.difference}</td>
+                                            <td>{item.point}</td>
+                                            <td>{item.posiotion}</td>
+                                            <td>{item.winner}</td>
                                         </tr>
                                     );
                                 })
