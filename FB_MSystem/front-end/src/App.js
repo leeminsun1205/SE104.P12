@@ -229,7 +229,7 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/create" element={<CreateNew />} />
             <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
-            <Route path="/settings" element={<Settings API_URL={API_URL} />} />
+            <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
             <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
             <Route path="/stadiums" element={<Stadiums />} />
             <Route path="/create/stadium" element={<CreateStadium />} />

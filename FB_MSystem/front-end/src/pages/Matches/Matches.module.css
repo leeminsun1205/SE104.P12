@@ -100,3 +100,83 @@
 .row:hover {
   background-color: #f1f1f1;
 }
+/* Matches.module.css */
+
+.matchesPage th {
+  font-weight: 800;
+}
+
+.modalOverlay {
+  position: fixed; /* Cố định vị trí trên màn hình */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền tối với độ trong suốt */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo modal nằm trên cùng */
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%; /* Chiều rộng của modal */
+  max-width: 600px; /* Chiều rộng tối đa */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative; /* Để định vị nút đóng */
+}
+
+.modalTitle {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.5em;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="date"],
+.formGroup input[type="time"],
+.formGroup select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.saveButton,
+.cancelButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.saveButton {
+  background-color: #5cb85c;
+  color: white;
+}
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+}

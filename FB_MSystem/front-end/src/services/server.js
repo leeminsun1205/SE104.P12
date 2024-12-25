@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
@@ -5,290 +6,18 @@ const upload = multer();
 const app = express();
 const PORT = 5000;
 
+let {
+  availableTeams,
+  seasons,
+  players,
+  availablePlayers,
+  stadiums,
+  matchesData,
+  typeSettings
+} = require("./data"); // Chuyển qua ./lite_data cho dễ làm
+
 app.use(cors());
 app.use(express.json());
-
-let availableTeams = [
-  {
-    id: 1,
-    name: "Hà Nội FC",
-    city: "Hà Nội",
-    coach: "Gad",
-    stadium: "Hàng Đẫy",
-    stadiumId: 1,
-    capacity: 22500,
-    standard: 5,
-    home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/e/eb/Hanoi_FC.png",
-    away_kit_image: null,
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Hà Nội",
-    season: null,
-  },
-  {
-    id: 2,
-    name: "Viettel FC",
-    city: "Hà Nội",
-    coach: "Tăng Nhất",
-    stadium: "Hàng Đẫy",
-    stadiumId: 1,
-    capacity: 22500,
-    standard: 4,
-    home_kit_image: null,
-    away_kit_image:
-      "https://upload.wikimedia.org/wikipedia/vi/thumb/d/d5/Viettel_FC_logo.png/1200px-Viettel_FC_logo.png",
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Viettel",
-    season: null,
-  },
-  {
-    id: 3,
-    name: "Hoàng Anh Gia Lai",
-    city: "Pleiku",
-    coach: "Faigar",
-    stadium: "Pleiku",
-    stadiumId: 2,
-    capacity: 12000,
-    standard: 4,
-    home_kit_image: null,
-    away_kit_image: null,
-    third_kit_image:
-      "https://upload.wikimedia.org/wikipedia/vi/thumb/7/7d/Hoang_Anh_Gia_Lai_FC_logo.png/1200px-Hoang_Anh_Gia_Lai_FC_logo.png",
-    description: "Câu lạc bộ bóng đá Hoàng Anh Gia Lai",
-    season: null,
-  },
-  {
-    id: 4,
-    name: "Becamex Bình Dương",
-    city: "Thủ Dầu Một",
-    coach: "Superman",
-    stadium: "Gò Đậu",
-    stadiumId: 3,
-    capacity: 18250,
-    standard: 3,
-    home_kit_image: null,
-    away_kit_image:
-      "https://upload.wikimedia.org/wikipedia/vi/thumb/0/07/Becamex_Binh_Duong_FC_logo.png/1200px-Becamex_Binh_Duong_FC_logo.png",
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Becamex Bình Dương",
-    season: null,
-  },
-  {
-    id: 5,
-    name: "Hải Phòng",
-    city: "Hải Phòng",
-    coach: "tslnh",
-    stadium: "Lạch Tray",
-    stadiumId: 4,
-    capacity: 26000,
-    standard: 4,
-    home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/8/85/Hai_Phong_FC_logo.png",
-    away_kit_image: null,
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Hải Phòng",
-    season: null,
-  },
-];
-
-let seasons = [
-  {
-    id: "2023-2024",
-    name: "Mùa giải 2023-2024",
-    startDate: "2023-08-01",
-    endDate: "2024-05-30",
-    teams: [1, 2, 3, 4, 5],
-    rounds: [
-      {
-        roundId: "2023-2024-ROUND1",
-        name: "Lượt đi",
-        startDate: "2023-08-05",
-        endDate: "2023-08-07",
-      },
-      {
-        roundId: "2023-2024-ROUND2",
-        name: "Lượt về",
-        startDate: "2023-08-12",
-        endDate: "2023-08-14",
-      },
-    ],
-  },
-  {
-     id: "2024-2025",
-     name: "Mùa giải 2024-2025",
-     startDate: "2024-08-01",
-     endDate: "2025-05-30",
-     teams: [],
-     rounds: [],
-   },
-];
-
-let players = {
-  "2023-2024": {
-    1: [
-      {
-        id: 1,
-        name: "Cầu thủ A1",
-        dob: "1999-03-15",
-        position: "Tiền đạo",
-        nationality: "Việt Nam",
-        birthplace: "Hà Nội",
-        height: 180,
-        weight: 75,
-        bio: "Một tiền đạo tài năng của đội.",
-        season: "2023-2024",
-        playerType: "Trong nước",
-      },
-    ],
-    2: [
-      {
-        id: 2,
-        name: "Cầu thủ B2",
-        dob: "1998-05-20",
-        position: "Hậu vệ",
-        nationality: "Việt Nam",
-        birthplace: "Hồ Chí Minh",
-        height: 175,
-        weight: 70,
-        bio: "Một hậu vệ chắc chắn.",
-        season: "2023-2024",
-        playerType: "Trong nước",
-      },
-    ],
-  },
-  "2022-2023": {
-    1: [
-      {
-        id: 3,
-        name: "Cầu thủ C3",
-        dob: "1997-10-10",
-        position: "Tiền vệ",
-        nationality: "Việt Nam",
-        birthplace: "Đà Nẵng",
-        height: 182,
-        weight: 78,
-        bio: "Một tiền vệ sáng tạo.",
-        season: "2022-2023",
-        playerType: "Trong nước",
-      },
-    ],
-  },
-};
-
-// Khai báo availablePlayers - Danh sách cầu thủ có sẵn
-let availablePlayers = [
-  {
-    id: 1,
-    name: "Cầu thủ A1",
-    dob: "1999-03-15",
-    position: "Tiền đạo",
-    nationality: "Việt Nam",
-    birthplace: "Hà Nội",
-    height: 180,
-    weight: 75,
-    bio: "Một tiền đạo tài năng của đội.",
-    season: "2023-2024",
-    playerType: "Trong nước",
-  },
-  {
-    id: 2,
-    name: "Cầu thủ B2",
-    dob: "1998-05-20",
-    position: "Hậu vệ",
-    nationality: "Việt Nam",
-    birthplace: "Hồ Chí Minh",
-    height: 175,
-    weight: 70,
-    bio: "Một hậu vệ chắc chắn.",
-    season: "2023-2024",
-    playerType: "Trong nước",
-  },
-  {
-    id: 3,
-    name: "Cầu thủ C3",
-    dob: "1997-10-10",
-    position: "Tiền vệ",
-    nationality: "Việt Nam",
-    birthplace: "Đà Nẵng",
-    height: 182,
-    weight: 78,
-    bio: "Một tiền vệ sáng tạo.",
-    season: "2022-2023",
-    playerType: "Trong nước",
-  },
-];
-let stadiums = [
-  {
-    stadiumId: 1,
-    stadiumName: "Hàng Đẫy",
-    address: "Trịnh Hoài Đức, Cát Linh, Đống Đa, Hà Nội",
-    capacity: 22500,
-    standard: 5,
-  },
-  {
-    stadiumId: 2,
-    stadiumName: "Pleiku",
-    address: "Đường Quang Trung, Phường Hội Thương, Thành phố Pleiku, Gia Lai",
-    capacity: 12000,
-    standard: 4,
-  },
-  {
-    stadiumId: 3,
-    stadiumName: "Gò Đậu",
-    address: "Đường 30 Tháng 4, Phú Thọ, Thủ Dầu Một, Bình Dương",
-    capacity: 18250,
-    standard: 3,
-  },
-  {
-    stadiumId: 4,
-    stadiumName: "Lạch Tray",
-    address: "Đường Chu Văn An, Đằng Giang, Ngô Quyền, Hải Phòng",
-    capacity: 26000,
-    standard: 4,
-  },
-];
-
-// New data structure for matches
-let matchesData = [
-  {
-    matchId: 1,
-    season: "2023-2024",
-    round: "2023-2024-ROUND1",
-    homeTeamId: 1, // Reference to Hà Nội FC
-    awayTeamId: 2, // Reference to Viettel FC
-    date: "2023-08-05",
-    time: "19:15",
-    homeScore: 2,
-    awayScore: 1,
-    stadiumId: 1,
-    isFinished: true,
-    goals: [
-      { player: "Văn Quyết", team: "Hà Nội FC", type: "penalty", time: "30'" },
-      { player: "Geovane", team: "Hà Nội FC", type: "own goal", time: "45'" },
-      { player: "Tuấn Hải", team: "Viettel FC", type: "normal", time: "75'" },
-    ],
-    cards: [
-      { player: "Hùng Dũng", team: "Hà Nội FC", type: "Yellow", time: "60'" },
-      { player: "Hoàng Đức", team: "Viettel FC", type: "Yellow", time: "80'" },
-    ],
-  },
-  {
-    matchId: 2,
-    season: "2023-2024",
-    round: "2023-2024-ROUND1",
-    homeTeamId: 3, // Reference to Hoàng Anh Gia Lai
-    awayTeamId: 4, // Reference to Becamex Bình Dương
-    date: "2023-08-06",
-    time: "17:00",
-    homeScore: 0,
-    awayScore: 0,
-    stadiumId: 2,
-    isFinished: true,
-    goals: [],
-    cards: [
-      { player: "Công Phượng", team: "Hoàng Anh Gia Lai", type: "Yellow", time: "25'" },
-    ],
-  },
-  // ... more matches
-];
 
 // Helper function to get team details with stadium info
 const getTeamWithStadium = (teamId) => {
@@ -1029,7 +758,7 @@ app.get("/api/matches", (req, res) => {
     homeTeamName: getTeamName(match.homeTeamId),
     awayTeamName: getTeamName(match.awayTeamId),
     stadiumName: getStadiumName(match.stadiumId),
-    roundName: getRoundName(match.season, match.round), // Add roundName
+    roundName: getRoundName(match.season, match.round),
   }));
 
   res.json(matchesWithDetails);
@@ -1049,7 +778,7 @@ app.get("/api/matches/:matchId", (req, res) => {
     homeTeamName: getTeamName(match.homeTeamId),
     awayTeamName: getTeamName(match.awayTeamId),
     stadiumName: getStadiumName(match.stadiumId),
-    roundName: getRoundName(match.season, match.round), // Add roundName
+    roundName: getRoundName(match.season, match.round),
   };
 
   res.json(matchWithDetails);
@@ -1083,6 +812,8 @@ app.put("/api/matches/:matchId", (req, res) => {
   const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
   if (matchIndex === -1) {
     return res.status(404).json({ message: "Match not found" });
+  } else {
+    updatedMatchData.isFinished = updatedMatchData.homeScore !== null && updatedMatchData.awayScore !== null;
   }
 
   matchesData[matchIndex] = {
@@ -1091,10 +822,45 @@ app.put("/api/matches/:matchId", (req, res) => {
   };
   res.json({ message: "Match updated", match: matchesData[matchIndex] });
 });
+app.delete("/api/matches/:matchId", (req, res) => {
+  console.log("Received DELETE request for match ID:", req.params.matchId);
+  const { matchId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  console.log("Parsed matchIdNum:", matchIdNum);
+
+  console.log("matchesData before filter:", JSON.stringify(matchesData, null, 2));
+
+  try {
+      const initialLength = matchesData.length;
+      matchesData = matchesData.filter(match => match.matchId !== matchIdNum);
+
+      if (matchesData.length < initialLength) {
+          console.log("Match deleted successfully");
+          res.json({ message: "Match deleted successfully" });
+      } else {
+          console.log("Match not found for deletion");
+          res.status(404).json({ message: "Match not found" });
+      }
+  } catch (error) {
+      console.error("Error during match deletion:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 app.post('/api/settings', (req, res) => {
   const newSettings = req.body;
   console.log('Received settings from frontend:', newSettings);
   res.status(200).json({ message: 'Settings saved successfully' });
+});
+
+// Endpoint to get types settings
+app.get('/api/types-settings', (req, res) => {
+  res.json(typeSettings);
+});
+
+// Endpoint to save types settings
+app.post('/api/types-settings', (req, res) => {
+  typeSettings = req.body;
+  res.json({ message: 'Types settings saved successfully' });
 });
 
 // Start Server

@@ -2,8 +2,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./MatchDetails.module.css";
 
-function MatchDetails({API_URL}){
-  const { season, id } = useParams();
+function MatchDetails({ API_URL }) {
+  const { season, round, id } = useParams();
   const navigate = useNavigate();
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ function MatchDetails({API_URL}){
   const [showResult, setShowResult] = useState(false);
   const [isEditingGoals, setIsEditingGoals] = useState(false);
   const [isEditingCards, setIsEditingCards] = useState(false);
-  const [editedMatch, setEditedMatch] = useState(null);
+  const [editedMatch, setEditedMatch] = useState(null); // Initialize to null
   const [goalSortConfig, setGoalSortConfig] = useState({
     key: null,
     direction: "ascending",
@@ -22,6 +22,8 @@ function MatchDetails({API_URL}){
     key: null,
     direction: "ascending",
   });
+  const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
+  const [awayTeamPlayers, setAwayTeamPlayers] = useState([]);
 
   useEffect(() => {
     const fetchMatchDetails = async () => {
@@ -34,6 +36,7 @@ function MatchDetails({API_URL}){
         }
         const data = await response.json();
         setMatch(data);
+        setEditedMatch(data);
       } catch (e) {
         setError(e);
       } finally {
@@ -42,45 +45,81 @@ function MatchDetails({API_URL}){
     };
 
     fetchMatchDetails();
-  }, [id]);
+  }, [API_URL, id]);
+
+  useEffect(() => {
+    const fetchTeamPlayers = async () => {
+      if (match) {
+        try {
+          const homeResponse = await fetch(
+            `${API_URL}/teams/${match.homeTeamId}/players?season=${match.season}`
+          );
+          if (homeResponse.ok) {
+            const homeData = await homeResponse.json();
+            setHomeTeamPlayers(homeData.players);
+          } else {
+            console.error("Failed to fetch home team players");
+            setHomeTeamPlayers([]);
+          }
+
+          const awayResponse = await fetch(
+            `${API_URL}/teams/${match.awayTeamId}/players?season=${match.season}`
+          );
+          if (awayResponse.ok) {
+            const awayData = await awayResponse.json();
+            setAwayTeamPlayers(awayData.players);
+          } else {
+            console.error("Failed to fetch away team players");
+            setAwayTeamPlayers([]);
+          }
+        } catch (error) {
+          console.error("Error fetching team players:", error);
+          setHomeTeamPlayers([]);
+          setAwayTeamPlayers([]);
+        }
+      }
+    };
+
+    fetchTeamPlayers();
+  }, [match, API_URL]);
 
   // Sắp xếp danh sách bàn thắng
   const sortedGoals = useMemo(() => {
-    const sortableGoals = match && match.goals
-      ? [...(isEditingGoals ? editedMatch?.goals || [] : match.goals)]
-      : [];
+    const sortableGoals = editedMatch?.goals ? [...editedMatch.goals] : [];
     if (goalSortConfig.key !== null) {
       sortableGoals.sort((a, b) => {
-        if (a[goalSortConfig.key] < b[goalSortConfig.key]) {
+        const aValue = a[goalSortConfig.key];
+        const bValue = b[goalSortConfig.key];
+        if (aValue < bValue) {
           return goalSortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (a[goalSortConfig.key] > b[goalSortConfig.key]) {
+        if (aValue > bValue) {
           return goalSortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
     }
     return sortableGoals;
-  }, [match, isEditingGoals, editedMatch, goalSortConfig]);
+  }, [editedMatch?.goals, goalSortConfig]);
 
   // Sắp xếp danh sách thẻ phạt
   const sortedCards = useMemo(() => {
-    const sortableCards = match && match.cards
-      ? [...(isEditingCards ? editedMatch?.cards || [] : match.cards || [])]
-      : [];
+    const sortableCards = editedMatch?.cards ? [...editedMatch.cards] : [];
     if (cardSortConfig.key !== null) {
       sortableCards.sort((a, b) => {
-        if (a[cardSortConfig.key] < b[cardSortConfig.key]) {
+        const aValue = a[cardSortConfig.key];
+        const bValue = b[cardSortConfig.key];
+        if (aValue < bValue) {
           return cardSortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (a[cardSortConfig.key] > b[cardSortConfig.key]) {
+        if (aValue > bValue) {
           return cardSortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
     }
     return sortableCards;
-  }, [match, isEditingCards, editedMatch, cardSortConfig]);
+  }, [editedMatch?.cards, cardSortConfig]);
 
   if (loading) {
     return <div>Đang tải thông tin trận đấu...</div>;
@@ -131,12 +170,10 @@ function MatchDetails({API_URL}){
 
   const handleEditGoals = () => {
     setIsEditingGoals(true);
-    setEditedMatch({ ...match });
   };
 
   const handleEditCards = () => {
     setIsEditingCards(true);
-    setEditedMatch({ ...match });
   };
 
   const handleGoalChange = (index, field, value) => {
@@ -149,15 +186,16 @@ function MatchDetails({API_URL}){
   const addGoal = () => {
     setEditedMatch({
       ...editedMatch,
-      goals: [...editedMatch.goals, { player: "", team: "", type: "", time: "" }],
+      goals: [
+        ...(editedMatch.goals || []),
+        { player: "", team: "", type: "", time: "" },
+      ],
     });
   };
 
   const removeGoal = (index) => {
-    setEditedMatch({
-      ...editedMatch,
-      goals: editedMatch.goals.filter((_, i) => i !== index),
-    });
+    const updatedGoals = editedMatch.goals.filter((_, i) => i !== index);
+    setEditedMatch({ ...editedMatch, goals: updatedGoals });
   };
 
   const handleCardChange = (index, field, value) => {
@@ -171,34 +209,31 @@ function MatchDetails({API_URL}){
     setEditedMatch({
       ...editedMatch,
       cards: [
-        ...editedMatch.cards,
+        ...(editedMatch.cards || []),
         { player: "", team: "", type: "Yellow", time: "" },
       ],
     });
   };
 
   const removeCard = (index) => {
-    setEditedMatch({
-      ...editedMatch,
-      cards: editedMatch.cards.filter((_, i) => i !== index),
-    });
+    const updatedCards = editedMatch.cards.filter((_, i) => i !== index);
+    setEditedMatch({ ...editedMatch, cards: updatedCards });
   };
 
   const handleSaveGoals = async () => {
     try {
       const response = await fetch(`${API_URL}/matches/${match.matchId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ goals: editedMatch.goals }),
       });
       if (!response.ok) {
         throw new Error(`Could not update goals: ${response.statusText}`);
       }
-      setMatch(prevMatch => ({ ...prevMatch, goals: editedMatch.goals }));
+      setMatch((prevMatch) => ({ ...prevMatch, goals: editedMatch.goals }));
       setIsEditingGoals(false);
-      setEditedMatch(null);
     } catch (error) {
       console.error("Error updating goals:", error);
       // Optionally set an error state to display a message to the user
@@ -208,18 +243,17 @@ function MatchDetails({API_URL}){
   const handleSaveCards = async () => {
     try {
       const response = await fetch(`${API_URL}/matches/${match.matchId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ cards: editedMatch.cards }),
       });
       if (!response.ok) {
         throw new Error(`Could not update cards: ${response.statusText}`);
       }
-      setMatch(prevMatch => ({ ...prevMatch, cards: editedMatch.cards }));
+      setMatch((prevMatch) => ({ ...prevMatch, cards: editedMatch.cards }));
       setIsEditingCards(false);
-      setEditedMatch(null);
     } catch (error) {
       console.error("Error updating cards:", error);
       // Optionally set an error state to display a message to the user
@@ -228,12 +262,12 @@ function MatchDetails({API_URL}){
 
   const handleCancelGoals = () => {
     setIsEditingGoals(false);
-    setEditedMatch(null);
+    setEditedMatch(match); // Revert to original match data
   };
 
   const handleCancelCards = () => {
     setIsEditingCards(false);
-    setEditedMatch(null);
+    setEditedMatch(match); // Revert to original match data
   };
 
   // Sắp xếp bàn thắng theo cột
@@ -268,31 +302,44 @@ function MatchDetails({API_URL}){
     return "";
   };
 
+  const getAvailablePlayersForTeam = (teamId) => {
+    const teamIdInt = parseInt(teamId);
+    if (match?.homeTeamId === teamIdInt) {
+      return homeTeamPlayers;
+    } else if (match?.awayTeamId === teamIdInt) {
+      return awayTeamPlayers;
+    }
+    return [];
+  };
+
   return (
     <div className={styles.matchDetails}>
       <h1 className={styles.matchTitle}>
-        {match.homeTeamName} <span>vs</span> {match.awayTeamName}
+        {match?.homeTeamName} <span>vs</span> {match?.awayTeamName}
       </h1>
       <div className={styles.matchInfo}>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Mùa giải:</span> {match.season}
+          <span className={styles.label}>Mùa giải:</span> {match?.season}
         </div>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Vòng đấu:</span> {match.roundName}
+          <span className={styles.label}>Vòng đấu:</span> {match?.roundName}
         </div>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Ngày:</span> {match.date}
+          <span className={styles.label}>Ngày:</span> {match?.date}
         </div>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Giờ:</span> {match.time}
+          <span className={styles.label}>Giờ:</span> {match?.time}
         </div>
         <div className={styles.infoItem}>
-          <span className={styles.label}>Sân vận động:</span> {match.stadiumName}
+          <span className={styles.label}>
+            Sân vận động:
+          </span>{" "}
+          {match?.stadiumName}
         </div>
       </div>
 
       {/* Buttons để hiện/ẩn thông tin chi tiết */}
-      {match.isFinished && (
+      {match?.isFinished && (
         <div>
           <button className={styles.smallDetailsButton} onClick={toggleResult}>
             {showResult ? "Ẩn kết quả trận đấu" : "Hiện kết quả trận đấu"}
@@ -301,33 +348,37 @@ function MatchDetails({API_URL}){
       )}
 
       {/* Thông tin chi tiết trận đấu */}
-      {match.isFinished && showResult && (
+      {match?.isFinished && showResult && (
         <div className={styles.matchDetailsContainer}>
           <table className={styles.matchDetailsTable}>
             <tbody>
               <tr>
                 <td>
-                  <span className={styles.label}>Đội 1:</span> {match.homeTeamName}
+                  <span className={styles.label}>Đội 1:</span>{" "}
+                  {match?.homeTeamName}
                 </td>
                 <td>
-                  <span className={styles.label}>Đội 2:</span> {match.awayTeamName}
+                  <span className={styles.label}>Đội 2:</span>{" "}
+                  {match?.awayTeamName}
                 </td>
               </tr>
               <tr>
                 <td>
                   <span className={styles.label}>Tỷ số:</span>{" "}
-                  {match.homeScore} - {match.awayScore}
+                  {match?.homeScore} - {match?.awayScore}
                 </td>
                 <td>
-                  <span className={styles.label}>Sân đấu:</span> {match.stadiumName}
+                  <span className={styles.label}>Sân đấu:</span>{" "}
+                  {match?.stadiumName}
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span className={styles.label}>Ngày:</span> {match.date}
+                  <span className={styles.label}>Ngày:</span> {match?.date}
                 </td>
                 <td>
-                  <span className={styles.label}>Thời gian:</span> {match.time}
+                  <span className={styles.label}>Thời gian:</span>{" "}
+                  {match?.time}
                 </td>
               </tr>
               <tr>
@@ -368,9 +419,7 @@ function MatchDetails({API_URL}){
                               Cầu thủ{" "}
                               {getSortIndicator("player", goalSortConfig)}
                             </th>
-                            <th onClick={() => sortGoals("team")}>
-                              Đội {getSortIndicator("team", goalSortConfig)}
-                            </th>
+                            <th>Đội</th>
                             <th onClick={() => sortGoals("type")}>
                               Loại bàn thắng{" "}
                               {getSortIndicator("type", goalSortConfig)}
@@ -387,8 +436,7 @@ function MatchDetails({API_URL}){
                             <tr key={`goal-${index}`}>
                               <td>
                                 {isEditingGoals ? (
-                                  <input
-                                    type="text"
+                                  <select
                                     value={goal.player}
                                     onChange={(e) =>
                                       handleGoalChange(
@@ -397,15 +445,25 @@ function MatchDetails({API_URL}){
                                         e.target.value
                                       )
                                     }
-                                  />
+                                  >
+                                    <option value="">Chọn cầu thủ</option>
+                                    {getAvailablePlayersForTeam(
+                                      goal.team === match.homeTeamName
+                                        ? match.homeTeamId
+                                        : match.awayTeamId
+                                    ).map((player) => (
+                                      <option key={player.id} value={player.name}>
+                                        {player.name}
+                                      </option>
+                                    ))}
+                                  </select>
                                 ) : (
                                   goal.player
                                 )}
                               </td>
                               <td>
                                 {isEditingGoals ? (
-                                  <input
-                                    type="text"
+                                  <select
                                     value={goal.team}
                                     onChange={(e) =>
                                       handleGoalChange(
@@ -414,7 +472,14 @@ function MatchDetails({API_URL}){
                                         e.target.value
                                       )
                                     }
-                                  />
+                                  >
+                                    <option value={match.homeTeamName}>
+                                      {match.homeTeamName}
+                                    </option>
+                                    <option value={match.awayTeamName}>
+                                      {match.awayTeamName}
+                                    </option>
+                                  </select>
                                 ) : (
                                   goal.team
                                 )}
@@ -520,9 +585,7 @@ function MatchDetails({API_URL}){
                               Cầu thủ{" "}
                               {getSortIndicator("player", cardSortConfig)}
                             </th>
-                            <th onClick={() => sortCards("team")}>
-                              Đội {getSortIndicator("team", cardSortConfig)}
-                            </th>
+                            <th>Đội</th>
                             <th onClick={() => sortCards("type")}>
                               Loại thẻ{" "}
                               {getSortIndicator("type", cardSortConfig)}
@@ -539,8 +602,7 @@ function MatchDetails({API_URL}){
                             <tr key={`card-${index}`}>
                               <td>
                                 {isEditingCards ? (
-                                  <input
-                                    type="text"
+                                  <select
                                     value={card.player}
                                     onChange={(e) =>
                                       handleCardChange(
@@ -549,15 +611,25 @@ function MatchDetails({API_URL}){
                                         e.target.value
                                       )
                                     }
-                                  />
+                                  >
+                                    <option value="">Chọn cầu thủ</option>
+                                    {getAvailablePlayersForTeam(
+                                      card.team === match.homeTeamName
+                                        ? match.homeTeamId
+                                        : match.awayTeamId
+                                    ).map((player) => (
+                                      <option key={player.id} value={player.name}>
+                                        {player.name}
+                                      </option>
+                                    ))}
+                                  </select>
                                 ) : (
                                   card.player
                                 )}
                               </td>
                               <td>
                                 {isEditingCards ? (
-                                  <input
-                                    type="text"
+                                  <select
                                     value={card.team}
                                     onChange={(e) =>
                                       handleCardChange(
@@ -566,7 +638,14 @@ function MatchDetails({API_URL}){
                                         e.target.value
                                       )
                                     }
-                                  />
+                                  >
+                                    <option value={match.homeTeamName}>
+                                      {match.homeTeamName}
+                                    </option>
+                                    <option value={match.awayTeamName}>
+                                      {match.awayTeamName}
+                                    </option>
+                                  </select>
                                 ) : (
                                   card.team
                                 )}

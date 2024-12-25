@@ -17,6 +17,10 @@ const Matches = ({ API_URL }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
+  // State for modal and editing
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingMatch, setEditingMatch] = useState(null);
+
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
@@ -104,7 +108,10 @@ const Matches = ({ API_URL }) => {
     setSelectedSeason(season);
     setSelectedRound("");
   };
-
+  const handleMatchClick = (match) => {
+    const { season, round, matchId } = match;
+    navigate(`/match/${season}/${round}/${matchId}`);
+  };
   const handleSort = (key) => {
     setSortConfig((prev) => ({
       key,
@@ -119,6 +126,65 @@ const Matches = ({ API_URL }) => {
       return sortConfig.direction === "ascending" ? "↑" : "↓";
     }
     return "";
+  };
+
+  // Function to open the edit modal
+  const handleEditMatch = (match) => {
+    setEditingMatch(match);
+    setIsEditModalOpen(true);
+  };
+
+  // Function to close the edit modal
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingMatch(null);
+  };
+
+  // Function to handle saving the edited match
+  const handleSaveEditedMatch = async (updatedMatch) => {
+    try {
+      const response = await fetch(`${API_URL}/matches/${updatedMatch.matchId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedMatch),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Update the matches state
+      setMatches(matches.map(match =>
+        match.matchId === updatedMatch.matchId ? updatedMatch : match
+      ));
+      handleCloseEditModal();
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trận đấu:", error);
+      // Handle error, e.g., show a notification
+    }
+  };
+
+  // Function to handle deleting a match
+  const handleDeleteMatch = async (matchId) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa trận đấu này?")) {
+      try {
+        const response = await fetch(`${API_URL}/matches/${matchId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Update the matches state by removing the deleted match
+        setMatches(matches.filter(match => match.matchId !== matchId));
+      } catch (error) {
+        console.error("Lỗi khi xóa trận đấu:", error);
+        // Handle error, e.g., show a notification
+      }
+    }
   };
 
   if (loading) {
@@ -229,7 +295,27 @@ const Matches = ({ API_URL }) => {
                     <td className={styles.cell}>{match.homeTeamName}</td>
                     <td className={styles.cell}>{match.awayTeamName}</td>
                     <td className={styles.cell}>{match.stadiumName}</td>
-                    <td className={styles.cell}>{match.roundName}</td> {/* Display round name */}
+                    <td className={styles.cell}>{match.roundName}</td>
+                    <td>
+                      <button
+                        className={styles.editButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditMatch(match);
+                        }}
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        className={styles.deleteButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteMatch(match.matchId);
+                        }}
+                      >
+                        Xóa
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -237,7 +323,117 @@ const Matches = ({ API_URL }) => {
           )}
         </>
       )}
+
+      {isEditModalOpen && editingMatch && (
+        <div className={styles.modalOverlay}> {/* Lớp overlay */}
+          <div className={styles.modalContent}>
+            <h3 className={styles.modalTitle}>Sửa trận đấu</h3>
+            {/* Form for editing match details */}
+            <EditMatchForm
+              match={editingMatch}
+              onSave={handleSaveEditedMatch}
+              onCancel={handleCloseEditModal}
+              API_URL={API_URL}
+            />
+          </div>
+        </div>
+      )}
     </div>
+  );
+};
+
+// Create a separate component for the Edit Match Form
+const EditMatchForm = ({ match, onSave, onCancel, API_URL }) => {
+  const [editedMatch, setEditedMatch] = useState({ ...match });
+  const [availableTeams, setAvailableTeams] = useState([]);
+  const [availableStadiums, setAvailableStadiums] = useState([]);
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await fetch(`${API_URL}/teams/all`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAvailableTeams(data.teams);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách đội:", error);
+      }
+    };
+
+    const fetchStadiums = async () => {
+      try {
+        const response = await fetch(`${API_URL}/stadiums`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAvailableStadiums(data);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách sân vận động:", error);
+      }
+    };
+
+    fetchTeams();
+    fetchStadiums();
+  }, [API_URL]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditedMatch(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(editedMatch);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className={styles.editMatchForm}>
+      <div className={styles.formGroup}>
+        <label htmlFor="date">Ngày thi đấu:</label>
+        <input type="date" id="date" name="date" value={editedMatch.date} onChange={handleChange} required />
+      </div>
+      <div className={styles.formGroup}>
+        <label htmlFor="time">Giờ:</label>
+        <input type="time" id="time" name="time" value={editedMatch.time} onChange={handleChange} required />
+      </div>
+      <div className={styles.formGroup}>
+        <label htmlFor="homeTeamId">Đội nhà:</label>
+        <select id="homeTeamId" name="homeTeamId" value={editedMatch.homeTeamId} onChange={handleChange} required>
+          <option value="">Chọn đội nhà</option>
+          {availableTeams.map(team => (
+            <option key={team.id} value={team.id}>{team.name}</option>
+          ))}
+        </select>
+      </div>
+      <div className={styles.formGroup}>
+        <label htmlFor="awayTeamId">Đội khách:</label>
+        <select id="awayTeamId" name="awayTeamId" value={editedMatch.awayTeamId} onChange={handleChange} required>
+          <option value="">Chọn đội khách</option>
+          {availableTeams.map(team => (
+            <option key={team.id} value={team.id}>{team.name}</option>
+          ))}
+        </select>
+      </div>
+      <div className={styles.formGroup}>
+        <label htmlFor="stadiumId">Sân thi đấu:</label>
+        <select id="stadiumId" name="stadiumId" value={editedMatch.stadiumId} onChange={handleChange} required>
+          <option value="">Chọn sân vận động</option>
+          {availableStadiums.map(stadium => (
+            <option key={stadium.stadiumId} value={stadium.stadiumId}>{stadium.stadiumName}</option>
+          ))}
+        </select>
+      </div>
+      <div className={styles.formActions}>
+        <button type="submit" className={styles.saveButton}>Lưu</button>
+        <button type="button" className={styles.cancelButton} onClick={onCancel}>Hủy</button>
+      </div>
+    </form>
   );
 };
 

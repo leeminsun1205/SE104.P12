@@ -246,9 +246,9 @@ function SeasonDetails({ API_URL }) {
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>{season.name}</h2>
-            <p className={styles.paragraph}>Mã mùa giải: {season.id}</p>
-            <p className={styles.paragraph}>Ngày bắt đầu: {new Date(season.startDate).toLocaleDateString()}</p>
-            <p className={styles.paragraph}>Ngày kết thúc: {new Date(season.endDate).toLocaleDateString()}</p>
+            <p className={styles.paragraph}><strong>Mã mùa giải:</strong> {season.id}</p>
+            <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong><strong></strong> {new Date(season.startDate).toLocaleDateString()}</p>
+            <p className={styles.paragraph}><strong>Ngày kết thúc:</strong><strong></strong> {new Date(season.endDate).toLocaleDateString()}</p>
 
             <div>
                 <h3 className={styles.title} style={{ fontSize: '20px' }}>Vòng đấu:</h3>

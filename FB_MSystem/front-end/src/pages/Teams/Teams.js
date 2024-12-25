@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
@@ -13,7 +14,9 @@ function Teams({
 }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTeams, setFilteredTeams] = useState([]);
+  const [allTeams, setAllTeams] = useState([]); // Store all teams for the selected season
+  const [currentPage, setCurrentPage] = useState(1);
+  const teamsPerPage = 4;
   const [showAddTeamsModal, setShowAddTeamsModal] = useState(false);
 
   // Fetch teams when the component mounts or when the selected season changes
@@ -29,7 +32,7 @@ function Teams({
           throw new Error('Failed to fetch teams');
         }
         const data = await response.json();
-        setFilteredTeams(data.teams); // Assuming the response has a 'teams' property
+        setAllTeams(data.teams); // Assuming the response has a 'teams' property
       } catch (error) {
         console.error('Error fetching teams:', error);
         // Handle error appropriately
@@ -39,32 +42,15 @@ function Teams({
     fetchTeamsForSelectedSeason();
   }, [selectedSeason]);
 
-  // Update filtered teams when the search term changes
+  // Update filtered teams when the search term or allTeams changes
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
-    setFilteredTeams(
-      teams.filter((team) => team.name.toLowerCase().includes(term))
+    const filtered = allTeams.filter((team) =>
+      team.name.toLowerCase().includes(term)
     );
-  }, [teams, searchTerm]);
-
-    const fetchTeamsForSelectedSeason = async () => {
-      try {
-        const url = selectedSeason === 'all'
-          ? 'http://localhost:5000/api/teams/all'
-          : `http://localhost:5000/api/teams?season=${selectedSeason}`;
-
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Failed to fetch teams');
-        }
-        const data = await response.json();
-        setFilteredTeams(data.teams);
-      } catch (error) {
-        console.error('Error fetching teams:', error);
-      }
-
-    fetchTeamsForSelectedSeason();
-  };
+    // Reset to the first page when the filter changes
+    setCurrentPage(1);
+  }, [allTeams, searchTerm]);
 
   const handleDelete = (id) => {
     const confirmDelete = window.confirm(
@@ -81,7 +67,7 @@ function Teams({
 
   const handleEdit = (id) => {
     navigate(`/teams/edit/${id}`);
-};
+  };
 
   const handleAddTeamsToSeason = async (selectedTeamIds, season) => {
     setShowAddTeamsModal(false);
@@ -96,7 +82,7 @@ function Teams({
         }
         const teamToAdd = await response.json();
         if (teamToAdd) {
-          setFilteredTeams((prevTeams) => {
+          setAllTeams((prevTeams) => {
             if (!prevTeams.some((team) => team.id === teamToAdd.id)) {
               return [...prevTeams, { ...teamToAdd, season: season }];
             }
@@ -132,6 +118,37 @@ function Teams({
   };
 
   const clearSearch = () => setSearchTerm("");
+
+  // Get filtered teams for the current page
+  const indexOfLastTeam = currentPage * teamsPerPage;
+  const indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
+  const term = searchTerm.trim().toLowerCase();
+  const currentTeams = allTeams
+    .filter((team) => team.name.toLowerCase().includes(term))
+    .slice(indexOfFirstTeam, indexOfLastTeam);
+
+  const totalTeams = allTeams.filter((team) =>
+    team.name.toLowerCase().includes(term)
+  ).length;
+  const totalPages = Math.ceil(totalTeams / teamsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={currentPage === i ? "active" : ""}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
 
   return (
     <div className="teams">
@@ -179,32 +196,39 @@ function Teams({
         />
       )}
 
-      {filteredTeams.length > 0 ? (
-        <ul>
-          {filteredTeams.map((team) => (
-            <li key={team.id}>
-              <h3>
-                <Link to={`/teams/${team.id}`}>{team.name}</Link>
-              </h3>
-              <p>Thành phố: {team.city}</p>
-              <p>Sân nhà: {team.stadium ? team.stadium.stadiumName : "Chưa xác định"}</p>
-              <div className="actions">
-                <button
-                  className="toplayer"
-                  onClick={() => handleToPlayer(team.id)}
-                >
-                  Cầu thủ
-                </button>
-                <button className="edit" onClick={() => handleEdit(team.id)}>
-                  Sửa
-                </button>
-                <button className="delete" onClick={() => handleDelete(team.id)}>
-                  Xóa
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+      {currentTeams.length > 0 ? (
+        <>
+          <ul>
+            {currentTeams.map((team) => (
+              <li key={team.id}>
+                <h3>
+                  <Link to={`/teams/${team.id}`}>{team.name}</Link>
+                </h3>
+                <p>Thành phố: {team.city}</p>
+                <p>Sân nhà: {team.stadium ? team.stadium.stadiumName : "Chưa xác định"}</p>
+                <div className="actions">
+                  <button
+                    className="toplayer"
+                    onClick={() => handleToPlayer(team.id)}
+                  >
+                    Cầu thủ
+                  </button>
+                  <button className="edit" onClick={() => handleEdit(team.id)}>
+                    Sửa
+                  </button>
+                  <button className="delete" onClick={() => handleDelete(team.id)}>
+                    Xóa
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {totalPages > 1 && (
+            <div className="pagination">
+              {renderPageNumbers()}
+            </div>
+          )}
+        </>
       ) : (
         <div className="empty-state">
           <p>
