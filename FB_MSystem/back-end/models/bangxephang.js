@@ -90,6 +90,12 @@ BangXepHang.associate = (models) => {
     //     targetKey: 'MaVongDau',
     //     as: 'VongDau',
     // });
+
+    // Liên kết với bảng MgDbCt
+    BangXepHang.hasMany(models.MgDbCt, {  // Sử dụng hasMany hoặc belongsToMany tùy theo mối quan hệ
+        foreignKey: 'MaDoiBong',  // Chìa khóa ngoại liên kết giữa BangXepHang và MgDbCt
+        as: 'MgDbCt',
+    });
 };
 
 module.exports = BangXepHang;

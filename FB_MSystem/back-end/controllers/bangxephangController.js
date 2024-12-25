@@ -1,4 +1,4 @@
-const { BangXepHang, DoiBong, MG_DB_CT } = require('../models');
+const { BangXepHang, DoiBong, MgDbCt } = require('../models');
 
 const BangXepHangController = {
     async getByMuaGiai(req, res) {
@@ -7,26 +7,30 @@ const BangXepHangController = {
             const bangXepHang = await BangXepHang.findAll({
                 where: { MaMuaGiai },
                 include: [
-                    { model: DoiBong, as: 'DoiBong' },
-                    // { model: VongDau, as: 'VongDau' },
                     {
-                        model: MG_DB_CT, // Model has to be defined correctly
-                        as: 'MG_DB_CT',   // Ensure alias is correct
-                        include: [
-                            { model: DoiBong, as: 'DoiNha', attributes: ['TenDoiBong'] },
-                            { model: DoiBong, as: 'DoiKhach', attributes: ['TenDoiBong'] }
-                        ]
+                        model: DoiBong, 
+                        as: 'DoiBong',  // Đảm bảo alias khớp với alias trong định nghĩa BangXepHang
+                        attributes: ['TenDoiBong'],  // Chỉ lấy thuộc tính TenDoiBong của DoiBong
+                    },
+                    {
+                        model: MgDbCt, 
+                        as: 'MgDbCt',  // Alias MgDbCt trong BangXepHang
+                        attributes: []  // Không lấy thêm thuộc tính nào từ MgDbCt
                     }
                 ],
-                order: [['DiemSo', 'DESC']]
+                attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],  // Lấy các thuộc tính từ BangXepHang
+                order: [['DiemSo', 'DESC']]  // Sắp xếp theo điểm số giảm dần
             });
-
+    
+            // Kiểm tra nếu không tìm thấy bảng xếp hạng
             if (bangXepHang.length === 0) {
                 return res.status(404).json({ message: 'Không tìm thấy bảng xếp hạng cho mùa giải này.' });
             }
-
+    
+            // Trả về kết quả bảng xếp hạng
             res.status(200).json(bangXepHang);
         } catch (error) {
+            console.error('Lỗi khi truy vấn bảng xếp hạng:', error);
             res.status(500).json({ error: error.message });
         }
     },
@@ -39,8 +43,8 @@ const BangXepHangController = {
     //             include: [
     //                 { model: DoiBong, as: 'DoiBong' },
     //                 {
-    //                     model: MG_DB_CT,  // Model has to be defined correctly
-    //                     as: 'MG_DB_CT',   // Ensure alias is correct
+    //                     model: MgDbCt,  // Model has to be defined correctly
+    //                     as: 'MgDbCt',   // Ensure alias is correct
     //                     include: [
     //                         { model: DoiBong, as: 'DoiNha', attributes: ['TenDoiBong'] },
     //                         { model: DoiBong, as: 'DoiKhach', attributes: ['TenDoiBong'] }
