@@ -1,4 +1,4 @@
-const { DsThePhat, CauThu, VongDau, ThePhat, TranDau } = require('../models');
+const { DsThePhat, CauThu, VongDau, ThePhat, TranDau, LoaiThePhat, sequelize  } = require('../models');
 
 const DsThePhatController = {
     async getByVongDau(req, res) {
@@ -35,60 +35,139 @@ const DsThePhatController = {
 
     async update(req, res) {
         try {
-            // Không cần params, logic tự động cập nhật toàn bộ danh sách thẻ phạt
-            const thePhatData = await ThePhat.findAll({
-                attributes: ['MaCauThu', 'MaTranDau'], // Chỉ lấy MaCauThu và MaTranDau
+            console.log('=== Bắt đầu cập nhật danh sách thẻ phạt ===');
+
+            // Lấy danh sách các loại thẻ phạt
+            const loaiThePhat = await LoaiThePhat.findAll({
+                attributes: ['MaLoaiThePhat', 'TenLoaiThePhat'],
+                raw: true,
             });
 
-            // Lấy MaVongDau từ bảng TranDau dựa trên MaTranDau
-            const tranDauMap = {};
-            const tranDauData = await TranDau.findAll({
-                attributes: ['MaTranDau', 'MaVongDau'], // Chỉ lấy MaTranDau và MaVongDau
+            if (!loaiThePhat || loaiThePhat.length === 0) {
+                console.error('Không tìm thấy loại thẻ phạt trong bảng LoaiThePhat.');
+                return res.status(500).json({ error: 'Không tìm thấy loại thẻ phạt.' });
+            }
+
+            const loaiTheMap = {};
+            loaiThePhat.forEach(loai => {
+                if (loai.TenLoaiThePhat === 'Thẻ vàng') {
+                    loaiTheMap.vang = loai.MaLoaiThePhat;
+                }
+                if (loai.TenLoaiThePhat === 'Thẻ đỏ') {
+                    loaiTheMap.do = loai.MaLoaiThePhat;
+                }
             });
+
+            if (!loaiTheMap.vang || !loaiTheMap.do) {
+                console.error('Không xác định được mã thẻ vàng hoặc thẻ đỏ.');
+                return res.status(500).json({ error: 'Không xác định được mã thẻ vàng hoặc thẻ đỏ.' });
+            }
+
+            console.log('=== Loại thẻ phạt đã ánh xạ:', loaiTheMap);
+
+            // Lấy danh sách thẻ phạt
+            const thePhatData = await ThePhat.findAll({
+                attributes: ['MaCauThu', 'MaTranDau'],
+                raw: true,
+            });
+
+            if (!thePhatData || thePhatData.length === 0) {
+                console.error('Không tìm thấy dữ liệu thẻ phạt.');
+                return res.status(500).json({ error: 'Không tìm thấy dữ liệu thẻ phạt.' });
+            }
+
+            console.log(`=== Đã tìm thấy ${thePhatData.length} bản ghi trong bảng ThePhat.`);
+
+            // Lấy MaVongDau từ bảng TranDau dựa trên MaTranDau
+            const tranDauData = await TranDau.findAll({
+                attributes: ['MaTranDau', 'MaVongDau'],
+                raw: true,
+            });
+
+            if (!tranDauData || tranDauData.length === 0) {
+                console.error('Không tìm thấy dữ liệu trong bảng TranDau.');
+                return res.status(500).json({ error: 'Không tìm thấy dữ liệu trong bảng TranDau.' });
+            }
+
+            const tranDauMap = {};
             tranDauData.forEach(tran => {
                 tranDauMap[tran.MaTranDau] = tran.MaVongDau;
             });
 
-            // Duyệt qua danh sách ThePhat và cập nhật DsThePhat
-            for (const thePhat of thePhatData) {
-                const { MaCauThu, MaTranDau } = thePhat;
-                const MaVongDau = tranDauMap[MaTranDau];
+            console.log(`=== Đã ánh xạ ${tranDauData.length} bản ghi từ bảng TranDau.`);
 
-                if (!MaVongDau) {
-                    console.warn(`Không tìm thấy MaVongDau cho MaTranDau: ${MaTranDau}`);
-                    continue;
-                }
+            // Sử dụng forEach với async/await
+            await Promise.all(
+                thePhatData.map(async (thePhat) => {
+                    const { MaCauThu, MaTranDau } = thePhat;
+                    const MaVongDau = tranDauMap[MaTranDau];
+            
+                    if (!MaVongDau) {
+                        console.warn(`Không tìm thấy MaVongDau cho MaTranDau: ${MaTranDau}`);
+                        return; // Bỏ qua bản ghi không hợp lệ
+                    }
+            
+                    console.log(`=== Đang xử lý: MaCauThu=${MaCauThu}, MaTranDau=${MaTranDau}, MaVongDau=${MaVongDau}`);
+            
+                    // Đếm số thẻ vàng và thẻ đỏ của cầu thủ trong vòng đấu
+                    try {
+                        const soThe = await ThePhat.findAll({
+                            attributes: [
+                                [sequelize.fn('COUNT', sequelize.col('MaLoaiThePhat')), 'TongSoThe'],
+                                'MaLoaiThePhat',
+                            ],
+                            where: {
+                                MaCauThu,
+                                MaTranDau,
+                                MaLoaiThePhat: [loaiTheMap.vang, loaiTheMap.do],
+                            },
+                            group: ['MaLoaiThePhat'],
+                            raw: true,
+                        });
+            
+                        console.log(`Truy vấn số thẻ cho MaCauThu=${MaCauThu}, MaTranDau=${MaTranDau}:`, soThe);
+            
+                        let SoTheVang = 0;
+                        let SoTheDo = 0;
+            
+                        soThe.forEach(record => {
+                            if (record.MaLoaiThePhat === loaiTheMap.vang) {
+                                SoTheVang = parseInt(record.TongSoThe, 10) || 0;
+                            }
+                            if (record.MaLoaiThePhat === loaiTheMap.do) {
+                                SoTheDo = parseInt(record.TongSoThe, 10) || 0;
+                            }
+                        });
+            
+                        console.log(`Số thẻ tính toán cho MaCauThu=${MaCauThu}: SoTheVang=${SoTheVang}, SoTheDo=${SoTheDo}`);
+            
+                        // Cập nhật tình trạng thi đấu
+                        const TinhTrangThiDau = SoTheVang >= 2 || SoTheDo >= 1 ? 0 : 1;
+            
+                        console.log(`TinhTrangThiDau cho MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}: ${TinhTrangThiDau}`);
+            
+                        // Kiểm tra và cập nhật DsThePhat
+                        try {
+                            const [dsThePhat, created] = await DsThePhat.findOrCreate({
+                                where: { MaCauThu, MaVongDau },
+                                defaults: { SoTheVang, SoTheDo, TinhTrangThiDau },
+                            });
+            
+                            if (!created) {
+                                await dsThePhat.update({ SoTheVang, SoTheDo, TinhTrangThiDau });
+                            }
+            
+                            console.log(`Cập nhật thành công DsThePhat cho MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}`);
+                        } catch (updateError) {
+                            console.error(`Lỗi khi cập nhật DsThePhat cho MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}:`, updateError);
+                        }
+                    } catch (queryError) {
+                        console.error(`Lỗi khi truy vấn số thẻ cho MaCauThu=${MaCauThu}, MaTranDau=${MaTranDau}:`, queryError);
+                    }
+                })
+            );
 
-                // Đếm số thẻ vàng và thẻ đỏ của cầu thủ trong vòng đấu
-                const soThe = await ThePhat.findAll({
-                    attributes: [
-                        [sequelize.fn('SUM', sequelize.literal("CASE WHEN MaLoaiThePhat = 'VANG' THEN 1 ELSE 0 END")), 'SoTheVang'],
-                        [sequelize.fn('SUM', sequelize.literal("CASE WHEN MaLoaiThePhat = 'DO' THEN 1 ELSE 0 END")), 'SoTheDo'],
-                    ],
-                    where: {
-                        MaCauThu,
-                        MaTranDau,
-                    },
-                    raw: true,
-                });
-
-                const SoTheVang = parseInt(soThe[0].SoTheVang, 10) || 0;
-                const SoTheDo = parseInt(soThe[0].SoTheDo, 10) || 0;
-
-                // Cập nhật TinhTrangThiDau
-                const TinhTrangThiDau = SoTheVang >= 2 || SoTheDo >= 1 ? 0 : 1; // 0: Treo giò, 1: Có thể thi đấu
-
-                // Kiểm tra và cập nhật DsThePhat
-                const [dsThePhat, created] = await DsThePhat.findOrCreate({
-                    where: { MaCauThu, MaVongDau },
-                    defaults: { SoTheVang, SoTheDo, TinhTrangThiDau },
-                });
-
-                if (!created) {
-                    await dsThePhat.update({ SoTheVang, SoTheDo, TinhTrangThiDau });
-                }
-            }
-
+            console.log('=== Cập nhật danh sách thẻ phạt hoàn tất ===');
             res.status(200).json({ message: 'Cập nhật danh sách thẻ phạt thành công!' });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi cập nhật thông tin danh sách thẻ phạt.' });
