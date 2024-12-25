@@ -1017,11 +1017,15 @@ app.get("/api/standings", (req, res) => {
 });
 
 app.get("/api/matches", (req, res) => {
-  const { season } = req.query;
+  const { season, team } = req.query;
   let filteredMatches = matchesData;
 
   if (season) {
     filteredMatches = filteredMatches.filter(match => match.season === season);
+  } else if (team) {
+    filteredMatches = filteredMatches.filter(match => match.homeTeamId === team || match.awayTeamId === team);
+  } else {
+    return res.status(404).json({ message: "Vui lòng truyền vào teamId hoặc season" });
   }
 
   const matchesWithDetails = filteredMatches.map(match => ({

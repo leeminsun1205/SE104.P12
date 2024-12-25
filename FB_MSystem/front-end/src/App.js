@@ -32,7 +32,8 @@ import StadiumInfo from './pages/Stadiums/StadiumInfo';
 import SeasonDetails from './pages/Seasons/SeasonDetails';
 import CreateSeason from './pages/CreateNew/CreateSeason';
 import SeasonList from './pages/Seasons/SeasonList';
-import LockUp from './pages/LockUp/LockUp';
+import LookUp from './pages/LookUp/LookUp';
+import LookUpMatch from './pages/LookUp/LookUpMatch';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -239,7 +240,8 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/create/season" element={<CreateSeason API_URL={API_URL} />} />
             <Route path="/seasons" element={<SeasonList API_URL={API_URL} />} />
             <Route path="/teams/:teamId/other-matches" element={<OtherLeagueMatches />} /> 
-            <Route path="/lockup" element={<LockUp />} /> 
+            <Route path="/lookup" element={<LookUp />} /> 
+            <Route path="/lookup/match" element={<LookUpMatch />} /> 
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

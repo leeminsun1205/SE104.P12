@@ -1,6 +1,6 @@
-/* LockUp.css */
+/* LookUp.css */
 
-.lock-up-container {
+.look-up-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,7 +19,7 @@
     transform: translate(-50%, -50%);
   }
   
-  .lock-up-container button {
+  .look-up-container button {
     width: 100%; /* Make buttons fill the container width */
     padding: 15px 20px;
     margin-bottom: 10px; /* Space between buttons */
@@ -32,22 +32,22 @@
     transition: background-color 0.3s ease;
   }
   
-  .lock-up-container button:first-of-type {
+  .look-up-container button:first-of-type {
     background-color: #008CBA; /* Back to Dashboard button color */
   }
   
-  .lock-up-container button:nth-of-type(2) {
-    background-color: #4CAF50; /* LockUp Match button color */
+  .look-up-container button:nth-of-type(2) {
+    background-color: #4CAF50; /* LookUp Match button color */
   }
   
-  .lock-up-container button:nth-of-type(3) {
-    background-color: #3f8bb1; /* LockUp Season button color */
+  .look-up-container button:nth-of-type(3) {
+    background-color: #3f8bb1; /* LookUp Season button color */
   }
   
-  .lock-up-container button:last-of-type {
-    background-color: #717d96; /* LockUp Achievements button color */
+  .look-up-container button:last-of-type {
+    background-color: #717d96; /* LookUp Achievements button color */
   }
   
-  .lock-up-container button:hover {
+  .look-up-container button:hover {
     opacity: 0.8;
   }

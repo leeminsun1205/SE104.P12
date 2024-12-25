@@ -1,42 +1,42 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LockUp.css'; // Make sure the path is correct
+import './LookUp.css'; // Make sure the path is correct
 
-function LockUp() {
+function LookUp() {
     const navigate = useNavigate();
 
     const handleBackToDashboard = () => {
         navigate('/dashboard');
     };
 
-    const handleToLockUpMatch = () => {
-        navigate('/lockup/match');
+    const handleToLookUpMatch = () => {
+        navigate('/lookup/match');
     };
 
-    const handleToLockUpSeason = () => {
-        navigate('/lockup/season');
+    const handleToLookUpSeason = () => {
+        navigate('/lookup/season');
     };
 
-    const handleToLockUpAchievements = () => {
-        navigate('/lockup/achievements');
+    const handleToLookUpAchievements = () => {
+        navigate('/lookup/achievements');
     };
 
     return (
-        <div className="lock-up-container">
+        <div className="look-up-container">
             <button onClick={handleBackToDashboard}>
                 Quay lại bảng điều khiển
             </button>
-            <button onClick={handleToLockUpMatch}>
+            <button onClick={handleToLookUpMatch}>
                 Lịch sử thi đấu
             </button>
-            <button onClick={handleToLockUpSeason}>
+            <button onClick={handleToLookUpSeason}>
                 Lịch sử giải
             </button>
-            <button onClick={handleToLockUpAchievements}>
+            <button onClick={handleToLookUpAchievements}>
                 Thành tích
             </button>
         </div>
     );
 }
 
-export default LockUp;
+export default LookUp;
