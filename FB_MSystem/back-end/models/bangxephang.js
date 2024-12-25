@@ -7,11 +7,11 @@ const BangXepHang = sequelize.define('BangXepHang', {
         primaryKey: true,
         allowNull: false,
     },
-    MaVongDau: {
-        type: DataTypes.CHAR(15),
-        primaryKey: true,
-        allowNull: false,
-    },
+    // MaVongDau: {
+    //     type: DataTypes.CHAR(15),
+    //     primaryKey: true,
+    //     allowNull: false,
+    // },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         primaryKey: true,
@@ -85,11 +85,11 @@ BangXepHang.associate = (models) => {
     });
 
     // Liên kết với bảng VONGDAU (thông qua MaMuaGiai và MaVongDau)
-    BangXepHang.belongsTo(models.VongDau, {
-        foreignKey: 'MaVongDau',
-        targetKey: 'MaVongDau',
-        as: 'VongDau',
-    });
+    // BangXepHang.belongsTo(models.VongDau, {
+    //     foreignKey: 'MaVongDau',
+    //     targetKey: 'MaVongDau',
+    //     as: 'VongDau',
+    // });
 };
 
 module.exports = BangXepHang;

@@ -134,7 +134,7 @@ CREATE TABLE BANTHANG (
 
 CREATE TABLE BANGXEPHANG (
     MaMuaGiai CHAR(10) NOT NULL,
-    MaVongDau CHAR (15) NOT NULL,
+--     MaVongDau CHAR (15) NOT NULL,
     MaDoiBong CHAR(10) NOT NULL,
     SoTran TINYINT NOT NULL DEFAULT 0,
 	SoTranThang TINYINT NOT NULL DEFAULT 0,
@@ -144,10 +144,10 @@ CREATE TABLE BANGXEPHANG (
 	SoBanThua TINYINT NOT NULL DEFAULT 0,
 	DiemSo TINYINT NOT NULL DEFAULT 0,
 	HieuSo TINYINT NOT NULL DEFAULT 0,
-    CONSTRAINT PK_BANGXEPHANG PRIMARY KEY (MaMuaGiai, MaVongDau, MaDoiBong),
+    CONSTRAINT PK_BANGXEPHANG PRIMARY KEY (MaMuaGiai, MaDoiBong),
     CONSTRAINT FK_BANGXEPHANG_DOIBONG FOREIGN KEY (MaDoiBong) REFERENCES DOIBONG(MaDoiBong),
-    CONSTRAINT FK_BANGXEPHANG_MUAGIAI FOREIGN KEY (MaMuaGiai) REFERENCES MUAGIAI(MaMuaGiai),
-    CONSTRAINT FK_BANGXEPHANG_VONGDAU FOREIGN KEY (MaVongDau) REFERENCES VONGDAU(MaVongDau)
+    CONSTRAINT FK_BANGXEPHANG_MUAGIAI FOREIGN KEY (MaMuaGiai) REFERENCES MUAGIAI(MaMuaGiai)
+--     CONSTRAINT FK_BANGXEPHANG_VONGDAU FOREIGN KEY (MaVongDau) REFERENCES VONGDAU(MaVongDau)
 );
 
 CREATE TABLE LOAIUUTIEN (
@@ -350,57 +350,57 @@ VALUES
 ('CT000030', 'Lê Văn J', '1992-11-11', 'Việt Nam', 1, 'Thủ môn', 1.88, 82.00, 33, 'Thủ môn kinh nghiệm.');
 
 -- Thêm 30 cầu thủ vào bảng MG_DB_CT
--- INSERT INTO MG_DB_CT (MaMuaGiai, MaDoiBong, MaCauThu)
--- VALUES
--- -- Đội 1: Hà Nội FC
--- ('MG2025_1', 'DB001', 'CT000001'),
--- ('MG2025_1', 'DB001', 'CT000002'),
--- ('MG2025_1', 'DB001', 'CT000003'),
+INSERT INTO MG_DB_CT (MaMuaGiai, MaDoiBong, MaCauThu)
+VALUES
+-- Đội 1: Hà Nội FC
+('MG2025_1', 'DB001', 'CT000001'),
+('MG2025_1', 'DB001', 'CT000002'),
+('MG2025_1', 'DB001', 'CT000003'),
 
--- -- Đội 2: Hải Phòng FC
--- ('MG2025_1', 'DB002', 'CT000004'),
--- ('MG2025_1', 'DB002', 'CT000005'),
--- ('MG2025_1', 'DB002', 'CT000006'),
+-- Đội 2: Hải Phòng FC
+('MG2025_1', 'DB002', 'CT000004'),
+('MG2025_1', 'DB002', 'CT000005'),
+('MG2025_1', 'DB002', 'CT000006'),
 
--- -- Đội 3: TP.HCM FC
--- ('MG2025_1', 'DB003', 'CT000007'),
--- ('MG2025_1', 'DB003', 'CT000008'),
--- ('MG2025_1', 'DB003', 'CT000009'),
+-- Đội 3: TP.HCM FC
+('MG2025_1', 'DB003', 'CT000007'),
+('MG2025_1', 'DB003', 'CT000008'),
+('MG2025_1', 'DB003', 'CT000009'),
 
--- -- Đội 4: Sông Lam Nghệ An
--- ('MG2025_1', 'DB004', 'CT000010'),
--- ('MG2025_1', 'DB004', 'CT000011'),
--- ('MG2025_1', 'DB004', 'CT000012'),
+-- Đội 4: Sông Lam Nghệ An
+('MG2025_1', 'DB004', 'CT000010'),
+('MG2025_1', 'DB004', 'CT000011'),
+('MG2025_1', 'DB004', 'CT000012'),
 
--- -- Đội 5: Hoàng Anh Gia Lai
--- ('MG2025_1', 'DB005', 'CT000013'),
--- ('MG2025_1', 'DB005', 'CT000014'),
--- ('MG2025_1', 'DB005', 'CT000015'),
+-- Đội 5: Hoàng Anh Gia Lai
+('MG2025_1', 'DB005', 'CT000013'),
+('MG2025_1', 'DB005', 'CT000014'),
+('MG2025_1', 'DB005', 'CT000015'),
 
--- -- Đội 6: Becamex Bình Dương
--- ('MG2025_1', 'DB006', 'CT000016'),
--- ('MG2025_1', 'DB006', 'CT000017'),
--- ('MG2025_1', 'DB006', 'CT000018'),
+-- Đội 6: Becamex Bình Dương
+('MG2025_1', 'DB006', 'CT000016'),
+('MG2025_1', 'DB006', 'CT000017'),
+('MG2025_1', 'DB006', 'CT000018'),
 
--- -- Đội 7: Cần Thơ FC
--- ('MG2025_1', 'DB007', 'CT000019'),
--- ('MG2025_1', 'DB007', 'CT000020'),
--- ('MG2025_1', 'DB007', 'CT000021'),
+-- Đội 7: Cần Thơ FC
+('MG2025_1', 'DB007', 'CT000019'),
+('MG2025_1', 'DB007', 'CT000020'),
+('MG2025_1', 'DB007', 'CT000021'),
 
--- -- Đội 8: Long An FC
--- ('MG2025_1', 'DB008', 'CT000022'),
--- ('MG2025_1', 'DB008', 'CT000023'),
--- ('MG2025_1', 'DB008', 'CT000024'),
+-- Đội 8: Long An FC
+('MG2025_1', 'DB008', 'CT000022'),
+('MG2025_1', 'DB008', 'CT000023'),
+('MG2025_1', 'DB008', 'CT000024'),
 
--- -- Đội 9: Thanh Hóa FC
--- ('MG2025_1', 'DB009', 'CT000025'),
--- ('MG2025_1', 'DB009', 'CT000026'),
--- ('MG2025_1', 'DB009', 'CT000027'),
+-- Đội 9: Thanh Hóa FC
+('MG2025_1', 'DB009', 'CT000025'),
+('MG2025_1', 'DB009', 'CT000026'),
+('MG2025_1', 'DB009', 'CT000027'),
 
--- -- Đội 10: Viettel FC
--- ('MG2025_1', 'DB010', 'CT000028'),
--- ('MG2025_1', 'DB010', 'CT000029'),
--- ('MG2025_1', 'DB010', 'CT000030');
+-- Đội 10: Viettel FC
+('MG2025_1', 'DB010', 'CT000028'),
+('MG2025_1', 'DB010', 'CT000029'),
+('MG2025_1', 'DB010', 'CT000030');
 
 INSERT INTO LOAIBANTHANG (MaLoaiBanThang, TenLoaiBanThang, MoTa)
 VALUES
@@ -422,4 +422,4 @@ VALUES
 
 
 SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
-select * from vongdau
+select * from cauthu
