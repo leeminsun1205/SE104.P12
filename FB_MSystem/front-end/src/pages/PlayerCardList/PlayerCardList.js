@@ -9,6 +9,7 @@ function PlayerCardList({ API_URL }) {
   const [error, setError] = useState(null);
   const [availableSeasons, setAvailableSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState("");
+  const [notFound, setNotFound] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
