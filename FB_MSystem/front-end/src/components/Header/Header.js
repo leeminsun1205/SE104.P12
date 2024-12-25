@@ -58,7 +58,7 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/matches" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Trận đấu
                         </NavLink>
-                        <NavLink to="/standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/combined-standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Bảng xếp hạng
                         </NavLink>
                         <NavLink to="/create" className={({ isActive }) => isActive ? styles.active : styles.navLink}>

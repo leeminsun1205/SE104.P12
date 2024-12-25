@@ -86,7 +86,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-futbol"></i> Trận đấu
             </NavLink>
             <NavLink
-              to="/standings"
+              to="/combined-standings"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
