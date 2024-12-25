@@ -127,7 +127,7 @@ function LookUpSeason({ API_URL }) {
     
     return (
         <div className={styles.standingsContainer}>
-            <h2 className={styles.standingsTitle}>Bảng xếp hạng</h2>
+            <h2 className={styles.standingsTitle}>Lịch sử giải đấu</h2>
             {availableTeams.length > 0 && (
                 <TeamSelector
                     onTeamsChange={handleTeamChange}
