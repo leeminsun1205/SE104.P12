@@ -1,3 +1,4 @@
+// -- Updated App.js --
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -13,7 +14,7 @@ import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
 import Players from './pages/Players/Players';
 import PlayerInfo from './pages/Players/PlayerInfo';
-import OtherLeagueMatches from './pages/Matches/OtherLeagueMatches'; 
+import OtherLeagueMatches from './pages/Matches/OtherLeagueMatches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
@@ -32,6 +33,8 @@ import StadiumInfo from './pages/Stadiums/StadiumInfo';
 import SeasonDetails from './pages/Seasons/SeasonDetails';
 import CreateSeason from './pages/CreateNew/CreateSeason';
 import SeasonList from './pages/Seasons/SeasonList';
+import TopScorers from './pages/TopScorers/TopScorers';
+import TopScorersStandings from './pages/Standings/TopScorersStandings'; // Import the new component
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -237,7 +240,9 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/seasons/:seasonId" element={<SeasonDetails API_URL={API_URL} />} />
             <Route path="/create/season" element={<CreateSeason API_URL={API_URL} />} />
             <Route path="/seasons" element={<SeasonList API_URL={API_URL} />} />
-            <Route path="/teams/:teamId/other-matches" element={<OtherLeagueMatches />} /> 
+            <Route path="/teams/:teamId/other-matches" element={<OtherLeagueMatches />} />
+            <Route path="/seasons/:seasonId/top-scorers" element={<TopScorers API_URL={API_URL} />} />
+            <Route path="/top-scorers" element={<TopScorersStandings API_URL={API_URL} />} /> {/* Add the new route */}
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

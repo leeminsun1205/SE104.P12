@@ -1,0 +1,50 @@
+/* /src/pages/TopScorers/TopScorers.module.css */
+.topScorersPage {
+    padding: 20px;
+    font-family: sans-serif;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.scorersTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.scorersTable th, .scorersTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.scorersTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.scorersTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.scorersTable tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+.backButton {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    borderRadius: 5px;
+    cursor: pointer;
+    fontSize: 16px;
+}
+
+.backButton:hover {
+    background-color: #0056b3;
+}
