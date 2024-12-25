@@ -34,7 +34,7 @@ function LookUpSeason({ API_URL }) {
     useEffect(() => {
         if (!setSelectedTeam) {
             setStandings([]);
-            setSortConfig({ key: null, direction: 'ascending' });
+            setSortConfig({ key: season, direction: 'ascending' });
             setNotFound(false);
             return;
         }
@@ -57,11 +57,13 @@ function LookUpSeason({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("Dữ liệu giải đấu từ API:", data); // Debug API response
-                const winner = data.posiotion==1 ? true : false;
-                setStandings({
-                    ...data,
-                    winner: winner,
-                });
+                setStandings(data.map((team)=>{
+                    const winner = team.posiotion==1 ? 'Có' :'Không';
+                    return {
+                        ...team,
+                        winner: winner,
+                    }
+                }));
             } catch (error) {
                 console.error("Lỗi khi fetch dữ liệu giải đấu:", error);
                 setError("Failed to load standings.");
