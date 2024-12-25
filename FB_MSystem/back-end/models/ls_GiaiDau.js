@@ -33,7 +33,7 @@ const LichSuGiaiDau = sequelize.define('LichSuGiaiDau', {
         validate: { min: 0 },
     },
 }, {
-    tableName: 'LICHSUGIAIDAU',
+    tableName: 'LS_GIAIDAU',
     timestamps: false,
 });
 

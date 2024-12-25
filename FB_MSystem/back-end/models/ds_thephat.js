@@ -27,7 +27,7 @@ const DsThePhat = sequelize.define('DsThePhat', {
         allowNull: false,
     },
 }, {
-    tableName: 'DSTHEPHAT',
+    tableName: 'DS_THEPHAT',
     timestamps: false,
 });
 
