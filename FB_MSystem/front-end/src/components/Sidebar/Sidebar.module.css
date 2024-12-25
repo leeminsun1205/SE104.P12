@@ -11,7 +11,10 @@
   padding-top: 20px;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
-
+.sidebar h2 {
+  color: rgb(69, 84, 255);
+  font-weight: 600;
+}
 .sidebar.active {
   transform: translateX(0);
 }

@@ -22,43 +22,18 @@ const SignatureBox = ({ label }) => (
 function Invoices({ invoices }) {
   const { invoiceId } = useParams();
   const navigate = useNavigate();
-  // Remove the unnecessary setInvoiceData since it's not actually changing any state.
-  // const [, setInvoiceData] = useState(null); 
   const invoiceData = invoices.find((invoice) => invoice.id === invoiceId);
 
   const goBackToForm = () => {
     navigate("/invoices");
   };
 
-  useEffect(() => {
-    // This useEffect is no longer needed as we're not fetching data anymore
-    // and we're relying on the `invoices` prop passed from the parent.
-
-    // const fetchedInvoiceData = {
-    //   receiptNumber: invoiceId,
-    //   teamName: "Team A",
-    //   fee: "100000",
-    //   receivedAmount: "50000",
-    //   receivedDate: "2024-12-23",
-    //   status: "Đã nhận",
-    // };
-
-    // setInvoiceData(fetchedInvoiceData);
-  }, [invoiceId]);
-
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
 
-  // This function is not used anywhere, so it can be removed.
-  // const calculateRemainingAmount = () => {
-  //   const fee = parseFloat(invoiceData?.fee) || 0;
-  //   const receivedAmount = parseFloat(invoiceData?.receivedAmount) || 0;
-  //   return fee - receivedAmount;
-  // };
 
   const handlePrint = () => window.print();
 
-  // Improved error handling: Show a more user-friendly message with a button to go back
   if (!invoiceData) {
     return (
       <div className={styles.errorMessage}>
