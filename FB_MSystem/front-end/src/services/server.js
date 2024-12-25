@@ -379,6 +379,46 @@ app.put("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
   season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
   res.json(season.rounds[roundIndex]);
 });
+let playerCards = {
+  "2022-2023": [
+    {
+      id: 1,
+      name: "Cầu thủ A1",
+      teamId: 1,
+      team: "Team A",
+      playerType: "Trong nước",
+      soThe: 3,
+      playerState: false,
+    },
+    {
+      id: 2,
+      name: "Cầu thủ B2",
+      teamId: 2,
+      team: "Team B",
+      playerType: "Trong nước",
+      soThe: 1,
+      playerState: true,
+    },
+    {
+      id: 3,
+      name: "Cầu thủ C3",
+      teamId: 3,
+      team: "Team C",
+      playerType: "Trong nước",
+      soThe: 2,
+      playerState: false,
+    }
+  ],
+  "2024-2025": [],
+};
+app.get("/api/seasons/cards", (req, res) => {
+  const season = req.query.season;
+  if (!season) {
+    return res.status(404).json({ message: "Season not found" });
+  }
+  const cards = playerCards[season]
+  res.json({ cards: cards });
+});
 
 app.put("/api/teams/:id", upload.none(), (req, res) => {
   const { id } = req.params;
