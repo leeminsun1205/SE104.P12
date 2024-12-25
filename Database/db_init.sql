@@ -416,9 +416,9 @@ VALUES
 
 INSERT INTO LOAITHEPHAT (MaLoaiThePhat, TenLoaiThePhat, MoTa)
 VALUES
-    ('TP01', 'Thẻ vàng', 'Thẻ cảnh cáo cầu thủ'),
-    ('TP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
-    ('TP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
+    ('LTP01', 'Thẻ vàng', 'Thẻ cảnh cáo cầu thủ'),
+    ('LTP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
+    ('LTP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
 
 
 SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
