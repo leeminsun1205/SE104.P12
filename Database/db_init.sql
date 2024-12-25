@@ -123,7 +123,7 @@ CREATE TABLE BANTHANG (
 	MaDoiBong CHAR(10) NOT NULL,
 	MaCauThu CHAR(10) NOT NULL,
 	MaLoaiBanThang CHAR(10) NOT NULL,
-	ThoiDiem INT NOT NULL,
+	ThoiDiem TINYINT NOT NULL,
     CONSTRAINT CK_ThoiDiem CHECK (ThoiDiem > 0 AND ThoiDiem <= 90),
     CONSTRAINT PK_BANTHANG PRIMARY KEY (MaBanThang),
     CONSTRAINT FK_BANTHANG_TRANDAU FOREIGN KEY (MaTranDau) REFERENCES TRANDAU(MaTranDau),
@@ -317,90 +317,90 @@ VALUES
 -- Phát sinh 30 cầu thủ mẫu
 INSERT INTO CAUTHU (MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, ChieuCao, CanNang, SoAo, TieuSu)
 VALUES
-('CT001', 'Nguyễn Văn A', '1995-03-15', 'Việt Nam', 1, 'Tiền đạo', 1.75, 70.50, 9, 'Cầu thủ tấn công xuất sắc.'),
-('CT002', 'Nguyễn Văn B', '1998-07-21', 'Việt Nam', 1, 'Tiền vệ', 1.72, 68.00, 10, 'Chuyên gia chuyền bóng.'),
-('CT003', 'Trần Văn C', '1997-01-12', 'Việt Nam', 1, 'Hậu vệ', 1.80, 75.00, 4, 'Phòng ngự chắc chắn.'),
-('CT004', 'Nguyễn Thành D', '1994-05-10', 'Việt Nam', 1, 'Thủ môn', 1.85, 80.00, 1, 'Thủ môn kỳ cựu.'),
-('CT005', 'Lê Văn E', '2000-02-25', 'Việt Nam', 1, 'Tiền vệ', 1.73, 65.00, 8, 'Khả năng tranh chấp mạnh mẽ.'),
-('CT006', 'Nguyễn Công F', '1999-06-15', 'Việt Nam', 1, 'Tiền đạo', 1.78, 72.50, 11, 'Cầu thủ nhanh nhẹn và khéo léo.'),
-('CT007', 'Đỗ Hữu G', '1996-04-22', 'Việt Nam', 1, 'Hậu vệ', 1.82, 74.00, 3, 'Phòng ngự thông minh.'),
-('CT008', 'Phan Văn H', '1995-12-05', 'Việt Nam', 1, 'Thủ môn', 1.86, 81.00, 12, 'Phản xạ xuất sắc.'),
-('CT009', 'Nguyễn Quang I', '1997-11-17', 'Việt Nam', 1, 'Tiền vệ', 1.74, 67.00, 7, 'Điều khiển nhịp độ trận đấu tốt.'),
-('CT010', 'Lê Văn K', '1993-09-09', 'Việt Nam', 1, 'Hậu vệ', 1.83, 76.00, 5, 'Khả năng tắc bóng chính xác.'),
+('CT000001', 'Nguyễn Văn A', '1995-03-15', 'Việt Nam', 1, 'Tiền đạo', 1.75, 70.50, 9, 'Cầu thủ tấn công xuất sắc.'),
+('CT000002', 'Nguyễn Văn B', '1998-07-21', 'Việt Nam', 1, 'Tiền vệ', 1.72, 68.00, 10, 'Chuyên gia chuyền bóng.'),
+('CT000003', 'Trần Văn C', '1997-01-12', 'Việt Nam', 1, 'Hậu vệ', 1.80, 75.00, 4, 'Phòng ngự chắc chắn.'),
+('CT000004', 'Nguyễn Thành D', '1994-05-10', 'Việt Nam', 1, 'Thủ môn', 1.85, 80.00, 1, 'Thủ môn kỳ cựu.'),
+('CT000005', 'Lê Văn E', '2000-02-25', 'Việt Nam', 1, 'Tiền vệ', 1.73, 65.00, 8, 'Khả năng tranh chấp mạnh mẽ.'),
+('CT000006', 'Nguyễn Công F', '1999-06-15', 'Việt Nam', 1, 'Tiền đạo', 1.78, 72.50, 11, 'Cầu thủ nhanh nhẹn và khéo léo.'),
+('CT000007', 'Đỗ Hữu G', '1996-04-22', 'Việt Nam', 1, 'Hậu vệ', 1.82, 74.00, 3, 'Phòng ngự thông minh.'),
+('CT000008', 'Phan Văn H', '1995-12-05', 'Việt Nam', 1, 'Thủ môn', 1.86, 81.00, 12, 'Phản xạ xuất sắc.'),
+('CT000009', 'Nguyễn Quang I', '1997-11-17', 'Việt Nam', 1, 'Tiền vệ', 1.74, 67.00, 7, 'Điều khiển nhịp độ trận đấu tốt.'),
+('CT000010', 'Lê Văn K', '1993-09-09', 'Việt Nam', 1, 'Hậu vệ', 1.83, 76.00, 5, 'Khả năng tắc bóng chính xác.'),
 
-('CT011', 'John Doe', '1990-08-30', 'Brazil', 0, 'Tiền đạo', 1.88, 78.00, 99, 'Cầu thủ ngoại kinh nghiệm.'),
-('CT012', 'Carlos Alberto', '1995-03-21', 'Argentina', 0, 'Tiền vệ', 1.80, 74.00, 23, 'Khả năng kiến tạo tuyệt vời.'),
-('CT013', 'David Silva', '1992-02-13', 'Spain', 0, 'Hậu vệ', 1.85, 76.50, 14, 'Phòng ngự kiên cố.'),
-('CT014', 'Javier Hernandez', '1996-07-18', 'Mexico', 0, 'Thủ môn', 1.90, 83.00, 25, 'Thủ môn ngoại xuất sắc.'),
-('CT015', 'Kwon Ji-Sung', '1998-10-11', 'South Korea', 0, 'Tiền vệ', 1.75, 69.00, 17, 'Khả năng tấn công linh hoạt.'),
-('CT016', 'Luis Figo', '1991-05-25', 'Portugal', 0, 'Tiền đạo', 1.84, 75.00, 21, 'Kinh nghiệm dày dặn trong trận đấu lớn.'),
-('CT017', 'Samuel Eto', '1999-12-03', 'Cameroon', 0, 'Tiền đạo', 1.87, 77.00, 22, 'Khả năng ghi bàn ấn tượng.'),
-('CT018', 'Alexis Sanchez', '1993-04-07', 'Chile', 0, 'Tiền vệ', 1.76, 71.00, 18, 'Tốc độ và kỹ thuật điêu luyện.'),
-('CT019', 'Luka Modric', '1992-06-12', 'Croatia', 0, 'Tiền vệ', 1.74, 68.50, 19, 'Nhạc trưởng tuyến giữa.'),
-('CT020', 'Sergio Ramos', '1994-03-31', 'Spain', 0, 'Hậu vệ', 1.89, 80.00, 4, 'Trung vệ đẳng cấp thế giới.'),
+('CT000011', 'John Doe', '1990-08-30', 'Brazil', 0, 'Tiền đạo', 1.88, 78.00, 99, 'Cầu thủ ngoại kinh nghiệm.'),
+('CT000012', 'Carlos Alberto', '1995-03-21', 'Argentina', 0, 'Tiền vệ', 1.80, 74.00, 23, 'Khả năng kiến tạo tuyệt vời.'),
+('CT000013', 'David Silva', '1992-02-13', 'Spain', 0, 'Hậu vệ', 1.85, 76.50, 14, 'Phòng ngự kiên cố.'),
+('CT000014', 'Javier Hernandez', '1996-07-18', 'Mexico', 0, 'Thủ môn', 1.90, 83.00, 25, 'Thủ môn ngoại xuất sắc.'),
+('CT000015', 'Kwon Ji-Sung', '1998-10-11', 'South Korea', 0, 'Tiền vệ', 1.75, 69.00, 17, 'Khả năng tấn công linh hoạt.'),
+('CT000016', 'Luis Figo', '1991-05-25', 'Portugal', 0, 'Tiền đạo', 1.84, 75.00, 21, 'Kinh nghiệm dày dặn trong trận đấu lớn.'),
+('CT000017', 'Samuel Eto', '1999-12-03', 'Cameroon', 0, 'Tiền đạo', 1.87, 77.00, 22, 'Khả năng ghi bàn ấn tượng.'),
+('CT000018', 'Alexis Sanchez', '1993-04-07', 'Chile', 0, 'Tiền vệ', 1.76, 71.00, 18, 'Tốc độ và kỹ thuật điêu luyện.'),
+('CT000019', 'Luka Modric', '1992-06-12', 'Croatia', 0, 'Tiền vệ', 1.74, 68.50, 19, 'Nhạc trưởng tuyến giữa.'),
+('CT000020', 'Sergio Ramos', '1994-03-31', 'Spain', 0, 'Hậu vệ', 1.89, 80.00, 4, 'Trung vệ đẳng cấp thế giới.'),
 
-('CT021', 'Nguyễn Hồng A', '2001-01-15', 'Việt Nam', 1, 'Tiền đạo', 1.75, 68.00, 15, 'Cầu thủ trẻ triển vọng.'),
-('CT022', 'Lê Quốc B', '2000-07-22', 'Việt Nam', 1, 'Tiền vệ', 1.72, 66.00, 16, 'Chuyên gia điều phối bóng.'),
-('CT023', 'Phạm Văn C', '1999-09-18', 'Việt Nam', 1, 'Hậu vệ', 1.78, 72.00, 2, 'Phòng ngự vững chắc.'),
-('CT024', 'Hoàng Minh D', '1998-10-10', 'Việt Nam', 1, 'Thủ môn', 1.83, 80.50, 30, 'Thủ môn tài năng trẻ.'),
-('CT025', 'Nguyễn Tấn E', '1997-08-19', 'Việt Nam', 1, 'Tiền đạo', 1.79, 70.00, 13, 'Khả năng dứt điểm tốt.'),
-('CT026', 'Đinh Văn F', '1996-03-25', 'Việt Nam', 1, 'Hậu vệ', 1.81, 73.00, 6, 'Trung vệ đáng tin cậy.'),
-('CT027', 'Võ Hữu G', '1995-12-12', 'Việt Nam', 1, 'Tiền vệ', 1.73, 67.50, 20, 'Khả năng chuyền bóng xuất sắc.'),
-('CT028', 'Phan Văn H', '1994-04-20', 'Việt Nam', 1, 'Tiền vệ', 1.76, 69.00, 24, 'Cầu thủ đa năng.'),
-('CT029', 'Nguyễn Hoàng I', '1993-02-15', 'Việt Nam', 1, 'Tiền đạo', 1.82, 71.50, 27, 'Tiền đạo cánh nhanh nhẹn.'),
-('CT030', 'Lê Văn J', '1992-11-11', 'Việt Nam', 1, 'Thủ môn', 1.88, 82.00, 33, 'Thủ môn kinh nghiệm.');
+('CT000021', 'Nguyễn Hồng A', '2001-01-15', 'Việt Nam', 1, 'Tiền đạo', 1.75, 68.00, 15, 'Cầu thủ trẻ triển vọng.'),
+('CT000022', 'Lê Quốc B', '2000-07-22', 'Việt Nam', 1, 'Tiền vệ', 1.72, 66.00, 16, 'Chuyên gia điều phối bóng.'),
+('CT000023', 'Phạm Văn C', '1999-09-18', 'Việt Nam', 1, 'Hậu vệ', 1.78, 72.00, 2, 'Phòng ngự vững chắc.'),
+('CT000024', 'Hoàng Minh D', '1998-10-10', 'Việt Nam', 1, 'Thủ môn', 1.83, 80.50, 30, 'Thủ môn tài năng trẻ.'),
+('CT000025', 'Nguyễn Tấn E', '1997-08-19', 'Việt Nam', 1, 'Tiền đạo', 1.79, 70.00, 13, 'Khả năng dứt điểm tốt.'),
+('CT000026', 'Đinh Văn F', '1996-03-25', 'Việt Nam', 1, 'Hậu vệ', 1.81, 73.00, 6, 'Trung vệ đáng tin cậy.'),
+('CT000027', 'Võ Hữu G', '1995-12-12', 'Việt Nam', 1, 'Tiền vệ', 1.73, 67.50, 20, 'Khả năng chuyền bóng xuất sắc.'),
+('CT000028', 'Phan Văn H', '1994-04-20', 'Việt Nam', 1, 'Tiền vệ', 1.76, 69.00, 24, 'Cầu thủ đa năng.'),
+('CT000029', 'Nguyễn Hoàng I', '1993-02-15', 'Việt Nam', 1, 'Tiền đạo', 1.82, 71.50, 27, 'Tiền đạo cánh nhanh nhẹn.'),
+('CT000030', 'Lê Văn J', '1992-11-11', 'Việt Nam', 1, 'Thủ môn', 1.88, 82.00, 33, 'Thủ môn kinh nghiệm.');
 
 -- Thêm 30 cầu thủ vào bảng MG_DB_CT
 INSERT INTO MG_DB_CT (MaMuaGiai, MaDoiBong, MaCauThu)
 VALUES
 -- Đội 1: Hà Nội FC
-('MG2025_1', 'DB001', 'CT001'),
-('MG2025_1', 'DB001', 'CT002'),
-('MG2025_1', 'DB001', 'CT003'),
+('MG2025_1', 'DB001', 'CT000001'),
+('MG2025_1', 'DB001', 'CT000002'),
+('MG2025_1', 'DB001', 'CT000003'),
 
 -- Đội 2: Hải Phòng FC
-('MG2025_1', 'DB002', 'CT004'),
-('MG2025_1', 'DB002', 'CT005'),
-('MG2025_1', 'DB002', 'CT006'),
+('MG2025_1', 'DB002', 'CT000004'),
+('MG2025_1', 'DB002', 'CT000005'),
+('MG2025_1', 'DB002', 'CT000006'),
 
 -- Đội 3: TP.HCM FC
-('MG2025_1', 'DB003', 'CT007'),
-('MG2025_1', 'DB003', 'CT008'),
-('MG2025_1', 'DB003', 'CT009'),
+('MG2025_1', 'DB003', 'CT000007'),
+('MG2025_1', 'DB003', 'CT000008'),
+('MG2025_1', 'DB003', 'CT000009'),
 
 -- Đội 4: Sông Lam Nghệ An
-('MG2025_1', 'DB004', 'CT010'),
-('MG2025_1', 'DB004', 'CT011'),
-('MG2025_1', 'DB004', 'CT012'),
+('MG2025_1', 'DB004', 'CT000010'),
+('MG2025_1', 'DB004', 'CT000011'),
+('MG2025_1', 'DB004', 'CT000012'),
 
 -- Đội 5: Hoàng Anh Gia Lai
-('MG2025_1', 'DB005', 'CT013'),
-('MG2025_1', 'DB005', 'CT014'),
-('MG2025_1', 'DB005', 'CT015'),
+('MG2025_1', 'DB005', 'CT000013'),
+('MG2025_1', 'DB005', 'CT000014'),
+('MG2025_1', 'DB005', 'CT000015'),
 
 -- Đội 6: Becamex Bình Dương
-('MG2025_1', 'DB006', 'CT016'),
-('MG2025_1', 'DB006', 'CT017'),
-('MG2025_1', 'DB006', 'CT018'),
+('MG2025_1', 'DB006', 'CT000016'),
+('MG2025_1', 'DB006', 'CT000017'),
+('MG2025_1', 'DB006', 'CT000018'),
 
 -- Đội 7: Cần Thơ FC
-('MG2025_1', 'DB007', 'CT019'),
-('MG2025_1', 'DB007', 'CT020'),
-('MG2025_1', 'DB007', 'CT021'),
+('MG2025_1', 'DB007', 'CT000019'),
+('MG2025_1', 'DB007', 'CT000020'),
+('MG2025_1', 'DB007', 'CT000021'),
 
 -- Đội 8: Long An FC
-('MG2025_1', 'DB008', 'CT022'),
-('MG2025_1', 'DB008', 'CT023'),
-('MG2025_1', 'DB008', 'CT024'),
+('MG2025_1', 'DB008', 'CT000022'),
+('MG2025_1', 'DB008', 'CT000023'),
+('MG2025_1', 'DB008', 'CT000024'),
 
 -- Đội 9: Thanh Hóa FC
-('MG2025_1', 'DB009', 'CT025'),
-('MG2025_1', 'DB009', 'CT026'),
-('MG2025_1', 'DB009', 'CT027'),
+('MG2025_1', 'DB009', 'CT000025'),
+('MG2025_1', 'DB009', 'CT000026'),
+('MG2025_1', 'DB009', 'CT000027'),
 
 -- Đội 10: Viettel FC
-('MG2025_1', 'DB010', 'CT028'),
-('MG2025_1', 'DB010', 'CT029'),
-('MG2025_1', 'DB010', 'CT030');
+('MG2025_1', 'DB010', 'CT000028'),
+('MG2025_1', 'DB010', 'CT000029'),
+('MG2025_1', 'DB010', 'CT000030');
 SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
 select * from vongdau

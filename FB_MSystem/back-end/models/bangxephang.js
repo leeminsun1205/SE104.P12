@@ -74,4 +74,31 @@ const BangXepHang = sequelize.define('BangXepHang', {
     timestamps: false,
 });
 
+// Thiết lập quan hệ với các bảng khác
+BangXepHang.associate = (models) => {
+    // Một bảng xếp hạng thuộc về một mùa giải
+    BangXepHang.belongsTo(models.MuaGiai, {
+        foreignKey: 'MaMuaGiai',
+        as: 'MuaGiai',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Một bảng xếp hạng thuộc về một vòng đấu
+    BangXepHang.belongsTo(models.VongDau, {
+        foreignKey: 'MaVongDau',
+        as: 'VongDau',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Một bảng xếp hạng thuộc về một đội bóng
+    BangXepHang.belongsTo(models.DoiBong, {
+        foreignKey: 'MaDoiBong',
+        as: 'DoiBong',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+};
+
 module.exports = BangXepHang;

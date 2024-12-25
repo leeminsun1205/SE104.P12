@@ -32,7 +32,7 @@ const SanThiDau = sequelize.define('SanThiDau', {
     hooks: {
         beforeValidate: async (record) => {
             if (!record.MaSan) {
-                record.MaSan = await autoCreateCode(SanThiDau, 'SAN', 'MaSan', 2);
+                record.MaSan = await autoCreateCode(SanThiDau, 'SAN', 'MaSan', 3);
             }
         },
     },

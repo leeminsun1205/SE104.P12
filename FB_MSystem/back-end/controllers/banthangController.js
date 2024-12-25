@@ -73,6 +73,7 @@ const BanThangController = {
     
             res.status(201).json({ banThang, tranDau });
         } catch (error) {
+            console.error(error);
             res.status(500).json({ error: error });
         }
     },

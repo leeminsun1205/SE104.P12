@@ -55,7 +55,7 @@ const CauThu = sequelize.define(
         hooks: {
             beforeValidate: async (record) => {
                 if (!record.MaCauThu) {
-                    record.MaCauThu = await autoCreateCode(CauThu, 'CT', 'MaCauThu', 4);
+                    record.MaCauThu = await autoCreateCode(CauThu, 'CT', 'MaCauThu', 6);
                 }
             },
         },

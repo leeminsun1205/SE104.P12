@@ -45,7 +45,7 @@ const BienNhan = sequelize.define('BienNhan', {
         beforeValidate: async (record) => {
             // Tự động tạo mã biên nhận nếu chưa có
             if (!record.MaBienNhan) {
-                record.MaBienNhan = await autoCreateCode(BienNhan, 'BN', 'MaBienNhan', 4);
+                record.MaBienNhan = await autoCreateCode(BienNhan, 'BN', 'MaBienNhan', 5);
             }
             // Tự động đặt giá trị mặc định cho NgayThanhToan và TinhTrang
             if (record.NgayThanhToan === undefined) {
