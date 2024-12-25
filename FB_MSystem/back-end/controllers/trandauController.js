@@ -48,6 +48,7 @@ const TranDauController = {
             if (playing === true) {
                 tranDau.BanThangDoiNha = 0;
                 tranDau.BanThangDoiKhach = 0;
+                await tranDau.save(); // Lưu thay đổi vào cơ sở dữ liệu
             }
             
     

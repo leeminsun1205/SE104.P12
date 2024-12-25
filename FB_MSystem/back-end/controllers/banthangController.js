@@ -1,4 +1,4 @@
-const { BanThang, TranDau, CauThu, DoiBong, LoaiBanThang } = require('../models');
+const { BanThang, TranDau, CauThu, DoiBong, LoaiBanThang, MgDbCt, VongDau } = require('../models');
 
 const BanThangController = {
     async getAll(req, res) {
@@ -47,12 +47,20 @@ const BanThangController = {
     
             // Kiểm tra trận đấu có tồn tại không
             const tranDau = await TranDau.findOne({
-                where: { MaTranDau }
+                where: { MaTranDau },
+                include: {
+                    model: VongDau,
+                    as: 'VongDau',
+                    attributes: ['MaMuaGiai'], // Lấy thông tin MaMuaGiai từ VongDau
+                },
             });
     
             if (!tranDau) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
             }
+    
+            // Lấy MaMuaGiai từ VongDau
+            const { MaMuaGiai } = tranDau.VongDau;
     
             // Kiểm tra trạng thái trận đấu
             if (tranDau.TinhTrang !== true) {
@@ -62,6 +70,15 @@ const BanThangController = {
             // Kiểm tra đội bóng có thuộc trận đấu không
             if (MaDoiBong !== tranDau.MaDoiBongNha && MaDoiBong !== tranDau.MaDoiBongKhach) {
                 return res.status(400).json({ error: 'Đội bóng không thuộc trận đấu này.' });
+            }
+    
+            // Kiểm tra cầu thủ có thuộc đội bóng không
+            const isPlayerInTeam = await MgDbCt.findOne({
+                where: { MaMuaGiai, MaDoiBong, MaCauThu },
+            });
+    
+            if (!isPlayerInTeam) {
+                return res.status(400).json({ error: 'Cầu thủ không thuộc đội bóng.' });
             }
     
             // Cập nhật số bàn thắng cho đội bóng
