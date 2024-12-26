@@ -7,11 +7,6 @@ const BangXepHang = sequelize.define('BangXepHang', {
         primaryKey: true,
         allowNull: false,
     },
-    // MaVongDau: {
-    //     type: DataTypes.CHAR(15),
-    //     primaryKey: true,
-    //     allowNull: false,
-    // },
     MaDoiBong: {
         type: DataTypes.CHAR(10),
         primaryKey: true,

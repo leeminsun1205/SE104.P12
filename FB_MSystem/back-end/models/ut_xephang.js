@@ -14,6 +14,7 @@ const UtXepHang = sequelize.define('UtXepHang', {
     },
     MucDoUuTien: {
         type: DataTypes.TINYINT,
+        primaryKey: true,
         allowNull: false,
         validate: { min: 1 }, // Mức độ ưu tiên phải >= 1
     },

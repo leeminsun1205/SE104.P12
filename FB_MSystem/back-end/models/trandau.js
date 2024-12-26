@@ -25,19 +25,19 @@ const TranDau = sequelize.define('TranDau', {
     },
     NgayThiDau: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
+        allowNull: true,
     },
     GioThiDau: {
         type: DataTypes.TIME,
-        allowNull: false,
+        allowNull: true,
     },
     BanThangDoiNha: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT,
         allowNull: false,
         validate: { min: 0 },
     },
     BanThangDoiKhach: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT,
         allowNull: false,
         validate: { min: 0 },
     },

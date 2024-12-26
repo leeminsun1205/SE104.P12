@@ -13,9 +13,22 @@ let {
   stadiums,
   matchesData,
   typeSettings,
-  settingsData,
-  teamsPosition
 } = require("./data");
+
+let settingsData = {
+  minPlayers: 15,
+  maxPlayers: 22,
+  maxForeignPlayers: 3,
+  minAge: 16,
+  maxAge: 40,
+  minCapacity: 10000,
+  minStar: 2,
+  participationFee: 1000000000,
+  winPoints: 3,
+  drawPoints: 1,
+  losePoints: 0,
+  maxGoalTime: 90,
+};
 
 app.use(cors());
 app.use(express.json());

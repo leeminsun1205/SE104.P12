@@ -15,13 +15,6 @@ const VongDau = sequelize.define('VongDau', {
         type: DataTypes.BOOLEAN, // 0: Lượt đi, 1: Lượt về
         allowNull: false,
     },
-    SoThuTu: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        validate: {
-            min: 1,
-        },
-    },
     NgayBatDau: {
         type: DataTypes.DATEONLY,
         allowNull: true,

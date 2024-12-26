@@ -28,6 +28,7 @@ const DoiBong = sequelize.define(
         ThongTin: {
             type: DataTypes.STRING(1000),
             allowNull: true,
+            defaultValue: '',
         },
     },
     {
