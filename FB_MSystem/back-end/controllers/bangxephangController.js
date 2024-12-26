@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 const { BangXepHang, DoiBong, MgDbCt } = require('../models');
+=======
+const { BangXepHang, DoiBong, VongDau, MgDbCt } = require('../models');
+>>>>>>> Stashed changes
 
 const BangXepHangController = {
     async getByMuaGiai(req, res) {
@@ -8,6 +12,7 @@ const BangXepHangController = {
                 where: { MaMuaGiai },
                 include: [
                     {
+<<<<<<< Updated upstream
                         model: DoiBong, 
                         as: 'DoiBong',  // Đảm bảo alias khớp với alias trong định nghĩa BangXepHang
                         attributes: ['TenDoiBong'],  // Chỉ lấy thuộc tính TenDoiBong của DoiBong
@@ -16,6 +21,14 @@ const BangXepHangController = {
                         model: MgDbCt, 
                         as: 'MgDbCt',  // Alias MgDbCt trong BangXepHang
                         attributes: []  // Không lấy thêm thuộc tính nào từ MgDbCt
+=======
+                        model: MgDbCt, // Model has to be defined correctly
+                        as: 'MgDbCt',   // Ensure alias is correct
+                        include: [
+                            { model: DoiBong, as: 'DoiNha', attributes: ['TenDoiBong'] },
+                            { model: DoiBong, as: 'DoiKhach', attributes: ['TenDoiBong'] }
+                        ]
+>>>>>>> Stashed changes
                     }
                 ],
                 attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],  // Lấy các thuộc tính từ BangXepHang
@@ -35,6 +48,7 @@ const BangXepHangController = {
         }
     },
 
+<<<<<<< Updated upstream
     // async getByVongDau(req, res) {
     //     try {
     //         const { MaVongDau } = req.params;
@@ -53,6 +67,26 @@ const BangXepHangController = {
     //             ],
     //             order: [['DiemSo', 'DESC']]
     //         });
+=======
+    async getByVongDau(req, res) {
+        try {
+            const { MaVongDau } = req.params;
+            const bangXepHang = await BangXepHang.findAll({
+                where: { MaVongDau },
+                include: [
+                    { model: DoiBong, as: 'DoiBong' },
+                    {
+                        model: MgDbCt,  // Model has to be defined correctly
+                        as: 'MgDbCt',   // Ensure alias is correct
+                        include: [
+                            { model: DoiBong, as: 'DoiNha', attributes: ['TenDoiBong'] },
+                            { model: DoiBong, as: 'DoiKhach', attributes: ['TenDoiBong'] }
+                        ]
+                    }
+                ],
+                order: [['DiemSo', 'DESC']]
+            });
+>>>>>>> Stashed changes
 
     //         if (bangXepHang.length === 0) {
     //             return res.status(404).json({ message: 'Không tìm thấy bảng xếp hạng cho vòng đấu này.' });
