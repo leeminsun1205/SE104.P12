@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Standings from './Standings';
 import TopScorersStandings from './TopScorersStandings';
-import CardsList from './CardsList'; // Import CardsList
+import CardsList from './CardsList'; 
 import styles from './CombinedStandingsPage.module.css'; // Import CSS module
 
 function CombinedStandingsPage({ API_URL }) {

@@ -6,34 +6,35 @@ import styles from "./LookUpAchievements.module.css";
 function LookUpAchievements({ API_URL }) {
     const navigate = useNavigate();
     const [selectedTeam, setSelectedTeam] = useState("");
+    const [standings, setStandings] = useState([]);
     const [availableTeams, setAvailableTeams] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [notFound, setNotFound] = useState(false);
-    const [achievements, setAchievements] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
-    const fetchTeams = async () => {
-        try {
-        const response = await fetch(`${API_URL}/teams/all`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Dữ liệu đội bóng từ API:", data);
-        setAvailableTeams(data.teams);
-        } catch (error) {
-        console.error("Lỗi khi tải danh sách đội bóng:", error);
-        }
-    };
+        const fetchTeams = async () => {
+            try {
+                const response = await fetch(`${API_URL}/teams/all`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Dữ liệu đội bóng từ API:", data);
+                setAvailableTeams(data.teams);
+            } catch (error) {
+                console.error("Lỗi khi tải danh sách đội bóng:", error);
+            }
+        };
 
-    fetchTeams();
+        fetchTeams();
     }, [API_URL]);
 
     useEffect(() => {
         if (!selectedTeam) {
-            setAchievements([]);
+            setStandings([]);
+            setSortConfig({ key: 'season', direction: 'ascending' });
             setNotFound(false);
             return;
         }
@@ -43,12 +44,12 @@ function LookUpAchievements({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/teams/position?teamId=${selectedTeam}`);
+                const response = await fetch(`${API_URL}/teams/${selectedTeam}/position`);
                 if (!response.ok) {
                     if (response.status === 402) {
                         console.log(`Team not found: ${selectedTeam}`);
                         setNotFound(true);
-                        setAchievements([]);
+                        setStandings([]);
                     } else {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -56,14 +57,24 @@ function LookUpAchievements({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("Dữ liệu giải đấu từ API:", data); // Debug API response
-                // Access the array from the 'teams' property
-                const result = data.teams.filter(team => team.posiotion === 1);
-                const seasonsWinner = result.map(team => team.season);
-                setAchievements(seasonsWinner);
+                if (data && data.teams) {
+                    setStandings(data.teams.map((team) => {
+                        return {
+                            ...team,
+                            winner: team.position === 1 ? 'Có' : 'Không',
+                            runnerUp: team.position === 2 ? 'Có' : 'Không',
+                            thirdPlace: team.position === 3 ? 'Có' : 'Không',
+                        };
+                    }));
+                } else {
+                    console.error("Dữ liệu giải đấu không đúng định dạng:", data);
+                    setError("Failed to load standings: Invalid data format.");
+                    setStandings([]);
+                }
             } catch (error) {
                 console.error("Lỗi khi fetch dữ liệu giải đấu:", error);
                 setError("Failed to load standings.");
-                setAchievements([]);
+                setStandings([]);
             } finally {
                 setLoading(false);
             }
@@ -85,21 +96,28 @@ function LookUpAchievements({ API_URL }) {
         setSortConfig({ key, direction });
     };
 
-    const sortedAchievements = useMemo(() => {
-        const sortableAchievements = [...achievements];
+    const sortedStandings = useMemo(() => {
+        const sortableStandings = [...standings];
         if (sortConfig.key !== null) {
-            sortableAchievements.sort((a, b) => {
-                if (a < b) {
-                    return sortConfig.direction === 'ascending' ? -1 : 1;
+            sortableStandings.sort((a, b) => {
+                const aValue = a[sortConfig.key];
+                const bValue = b[sortConfig.key];
+
+                if (typeof aValue === 'string' && typeof bValue === 'string') {
+                    return sortConfig.direction === 'ascending' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                } else {
+                    if (aValue < bValue) {
+                        return sortConfig.direction === 'ascending' ? -1 : 1;
+                    }
+                    if (aValue > bValue) {
+                        return sortConfig.direction === 'ascending' ? 1 : -1;
+                    }
+                    return 0;
                 }
-                if (a > b) {
-                    return sortConfig.direction === 'ascending' ? 1 : -1;
-                }
-                return 0;
             });
         }
-        return sortableAchievements;
-    }, [achievements, sortConfig]);
+        return sortableStandings;
+    }, [standings, sortConfig]);
 
     const getSortIndicator = (key) => {
         if (sortConfig.key === key) {
@@ -108,15 +126,22 @@ function LookUpAchievements({ API_URL }) {
         return "";
     };
 
+    if (loading) {
+        return <div>Đang tải dữ liệu mùa giải...</div>;
+    }
+
+    if (error) {
+        return <div>Lỗi: {error}</div>;
+    }
+
     const handleRowClick = (seasonId) => {
         console.log(`handleRowClick Season ID: ${seasonId}`); // Debug handleRowClick
-        // Assuming you want to navigate to the season details page
         navigate(`/season/${seasonId}`);
     };
 
     return (
         <div className={styles.standingsContainer}>
-            <h2 className={styles.standingsTitle}>Thành tích</h2>
+            <h2 className={styles.standingsTitle}>Lịch sử giải đấu</h2>
             {availableTeams.length > 0 && (
                 <TeamSelector
                     onTeamsChange={handleTeamChange}
@@ -131,34 +156,44 @@ function LookUpAchievements({ API_URL }) {
                     <thead>
                         <tr>
                             <th onClick={() => requestSort('season')}>Mùa giải {getSortIndicator('season')}</th>
+                            <th onClick={() => requestSort('win')}>Thắng {getSortIndicator('win')}</th>
+                            <th onClick={() => requestSort('loss')}>Thua {getSortIndicator('loss')}</th>
+                            <th onClick={() => requestSort('draw')}>Hòa {getSortIndicator('draw')}</th>
+                            <th onClick={() => requestSort('position')}>Hạng {getSortIndicator('position')}</th>
+                            <th>Số lần tham gia</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedTeam ? (
-                            sortedAchievements.length > 0 ? (
-                                sortedAchievements.map((season) => {
-                                    console.log("Mùa giải trong map:", season); // Debug object in map
+                            sortedStandings.length > 0 ? (
+                                sortedStandings.map((item) => {
+                                    console.log("Mùa giải trong map:", item); // Debug object in map
                                     return (
                                         <tr
-                                            key={season}
-                                            onClick={() => handleRowClick(season)}
+                                            key={`${item.season}`}
+                                            onClick={() => handleRowClick(item.season)}
                                             className={styles.standingsRow}
                                         >
-                                            <td>{season}</td>
+                                            <td>{item.season}</td>
+                                            <td>{item.win}</td>
+                                            <td>{item.loss}</td>
+                                            <td>{item.draw}</td>
+                                            <td>{item.position}</td>
+                                            <td>{standings.length}</td>
                                         </tr>
                                     );
                                 })
                             ) : loading ? (
-                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Đang tải dữ liệu thành tích...</td></tr>
+                                <tr><td colSpan="6" style={{ textAlign: 'center' }}>Đang tải dữ liệu lịch sử giải...</td></tr>
                             ) : notFound ? (
-                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Không tìm thấy thành tích nào cho đội này.</td></tr>
+                                <tr><td colSpan="6" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="6" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="1" style={{ textAlign: 'center' }}>Không có dữ liệu thành tích.</td></tr>
+                                <tr><td colSpan="6" style={{ textAlign: 'center' }}>Không tìm thấy mùa giải nào có đội.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="1" style={{ textAlign: 'center' }}>Vui lòng chọn một đội</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Vui lòng chọn một đội</td></tr>
                         )}
                     </tbody>
                 </table>

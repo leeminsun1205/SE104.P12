@@ -1,53 +1,55 @@
-/* LookUp.css */
-
 .look-up-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 80%; 
-    max-width: 600px; 
-    margin: 0 auto; 
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f8f8f8;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .look-up-container button {
-    width: 100%; /* Make buttons fill the container width */
-    padding: 15px 20px;
-    margin-bottom: 10px; /* Space between buttons */
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .look-up-container button:first-of-type {
-    background-color: #008CBA; /* Back to Dashboard button color */
-  }
-  
-  .look-up-container button:nth-of-type(2) {
-    background-color: #4CAF50; /* LookUp Match button color */
-  }
-  
-  .look-up-container button:nth-of-type(3) {
-    background-color: #3f8bb1; /* LookUp Season button color */
-  }
-  
-  .look-up-container button:last-of-type {
-    background-color: #717d96; /* LookUp Achievements button color */
-  }
-  
-  .look-up-container button:hover {
-    opacity: 0.8;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh; 
+  background-color: #f9f9f9;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  padding: 20px;
+  gap: 20px; 
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  max-width: 1000px;
+}
+
+.look-up-container button {
+  background-color: #007bff; /* Màu xanh nổi bật */
+  color: white; /* Màu chữ trắng */
+  border: none; /* Bỏ viền */
+  border-radius: 8px; /* Bo góc mềm mại */
+  padding: 15px 30px; /* Tăng kích thước nút */
+  font-size: 18px; /* Kích thước chữ lớn */
+  font-weight: bold; /* Làm chữ đậm */
+  cursor: pointer; /* Thay đổi con trỏ khi di chuột */
+  transition: transform 0.2s, background-color 0.2s; /* Hiệu ứng hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
+  max-width: 800px;
+}
+
+.look-up-container button:hover {
+  background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Đổ bóng mạnh hơn */
+}
+
+.look-up-container button:active {
+  transform: scale(0.95); /* Thu nhỏ khi bấm */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Giảm đổ bóng */
+}
+
+.look-up-container button:last-child {
+  background-color: #dc3545; /* Màu đỏ cho nút "Quay lại" */
+}
+
+.look-up-container button:last-child:hover {
+  background-color: #b02a37; /* Đỏ đậm hơn khi hover */
+}
+
+.look-up-container button:last-child:active {
+  background-color: #841f2a; /* Đỏ đậm hơn khi nhấn */
+}

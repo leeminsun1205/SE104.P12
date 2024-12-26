@@ -23,9 +23,6 @@ function LookUp() {
 
     return (
         <div className="look-up-container">
-            <button onClick={handleBackToDashboard}>
-                Quay lại bảng điều khiển
-            </button>
             <button onClick={handleToLookUpMatch}>
                 Lịch sử thi đấu
             </button>
@@ -34,6 +31,9 @@ function LookUp() {
             </button>
             <button onClick={handleToLookUpAchievements}>
                 Thành tích
+            </button>
+            <button onClick={handleBackToDashboard}>
+                Quay lại bảng điều khiển
             </button>
         </div>
     );

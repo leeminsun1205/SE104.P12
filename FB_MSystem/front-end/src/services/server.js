@@ -14,7 +14,8 @@ let {
   matchesData,
   typeSettings,
   settingsData,
-  teamsPosition
+  teamsPosition,
+  playerCards
 } = require("./data");
 
 app.use(cors());
@@ -252,14 +253,6 @@ app.post("/api/teams/available", (req, res) => {
     .json({ message: "Team created successfully", team: { ...newTeam, stadium: stadiums.find(s => s.stadiumId === newTeam.stadiumId) } });
 });
 
-app.get("/api/teams/position", (req, res) => {
-  const teamId = req.query.teamId;
-  if (!teamId) {
-    return res.status(402).json({ message: "teamId not found" });
-  }
-  const teamPosition = teamsPosition[teamId]
-  res.json({ teams: teamPosition });
-});
 
 app.get("/api/teams/available", (req, res) => {
   const availableTeamsOnly = availableTeams.filter((team) => !team.season).map(team => ({
@@ -381,38 +374,7 @@ app.put("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
   season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
   res.json(season.rounds[roundIndex]);
 });
-let playerCards = {
-  "2022-2023": [
-    {
-      id: 1,
-      name: "Cầu thủ A1",
-      teamId: 1,
-      team: "Team A",
-      playerType: "Trong nước",
-      soThe: 3,
-      playerState: false,
-    },
-    {
-      id: 2,
-      name: "Cầu thủ B2",
-      teamId: 2,
-      team: "Team B",
-      playerType: "Trong nước",
-      soThe: 1,
-      playerState: true,
-    },
-    {
-      id: 3,
-      name: "Cầu thủ C3",
-      teamId: 3,
-      team: "Team C",
-      playerType: "Trong nước",
-      soThe: 2,
-      playerState: false,
-    }
-  ],
-  "2024-2025": [],
-};
+
 app.get("/api/seasons/cards", (req, res) => {
   const season = req.query.season;
   if (!season) {
@@ -445,6 +407,8 @@ app.get("/api/teams/available-for-season", (req, res) => {
   const availableTeamsForSeason = availableTeams.filter(team => !team.season);
   res.json({ teams: availableTeamsForSeason });
 });
+
+
 app.delete("/api/teams/:id", (req, res) => {
   const { id } = req.params;
   const teamId = parseInt(id);
@@ -467,7 +431,40 @@ app.delete("/api/teams/:id", (req, res) => {
 
   res.json({ message: "Team deleted successfully" });
 });
+app.get("/api/teams/position", (req, res) => {
+  const teamStatistics = availableTeams.map(team => {
+    let participations = 0;
+    let wins = 0;
+    let runnerUps = 0;
+    let thirdPlaces = 0;
 
+    seasons.forEach(season => {
+      const standings = calculateStandings(season.id);
+      const teamStanding = standings.find(t => t.id === team.id);
+      if (teamStanding) {
+        participations++;
+        if (teamStanding.rank === 1) {
+          wins++;
+        } else if (teamStanding.rank === 2) {
+          runnerUps++;
+        } else if (teamStanding.rank === 3) {
+          thirdPlaces++;
+        }
+      } else {
+      }
+    });
+
+    return {
+      name: team.name,
+      participations,
+      wins,
+      runnerUps,
+      thirdPlaces,
+    };
+  });
+
+  res.json({ teams: teamStatistics });
+});
 // Get a specific team
 app.get("/api/teams/:id", (req, res) => {
   const { id } = req.params;
@@ -520,7 +517,6 @@ app.get("/api/teams/:teamId/players", (req, res) => {
     return res.json({ players: allPlayers });
   }
 });
-
 // Sửa lại app.post để sử dụng playerIds và tìm cầu thủ trong availablePlayers
 app.post("/api/teams/:teamId/players", (req, res) => {
   const { teamId } = req.params;
@@ -861,9 +857,9 @@ app.get("/api/matches", (req, res) => {
   if (season) {
     filteredMatches = filteredMatches.filter(match => match.season === season);
   } else if (team) {
-    filteredMatches = filteredMatches.filter(match => match.homeTeamId === team || match.awayTeamId === team);
+    filteredMatches = filteredMatches.filter(match => match.homeTeamId === parseInt(team) || match.awayTeamId === parseInt(team));
   } else {
-    return res.status(404).json({ message: "Vui lòng truyền vào teamId hoặc season" });
+    return res.status(400).json({ message: "Vui lòng truyền vào teamId hoặc season" });
   }
 
   const matchesWithDetails = filteredMatches.map(match => ({
@@ -1156,15 +1152,125 @@ app.post('/api/types-settings', (req, res) => {
   res.json({ message: 'Types settings saved successfully' });
 })
 
-app.get("/api/teams/position", (req, res) => {
-  const teamId = req.query.teamId;
-  if (!teamId) {
-    return res.status(402).json({ message: "teamId not found" });
+function calculateStandings(seasonId) {
+  const seasonData = seasons.find(s => s.id === seasonId);
+  if (!seasonData) {
+    return [];
   }
-  const teamPosition = teamsPosition[teamId]
-  res.json({ teams: teamPosition });
-});
 
+  const teamsInSeason = seasonData.teams
+    ? seasonData.teams.map((id) =>
+      availableTeams.find((team) => team.id === id)
+    )
+    : [];
+
+
+  if (!teamsInSeason || teamsInSeason.length === 0) {
+    return [];
+  }
+
+  const standings = teamsInSeason.reduce((acc, team) => {
+    if (team) {
+      acc[team.id] = {
+        id: team.id,
+        name: team.name,
+        played: 0,
+        won: 0,
+        drawn: 0,
+        lost: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        goalDifference: 0,
+        points: 0,
+        season: seasonId,
+      };
+    } else {
+    }
+    return acc;
+  }, {});
+
+  const matchesForSeason = matchesData.filter((match) => match.season === seasonId);
+
+  matchesForSeason.forEach((match) => {
+    const { homeTeamId, awayTeamId, homeScore, awayScore } = match;
+
+    matchesForSeason.forEach((match) => { // **POTENTIAL ISSUE: Looping through matches twice!**
+      const { homeTeamId, awayTeamId, homeScore, awayScore } = match;
+
+      if (standings[homeTeamId]) {
+        standings[homeTeamId].played++;
+        standings[homeTeamId].goalsFor += homeScore || 0;
+        standings[homeTeamId].goalsAgainst += awayScore || 0;
+        standings[homeTeamId].goalDifference = standings[homeTeamId].goalsFor - standings[homeTeamId].goalsAgainst;
+      }
+      if (standings[awayTeamId]) {
+        standings[awayTeamId].played++;
+        standings[awayTeamId].goalsFor += awayScore || 0;
+        standings[awayTeamId].goalsAgainst += homeScore || 0;
+        standings[awayTeamId].goalDifference = standings[awayTeamId].goalsFor - standings[awayTeamId].goalsAgainst;
+      }
+
+      if (homeScore > awayScore) {
+        if (standings[homeTeamId]) standings[homeTeamId].won++;
+        if (standings[homeTeamId]) standings[homeTeamId].points += 3;
+        if (standings[awayTeamId]) standings[awayTeamId].lost++;
+      } else if (awayScore > homeScore) {
+        if (standings[awayTeamId]) standings[awayTeamId].won++;
+        if (standings[awayTeamId]) standings[awayTeamId].points += 3;
+        if (standings[homeTeamId]) standings[homeTeamId].lost++;
+      } else if (homeScore === awayScore) {
+        if (standings[homeTeamId]) standings[homeTeamId].drawn++;
+        if (standings[homeTeamId]) standings[homeTeamId].points += 1;
+        if (standings[awayTeamId]) standings[awayTeamId].drawn++;
+        if (standings[awayTeamId]) standings[awayTeamId].points += 1;
+      }
+    });
+  });
+
+  const sortedStandings = Object.values(standings).sort((a, b) => {
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+    if (b.goalDifference !== a.goalDifference) {
+      return b.goalDifference - a.goalDifference;
+    }
+    return b.goalsFor - a.goalsFor;
+  }).map((team, index) => ({ ...team, rank: index + 1 }));
+
+  return sortedStandings;
+}
+
+app.get("/api/teams/:teamId/position", (req, res) => { 
+  const { teamId } = req.params;
+
+  if (!teamId) {
+    return res.status(400).json({ message: "Thiếu teamId" });
+  }
+
+  const teamIdNum = parseInt(teamId);
+  const teamHistory = [];
+
+  seasons.forEach(season => {
+    const standings = calculateStandings(season.id);
+    const teamStanding = standings.find(t => t.id === teamIdNum);
+    if (teamStanding) {
+      teamHistory.push({
+        season: season.id,
+        position: teamStanding.rank,
+        win: teamStanding.won,
+        loss: teamStanding.lost,
+        draw: teamStanding.drawn,
+        difference: teamStanding.goalDifference,
+        point: teamStanding.points,
+      });
+    } else {
+    }
+  });
+
+  res.json({ teams: teamHistory });
+});
 // Start Server
 app.listen(PORT, () => {
 });
+
+  
