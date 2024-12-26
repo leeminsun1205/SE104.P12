@@ -1,4 +1,4 @@
-const { MgDbCt, CauThu, DoiBong, MuaGiai, BangXepHang } = require('../models');
+const { MgDbCt, CauThu, DoiBong, MuaGiai, BangXepHang, ThamSo } = require('../models');
 
 const MgDbCtController = {
     // Lấy danh sách đội bóng và cầu thủ theo mùa giải

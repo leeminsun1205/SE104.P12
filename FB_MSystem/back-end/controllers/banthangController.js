@@ -1,4 +1,4 @@
-const { BanThang, TranDau, CauThu, DoiBong, LoaiBanThang} = require('../models');
+const { BanThang, TranDau, CauThu, DoiBong, LoaiBanThang, ThamSo} = require('../models');
 const { autoUpdateMatch } = require('../services/autoUpdateServices');
 
 const BanThangController = {
@@ -39,11 +39,27 @@ const BanThangController = {
         try {
             const { MaTranDau, MaDoiBong, MaCauThu } = req.params;
             const { MaLoaiBanThang, ThoiDiem } = req.body;
-
+    
             if (!MaLoaiBanThang || !ThoiDiem) {
                 return res.status(400).json({ error: 'Thiếu dữ liệu cần thiết để tạo bàn thắng.' });
             }
-
+    
+            // Lấy thông tin từ bảng ThamSo
+            const thamSo = await ThamSo.findOne();
+            if (!thamSo) {
+                return res.status(500).json({ error: 'Tham số hệ thống chưa được cấu hình.' });
+            }
+    
+            const { ThoiDiemGhiBanToiDa } = thamSo;
+    
+            // Kiểm tra điều kiện ThoiDiem
+            if (ThoiDiem > ThoiDiemGhiBanToiDa) {
+                return res.status(400).json({
+                    error: `Thời điểm ghi bàn không hợp lệ. Phải nhỏ hơn hoặc bằng ${ThoiDiemGhiBanToiDa}.`,
+                });
+            }
+    
+            // Gọi hàm tự động cập nhật trận đấu
             const { banThang, tranDau, vuaPhaLuoi } = await autoUpdateMatch(
                 MaTranDau,
                 MaDoiBong,
@@ -51,14 +67,13 @@ const BanThangController = {
                 MaLoaiBanThang,
                 ThoiDiem
             );
-
+    
             res.status(201).json({ banThang, tranDau, vuaPhaLuoi });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: error.message });
         }
     },
-
     
     async delete(req, res) {
         try {
