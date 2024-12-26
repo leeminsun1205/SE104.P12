@@ -1,6 +1,5 @@
 const { TranDau } = require('../models');
-const { taoTranDau } = require('../services/tranDauService')
-const { BangXepHang, MG_DB_CT } = require('../models');
+const { BangXepHang, MgDbCt } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
@@ -54,8 +53,8 @@ const TranDauController = {
     
             // Nếu trận đấu đã kết thúc và thời gian trận đấu nhỏ hơn thời gian hiện tại
             if (!playing && new Date(tranDau.GioThiDau) < now) {
-                const doiNha = await MG_DB_CT.findOne({ where: { MaDoiBong: tranDau.MaDoiBongNha, MaMuaGiai: tranDau.MaMuaGiai } });
-                const doiKhach = await MG_DB_CT.findOne({ where: { MaDoiBong: tranDau.MaDoiBongKhach, MaMuaGiai: tranDau.MaMuaGiai } });
+                const doiNha = await MgDbCt.findOne({ where: { MaDoiBong: tranDau.MaDoiBongNha, MaMuaGiai: tranDau.MaMuaGiai } });
+                const doiKhach = await MgDbCt.findOne({ where: { MaDoiBong: tranDau.MaDoiBongKhach, MaMuaGiai: tranDau.MaMuaGiai } });
     
                 // Nếu không tìm thấy đội trong bảng xếp hạng, trả về lỗi
                 if (!doiNha || !doiKhach) {
@@ -125,27 +124,6 @@ const TranDauController = {
             res.status(500).json({ error: 'Lỗi khi xóa trận đấu.' });
         }
     },
-    async createMatchesBySeason(req, res) {
-        try {
-            const { maMuaGiai } = req.params;
-    
-            if (!maMuaGiai) {
-                return res.status(400).json({ error: 'Thiếu mã mùa giải trong yêu cầu.' });
-            }
-    
-            const tranDauData = await taoTranDau(maMuaGiai);
-    
-            res.status(201).json({
-                message: `Đã tạo ${tranDauData.length} trận đấu cho mùa giải ${maMuaGiai}.`,
-                data: tranDauData,
-            });
-        } catch (error) {
-            res.status(500).json({
-                error: 'Lỗi khi tạo trận đấu.',
-                details: error.message,
-            });
-        }
-    }
 };
 
 module.exports = TranDauController;

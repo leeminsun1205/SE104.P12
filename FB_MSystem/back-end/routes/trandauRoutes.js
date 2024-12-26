@@ -11,7 +11,7 @@ router.get('/:id', tranDauController.getById);
 
 
 router.post('/', tranDauController.create);
-router.post('/:maMuaGiai', tranDauController.createMatchesBySeason);
+// router.post('/:maMuaGiai', tranDauController.createMatchesBySeason);
 
 
 
