@@ -21,7 +21,8 @@ function Sidebar({ isOpen, onToggleSidebar }) {
       )}
       <aside className={`${styles.sidebar} ${isOpen ? styles.active : ""}`}>
         <div className={styles.logo}>
-          <h2>Football Management</h2>
+          <h2>Quản lý Giải Bóng đá Quốc gia</h2>
+
         </div>
         <nav className={styles.nav}>
           <NavLink
@@ -46,7 +47,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               }`}
           >
             <NavLink
-              to="/seasons"
+              to="/mua-giai"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
@@ -54,21 +55,21 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-calendar"></i> Mùa giải
             </NavLink>
             <NavLink
-              to="/teams"
+              to="/doi-bong"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
             >
               <i className="fas fa-users"></i> Đội bóng
             </NavLink>
-            <NavLink to="/stadiums" className={({ isActive }) =>
+            <NavLink to="/san-thi-dau" className={({ isActive }) =>
               isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
             }
             >
-            <i className="fas fa-futbol"></i> Sân vận động
+            <i className="fas fa-futbol"></i> Sân thi đấu
             </NavLink>
             <NavLink
-              to="/players"
+              to="/cau-thu"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
@@ -76,7 +77,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-user"></i> Cầu thủ
             </NavLink>
             <NavLink
-              to="/matches"
+              to="/tran-dau"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
@@ -84,7 +85,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-futbol"></i> Trận đấu
             </NavLink>
             <NavLink
-              to="/combined-standings"
+              to="/bang-xep-hang"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
@@ -100,7 +101,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-plus"></i> Thêm mới
             </NavLink>
             <NavLink
-              to="/invoices"
+              to="/bien-nhan"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }

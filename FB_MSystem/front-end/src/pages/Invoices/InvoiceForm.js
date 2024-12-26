@@ -27,12 +27,12 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
     // Fetch available teams
     const fetchAvailableTeams = async () => {
       try {
-        const response = await fetch(`${API_URL}/teams/available`);
+        const response = await fetch(`${API_URL}/doi-bong/`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setAvailableTeams(data.teams);
+        setAvailableTeams(data.doiBong);
       } catch (error) {
         setErrorTeams(error);
       } finally {
@@ -58,7 +58,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
     };
 
     onAddInvoice(newInvoice);
-    navigate(`/invoices/${formData.receiptNumber}`);
+    navigate(`/bien-nhan/${formData.receiptNumber}`);
   };
 
   const calculateRemainingAmount = () => {
@@ -94,8 +94,8 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
         >
           <option value="">-- Chọn đội bóng --</option>
           {availableTeams.map((team) => (
-            <option key={team.id} value={team.name}>
-              {team.name}
+            <option key={team.MaDoiBong} value={team.TenDoiBong}>
+              {team.TenDoiBong}
             </option>
           ))}
         </select>

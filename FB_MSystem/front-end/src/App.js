@@ -221,45 +221,44 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/" element={<HomePage />} />
             <Route path="/temp" element={<Temp />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/teams"
+            <Route path="/doi-bong"
                 element={<Teams
                     teams={teams}
                     API_URL={API_URL}
                     onDeleteTeam={onDeleteTeam} />}
             />
-            <Route path="/create/team" element={<CreateTeam API_URL={API_URL} />} />
-            <Route path="/create/player" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
-            <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
-            <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
-            <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
-            <Route path="/players" element={<AllPlayers />} />
-            <Route path="/players/:playerId" element={<PlayerInfo />} />
-            <Route path="/matches" element={<Matches API_URL={API_URL} />} />
-            <Route path="/match/:season/:round/:id" element={<MatchDetails API_URL={API_URL} />} />
-            <Route path="/standings" element={<Standings API_URL={API_URL} />} />
+            <Route path="/create/doi-bong" element={<CreateTeam API_URL={API_URL} />} />
+            <Route path="/create/cau-thu" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
+            <Route path="/doi-bong/edit/:MaDoiBong" element={<EditTeam onEditTeam={onEditTeam} />} />
+            <Route path="/doi-bong/:MaDoiBong" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
+            <Route path="/doi-bong/:MaDoiBong/cau-thu" element={<Players seasons={seasons} />} />
+            <Route path="/doi-bong/:MaDoiBong/cau-thu/:MaCauThu" element={<PlayerInfo />} />
+            <Route path="/cau-thu" element={<AllPlayers />} />
+            <Route path="/cau-thu/:MaCauThu" element={<PlayerInfo />} />
+            <Route path="/tran-dau" element={<Matches API_URL={API_URL} />} />
+            <Route path="/tran-dau/:MaMuaGiai/:MaVongDau/:MaTranDau" element={<MatchDetails API_URL={API_URL} />} />
+            <Route path="/bang-xep-hang" element={<Standings API_URL={API_URL} />} />
             <Route path="/create" element={<CreateNew />} />
-            <Route path="/invoices" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
-            <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
+            <Route path="/bien-nhan" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
+            <Route path="/bien-nhan/:MaBienNhan" element={<Invoices invoices={invoices} />} />
             <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
             <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
-            <Route path="/stadiums" element={<Stadiums />} />
-            <Route path="/create/stadium" element={<CreateStadium />} />
-            <Route path="/stadiums/:stadiumId" element={<StadiumInfo />} />
-            <Route path="/seasons/:seasonId" element={<SeasonDetails API_URL={API_URL} />} />
-            <Route path="/create/season" element={<CreateSeason API_URL={API_URL} />} />
-            <Route path="/seasons" element={<SeasonList API_URL={API_URL} />} />
-            <Route path="/teams/:teamId/other-matches" element={<OtherLeagueMatches />} /> 
-            <Route path="/seasons/:seasonId/top-scorers" element={<TopScorers API_URL={API_URL} />} />
-            <Route path="/top-scorers" element={<TopScorersStandings API_URL={API_URL} />} />
-            <Route path="/seasons/:seasonId/standings" element={<SeasonalStandings API_URL={API_URL} />} />
-            <Route path="/cards" element={<CardsList API_URL={API_URL} />} />
+            <Route path="/san-thi-dau" element={<Stadiums />} />
+            <Route path="/create/san-thi-dau" element={<CreateStadium />} />
+            <Route path="/san-thi-dau/:MaSan" element={<StadiumInfo />} />
+            <Route path="/mua-giai/:MaMuaGiai" element={<SeasonDetails API_URL={API_URL} />} />
+            <Route path="/create/mua-giai" element={<CreateSeason API_URL={API_URL} />} />
+            <Route path="/mua-giai" element={<SeasonList API_URL={API_URL} />} />
+            <Route path="/doi-bong/:MaDoiBong/other-matches" element={<OtherLeagueMatches />} /> 
+            <Route path="/mua-giai/:MaMuaGiai/vua-pha-luoi" element={<TopScorers API_URL={API_URL} />} />
+            <Route path="/vua-pha-luoi" element={<TopScorersStandings API_URL={API_URL} />} />
+            <Route path="/mua-giai/:MaMuaGiai/standings" element={<SeasonalStandings API_URL={API_URL} />} />
+            <Route path="/the-phat" element={<CardsList API_URL={API_URL} />} />
             <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
             <Route path="/lookup" element={<LookUp />} />
-            <Route path="/lookup/match" element={<LookUpMatch API_URL={API_URL}/>} />
-            <Route path="/lookup/season" element={<LookUpSeason API_URL={API_URL}/>} />
-            <Route path="/lookup/achievements" element={<LookUpAchievements API_URL={API_URL}/>} />
-            <Route path="/player-card-list" element={<PlayerCardList />} />
+            <Route path="/lookup/tran-dau" element={<LookUpMatch API_URL={API_URL}/>} />
+            <Route path="/lookup/mua-giai" element={<LookUpSeason API_URL={API_URL}/>} />
+            <Route path="/lookup/thanh-tich" element={<LookUpAchievements API_URL={API_URL}/>} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

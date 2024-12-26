@@ -15,7 +15,7 @@ const MgDbController = {
                     },
                 ],
             });
-            res.status(200).json(data.map(item => item.DoiBong));
+            res.status(200).json({doiBong: data.map(item => item.DoiBong)});
         } catch (error) {
             console.error("Lỗi khi lấy danh sách đội bóng theo mùa giải:", error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng theo mùa giải.' });

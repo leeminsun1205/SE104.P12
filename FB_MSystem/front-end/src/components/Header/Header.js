@@ -32,7 +32,7 @@ function Header({ onLogout, onToggleSidebar }) {
                 </button>
             </div>
             <div className={styles.logo}>
-                <Link to="/">Football Championship Management</Link>
+                <Link to="/">Quản lý Giải Bóng đá Quốc gia</Link>
             </div>
             <nav className={styles.nav}>
                 <NavLink to="/dashboard" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
@@ -43,28 +43,28 @@ function Header({ onLogout, onToggleSidebar }) {
                         Quản lý giải đấu <i className="fa fa-caret-down"></i>
                     </button>
                     <div className={`${styles.dropdownContent} ${showLeagueDropdown ? styles.show : ''}`}>
-                        <NavLink to="/seasons" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/mua-giai" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Mùa giải
                         </NavLink>
-                        <NavLink to="/teams" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/doi-bong" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Đội bóng
                         </NavLink>
-                        <NavLink to="/stadiums" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                            Sân vận động
+                        <NavLink to="/san-thi-dau" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Sân thi đấu
                         </NavLink>
-                        <NavLink to="/players" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/cau-thu" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                            Cầu thủ
                         </NavLink>
-                        <NavLink to="/matches" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/tran-dau" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Trận đấu
                         </NavLink>
-                        <NavLink to="/combined-standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/bang-xep-hang" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Danh sách
                         </NavLink>
                         <NavLink to="/create" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Thêm mới
                         </NavLink>
-                        <NavLink to="/invoices" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/bien-nhan" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Biên nhận lệ phí
                         </NavLink>
                         <NavLink to="/lookup" className={({ isActive }) => isActive ? styles.active : styles.navLink}>

@@ -15,7 +15,7 @@ function HomePage() {
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedSeason, setSelectedSeason] = useState("2023-2024"); // Mùa giải mặc định
+    const [selectedSeason, setSelectedSeason] = useState("MG2025_1"); // Mùa giải mặc định
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,13 +32,14 @@ function HomePage() {
 
                 // Fetch teams for the selected season
                 const teamsResponse = await fetch(
-                    `http://localhost:5000/api/seasons/${selectedSeason}/teams`
+                    `http://localhost:5000/mg-db/mua-giai/${selectedSeason}/doi-bong`
                 );
                 if (!teamsResponse.ok) {
                     throw new Error("Failed to fetch teams");
                 }
                 const teamsData = await teamsResponse.json();
-                setTeams(teamsData.teams);
+                console.log(teamsData);
+                setTeams(teamsData.doiBong);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -72,7 +73,7 @@ function HomePage() {
                         Quản lý giải đấu, đội bóng và cầu thủ của bạn một cách dễ
                         dàng.
                     </p>
-                    <Link to="/teams" className={styles.ctaButton}>
+                    <Link to="/doi-bong" className={styles.ctaButton}>
                         Xem danh sách đội bóng
                     </Link>
                 </header>
@@ -95,8 +96,8 @@ function HomePage() {
                     <h2>Các đội bóng tham gia</h2>
                     <ul>
                         {teams.map((team) => (
-                            <li key={team.id}>
-                                <Link to={`/teams/${team.id}`}>{team.name}</Link>
+                            <li key={team.MaDoiBong}>
+                                <Link to={`/doi-bong/${team.MaDoiBong}`}>{team.TenDoiBong}</Link>
                             </li>
                         ))}
                     </ul>
