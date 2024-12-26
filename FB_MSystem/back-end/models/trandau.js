@@ -44,6 +44,7 @@ const TranDau = sequelize.define('TranDau', {
     TinhTrang: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
     }
 }, {
     tableName: 'TRANDAU',

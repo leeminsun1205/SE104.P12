@@ -92,6 +92,73 @@ const MgDbCtController = {
         }
     },
 
+    async createMany(req, res) {
+        try {
+            const { links } = req.body; // Nhận danh sách các bản ghi từ body
+    
+            if (!Array.isArray(links) || links.length === 0) {
+                return res.status(400).json({ error: 'Danh sách liên kết không hợp lệ.' });
+            }
+    
+            const createdLinks = [];
+            const existingLinks = [];
+            const missingRanks = new Set();
+    
+            for (const link of links) {
+                const { MaMuaGiai, MaDoiBong, MaCauThu } = link;
+    
+                // Kiểm tra liên kết đã tồn tại chưa
+                const existingLink = await MgDbCt.findOne({
+                    where: { MaMuaGiai, MaDoiBong, MaCauThu },
+                });
+    
+                if (existingLink) {
+                    existingLinks.push(link); // Ghi nhận liên kết đã tồn tại
+                    continue;
+                }
+    
+                // Tạo liên kết mới
+                const newLink = await MgDbCt.create({ MaMuaGiai, MaDoiBong, MaCauThu });
+                createdLinks.push(newLink);
+    
+                // Kiểm tra và ghi nhận bảng xếp hạng cần cập nhật
+                const existingRank = await BangXepHang.findOne({
+                    where: { MaMuaGiai, MaDoiBong },
+                });
+    
+                if (!existingRank) {
+                    missingRanks.add(`${MaMuaGiai}-${MaDoiBong}`); // Ghi nhận thông tin bảng xếp hạng cần tạo
+                }
+            }
+    
+            // Tạo bảng xếp hạng cho những đội chưa có
+            for (const rank of missingRanks) {
+                const [MaMuaGiai, MaDoiBong] = rank.split('-');
+                await BangXepHang.create({
+                    MaMuaGiai,
+                    MaDoiBong,
+                    SoTran: 0,
+                    SoTranThang: 0,
+                    SoTranHoa: 0,
+                    SoTranThua: 0,
+                    SoBanThang: 0,
+                    SoBanThua: 0,
+                    DiemSo: 0,
+                    HieuSo: 0,
+                });
+            }
+    
+            res.status(201).json({
+                createdLinks,
+                existingLinks,
+                message: `${createdLinks.length} liên kết mới đã được tạo. ${existingLinks.length} liên kết đã tồn tại.`,
+            });
+        } catch (error) {
+            console.error('Lỗi khi tạo nhiều liên kết:', error);
+            res.status(500).json({ error: 'Lỗi khi tạo nhiều liên kết.' });
+        }
+    },
+    
     // Cập nhật liên kết giữa mùa giải, đội bóng, và cầu thủ
     async update(req, res) {
         try {
