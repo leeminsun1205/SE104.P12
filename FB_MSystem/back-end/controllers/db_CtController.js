@@ -26,45 +26,19 @@ const DbCtController = {
     async create(req, res) {
         try {
             const { MaDoiBong, MaCauThu } = req.body;
-    
-            // Lấy thông tin từ bảng ThamSo
-            const thamSo = await ThamSo.findOne();
-            if (!thamSo) {
-                return res.status(500).json({ error: 'Tham số hệ thống chưa được cấu hình.' });
-            }
-    
-            const { TuoiToiThieu, TuoiToiDa } = thamSo;
-    
-            // Lấy thông tin cầu thủ
-            const cauThu = await CauThu.findByPk(MaCauThu);
-            if (!cauThu) {
-                return res.status(404).json({ error: `Không tìm thấy cầu thủ với mã ${MaCauThu}.` });
-            }
-    
-            // Tính tuổi cầu thủ
-            const currentYear = new Date().getFullYear();
-            const birthYear = new Date(cauThu.NgaySinh).getFullYear();
-            const age = currentYear - birthYear;
-    
-            // Kiểm tra độ tuổi tối thiểu và tối đa
-            if (age < TuoiToiThieu || age > TuoiToiDa) {
-                return res.status(400).json({
-                    error: `Cầu thủ ${cauThu.TenCauThu} (${MaCauThu}) không đáp ứng độ tuổi tham gia (${TuoiToiThieu}-${TuoiToiDa} tuổi).`,
-                });
-            }
-    
+
             // Kiểm tra liên kết đã tồn tại chưa
             const existingLink = await DbCt.findOne({
                 where: { MaDoiBong, MaCauThu },
             });
-    
+
             if (existingLink) {
                 return res.status(400).json({ error: 'Liên kết này đã tồn tại.' });
             }
-    
+
             // Tạo liên kết mới
             const newLink = await DbCt.create({ MaDoiBong, MaCauThu });
-    
+
             res.status(201).json(newLink);
         } catch (error) {
             console.error('Lỗi khi tạo liên kết:', error);
@@ -72,71 +46,38 @@ const DbCtController = {
         }
     },
 
+
     // Thêm nhiều liên kết giữa đội bóng và cầu thủ
     async createMany(req, res) {
         try {
             const { links } = req.body; // Nhận danh sách các bản ghi từ body
-    
+
             if (!Array.isArray(links) || links.length === 0) {
                 return res.status(400).json({ error: 'Danh sách liên kết không hợp lệ.' });
             }
-    
+
             const createdLinks = [];
             const existingLinks = [];
             const invalidLinks = [];
-    
-            // Lấy thông tin từ bảng ThamSo
-            const thamSo = await ThamSo.findOne();
-            if (!thamSo) {
-                return res.status(500).json({ error: 'Tham số hệ thống chưa được cấu hình.' });
-            }
-    
-            const { TuoiToiThieu, TuoiToiDa } = thamSo;
-    
+
             for (const link of links) {
                 const { MaDoiBong, MaCauThu } = link;
-    
-                // Lấy thông tin cầu thủ
-                const cauThu = await CauThu.findByPk(MaCauThu);
-                if (!cauThu) {
-                    invalidLinks.push({
-                        MaDoiBong,
-                        MaCauThu,
-                        error: `Không tìm thấy cầu thủ với mã ${MaCauThu}.`,
-                    });
-                    continue;
-                }
-    
-                // Tính tuổi cầu thủ
-                const currentYear = new Date().getFullYear();
-                const birthYear = new Date(cauThu.NgaySinh).getFullYear();
-                const age = currentYear - birthYear;
-    
-                // Kiểm tra độ tuổi tối thiểu và tối đa
-                if (age < TuoiToiThieu || age > TuoiToiDa) {
-                    invalidLinks.push({
-                        MaDoiBong,
-                        MaCauThu,
-                        error: `Cầu thủ ${cauThu.TenCauThu} không đáp ứng độ tuổi (${TuoiToiThieu}-${TuoiToiDa} tuổi).`,
-                    });
-                    continue;
-                }
-    
+
                 // Kiểm tra liên kết đã tồn tại chưa
                 const existingLink = await DbCt.findOne({
                     where: { MaDoiBong, MaCauThu },
                 });
-    
+
                 if (existingLink) {
                     existingLinks.push(link); // Ghi nhận liên kết đã tồn tại
                     continue;
                 }
-    
+
                 // Tạo liên kết mới
                 const newLink = await DbCt.create({ MaDoiBong, MaCauThu });
                 createdLinks.push(newLink);
             }
-    
+
             res.status(201).json({
                 createdLinks,
                 existingLinks,
@@ -148,6 +89,7 @@ const DbCtController = {
             res.status(500).json({ error: 'Lỗi khi tạo nhiều liên kết.' });
         }
     },
+
 
     // Cập nhật liên kết giữa đội bóng và cầu thủ
     async update(req, res) {

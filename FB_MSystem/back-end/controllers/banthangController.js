@@ -35,6 +35,28 @@ const BanThangController = {
         }
     },
 
+    async getByCauThu(req, res) {
+        try {
+            const { MaCauThu } = req.params; // Lấy mã cầu thủ từ URL
+    
+            // Truy vấn danh sách bàn thắng của cầu thủ
+            const banThangs = await BanThang.findAll({
+                where: { MaCauThu },
+                include: [
+                    { model: TranDau, as: 'TranDau' }, // Thông tin trận đấu
+                    { model: DoiBong, as: 'DoiBong' }, // Thông tin đội bóng
+                    { model: LoaiBanThang, as: 'LoaiBanThang' }, // Loại bàn thắng
+                ],
+            });
+    
+            // Trả về danh sách bàn thắng
+            res.status(200).json(banThangs);
+        } catch (error) {
+            console.error('Lỗi khi lấy bàn thắng theo mã cầu thủ:', error);
+            res.status(500).json({ error: 'Lỗi khi lấy bàn thắng theo mã cầu thủ.' });
+        }
+    },
+
     async create(req, res) {
         try {
             const { MaTranDau, MaDoiBong, MaCauThu } = req.params;

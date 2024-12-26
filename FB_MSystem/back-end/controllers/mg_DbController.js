@@ -1,5 +1,5 @@
-const { MgDb, DoiBong, MuaGiai, BangXepHang } = require('../models');
-
+const { MgDb, DoiBong} = require('../models');
+const { updateRanking, validateStadiumConditions, validatePlayerConditions} = require('../services/mg_DbServices')
 const MgDbController = {
     // Lấy danh sách đội bóng theo mùa giải
     async getByMuaGiai(req, res) {
@@ -22,10 +22,15 @@ const MgDbController = {
         }
     },
 
-    // Thêm liên kết mới giữa mùa giải và đội bóng
     async create(req, res) {
         try {
             const { MaMuaGiai, MaDoiBong } = req.body;
+
+            // Kiểm tra điều kiện sân nhà
+            await validateStadiumConditions(MaDoiBong);
+
+            // Kiểm tra điều kiện cầu thủ
+            await validatePlayerConditions(MaMuaGiai, MaDoiBong);
 
             // Kiểm tra liên kết đã tồn tại chưa
             const existingLink = await MgDb.findOne({
@@ -37,42 +42,22 @@ const MgDbController = {
             }
 
             // Tạo liên kết mới
-            const newLink = await MgDb.create({
-                MaMuaGiai,
-                MaDoiBong,
-            });
+            const newLink = await MgDb.create({ MaMuaGiai, MaDoiBong });
 
-            // Kiểm tra và cập nhật bảng xếp hạng nếu cần
-            const existingRank = await BangXepHang.findOne({
-                where: { MaMuaGiai, MaDoiBong },
-            });
-
-            if (!existingRank) {
-                await BangXepHang.create({
-                    MaMuaGiai,
-                    MaDoiBong,
-                    SoTran: 0,
-                    SoTranThang: 0,
-                    SoTranHoa: 0,
-                    SoTranThua: 0,
-                    SoBanThang: 0,
-                    SoBanThua: 0,
-                    DiemSo: 0,
-                    HieuSo: 0,
-                });
-            }
+            // Cập nhật bảng xếp hạng thông qua hàm riêng
+            await updateRanking(MaMuaGiai, MaDoiBong);
 
             res.status(201).json(newLink);
         } catch (error) {
             console.error('Lỗi khi tạo liên kết:', error);
-            res.status(500).json({ error: 'Lỗi khi tạo liên kết.' });
+            res.status(500).json({ error: error.message });
         }
     },
 
-    // Thêm nhiều liên kết giữa mùa giải và đội bóng
+
     async createMany(req, res) {
         try {
-            const { links } = req.body; // Nhận danh sách các bản ghi từ body
+            const { links } = req.body;
     
             if (!Array.isArray(links) || links.length === 0) {
                 return res.status(400).json({ error: 'Danh sách liên kết không hợp lệ.' });
@@ -80,56 +65,44 @@ const MgDbController = {
     
             const createdLinks = [];
             const existingLinks = [];
-            const missingRanks = new Set();
+            const invalidLinks = [];
     
             for (const link of links) {
                 const { MaMuaGiai, MaDoiBong } = link;
     
-                // Kiểm tra liên kết đã tồn tại chưa
-                const existingLink = await MgDb.findOne({
-                    where: { MaMuaGiai, MaDoiBong },
-                });
+                try {
+                    // Kiểm tra điều kiện sân nhà
+                    await validateStadiumConditions(MaDoiBong);
     
-                if (existingLink) {
-                    existingLinks.push(link); // Ghi nhận liên kết đã tồn tại
-                    continue;
+                    // Kiểm tra điều kiện cầu thủ
+                    await validatePlayerConditions(MaMuaGiai, MaDoiBong);
+    
+                    // Kiểm tra liên kết đã tồn tại chưa
+                    const existingLink = await MgDb.findOne({
+                        where: { MaMuaGiai, MaDoiBong },
+                    });
+    
+                    if (existingLink) {
+                        existingLinks.push(link);
+                        continue;
+                    }
+    
+                    // Tạo liên kết mới
+                    const newLink = await MgDb.create({ MaMuaGiai, MaDoiBong });
+                    createdLinks.push(newLink);
+    
+                    // Cập nhật bảng xếp hạng
+                    await updateRanking(MaMuaGiai, MaDoiBong);
+                } catch (err) {
+                    invalidLinks.push({ link, error: err.message });
                 }
-    
-                // Tạo liên kết mới
-                const newLink = await MgDb.create({ MaMuaGiai, MaDoiBong });
-                createdLinks.push(newLink);
-    
-                // Kiểm tra và ghi nhận bảng xếp hạng cần cập nhật
-                const existingRank = await BangXepHang.findOne({
-                    where: { MaMuaGiai, MaDoiBong },
-                });
-    
-                if (!existingRank) {
-                    missingRanks.add(`${MaMuaGiai}-${MaDoiBong}`); // Ghi nhận thông tin bảng xếp hạng cần tạo
-                }
-            }
-    
-            // Tạo bảng xếp hạng cho những đội chưa có
-            for (const rank of missingRanks) {
-                const [MaMuaGiai, MaDoiBong] = rank.split('-');
-                await BangXepHang.create({
-                    MaMuaGiai,
-                    MaDoiBong,
-                    SoTran: 0,
-                    SoTranThang: 0,
-                    SoTranHoa: 0,
-                    SoTranThua: 0,
-                    SoBanThang: 0,
-                    SoBanThua: 0,
-                    DiemSo: 0,
-                    HieuSo: 0,
-                });
             }
     
             res.status(201).json({
                 createdLinks,
                 existingLinks,
-                message: `${createdLinks.length} liên kết mới đã được tạo. ${existingLinks.length} liên kết đã tồn tại.`,
+                invalidLinks,
+                message: `${createdLinks.length} liên kết mới đã được tạo. ${existingLinks.length} liên kết đã tồn tại. ${invalidLinks.length} liên kết không hợp lệ.`,
             });
         } catch (error) {
             console.error('Lỗi khi tạo nhiều liên kết:', error);
