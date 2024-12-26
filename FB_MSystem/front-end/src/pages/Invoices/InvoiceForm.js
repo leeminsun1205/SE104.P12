@@ -12,7 +12,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
     receivedAmount: "",
     receivedDate: "",
     reason: "",
-    status: "Chưa hoàn thành", // Default status
+    status: "Đã hoàn thành",
   });
   const [availableTeams, setAvailableTeams] = useState([]);
   const [loadingTeams, setLoadingTeams] = useState(true);
@@ -145,14 +145,13 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           placeholder="Lý do"
         />
         <label>Tình trạng:</label>
-        <select
+        <input
           name="status"
           value={formData.status}
           onChange={handleChange}
+          readOnly
         >
-          <option value="Đã hoàn thành">Đã hoàn thành</option>
-          <option value="Chưa hoàn thành">Chưa hoàn thành</option>
-        </select>
+        </input>
         <button type="submit">Xuất biên nhận</button>
       </form>
     </div>

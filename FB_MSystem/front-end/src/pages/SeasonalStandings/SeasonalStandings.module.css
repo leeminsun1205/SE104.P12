@@ -1,62 +1,123 @@
-/* SeasonalStandings.module.css */
 .standingsContainer {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-}
-
-.standingsTitle {
-    text-align: center;
+    padding: 24px;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 20px;
-}
-
-.tableWrapper {
-    overflow-x: auto;
-}
-
-.standingsTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-.standingsTable th,
-.standingsTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.standingsTable th {
-    background-color: #f2f2f2;
-    cursor: pointer;
-}
-
-.standingsTable tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.standingsTable tbody tr:hover {
-    background-color: #e0e0e0;
-}
-
-.standingsRow {
-    cursor: pointer;
-}
-
-.teamName {
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .standingsContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .standingsTitle {
+    font-size: 28px;
     font-weight: bold;
-}
-
-.backButton {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #333;
+    border-bottom: 2px solid #17a2b8; 
+    display: inline-block;
+    padding-bottom: 8px;
+  }
+  
+  .tableWrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+  
+  .standingsTable {
+    width: 95%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin: 0 auto;
     font-size: 16px;
-}
-
-.backButton:hover {
-    background-color: #0056b3;
-}
+    background-color: #fdfdfd;
+  }
+  
+  .standingsTable thead {
+    background-color: #17a2b8;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+  
+  .standingsTable th {
+    background-color: #17a3b9;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .standingsTable th:hover {
+    background-color: #138496;
+    transition: background-color 0.2s ease;
+  }
+  
+  .standingsTable td {
+    padding: 14px;
+    text-align: center;
+    background-color: #ffffff;
+    color: #555;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .standingsTable tbody tr:hover td {
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .teamName {
+    font-weight: 600;
+    color: #17a2b8;
+    transition: color 0.2s ease;
+  }
+  
+  .teamName:hover {
+    color: #138496;
+    text-decoration: underline;
+  }
+  
+  .standingsTable tbody tr td:last-child {
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  .standingsRow {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .standingsRow:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .backButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #17a2b8;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .backButton:hover {
+    background-color: #138496;
+  }
+  
+  .backButton:active {
+    background-color: #117a8b;
+  }
+  

@@ -12,6 +12,9 @@ function SeasonDetails({ API_URL }) {
     const [isEditRoundModalOpen, setIsEditRoundModalOpen] = useState(false);
     const [roundToEdit, setRoundToEdit] = useState(null);
     const [editRoundError, setEditRoundError] = useState('');
+    const [isAddTeamsModalOpen, setIsAddTeamsModalOpen] = useState(false);
+    const [availableTeamsForSeason, setAvailableTeamsForSeason] = useState([]);
+    const [selectedTeamsToAdd, setSelectedTeamsToAdd] = useState([]);
 
     useEffect(() => {
         const fetchSeasonDetails = async () => {
@@ -85,6 +88,25 @@ function SeasonDetails({ API_URL }) {
         fetchSeasonRounds();
     }, [API_URL, seasonId]);
 
+    useEffect(() => {
+        const fetchAvailableTeamsForSeason = async () => {
+            try {
+                const response = await fetch(`${API_URL}/teams/available-for-season`);
+                if (!response.ok) {
+                    const message = await response.text();
+                    throw new Error(`Failed to fetch available teams: ${response.status} - ${message}`);
+                }
+                const data = await response.json();
+                setAvailableTeamsForSeason(data.teams);
+            } catch (error) {
+                console.error("Error fetching available teams:", error);
+                setError(error.message);
+            }
+        };
+
+        fetchAvailableTeamsForSeason();
+    }, [API_URL]);
+
     const handleOpenEditRoundModal = (round) => {
         setRoundToEdit({ ...round });
         setEditRoundError(''); // Clear any previous error
@@ -140,6 +162,56 @@ function SeasonDetails({ API_URL }) {
         } catch (error) {
             console.error("Error updating round:", error);
             setEditRoundError(error.message);
+        }
+    };
+
+    const handleOpenAddTeamsModal = () => {
+        setIsAddTeamsModalOpen(true);
+    };
+
+    const handleCloseAddTeamsModal = () => {
+        setIsAddTeamsModalOpen(false);
+        setSelectedTeamsToAdd([]);
+    };
+
+    const handleToggleTeamSelection = (teamId) => {
+        setSelectedTeamsToAdd(prevSelected =>
+            prevSelected.includes(teamId)
+                ? prevSelected.filter(id => id !== teamId)
+                : [...prevSelected, teamId]
+        );
+    };
+
+    const handleAddSelectedTeams = async () => {
+        if (selectedTeamsToAdd.length === 0) {
+            return; // No teams selected
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/seasons/${seasonId}/teams`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ teamIds: selectedTeamsToAdd }),
+            });
+
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(`Failed to add teams to season: ${response.status} - ${message}`);
+            }
+
+            // Refresh season details and teams
+            const updatedSeasonResponse = await fetch(`${API_URL}/seasons/${seasonId}`);
+            const updatedSeasonData = await updatedSeasonResponse.json();
+            setSeason(updatedSeasonData);
+
+            const teamsData = await Promise.all(updatedSeasonData.teams.map(teamId => fetch(`${API_URL}/teams/${teamId}`).then(res => res.json())));
+            setTeams(teamsData);
+            handleCloseAddTeamsModal();
+        } catch (error) {
+            console.error("Error adding teams to season:", error);
+            setError(error.message);
         }
     };
 
@@ -246,9 +318,41 @@ function SeasonDetails({ API_URL }) {
                 </div>
             )}
 
+            {isAddTeamsModalOpen && (
+                <div className={styles.modal}>
+                    <div className={styles['modal-content']}>
+                        <span className={styles.close} onClick={handleCloseAddTeamsModal}>×</span>
+                        <h3>Thêm đội bóng vào mùa giải</h3>
+                        {availableTeamsForSeason.length > 0 ? (
+                            <ul className={styles.list}>
+                                {availableTeamsForSeason.map(team => (
+                                    <li key={team.id} className={styles['modal-list-item']}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedTeamsToAdd.includes(team.id)}
+                                                onChange={() => handleToggleTeamSelection(team.id)}
+                                            />
+                                            {team.name}
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>Không có đội nào có sẵn để thêm.</p>
+                        )}
+                        <button onClick={handleAddSelectedTeams} className={styles.button}>Thêm đội đã chọn</button>
+                    </div>
+                </div>
+            )}
             {teams.length > 0 ? (
                 <div>
-                    <h3 className={styles.title} style={{ fontSize: '20px' }}>Các đội tham gia:</h3>
+                    <h3 className={styles.title} style={{ fontSize: '20px' }}>
+                        Các đội tham gia:
+                        </h3>
+                        <button onClick={handleOpenAddTeamsModal} className={styles['add-team-button']} style={{ marginLeft: '10px', fontSize: '14px' }}>
+                            Thêm đội bóng
+                        </button>
                     <ul className={styles.list}>
                         {teams.map(team => (
                             <li key={team.id} className={styles['list-item']}>
@@ -260,7 +364,10 @@ function SeasonDetails({ API_URL }) {
                     </ul>
                 </div>
             ) : (
-                <p className={styles.paragraph}>Không có đội nào tham gia mùa giải này.</p>
+                <div>
+                    <p className={styles.paragraph}>Không có đội nào tham gia mùa giải này.</p>
+                    <button onClick={handleOpenAddTeamsModal} className={styles["addteambutton"]}>Thêm đội bóng</button>
+                </div>
             )}
         </div>
     );

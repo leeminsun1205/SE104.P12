@@ -1,56 +1,43 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
-import AddTeamsToSeasonModal from "./AddTeamsToSeasonModal";
 import "./Teams.css";
 
 function Teams({
-  teams,
-  seasons,
-  selectedSeason,
-  onSeasonChange,
+  teams: initialTeams, 
   onDeleteTeam,
+  API_URL
 }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [allTeams, setAllTeams] = useState([]); // Store all teams for the selected season
+  const [allTeams, setAllTeams] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const teamsPerPage = 4;
-  const [showAddTeamsModal, setShowAddTeamsModal] = useState(false);
 
-  // Fetch teams when the component mounts or when the selected season changes
+  // Fetch all teams when the component mounts
   useEffect(() => {
-    const fetchTeamsForSelectedSeason = async () => {
-      try {
-        const url = selectedSeason === 'all'
-          ? 'http://localhost:5000/api/teams/all'
-          : `http://localhost:5000/api/teams?season=${selectedSeason}`;
-
-        const response = await fetch(url);
+    const fetchAllTeams = async () => {
+      try { 
+        const response = await fetch(`${API_URL}/teams/available`);
+        console.log(`${API_URL}/teams/available`)
         if (!response.ok) {
           throw new Error('Failed to fetch teams');
         }
         const data = await response.json();
-        setAllTeams(data.teams); // Assuming the response has a 'teams' property
+        setAllTeams(data.teams);
       } catch (error) {
         console.error('Error fetching teams:', error);
         // Handle error appropriately
       }
     };
 
-    fetchTeamsForSelectedSeason();
-  }, [selectedSeason]);
+    fetchAllTeams();
+  }, []); // Empty dependency array means this runs once on mount
 
-  // Update filtered teams when the search term or allTeams changes
+  // Update filtered teams when the search term changes
   useEffect(() => {
-    const term = searchTerm.trim().toLowerCase();
-    const filtered = allTeams.filter((team) =>
-      team.name.toLowerCase().includes(term)
-    );
-    // Reset to the first page when the filter changes
-    setCurrentPage(1);
-  }, [allTeams, searchTerm]);
+    // The filtering logic remains the same
+    setCurrentPage(1); // Reset to the first page when the filter changes
+  }, [searchTerm]);
 
   const handleDelete = (id) => {
     const confirmDelete = window.confirm(
@@ -67,54 +54,6 @@ function Teams({
 
   const handleEdit = (id) => {
     navigate(`/teams/edit/${id}`);
-  };
-
-  const handleAddTeamsToSeason = async (selectedTeamIds, season) => {
-    setShowAddTeamsModal(false);
-
-    for (const teamId of selectedTeamIds) {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/teams/${teamId}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const teamToAdd = await response.json();
-        if (teamToAdd) {
-          setAllTeams((prevTeams) => {
-            if (!prevTeams.some((team) => team.id === teamToAdd.id)) {
-              return [...prevTeams, { ...teamToAdd, season: season }];
-            }
-            return prevTeams;
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching team data:", error);
-      }
-    }
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/seasons/${season}/teams`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ teamIds: selectedTeamIds }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add teams to season");
-      }
-
-      await onSeasonChange(season);
-    } catch (error) {
-      console.error("Error adding teams to season:", error);
-    }
   };
 
   const clearSearch = () => setSearchTerm("");
@@ -156,11 +95,6 @@ function Teams({
       <Link to="/create/team" className="add-player-button">
         Thêm đội bóng mới
       </Link>
-      <SeasonSelector
-        seasons={seasons}
-        selectedSeason={selectedSeason}
-        onSeasonChange={onSeasonChange}
-      />
       <div className="search-container">
         <div className="search-input-wrapper">
           <p>Tìm kiếm</p>
@@ -177,24 +111,6 @@ function Teams({
           )}
         </div>
       </div>
-
-      {/* Chỉ hiển thị nút khi selectedSeason không phải là 'all' */}
-      {selectedSeason !== 'all' && (
-        <button
-          className="add-to-season-button"
-          onClick={() => setShowAddTeamsModal(true)}
-        >
-          Thêm đội bóng vào mùa giải
-        </button>
-      )}
-
-      {showAddTeamsModal && (
-        <AddTeamsToSeasonModal
-          season={selectedSeason}
-          onAddTeamsToSeason={handleAddTeamsToSeason}
-          onClose={() => setShowAddTeamsModal(false)}
-        />
-      )}
 
       {currentTeams.length > 0 ? (
         <>
@@ -231,10 +147,7 @@ function Teams({
         </>
       ) : (
         <div className="empty-state">
-          <p>
-            Không tìm thấy đội bóng nào. Hãy thử tìm kiếm với từ khóa
-            khác.
-          </p>
+          <p>Không tìm thấy đội bóng nào.</p>
         </div>
       )}
     </div>

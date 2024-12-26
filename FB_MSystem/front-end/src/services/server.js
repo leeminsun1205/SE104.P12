@@ -252,7 +252,7 @@ app.post("/api/teams/available", (req, res) => {
     .json({ message: "Team created successfully", team: { ...newTeam, stadium: stadiums.find(s => s.stadiumId === newTeam.stadiumId) } });
 });
 
-app.get("/api/teams/position", (req, res) =>{
+app.get("/api/teams/position", (req, res) => {
   const teamId = req.query.teamId;
   if (!teamId) {
     return res.status(402).json({ message: "teamId not found" });
@@ -285,7 +285,7 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
   const updatedTeams = [];
 
   teamIds.forEach((teamId) => {
-    const teamIdNum = Number(teamId);
+    const teamIdNum = parseInt(teamId);
     const team = availableTeams.find((t) => t.id === teamIdNum);
     if (team) {
       if (!season.teams.includes(teamIdNum)) {
@@ -294,7 +294,9 @@ app.post("/api/seasons/:seasonId/teams", (req, res) => {
       updatedTeams.push(getTeamWithStadium(teamIdNum));
     }
   });
-
+  availableTeams = availableTeams.map(team =>
+    teamIds.includes(String(team.id)) ? { ...team, season: seasonId } : team
+  );
   res.status(200).json({
     message: `Teams added to season ${seasonId}`,
     updatedTeams,
@@ -439,8 +441,10 @@ app.put("/api/teams/:id", upload.none(), (req, res) => {
     team: getTeamWithStadium(parseInt(id)),
   });
 });
-
-// Delete a team
+app.get("/api/teams/available-for-season", (req, res) => {
+  const availableTeamsForSeason = availableTeams.filter(team => !team.season);
+  res.json({ teams: availableTeamsForSeason });
+});
 app.delete("/api/teams/:id", (req, res) => {
   const { id } = req.params;
   const teamId = parseInt(id);
@@ -772,7 +776,7 @@ app.get("/api/standings", (req, res) => {
     )
     : [];
 
-  if (!teamsInSeason || teamsInSeason.length=== 0) {
+  if (!teamsInSeason || teamsInSeason.length === 0) {
     return res
       .status(404)
       .json({ message: `Không tìm thấy đội nào cho mùa giải ${season}.` });
@@ -919,16 +923,16 @@ app.put("/api/matches/:matchId", (req, res) => {
 
   const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
   if (matchIndex === -1) {
-      return res.status(404).json({ message: "Match not found" });
+    return res.status(404).json({ message: "Match not found" });
   } else {
-      updatedMatchData.isFinished =
-          updatedMatchData.homeScore !== null && updatedMatchData.awayScore !== null;
+    updatedMatchData.isFinished =
+      updatedMatchData.homeScore !== null && updatedMatchData.awayScore !== null;
   }
 
   matchesData[matchIndex] = {
-      ...matchesData[matchIndex],
-      ...updatedMatchData,
-      goals: updatedMatchData.goals // Ensure goals are updated
+    ...matchesData[matchIndex],
+    ...updatedMatchData,
+    goals: updatedMatchData.goals // Ensure goals are updated
   };
   res.json({ message: "Match updated", match: matchesData[matchIndex] });
 });
@@ -1152,7 +1156,7 @@ app.post('/api/types-settings', (req, res) => {
   res.json({ message: 'Types settings saved successfully' });
 })
 
-app.get("/api/teams/position", (req, res) =>{
+app.get("/api/teams/position", (req, res) => {
   const teamId = req.query.teamId;
   if (!teamId) {
     return res.status(402).json({ message: "teamId not found" });

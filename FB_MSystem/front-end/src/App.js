@@ -221,15 +221,13 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/teams"
                 element={<Teams
                     teams={teams}
-                    seasons={seasons}
-                    selectedSeason={selectedSeason}
-                    onSeasonChange={onSeasonChange}
+                    API_URL={API_URL}
                     onDeleteTeam={onDeleteTeam} />}
             />
             <Route path="/create/team" element={<CreateTeam API_URL={API_URL} />} />
             <Route path="/create/player" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
             <Route path="/teams/edit/:id" element={<EditTeam onEditTeam={onEditTeam} />} />
-            <Route path="/teams/:id" element={<TeamInfo teams={teams} />} />
+            <Route path="/teams/:id" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
             <Route path="/teams/:teamId/players" element={<Players seasons={seasons} />} />
             <Route path="/teams/:teamId/players/:playerId" element={<PlayerInfo />} />
             <Route path="/players" element={<AllPlayers />} />
