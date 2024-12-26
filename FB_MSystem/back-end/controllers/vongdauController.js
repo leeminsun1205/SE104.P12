@@ -1,10 +1,24 @@
 const { VongDau } = require('../models'); 
 const { autoSchedule } = require('../services/autoSchedule');
 const VongDauController = {
+    async getByMuaGiai(req, res) {
+        try {
+            const { maMuaGiai } = req.params;
+            const vongDaus = await VongDau.findAll({
+                where: { maMuaGiai: maMuaGiai }
+            });
+            if (vongDaus.length === 0) {
+                return res.status(404).json({ error: 'Không tìm thấy vòng đấu nào cho mùa giải này.' });
+            }
+            res.status(200).json({vongDau: vongDaus});
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách vòng đấu theo mùa giải.' });
+        }
+    },
     async getAll(req, res) {
         try {
             const vongDaus = await VongDau.findAll();
-            res.status(200).json(vongDaus);
+            res.status(200).json({vongDau: vongDaus});
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách vòng đấu.' });
         }
@@ -67,7 +81,33 @@ const VongDauController = {
                 details: error.message,
             });
         }
+    },
+    async updateByMuaGiai(req, res) {
+        try {
+            const { maMuaGiai, id } = req.params; // Lấy mã mùa giải và ID vòng đấu từ URL
+            const updates = req.body; // Thông tin cập nhật từ request body
+            const vongDau = await VongDau.findOne({
+                where: { MaMuaGiai: maMuaGiai, MaVongDau: id },
+            });
+            
+            if (!vongDau) {
+                return res.status(404).json({ error: 'Không tìm thấy vòng đấu trong mùa giải.' });
+            }
+
+            // Cập nhật vòng đấu
+            await vongDau.update(updates.vongDau);
+    
+            res.status(200).json({
+                message: 'Vòng đấu đã được cập nhật thành công.',
+                vongDau,
+            });
+        } catch (error) {
+            console.error('Lỗi khi cập nhật vòng đấu:', error);
+            res.status(500).json({ error: 'Lỗi khi cập nhật vòng đấu.', details: error.message });
+        }
     }
+    
 };
+
 
 module.exports = VongDauController;

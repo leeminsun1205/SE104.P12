@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { toVietnameseCurrencyString } from "./utils"; // Import toVietnameseCurrencyString
+import { toVietnameseCurrencyString } from "./utils";
 import styles from "./Invoices.module.css";
 
 const PLACEHOLDER = "..........................................................................................................";
@@ -25,7 +25,7 @@ function Invoices({ invoices }) {
   const invoiceData = invoices.find((invoice) => invoice.id === invoiceId);
 
   const goBackToForm = () => {
-    navigate("/invoices");
+    navigate("/bien-nhan");
   };
 
   const formatCurrency = (amount) =>

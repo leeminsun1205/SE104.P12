@@ -25,7 +25,14 @@ const MuaGiaiController = {
 
     async create(req, res) {
         try {
-            const { MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc } = req.body;
+            let { MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc } = req.body;
+
+            if (!MaMuaGiai) {
+                const ngayBatDauDate = new Date(NgayBatDau);
+                const year = ngayBatDauDate.getFullYear();
+                MaMuaGiai = `MG${year}_`;
+            }
+
             if (!isValidRange(NgayBatDau, NgayKetThuc)) {
                 return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.' });
             }
@@ -36,7 +43,7 @@ const MuaGiaiController = {
             const muaGiai = await MuaGiai.create({
                 MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc,
             });
-            res.status(201).json(muaGiai);
+            res.status(201).json({muaGiai: muaGiai});
         } catch (error) {
             console.error('Lỗi khi thêm mùa giải:', error);
             res.status(500).json({ error: 'Lỗi khi thêm mùa giải.', details: error.message });

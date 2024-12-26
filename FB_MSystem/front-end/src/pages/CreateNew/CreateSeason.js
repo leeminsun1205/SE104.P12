@@ -6,14 +6,14 @@ import styles from './CreateSeason.module.css'; // Import CSS module
 function CreateSeason({ API_URL }) {
     const navigate = useNavigate();
     const [season, setSeason] = useState({
-        name: '',
-        startDate: '',
-        endDate: '',
+        TenMuaGiai: '',
+        NgayBatDau: '',
+        NgayKetThuc: '',
     });
     const [errors, setErrors] = useState({
-        name: '',
-        startDate: '',
-        endDate: '',
+        TenMuaGiai: '',
+        NgayBatDau: '',
+        NgayKetThuc: '',
     });
     const [generalError, setGeneralError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -36,13 +36,13 @@ function CreateSeason({ API_URL }) {
     const handleReset = () => {
         setSeason({
             name: '',
-            startDate: '',
-            endDate: '',
+            NgayBatDau: '',
+            NgayKetThuc: '',
         });
         setErrors({
             name: '',
-            startDate: '',
-            endDate: '',
+            NgayBatDau: '',
+            NgayKetThuc: '',
         });
         setGeneralError('');
         setSuccessMessage('');
@@ -52,34 +52,34 @@ function CreateSeason({ API_URL }) {
         event.preventDefault();
         let isValid = true;
         const newErrors = {};
-
-        if (!season.name.trim()) {
+        if (!season.TenMuaGiai.trim()) {
             newErrors.name = 'Tên mùa giải không được để trống.';
             isValid = false;
         }
-        if (!season.startDate) {
-            newErrors.startDate = 'Ngày bắt đầu không được để trống.';
+        if (!season.NgayBatDau) {
+            newErrors.NgayBatDau = 'Ngày bắt đầu không được để trống.';
             isValid = false;
         }
-        if (!season.endDate) {
-            newErrors.endDate = 'Ngày kết thúc không được để trống.';
+        if (!season.NgayKetThuc) {
+            newErrors.NgayKetThuc = 'Ngày kết thúc không được để trống.';
             isValid = false;
-        } else if (season.startDate && season.endDate && season.endDate <= season.startDate) {
-            newErrors.endDate = 'Ngày kết thúc phải sau ngày bắt đầu.';
+        } else if (season.NgayBatDau && season.NgayKetThuc && season.NgayKetThuc <= season.NgayBatDau) {
+            newErrors.NgayKetThuc = 'Ngày kết thúc phải sau ngày bắt đầu.';
             isValid = false;
         }
-
+        
         setErrors(newErrors);
 
         if (isValid) {
             try {
-                const response = await fetch(`${API_URL}/seasons`, {
+                const response = await fetch(`${API_URL}/mua-giai`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(season),
                 });
+                console.log(season)
 
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -89,7 +89,7 @@ function CreateSeason({ API_URL }) {
                 const data = await response.json();
                 setSuccessMessage('Mùa giải đã được tạo thành công!');
                 setTimeout(() => {
-                    navigate(`/seasons/${data.season.id}`);
+                    navigate(`/create`);
                 }, 1500);
             } catch (error) {
                 console.error('Error creating season:', error);
@@ -108,9 +108,9 @@ function CreateSeason({ API_URL }) {
                     <label htmlFor="name">Tên mùa giải:</label>
                     <input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={season.name}
+                        id="TenMuaGiai"
+                        name="TenMuaGiai"
+                        value={season.TenMuaGiai}
                         onChange={handleChange}
                     />
                     {errors.name && <p className={styles['error-message']}>{errors.name}</p>}
@@ -119,23 +119,23 @@ function CreateSeason({ API_URL }) {
                     <label htmlFor="startDate">Ngày bắt đầu:</label>
                     <input
                         type="date"
-                        id="startDate"
-                        name="startDate"
-                        value={season.startDate}
+                        id="NgayBatDau"
+                        name="NgayBatDau"
+                        value={season.NgayBatDau}
                         onChange={handleChange}
                     />
-                    {errors.startDate && <p className={styles['error-message']}>{errors.startDate}</p>}
+                    {errors.NgayBatDau && <p className={styles['error-message']}>{errors.NgayBatDau}</p>}
                 </div>
                 <div className={styles['form-group']}>
                     <label htmlFor="endDate">Ngày kết thúc:</label>
                     <input
                         type="date"
-                        id="endDate"
-                        name="endDate"
-                        value={season.endDate}
+                        id="NgayKetThuc"
+                        name="NgayKetThuc"
+                        value={season.NgayKetThuc}
                         onChange={handleChange}
                     />
-                    {errors.endDate && <p className={styles['error-message']}>{errors.endDate}</p>}
+                    {errors.NgayKetThuc && <p className={styles['error-message']}>{errors.NgayKetThuc}</p>}
                 </div>
                 <div className={styles["create-container"]}>
                     <button className={styles['submit-button']} type="submit" >Tạo mùa giải</button>

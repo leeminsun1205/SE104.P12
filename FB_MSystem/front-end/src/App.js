@@ -42,7 +42,6 @@ import LookUp from './pages/LookUp/LookUp';
 import LookUpMatch from './pages/LookUp/LookUpMatch';
 import LookUpSeason from './pages/LookUp/LookUpSeason';
 import LookUpAchievements from './pages/LookUp/LookUpAchievements';
-import PlayerCardList from './pages/PlayerCardList/PlayerCardList';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -249,10 +248,10 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/mua-giai/:MaMuaGiai" element={<SeasonDetails API_URL={API_URL} />} />
             <Route path="/create/mua-giai" element={<CreateSeason API_URL={API_URL} />} />
             <Route path="/mua-giai" element={<SeasonList API_URL={API_URL} />} />
-            <Route path="/doi-bong/:MaDoiBong/other-matches" element={<OtherLeagueMatches />} /> 
+            <Route path="/doi-bong/:MaDoiBong/tran-dau-khac" element={<OtherLeagueMatches />} /> 
             <Route path="/mua-giai/:MaMuaGiai/vua-pha-luoi" element={<TopScorers API_URL={API_URL} />} />
             <Route path="/vua-pha-luoi" element={<TopScorersStandings API_URL={API_URL} />} />
-            <Route path="/mua-giai/:MaMuaGiai/standings" element={<SeasonalStandings API_URL={API_URL} />} />
+            <Route path="/mua-giai/:MaMuaGiai/bang-xep-hang" element={<SeasonalStandings API_URL={API_URL} />} />
             <Route path="/the-phat" element={<CardsList API_URL={API_URL} />} />
             <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
             <Route path="/lookup" element={<LookUp />} />

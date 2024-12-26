@@ -13,12 +13,12 @@ function SeasonsList({ API_URL }) {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`${API_URL}/seasons`);
+                const response = await fetch(`${API_URL}/mua-giai`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setSeasons(data.seasons);
+                setSeasons(data.muaGiai);
             } catch (error) {
                 console.error("Error fetching seasons:", error);
                 setError(error.message);
@@ -42,7 +42,7 @@ function SeasonsList({ API_URL }) {
 
         <div className={styles['seasons-list-container']}>
             <h2>Danh sách các mùa giải</h2>
-            <Link to="/create/season" className="add-player-button">
+            <Link to="/create/mua-giai" className="add-player-button">
                 Thêm mùa giải mới
             </Link>
             {seasons.length === 0 ? (
@@ -50,12 +50,12 @@ function SeasonsList({ API_URL }) {
             ) : (
                 <ul className={styles['seasons-list']}>
                     {seasons.map(season => (
-                        <li key={season.id} className={styles['season-item']}>
-                            <Link to={`/seasons/${season.id}`} className={styles['season-link']}>
-                                <span className={styles['season-name']}>{season.name}</span>
+                        <li key={season.MaMuaGiai} className={styles['season-item']}>
+                            <Link to={`/mua-giai/${season.MaMuaGiai}`} className={styles['season-link']}>
+                                <span className={styles['season-name']}>{season.TenMuaGiai}</span>
                                 <span className={styles['season-dates']}>
-                                    {new Date(season.startDate).toLocaleDateString()} -{' '}
-                                    {new Date(season.endDate).toLocaleDateString()}
+                                    {new Date(season.NgayBatDau).toLocaleDateString()} -{' '}
+                                    {new Date(season.NgayKetThuc).toLocaleDateString()}
                                 </span>
                             </Link>
                         </li>

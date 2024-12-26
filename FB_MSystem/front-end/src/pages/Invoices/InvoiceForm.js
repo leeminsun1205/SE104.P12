@@ -57,6 +57,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
       ...formData,
     };
 
+    console.log(newInvoice);
     onAddInvoice(newInvoice);
     navigate(`/bien-nhan/${formData.receiptNumber}`);
   };

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import styles from './SeasonDetails.module.css';
 
 function SeasonDetails({ API_URL }) {
-    const { seasonId } = useParams();
+    const { MaMuaGiai } = useParams();
     const [season, setSeason] = useState(null);
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ function SeasonDetails({ API_URL }) {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`${API_URL}/seasons/${seasonId}`);
+                const response = await fetch(`${API_URL}/mua-giai/${MaMuaGiai}`);
                 if (!response.ok) {
                     const text = await response.text();
                     console.error("HTTP Error fetching season:", response.status, response.statusText);
@@ -39,13 +39,13 @@ function SeasonDetails({ API_URL }) {
         };
 
         fetchSeasonDetails();
-    }, [API_URL, seasonId]);
+    }, [API_URL, MaMuaGiai]);
 
     useEffect(() => {
         const fetchTeamsDetails = async () => {
             if (season && season.teams && season.teams.length > 0) {
                 const teamsPromises = season.teams.map(teamId =>
-                    fetch(`${API_URL}/teams/${teamId}`).then(res => {
+                    fetch(`${API_URL}/doi-bong/${teamId}`).then(res => {
                         if (!res.ok) {
                             throw new Error(`Could not fetch team details for ID ${teamId}: ${res.status}`);
                         }
@@ -69,15 +69,16 @@ function SeasonDetails({ API_URL }) {
 
     useEffect(() => {
         const fetchSeasonRounds = async () => {
-            if (seasonId) {
+            if (MaMuaGiai) {
                 try {
-                    const response = await fetch(`${API_URL}/seasons/${seasonId}/rounds`);
+                    const response = await fetch(`${API_URL}/vong-dau/${MaMuaGiai}`);
                     if (!response.ok) {
                         const message = await response.text();
                         throw new Error(`Failed to fetch rounds: ${response.status} - ${message}`);
                     }
                     const data = await response.json();
-                    setRounds(data.rounds);
+                    console.log('asasa', data);
+                    setRounds(data.vongDau);
                 } catch (error) {
                     console.error("Error fetching season rounds:", error);
                     setError(error.message);
@@ -86,12 +87,12 @@ function SeasonDetails({ API_URL }) {
         };
 
         fetchSeasonRounds();
-    }, [API_URL, seasonId]);
+    }, [API_URL, MaMuaGiai]);
 
     useEffect(() => {
         const fetchAvailableTeamsForSeason = async () => {
             try {
-                const response = await fetch(`${API_URL}/teams/available-for-season`);
+                const response = await fetch(`${API_URL}/doi-bong`);
                 if (!response.ok) {
                     const message = await response.text();
                     throw new Error(`Failed to fetch available teams: ${response.status} - ${message}`);
@@ -128,18 +129,18 @@ function SeasonDetails({ API_URL }) {
 
     const handleSaveEditedRound = async () => {
         setEditRoundError('');
-        if (!roundToEdit.startDate || !roundToEdit.endDate) {
+        if (!roundToEdit.NgayBatDau || !roundToEdit.NgayKetThuc) {
             setEditRoundError('Vui lòng điền đầy đủ ngày bắt đầu và ngày kết thúc.');
             return;
         }
 
-        if (new Date(roundToEdit.startDate) >= new Date(roundToEdit.endDate)) {
+        if (new Date(roundToEdit.NgayBatDau) >= new Date(roundToEdit.NgayKetThuc)) {
             setEditRoundError('Ngày bắt đầu phải trước ngày kết thúc.');
             return;
         }
 
         try {
-            const response = await fetch(`${API_URL}/seasons/${seasonId}/rounds/${roundToEdit.roundId}`, {
+            const response = await fetch(`${API_URL}/vong-dau/${MaMuaGiai}/${roundToEdit.MaVongDau}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +189,7 @@ function SeasonDetails({ API_URL }) {
         }
 
         try {
-            const response = await fetch(`${API_URL}/seasons/${seasonId}/teams`, {
+            const response = await fetch(`${API_URL}/mua-giai/${MaMuaGiai}/teams`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -202,7 +203,7 @@ function SeasonDetails({ API_URL }) {
             }
 
             // Refresh season details and teams
-            const updatedSeasonResponse = await fetch(`${API_URL}/seasons/${seasonId}`);
+            const updatedSeasonResponse = await fetch(`${API_URL}/mua-giai/${MaMuaGiai}`);
             const updatedSeasonData = await updatedSeasonResponse.json();
             setSeason(updatedSeasonData);
 
@@ -231,16 +232,16 @@ function SeasonDetails({ API_URL }) {
 
     return (
         <div className={styles.container}>
-            <h2 className={styles.title}>{season.name}</h2>
-            <p className={styles.paragraph}><strong>Mã mùa giải:</strong> {season.id}</p>
-            <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong><strong></strong> {new Date(season.startDate).toLocaleDateString()}</p>
-            <p className={styles.paragraph}><strong>Ngày kết thúc:</strong><strong></strong> {new Date(season.endDate).toLocaleDateString()}</p>
+            <h2 className={styles.title}>{season.TenMuaGiai}</h2>
+            <p className={styles.paragraph}><strong>Mã mùa giải:</strong> {season.MaMuaGiai}</p>
+            <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong><strong></strong> {new Date(season.NgayBatDau).toLocaleDateString()}</p>
+            <p className={styles.paragraph}><strong>Ngày kết thúc:</strong><strong></strong> {new Date(season.NgayKetThuc).toLocaleDateString()}</p>
 
             <div className={styles.navigationLinks}>
-                <Link to={`/seasons/${seasonId}/standings`} className={styles.link}>
+                <Link to={`/mua-giai/${MaMuaGiai}/bang-xep-hang`} className={styles.link}>
                     Xem Bảng Xếp Hạng
                 </Link>
-                <Link to={`/seasons/${seasonId}/top-scorers`} className={styles.link}>
+                <Link to={`/mua-giai/${MaMuaGiai}/vua-pha-luoi`} className={styles.link}>
                     Xem Vua Phá Lưới
                 </Link>
             </div>
@@ -251,9 +252,9 @@ function SeasonDetails({ API_URL }) {
                     <ul className={styles.list}>
                         {rounds.map(round => (
                             <li key={round.roundId} className={styles['list-item']}>
-                                {round.name} (
-                                {new Date(round.startDate).toLocaleDateString()} -
-                                {new Date(round.endDate).toLocaleDateString()}
+                                {round.LuotDau ? "Lượt về" : "Lượt đi"} (
+                                {new Date(round.NgayBatDau).toLocaleDateString()} -
+                                {new Date(round.NgayKetThuc).toLocaleDateString()}
                                 )
                                 <button onClick={() => handleOpenEditRoundModal(round)} className={styles.editButton}>Sửa</button>
                             </li>
@@ -281,7 +282,7 @@ function SeasonDetails({ API_URL }) {
                             type="text"
                             id="editRoundId"
                             name="roundId"
-                            value={roundToEdit.roundId}
+                            value={roundToEdit.MaVongDau}
                             onChange={handleEditRoundInputChange}
                             className={styles['modal-input']}
                             readOnly
@@ -291,7 +292,7 @@ function SeasonDetails({ API_URL }) {
                             type="text"
                             id="editRoundName"
                             name="name"
-                            value={roundToEdit.name}
+                            value={roundToEdit.TenVongDau}
                             onChange={handleEditRoundInputChange}
                             className={styles['modal-input']}
                         />
@@ -300,7 +301,7 @@ function SeasonDetails({ API_URL }) {
                             type="date"
                             id="editRoundStartDate"
                             name="startDate"
-                            value={roundToEdit.startDate}
+                            value={roundToEdit.NgayBatDau}
                             onChange={handleEditRoundInputChange}
                             className={styles['modal-input']}
                         />
@@ -309,7 +310,7 @@ function SeasonDetails({ API_URL }) {
                             type="date"
                             id="editRoundEndDate"
                             name="endDate"
-                            value={roundToEdit.endDate}
+                            value={roundToEdit.NgayKetThuc}
                             onChange={handleEditRoundInputChange}
                             className={styles['modal-input']}
                         />
