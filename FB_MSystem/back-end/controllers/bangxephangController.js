@@ -7,12 +7,18 @@ const BangXepHangController = {
         try {
             const { MaMuaGiai } = req.params;
             const { sortBy, order } = req.query;  // `sortBy` và `order` là lựa chọn từ phía người dùng
-            const sortCriteriaBody = req.body;  // Lấy tiêu chí sắp xếp từ body
+            const utxh = UtXepHang;
+
+            // Gọi hàm cập nhật ThanhTich
+            await updateThanhTichFromBangXepHang(MaMuaGiai);
+
+            // Gọi hàm cập nhật LS_GIAIDAU
+            await updateLichSuGiaiDau();
 
             let sortCriteria = [];
 
             // Kiểm tra nếu body không tồn tại hoặc không phải là mảng
-            if (!Array.isArray(sortCriteriaBody) || sortCriteriaBody.length === 0) {
+            if (!Array.isArray(utxh) || utxh.length === 0) {
                 return res.status(400).json({ message: 'Danh sách tiêu chí sắp xếp không hợp lệ.' });
             }
 
@@ -22,7 +28,7 @@ const BangXepHangController = {
             // Nếu người dùng không yêu cầu sắp xếp theo cột nào cụ thể
             if (!sortBy) {
                 // Lấy tiêu chí mặc định từ body, sắp xếp dựa trên `MucDoUuTien`
-                sortCriteria = sortCriteriaBody
+                sortCriteria = utxh
                     .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien))
                     .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
                     .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);  // Mặc định sắp xếp giảm dần
@@ -37,7 +43,7 @@ const BangXepHangController = {
                 sortCriteria = [[sortBy, (order || 'DESC').toUpperCase()]];
 
                 // Thêm các tiêu chí mặc định từ body (không trùng với `sortBy`)
-                const remainingCriteria = sortCriteriaBody
+                const remainingCriteria = utxh
                     .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien) && criterion.MaLoaiUuTien !== sortBy)
                     .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
                     .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);
