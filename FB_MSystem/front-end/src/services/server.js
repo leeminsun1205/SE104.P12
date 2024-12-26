@@ -13,7 +13,7 @@ let {
   stadiums,
   matchesData,
   typeSettings,
-} = require("./lite_data");
+} = require("./data");
 
 let settingsData = {
   minPlayers: 15,

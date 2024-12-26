@@ -19,7 +19,7 @@ const LoaiUuTienController = {
                 return res.status(400).json({ error: `Tên loại ưu tiên "${TenLoaiUuTien}" đã tồn tại.` });
             }
             const loaiUuTien = await LoaiUuTien.create({
-                MaLoaiUuTien, TenLoaiUuTien,
+                MaLoaiUuTien, TenLoaiUuTien, MoTa
             });
             res.status(201).json(loaiUuTien);
         } catch (error) {

@@ -79,8 +79,7 @@ CREATE TABLE MG_DB_CT (
 CREATE TABLE VONGDAU (
     MaVongDau CHAR(15) NOT NULL,                
     MaMuaGiai CHAR(10) NOT NULL,                
-    LuotDau BIT NOT NULL,  # false: lượt đi, true: lượt về                     
-    SoThuTu TINYINT UNSIGNED NOT NULL,          
+    LuotDau BIT NOT NULL,  # false: lượt đi, true: lượt về                             
     NgayBatDau DATE,                            
     NgayKetThuc DATE,                           
     CONSTRAINT CK_NgayBatDau_NgayKetThuc CHECK (NgayBatDau IS NULL OR NgayKetThuc IS NULL OR NgayBatDau <= NgayKetThuc),
@@ -96,8 +95,8 @@ CREATE TABLE TRANDAU (
     MaSan CHAR(10) NOT NULL,
 	NgayThiDau DATE,
 	GioThiDau TIME,
-    BanThangDoiNha INT,
-	BanThangDoiKhach INT,
+    BanThangDoiNha TINYINT,
+	BanThangDoiKhach TINYINT,
     TinhTrang BIT NOT NULL, # true: đang đá, false: chưa đá hoặc kết thúc 
     CONSTRAINT CK_DoiKhacNhau CHECK (MaDoiBongNha <> MaDoiBongKhach),
     CONSTRAINT CK_BanThangDoiNha CHECK (BanThangDoiNha >= 0),
@@ -134,7 +133,6 @@ CREATE TABLE BANTHANG (
 
 CREATE TABLE BANGXEPHANG (
     MaMuaGiai CHAR(10) NOT NULL,
---     MaVongDau CHAR (15) NOT NULL,
     MaDoiBong CHAR(10) NOT NULL,
     SoTran TINYINT NOT NULL DEFAULT 0,
 	SoTranThang TINYINT NOT NULL DEFAULT 0,
@@ -153,6 +151,7 @@ CREATE TABLE BANGXEPHANG (
 CREATE TABLE LOAIUUTIEN (
 	MaLoaiUuTien CHAR(10) NOT NULL,
 	TenLoaiUuTien VARCHAR (50) NOT NULL,
+    MoTa VARCHAR (50),
     CONSTRAINT PK_LOAIUUTIEN PRIMARY KEY (MaLoaiUuTien)
 );
 
@@ -160,7 +159,7 @@ CREATE TABLE UT_XEPHANG (
 	MaMuaGiai CHAR(10) NOT NULL,
 	MaLoaiUuTien CHAR (10) NOT NULL,
 	MucDoUuTien TINYINT NOT NULL,
-    CONSTRAINT PK_UT_XEPHANG PRIMARY KEY (MaMuaGiai, MaLoaiUuTien),
+    CONSTRAINT PK_UT_XEPHANG PRIMARY KEY (MaMuaGiai, MaLoaiUuTien, MucDoUuTien),
     CONSTRAINT FK_UT_XEPHANG_MUAGIAI FOREIGN KEY (MaMuaGiai) REFERENCES MUAGIAI(MaMuaGiai),
     CONSTRAINT FK_UT_XEPHANG_LOAIUUTIEN FOREIGN KEY (MaLoaiUuTien) REFERENCES LOAIUUTIEN(MaLoaiUuTien)
 );
@@ -408,11 +407,11 @@ VALUES
     ('LBT02', 'Phạt đền', 'Bàn thắng từ quả phạt đền'),
     ('LBT03', 'Phản lưới nhà', 'Bàn thắng phản lưới nhà');
 
-INSERT INTO LOAIUUTIEN (MaLoaiUuTien, TenLoaiUuTien)
+INSERT INTO LOAIUUTIEN (MaLoaiUuTien, TenLoaiUuTien, MoTa)
 VALUES
-    ('LUT01', 'Hiệu số'),
-    ('LUT02', 'Số bàn thắng'),
-    ('LUT03', 'Đối đầu');
+    ('LUT01', 'Hiệu số', 'Ưu tiên tính hiệu số'),
+    ('LUT02', 'Số bàn thắng', 'Ưu tiên tính số bàn thắng'),
+    ('LUT03', 'Đối đầu', 'Ưu tiên kết quả đối đầu');
 
 INSERT INTO LOAITHEPHAT (MaLoaiThePhat, TenLoaiThePhat, MoTa)
 VALUES

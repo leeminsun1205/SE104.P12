@@ -1,5 +1,5 @@
 const { VongDau, MgDbCt} = require('../models'); 
-const { taoVongDau } = require('../services/vongDauService');
+const { autoSchedule } = require('../services/autoSchedule');
 const VongDauController = {
     async getAll(req, res) {
         try {
@@ -21,17 +21,6 @@ const VongDauController = {
         }
     },
 
-    // async create(req, res) {
-    //     try {
-    //         const { MaVongDau, MaMuaGiai, LuotDau, SoThuTu, NgayBatDau, NgayKetThuc } = req.body;
-    //         const vongDau = await VongDau.create({
-    //             MaVongDau, MaMuaGiai, LuotDau, SoThuTu, NgayBatDau, NgayKetThuc,
-    //         });
-    //         res.status(201).json(vongDau);
-    //     } catch (error) {
-    //         res.status(500).json({ error: 'Lỗi khi thêm vòng đấu.' });
-    //     }
-    // },
 
     async update(req, res) {
         try {
@@ -62,23 +51,19 @@ const VongDauController = {
         try {
             const { maMuaGiai } = req.params;
             console.log('maMuaGiai:', maMuaGiai);
-            // Kiểm tra số đội trong mùa giải
-            // const doiBongCount = await MgDbCt.count({
-            //     where: { MaMuaGiai: maMuaGiai },
-            // });
-        
-    
-            // Gọi service để tạo vòng đấu
-            const vongDauData = await taoVongDau(maMuaGiai);
-    
+
+            // Gọi service để tạo vòng đấu và lịch thi đấu
+            const { vongDauData, tranDauData } = await autoSchedule(maMuaGiai);
+
             res.status(201).json({
-                message: `Đã tạo ${vongDauData.length} vòng đấu cho mùa giải ${maMuaGiai}.`,
-                data: vongDauData,
+                message: `Đã tạo ${vongDauData.length} vòng đấu và ${tranDauData.length} trận đấu cho mùa giải ${maMuaGiai}.`,
+                vongDauData,
+                tranDauData,
             });
         } catch (error) {
-            console.error("Lỗi", error)
+            console.error("Lỗi", error);
             res.status(500).json({
-                error: 'Lỗi khi tạo vòng đấu cho mùa giải.',
+                error: 'Lỗi khi tạo vòng đấu và lịch thi đấu cho mùa giải.',
                 details: error.message,
             });
         }

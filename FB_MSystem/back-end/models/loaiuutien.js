@@ -12,6 +12,11 @@ const LoaiUuTien = sequelize.define('LoaiUuTien', {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
+    MoTa: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+        defaultValue: '',
+    },
 }, {
     tableName: 'LoaiUuTien',
     timestamps: false,

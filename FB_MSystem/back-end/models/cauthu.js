@@ -47,6 +47,7 @@ const CauThu = sequelize.define(
         TieuSu: {
             type: DataTypes.STRING(1000),
             allowNull: true,
+            defaultValue: '',
         },
     },
     {
