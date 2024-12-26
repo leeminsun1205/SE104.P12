@@ -1,0 +1,101 @@
+/* LookUpMatch.module.css */
+
+.matchesPage {
+    padding: 20px;
+    background-color: #f9f9f9;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    max-width: 1000px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filterContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.TeamSelector,
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.label {
+    font-weight: bold;
+    color: #333;
+}
+  
+.selectField {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+  
+.searchField {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+  
+.clearButton {
+    background: none;
+    max-width: 0px;
+    border: none;
+    color: #ff5a5a;
+    font-size: 16px;
+    cursor: pointer;
+    top: -62px;
+    right: -265px;
+    position: relative;
+}
+.clearButton:hover {
+    color:red;
+    background-color: transparent;
+}
+  
+.matchesTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+  
+.matchesTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+  
+.headerCell {
+    text-align: left;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+  
+.headerCell:hover {
+    background-color: #0056b3;
+}
+  
+.cell {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    cursor: pointer;
+}
+  
+.row:hover {
+    background-color: #f1f1f1;
+}
+  

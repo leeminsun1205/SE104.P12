@@ -1,14 +1,17 @@
-// --- START OF FILE Sidebar.js ---
-
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
 function Sidebar({ isOpen, onToggleSidebar }) {
   const [showManagement, setShowManagement] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const toggleManagement = () => {
     setShowManagement(!showManagement);
+  };
+
+  const toggleSettings = () => {
+    setShowSettings(!showSettings);
   };
 
   return (
@@ -81,12 +84,12 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-futbol"></i> Trận đấu
             </NavLink>
             <NavLink
-              to="/standings"
+              to="/combined-standings"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
             >
-              <i className="fas fa-list-ol"></i> Bảng xếp hạng
+              <i className="fas fa-list-ol"></i> Danh sách
             </NavLink>
             <NavLink
               to="/create"
@@ -104,23 +107,44 @@ function Sidebar({ isOpen, onToggleSidebar }) {
             >
               <i className="fas fa-file-invoice"></i> Biên nhận lệ phí
             </NavLink>
+            <NavLink
+              to="/lookup"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+              }
+            >
+              <i className="fas fa-search"></i> Tra cứu
+            </NavLink>
           </div>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
-            }
+
+          {/* Nhóm Cài đặt */}
+          <div className={styles.navLink} onClick={toggleSettings}>
+            <i
+              className={`fas ${showSettings ? "fa-caret-down" : "fa-caret-right"
+                }`}
+            ></i>
+            Cài đặt
+          </div>
+          <div
+            className={`${styles.management} ${showSettings ? styles.show : ""}`}
           >
-            <i className="fas fa-cog"></i> Cài đặt chung
-          </NavLink>
-          <NavLink
-            to="/settings/types"
-            className={({ isActive }) =>
-              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
-            }
-          >
-            <i className="fas fa-sliders-h"></i> Cài đặt các loại
-          </NavLink>
+            <NavLink
+              to="/settings/general"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+              }
+            >
+              <i className="fas fa-cog"></i> Cài đặt chung
+            </NavLink>
+            <NavLink
+              to="/settings/types"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+              }
+            >
+              <i className="fas fa-sliders-h"></i> Cài đặt các loại
+            </NavLink>
+          </div>
         </nav>
       </aside>
     </>

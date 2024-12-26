@@ -1,0 +1,88 @@
+.topScorersPage {
+    padding: 24px;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+  }
+  
+  .scorersTable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .scorersTable thead {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  .scorersTable th {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: blue;
+    cursor: pointer;;
+  }
+  .scorersTable td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .scorersTable th {
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+  
+  .scorersTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .scorersTable tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: default;
+  }
+  
+  .scorersTable td {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .scorersTable td:first-child {
+    font-weight: bold;
+  }
+  
+  .backButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #007bff;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .backButton:hover {
+    background-color: #007bff;
+    color: #ffffff;
+    border-color: #007bff;
+  }
+  

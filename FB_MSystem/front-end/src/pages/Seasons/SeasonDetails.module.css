@@ -1,45 +1,51 @@
-/* Base styles for the container */
+/* General styling */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #2d3748;
+}
+
+/* Container styles */
 .container {
-    margin-top: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px;
+    margin: 60px auto;
     max-width: 800px;
-    padding: 20px;
+    padding: 30px;
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Title styling */
 .title {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: blue;
-    margin-bottom: 16px;
+    text-align: center;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Paragraph styling */
 .paragraph {
     font-size: 16px;
-    line-height: 1.6;
-    color: #666666;
-    margin-bottom: 12px;
-}
-.missing {
-    color: red;
-    font-weight: 600;
-    margin-bottom: 10px;
-    border-radius: 4px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+    color: #4a5568;
 }
 
-.sufficient {
-    color: green;
-    font-weight: 600;
-    margin-bottom: 10px;
-    border-radius: 4px;
+/* Link styles */
+.navigationLinks a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    margin-right: 16px;
+    transition: color 0.3s ease;
 }
+
 
 /* List styling */
 .list {
@@ -52,49 +58,52 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    background: #f9f9f9;
-    border: 1px solid #e6e6e6;
-    border-radius: 8px;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
     margin-bottom: 10px;
-    transition: background 0.2s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .list-item:hover {
-    background: #f0f0f0;
+    background: #edf2f7;
+    transform: scale(1.02);
 }
 
 /* Button styling */
 .button {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 14px 20px;
     font-size: 16px;
+    font-weight: 600;
     color: #ffffff;
-    background: #007bff;
+    background: linear-gradient(90deg, #3182ce, #2b6cb0);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: transform 0.2s ease, background 0.3s ease;
 }
 
 .button:hover {
-    background: #0056b3;
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #2b6cb0, #2a4365);
 }
 
-/* Edit button */
+/* Edit button styling */
 .editButton {
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-size: 14px;
+    background: #68d391;
     color: #ffffff;
-    background: rgb(0, 102, 255);
     border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    max-width: 250px;
+    border-radius: 8px;
+    max-width: 200px;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .editButton:hover {
-    background: rgb(0, 72, 179);
+    background: #48bb78;
+    transform: scale(1.05);
 }
 
 /* Modal overlay */
@@ -109,62 +118,122 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
-
+.missing {
+    color: #e53e3e;
+    font-weight: 500;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fff5f5;
+    border: 1px solid #fc8181;
+}
+.addbutton {
+    display: inline-block;
+    max-width: 200px;
+    margin-left: 269px;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(90deg, #3182ce, #2b6cb0);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+.sufficient {
+    color: #38a169;
+    font-weight: 500;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+}
 /* Modal content */
 .modal-content {
     background: #ffffff;
     padding: 24px;
     border-radius: 12px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 450px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     position: relative;
+    animation: slideDown 0.4s ease;
 }
 
-/* Input fields inside the modal */
+/* Input fields in modal */
 .modal-input {
-    width: calc(100% - 20px);
-    padding: 10px;
+    width: 100%;
+    padding: 12px;
     margin: 10px 0;
-    border: 1px solid #dddddd;
+    border: 1px solid #cbd5e0;
     border-radius: 8px;
-    font-size: 16px;
-}
-/* SeasonDetails.module.css */
-
-.container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    font-size: 15px;
 }
 
-
-.modal .error {
-    color: red;
-    margin-bottom: 10px;
-}
-
+/* Close button */
 .close {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 12px;
+    right: 12px;
     font-size: 20px;
-    color: #333333;
+    color: #a0aec0;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: color 0.3s ease;
 }
 
 .close:hover {
-    color: #ff0000;
+    color: #718096;
+}
+.navigationLinks {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    color:white;
 }
 
-/* Links for teams */
-.teamLink {
+.link {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: #ffffff;
+    background-color: #4caf50; /* Green color */
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: 600;
-    color: #007bff;
-    transition: color 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.teamLink:hover {
-    color: #0056b3;
+.link:hover {
+    background-color: #45a049; /* Darker green */
+    transform: translateY(-2px);
+}
+
+.link:active {
+    background-color: #357a38;
+    transform: translateY(0);
+}
+/* Keyframes for animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

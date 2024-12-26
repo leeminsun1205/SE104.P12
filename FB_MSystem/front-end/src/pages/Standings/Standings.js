@@ -1,3 +1,4 @@
+// Standings.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Standings.module.css';
@@ -12,6 +13,8 @@ function Standings({ API_URL }) {
     const [error, setError] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5; // You can adjust this value
 
     useEffect(() => {
         const fetchSeasons = async () => {
@@ -29,7 +32,7 @@ function Standings({ API_URL }) {
         };
 
         fetchSeasons();
-    }, []);
+    }, [API_URL]); // Added API_URL to dependency array
 
     useEffect(() => {
         if (!selectedSeason) {
@@ -64,11 +67,12 @@ function Standings({ API_URL }) {
                 setStandings([]);
             } finally {
                 setLoading(false);
+                setCurrentPage(1); // Reset to first page when season changes
             }
         };
 
         fetchStandings();
-    }, [selectedSeason]);
+    }, [selectedSeason, API_URL]); // Added API_URL to dependency array
 
     const handleSeasonChange = (season) => {
         console.log("Mùa giải được chọn:", season); // Debug season selection
@@ -87,13 +91,20 @@ function Standings({ API_URL }) {
         const sortableStandings = [...standings];
         if (sortConfig.key !== null) {
             sortableStandings.sort((a, b) => {
-                if (a[sortConfig.key] < b[sortConfig.key]) {
-                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                const aValue = a[sortConfig.key];
+                const bValue = b[sortConfig.key];
+
+                if (typeof aValue === 'number' && typeof bValue === 'number') {
+                    return sortConfig.direction === 'ascending' ? aValue - bValue : bValue - aValue;
+                } else {
+                    if (aValue < bValue) {
+                        return sortConfig.direction === 'ascending' ? -1 : 1;
+                    }
+                    if (aValue > bValue) {
+                        return sortConfig.direction === 'ascending' ? 1 : -1;
+                    }
+                    return 0;
                 }
-                if (a[sortConfig.key] > b[sortConfig.key]) {
-                    return sortConfig.direction === 'ascending' ? 1 : -1;
-                }
-                return 0;
             });
         }
         return sortableStandings;
@@ -105,6 +116,17 @@ function Standings({ API_URL }) {
         }
         return "";
     };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = sortedStandings.slice(indexOfFirstItem, indexOfLastItem);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(sortedStandings.length / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
 
     if (loading) {
         return <div>Đang tải dữ liệu bảng xếp hạng...</div>;
@@ -148,8 +170,8 @@ function Standings({ API_URL }) {
                     </thead>
                     <tbody>
                         {selectedSeason ? (
-                            sortedStandings.length > 0 ? (
-                                sortedStandings.map((team) => {
+                            currentItems.length > 0 ? (
+                                currentItems.map((team) => {
                                     console.log("Đội trong map:", team); // Debug team object in map
                                     return (
                                         <tr
@@ -171,20 +193,29 @@ function Standings({ API_URL }) {
                                     );
                                 })
                             ) : loading ? (
-                                <tr><td colSpan="7" style={{ textAlign: 'center' }}>Đang tải dữ liệu bảng xếp hạng...</td></tr>
-                            ) : notFound ? ( // Changed colspan to 9
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không tìm thấy bảng xếp hạng cho mùa giải này.</td></tr>
+                                <tr><td colSpan="10" style={{ textAlign: 'center' }}>Đang tải dữ liệu bảng xếp hạng...</td></tr>
+                            ) : notFound ? (
+                                <tr><td colSpan="10" style={{ textAlign: 'center' }}>Không tìm thấy bảng xếp hạng cho mùa giải này.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="10" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="9" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
+                                <tr><td colSpan="10" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
+                            <tr><td colSpan="10" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
                         )}
                     </tbody>
                 </table>
             </div>
+            {sortedStandings.length > itemsPerPage && (
+                <div className={styles.pagination}>
+                    {pageNumbers.map(number => (
+                        <button key={number} onClick={() => paginate(number)} className={currentPage === number ? styles.active : ''}>
+                            {number}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

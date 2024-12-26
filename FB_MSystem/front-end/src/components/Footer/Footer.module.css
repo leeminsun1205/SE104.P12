@@ -1,69 +1,79 @@
-/* Footer.module.css */
-
+/* General Footer Styles */
 .footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: auto;
-  background-color: var(--primary-color);
+  background: linear-gradient(to right, var(--primary-color), #0056b3);
   color: white;
-  height: var(--footer-height);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px; /* Giảm padding để footer nhỏ hơn */
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
 }
-.footer p {
-  margin-bottom: 3px;
+.footer p{
   color: white;
 }
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  flex: 1;
-  flex-grow: 1;
+  gap: 10px; /* Giảm khoảng cách giữa các phần tử */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .info {
-  font-size: 12px;
-  margin-bottom: 0px;
+  font-size: 0.9rem; /* Giảm kích thước font */
+  color: #d4e2f7;
+  text-align: center;
 }
 
 .socialLinks {
   display: flex;
-  gap: 15px;
-  font-size: 16px;
+  gap: 15px; /* Giảm khoảng cách giữa các icon */
 }
 
 .socialLinks a {
   color: white;
-  font-size: 24px;
-  transition: color 0.3s;
+  font-size: 1.2rem; /* Giảm kích thước icon */
+  transition: transform 0.3s, color 0.3s;
 }
 
 .socialLinks a:hover {
-  color: var(--color-accent);
+  color: var(--color-secondary);
+  transform: scale(1.1); /* Giảm scale khi hover */
 }
 
 .links {
   display: flex;
-  gap: 16px;
-  font-size: 0.9rem;
+  gap: 15px; /* Giảm khoảng cách giữa các liên kết */
+  font-size: 0.9rem; /* Giảm kích thước font */
+  justify-content: center;
 }
 
 .links a {
   color: white;
   text-decoration: none;
-  transition: color 0.3s;
+  font-weight: 500;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 2px solid transparent;
 }
 
 .links a:hover {
-  color: var(--color-accent);
+  color: var(--color-secondary);
+  border-bottom: 2px solid var(--color-secondary);
 }
-
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
+    gap: 15px; /* Điều chỉnh khoảng cách giữa các phần tử */
+    padding: 10px;
+  }
+
+  .socialLinks {
+    gap: 10px; /* Giảm khoảng cách giữa các icon trên màn hình nhỏ */
+  }
+
+  .links {
+    flex-direction: column;
+    gap: 10px; /* Giảm khoảng cách giữa các liên kết trên màn hình nhỏ */
   }
 }

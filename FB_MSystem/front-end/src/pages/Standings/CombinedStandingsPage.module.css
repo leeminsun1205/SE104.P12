@@ -1,0 +1,46 @@
+/* CombinedStandingsPage.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  font-family: sans-serif;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  }
+  
+  .buttonGroup {
+  display: flex;
+  gap: 10px;
+  }
+  
+  .button {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  }
+  
+  .button:hover {
+  background-color: #e0e0e0;
+  }
+  
+  .active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  }
+  
+  .active:hover {
+  background-color: #0056b3;
+  }
+  
+  .content {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  }

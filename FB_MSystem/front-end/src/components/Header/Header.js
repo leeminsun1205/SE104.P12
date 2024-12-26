@@ -58,8 +58,8 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/matches" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Trận đấu
                         </NavLink>
-                        <NavLink to="/standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
-                            Bảng xếp hạng
+                        <NavLink to="/combined-standings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Danh sách
                         </NavLink>
                         <NavLink to="/create" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Thêm mới
@@ -67,14 +67,17 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/invoices" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Biên nhận lệ phí
                         </NavLink>
+                        <NavLink to="/lookup" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                            Tra cứu
+                        </NavLink>
                     </div>
-                </div>
-                <div className={styles.dropdown}>
+                 </div>
+                 <div className={styles.dropdown}>
                     <button className={styles.dropbtn} onClick={toggleSettingsDropdown}>
                         Cài đặt <i className="fa fa-caret-down"></i>
                     </button>
                     <div className={`${styles.dropdownContent} ${showSettingsDropdown ? styles.show : ''}`}>
-                        <NavLink to="/settings" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/settings/general" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Cài đặt chung
                         </NavLink>
                         <NavLink to="/settings/types" className={({ isActive }) => isActive ? styles.active : styles.navLink}>

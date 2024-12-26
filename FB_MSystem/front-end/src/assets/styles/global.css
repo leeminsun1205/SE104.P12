@@ -75,6 +75,7 @@ a:hover {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #f0f8ff;
 }
 
 .flex-center {
@@ -142,6 +143,7 @@ button.primary:hover {
 }
 
 main {
+  background-color: #ecececfd;
   flex: 1;
 }
 

@@ -1,6 +1,6 @@
 // src\pages\Teams\AddTeamsToSeasonModal.js
 import React, { useState, useEffect } from "react";
-import "./AddTeamsToSeasonModal.css";
+import "./AddTeamsToSeasonModal.module.css";
 
 function AddTeamsToSeasonModal({ season, onAddTeamsToSeason, onClose }) {
   const [availableTeams, setAvailableTeams] = useState([]);

@@ -1,3 +1,4 @@
+// -- Updated App.js --
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -13,7 +14,7 @@ import EditTeam from './pages/Teams/EditTeam';
 import TeamInfo from './pages/Teams/TeamInfo';
 import Players from './pages/Players/Players';
 import PlayerInfo from './pages/Players/PlayerInfo';
-import OtherLeagueMatches from './pages/Matches/OtherLeagueMatches'; 
+import OtherLeagueMatches from './pages/Matches/OtherLeagueMatches';
 import Standings from './pages/Standings/Standings';
 import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/Login/Login';
@@ -32,6 +33,16 @@ import StadiumInfo from './pages/Stadiums/StadiumInfo';
 import SeasonDetails from './pages/Seasons/SeasonDetails';
 import CreateSeason from './pages/CreateNew/CreateSeason';
 import SeasonList from './pages/Seasons/SeasonList';
+import TopScorers from './pages/TopScorers/TopScorers';
+import TopScorersStandings from './pages/Standings/TopScorersStandings';
+import CombinedStandingsPage from './pages/Standings/CombinedStandingsPage'; 
+import SeasonalStandings from './pages/SeasonalStandings/SeasonalStandings'; 
+import CardsList from './pages/Standings/CardsList';
+import LookUp from './pages/LookUp/LookUp';
+import LookUpMatch from './pages/LookUp/LookUpMatch';
+import LookUpSeason from './pages/LookUp/LookUpSeason';
+import LookUpAchievements from './pages/LookUp/LookUpAchievements';
+import PlayerCardList from './pages/PlayerCardList/PlayerCardList';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -227,9 +238,9 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/match/:season/:round/:id" element={<MatchDetails API_URL={API_URL} />} />
             <Route path="/standings" element={<Standings API_URL={API_URL} />} />
             <Route path="/create" element={<CreateNew />} />
-            <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
+            <Route path="/invoices" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
-            <Route path="/settings" element={<Settings API_URL={API_URL} />} />
+            <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
             <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
             <Route path="/stadiums" element={<Stadiums />} />
             <Route path="/create/stadium" element={<CreateStadium />} />
@@ -238,6 +249,16 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/create/season" element={<CreateSeason API_URL={API_URL} />} />
             <Route path="/seasons" element={<SeasonList API_URL={API_URL} />} />
             <Route path="/teams/:teamId/other-matches" element={<OtherLeagueMatches />} /> 
+            <Route path="/seasons/:seasonId/top-scorers" element={<TopScorers API_URL={API_URL} />} />
+            <Route path="/top-scorers" element={<TopScorersStandings API_URL={API_URL} />} />
+            <Route path="/seasons/:seasonId/standings" element={<SeasonalStandings API_URL={API_URL} />} />
+            <Route path="/cards" element={<CardsList API_URL={API_URL} />} />
+            <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
+            <Route path="/lookup" element={<LookUp />} />
+            <Route path="/lookup/match" element={<LookUpMatch API_URL={API_URL}/>} />
+            <Route path="/lookup/season" element={<LookUpSeason API_URL={API_URL}/>} />
+            <Route path="/lookup/achievements" element={<LookUpAchievements API_URL={API_URL}/>} />
+            <Route path="/player-card-list" element={<PlayerCardList />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

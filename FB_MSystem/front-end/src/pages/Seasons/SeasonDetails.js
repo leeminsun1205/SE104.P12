@@ -9,14 +9,8 @@ function SeasonDetails({ API_URL }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [rounds, setRounds] = useState([]);
-    const [isAddRoundsModalOpen, setIsAddRoundsModalOpen] = useState(false);
     const [isEditRoundModalOpen, setIsEditRoundModalOpen] = useState(false);
     const [roundToEdit, setRoundToEdit] = useState(null);
-    const [newRounds, setNewRounds] = useState([
-        { roundId: '', name: 'Lượt đi', startDate: '', endDate: '' },
-        { roundId: '', name: 'Lượt về', startDate: '', endDate: '' },
-    ]);
-    const [addRoundsError, setAddRoundsError] = useState('');
     const [editRoundError, setEditRoundError] = useState('');
 
     useEffect(() => {
@@ -90,86 +84,6 @@ function SeasonDetails({ API_URL }) {
 
         fetchSeasonRounds();
     }, [API_URL, seasonId]);
-
-    const generateRoundId = (roundNumber) => {
-        if (!season) return '';
-        const startYear = new Date(season.startDate).getFullYear();
-        const endYear = new Date(season.endDate).getFullYear();
-        return `${startYear}-${endYear}-ROUND${roundNumber}`;
-    };
-
-    const handleOpenAddRoundsModal = () => {
-        if (season) {
-            const startYear = new Date(season.startDate).getFullYear();
-            const endYear = new Date(season.endDate).getFullYear();
-            setNewRounds([
-                { roundId: `${startYear}-${endYear}-ROUND1`, name: 'Lượt đi', startDate: '', endDate: '' },
-                { roundId: `${startYear}-${endYear}-ROUND2`, name: 'Lượt về', startDate: '', endDate: '' },
-            ]);
-            setAddRoundsError('');
-            setIsAddRoundsModalOpen(true);
-        }
-    };
-
-    const handleCloseAddRoundsModal = () => {
-        setIsAddRoundsModalOpen(false);
-    };
-
-    const handleAddRoundsInputChange = (index, e) => {
-        const { name, value } = e.target;
-        setNewRounds(prevRounds => {
-            const updatedRounds = [...prevRounds];
-            updatedRounds[index] = { ...updatedRounds[index], [name]: value };
-            return updatedRounds;
-        });
-    };
-
-    const handleAddRounds = async () => {
-        setAddRoundsError('');
-        const [round1, round2] = newRounds;
-
-        if (!round1.startDate || !round1.endDate || !round2.startDate || !round2.endDate) {
-            setAddRoundsError('Vui lòng điền đầy đủ ngày bắt đầu và ngày kết thúc cho cả hai lượt.');
-            return;
-        }
-
-        if (new Date(round1.startDate) >= new Date(round1.endDate)) {
-            setAddRoundsError('Ngày bắt đầu lượt đi phải trước ngày kết thúc.');
-            return;
-        }
-
-        if (new Date(round2.startDate) >= new Date(round2.endDate)) {
-            setAddRoundsError('Ngày bắt đầu lượt về phải trước ngày kết thúc.');
-            return;
-        }
-
-        if (new Date(round2.startDate) <= new Date(round1.endDate)) {
-            setAddRoundsError('Lượt về phải diễn ra sau khi lượt đi kết thúc.');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/seasons/${seasonId}/rounds`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newRounds),
-            });
-
-            if (!response.ok) {
-                const message = await response.text();
-                throw new Error(`Failed to add rounds: ${response.status} - ${message}`);
-            }
-
-            const data = await response.json();
-            setRounds(prevRounds => [...prevRounds, ...data.rounds]);
-            handleCloseAddRoundsModal();
-        } catch (error) {
-            console.error("Error adding rounds:", error);
-            setAddRoundsError(error.message);
-        }
-    };
 
     const handleOpenEditRoundModal = (round) => {
         setRoundToEdit({ ...round });
@@ -246,9 +160,18 @@ function SeasonDetails({ API_URL }) {
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>{season.name}</h2>
-            <p className={styles.paragraph}>Mã mùa giải: {season.id}</p>
-            <p className={styles.paragraph}>Ngày bắt đầu: {new Date(season.startDate).toLocaleDateString()}</p>
-            <p className={styles.paragraph}>Ngày kết thúc: {new Date(season.endDate).toLocaleDateString()}</p>
+            <p className={styles.paragraph}><strong>Mã mùa giải:</strong> {season.id}</p>
+            <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong><strong></strong> {new Date(season.startDate).toLocaleDateString()}</p>
+            <p className={styles.paragraph}><strong>Ngày kết thúc:</strong><strong></strong> {new Date(season.endDate).toLocaleDateString()}</p>
+
+            <div className={styles.navigationLinks}>
+                <Link to={`/seasons/${seasonId}/standings`} className={styles.link}>
+                    Xem Bảng Xếp Hạng
+                </Link>
+                <Link to={`/seasons/${seasonId}/top-scorers`} className={styles.link}>
+                    Xem Vua Phá Lưới
+                </Link>
+            </div>
 
             <div>
                 <h3 className={styles.title} style={{ fontSize: '20px' }}>Vòng đấu:</h3>
@@ -268,55 +191,12 @@ function SeasonDetails({ API_URL }) {
                     <p className={styles.missing}>Chưa có vòng đấu nào được tạo.</p>
                 )}
                 {canAddRounds && (
-                    <button onClick={handleOpenAddRoundsModal} className={styles.button}>Thêm vòng đấu</button>
+                    <button className={styles.addbutton}>Tạo vòng đấu</button>
                 )}
                 {!canAddRounds && (
                     <p className={styles.sufficient}>Đã có đủ 2 vòng đấu (Lượt đi và Lượt về).</p>
                 )}
             </div>
-
-            {isAddRoundsModalOpen && (
-                <div className={styles.modal}>
-                    <div className={styles['modal-content']}>
-                        <span className={styles.close} onClick={handleCloseAddRoundsModal}>×</span>
-                        <h3>Thêm vòng đấu</h3>
-                        {addRoundsError && <p className={styles.error}>{addRoundsError}</p>}
-                        {newRounds.map((round, index) => (
-                            <div key={index}>
-                                <h4>{index === 0 ? 'Lượt đi' : 'Lượt về'}</h4>
-                                <label htmlFor={`roundId-${index}`}>Mã vòng đấu:</label>
-                                <input
-                                    type="text"
-                                    id={`roundId-${index}`}
-                                    name="roundId"
-                                    value={round.roundId}
-                                    readOnly
-                                    className={styles['modal-input']}
-                                />
-                                <label htmlFor={`roundStartDate-${index}`}>Ngày bắt đầu:</label>
-                                <input
-                                    type="date"
-                                    id={`roundStartDate-${index}`}
-                                    name="startDate"
-                                    value={round.startDate}
-                                    onChange={(e) => handleAddRoundsInputChange(index, e)}
-                                    className={styles['modal-input']}
-                                />
-                                <label htmlFor={`roundEndDate-${index}`}>Ngày kết thúc:</label>
-                                <input
-                                    type="date"
-                                    id={`roundEndDate-${index}`}
-                                    name="endDate"
-                                    value={round.endDate}
-                                    onChange={(e) => handleAddRoundsInputChange(index, e)}
-                                    className={styles['modal-input']}
-                                />
-                            </div>
-                        ))}
-                        <button onClick={handleAddRounds} className={styles.button}>Thêm</button>
-                    </div>
-                </div>
-            )}
 
             {isEditRoundModalOpen && (
                 <div className={styles.modal}>

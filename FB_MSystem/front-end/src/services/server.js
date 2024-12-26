@@ -5,311 +5,37 @@ const upload = multer();
 const app = express();
 const PORT = 5000;
 
+let {
+  availableTeams,
+  seasons,
+  players,
+  availablePlayers,
+  stadiums,
+  matchesData,
+  typeSettings,
+  settingsData,
+  teamsPosition
+} = require("./data");
+
 app.use(cors());
 app.use(express.json());
 
-let availableTeams = [
-  {
-    id: 1,
-    name: "Hà Nội FC",
-    city: "Hà Nội",
-    coach: "Gad",
-    stadium: "Hàng Đẫy",
-    stadiumId: 1,
-    capacity: 22500,
-    standard: 5,
-    home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/e/eb/Hanoi_FC.png",
-    away_kit_image: null,
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Hà Nội",
-    season: null,
-  },
-  {
-    id: 2,
-    name: "Viettel FC",
-    city: "Hà Nội",
-    coach: "Tăng Nhất",
-    stadium: "Hàng Đẫy",
-    stadiumId: 1,
-    capacity: 22500,
-    standard: 4,
-    home_kit_image: null,
-    away_kit_image:
-      "https://upload.wikimedia.org/wikipedia/vi/thumb/d/d5/Viettel_FC_logo.png/1200px-Viettel_FC_logo.png",
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Viettel",
-    season: null,
-  },
-  {
-    id: 3,
-    name: "Hoàng Anh Gia Lai",
-    city: "Pleiku",
-    coach: "Faigar",
-    stadium: "Pleiku",
-    stadiumId: 2,
-    capacity: 12000,
-    standard: 4,
-    home_kit_image: null,
-    away_kit_image: null,
-    third_kit_image:
-      "https://upload.wikimedia.org/wikipedia/vi/thumb/7/7d/Hoang_Anh_Gia_Lai_FC_logo.png/1200px-Hoang_Anh_Gia_Lai_FC_logo.png",
-    description: "Câu lạc bộ bóng đá Hoàng Anh Gia Lai",
-    season: null,
-  },
-  {
-    id: 4,
-    name: "Becamex Bình Dương",
-    city: "Thủ Dầu Một",
-    coach: "Superman",
-    stadium: "Gò Đậu",
-    stadiumId: 3,
-    capacity: 18250,
-    standard: 3,
-    home_kit_image: null,
-    away_kit_image:
-      "https://upload.wikimedia.org/wikipedia/vi/thumb/0/07/Becamex_Binh_Duong_FC_logo.png/1200px-Becamex_Binh_Duong_FC_logo.png",
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Becamex Bình Dương",
-    season: null,
-  },
-  {
-    id: 5,
-    name: "Hải Phòng",
-    city: "Hải Phòng",
-    coach: "tslnh",
-    stadium: "Lạch Tray",
-    stadiumId: 4,
-    capacity: 26000,
-    standard: 4,
-    home_kit_image: "https://upload.wikimedia.org/wikipedia/vi/8/85/Hai_Phong_FC_logo.png",
-    away_kit_image: null,
-    third_kit_image: null,
-    description: "Câu lạc bộ bóng đá Hải Phòng",
-    season: null,
-  },
-];
-
-let seasons = [
-  {
-    id: "2023-2024",
-    name: "Mùa giải 2023-2024",
-    startDate: "2023-08-01",
-    endDate: "2024-05-30",
-    teams: [1, 2, 3, 4, 5],
-    rounds: [
-      {
-        roundId: "2023-2024-ROUND1",
-        name: "Lượt đi",
-        startDate: "2023-08-05",
-        endDate: "2023-08-07",
-      },
-      {
-        roundId: "2023-2024-ROUND2",
-        name: "Lượt về",
-        startDate: "2023-08-12",
-        endDate: "2023-08-14",
-      },
-    ],
-  },
-  {
-     id: "2024-2025",
-     name: "Mùa giải 2024-2025",
-     startDate: "2024-08-01",
-     endDate: "2025-05-30",
-     teams: [],
-     rounds: [],
-   },
-];
-
-let players = {
-  "2023-2024": {
-    1: [
-      {
-        id: 1,
-        name: "Cầu thủ A1",
-        dob: "1999-03-15",
-        position: "Tiền đạo",
-        nationality: "Việt Nam",
-        birthplace: "Hà Nội",
-        height: 180,
-        weight: 75,
-        bio: "Một tiền đạo tài năng của đội.",
-        season: "2023-2024",
-        playerType: "Trong nước",
-      },
-    ],
-    2: [
-      {
-        id: 2,
-        name: "Cầu thủ B2",
-        dob: "1998-05-20",
-        position: "Hậu vệ",
-        nationality: "Việt Nam",
-        birthplace: "Hồ Chí Minh",
-        height: 175,
-        weight: 70,
-        bio: "Một hậu vệ chắc chắn.",
-        season: "2023-2024",
-        playerType: "Trong nước",
-      },
-    ],
-  },
-  "2022-2023": {
-    1: [
-      {
-        id: 3,
-        name: "Cầu thủ C3",
-        dob: "1997-10-10",
-        position: "Tiền vệ",
-        nationality: "Việt Nam",
-        birthplace: "Đà Nẵng",
-        height: 182,
-        weight: 78,
-        bio: "Một tiền vệ sáng tạo.",
-        season: "2022-2023",
-        playerType: "Trong nước",
-      },
-    ],
-  },
-};
-
-// Khai báo availablePlayers - Danh sách cầu thủ có sẵn
-let availablePlayers = [
-  {
-    id: 1,
-    name: "Cầu thủ A1",
-    dob: "1999-03-15",
-    position: "Tiền đạo",
-    nationality: "Việt Nam",
-    birthplace: "Hà Nội",
-    height: 180,
-    weight: 75,
-    bio: "Một tiền đạo tài năng của đội.",
-    season: "2023-2024",
-    playerType: "Trong nước",
-  },
-  {
-    id: 2,
-    name: "Cầu thủ B2",
-    dob: "1998-05-20",
-    position: "Hậu vệ",
-    nationality: "Việt Nam",
-    birthplace: "Hồ Chí Minh",
-    height: 175,
-    weight: 70,
-    bio: "Một hậu vệ chắc chắn.",
-    season: "2023-2024",
-    playerType: "Trong nước",
-  },
-  {
-    id: 3,
-    name: "Cầu thủ C3",
-    dob: "1997-10-10",
-    position: "Tiền vệ",
-    nationality: "Việt Nam",
-    birthplace: "Đà Nẵng",
-    height: 182,
-    weight: 78,
-    bio: "Một tiền vệ sáng tạo.",
-    season: "2022-2023",
-    playerType: "Trong nước",
-  },
-];
-let stadiums = [
-  {
-    stadiumId: 1,
-    stadiumName: "Hàng Đẫy",
-    address: "Trịnh Hoài Đức, Cát Linh, Đống Đa, Hà Nội",
-    capacity: 22500,
-    standard: 5,
-  },
-  {
-    stadiumId: 2,
-    stadiumName: "Pleiku",
-    address: "Đường Quang Trung, Phường Hội Thương, Thành phố Pleiku, Gia Lai",
-    capacity: 12000,
-    standard: 4,
-  },
-  {
-    stadiumId: 3,
-    stadiumName: "Gò Đậu",
-    address: "Đường 30 Tháng 4, Phú Thọ, Thủ Dầu Một, Bình Dương",
-    capacity: 18250,
-    standard: 3,
-  },
-  {
-    stadiumId: 4,
-    stadiumName: "Lạch Tray",
-    address: "Đường Chu Văn An, Đằng Giang, Ngô Quyền, Hải Phòng",
-    capacity: 26000,
-    standard: 4,
-  },
-];
-
-// New data structure for matches
-let matchesData = [
-  {
-    matchId: 1,
-    season: "2023-2024",
-    round: "2023-2024-ROUND1",
-    homeTeamId: 1, // Reference to Hà Nội FC
-    awayTeamId: 2, // Reference to Viettel FC
-    date: "2023-08-05",
-    time: "19:15",
-    homeScore: 2,
-    awayScore: 1,
-    stadiumId: 1,
-    isFinished: true,
-    goals: [
-      { player: "Văn Quyết", team: "Hà Nội FC", type: "penalty", time: "30'" },
-      { player: "Geovane", team: "Hà Nội FC", type: "own goal", time: "45'" },
-      { player: "Tuấn Hải", team: "Viettel FC", type: "normal", time: "75'" },
-    ],
-    cards: [
-      { player: "Hùng Dũng", team: "Hà Nội FC", type: "Yellow", time: "60'" },
-      { player: "Hoàng Đức", team: "Viettel FC", type: "Yellow", time: "80'" },
-    ],
-  },
-  {
-    matchId: 2,
-    season: "2023-2024",
-    round: "2023-2024-ROUND1",
-    homeTeamId: 3, // Reference to Hoàng Anh Gia Lai
-    awayTeamId: 4, // Reference to Becamex Bình Dương
-    date: "2023-08-06",
-    time: "17:00",
-    homeScore: 0,
-    awayScore: 0,
-    stadiumId: 2,
-    isFinished: true,
-    goals: [],
-    cards: [
-      { player: "Công Phượng", team: "Hoàng Anh Gia Lai", type: "Yellow", time: "25'" },
-    ],
-  },
-  // ... more matches
-];
-
-// Helper function to get team details with stadium info
 const getTeamWithStadium = (teamId) => {
   const team = availableTeams.find((t) => t.id === teamId);
   const stadium = stadiums.find((s) => s.stadiumId === team?.stadiumId);
   return team ? { ...team, stadium } : null;
 };
 
-// Helper function to get team name by ID
 const getTeamName = (teamId) => {
   const team = availableTeams.find((t) => t.id === teamId);
   return team ? team.name : "Unknown Team";
 };
 
-// Helper function to get stadium name by ID
 const getStadiumName = (stadiumId) => {
   const stadium = stadiums.find((s) => s.stadiumId === stadiumId);
   return stadium ? stadium.stadiumName : "Unknown Stadium";
 };
 
-// Helper function to get round name by seasonId and roundId
 const getRoundName = (seasonId, roundId) => {
   const season = seasons.find(s => s.id === seasonId);
   const round = season?.rounds.find(r => r.roundId === roundId);
@@ -369,6 +95,30 @@ app.put("/api/stadiums/:stadiumId", (req, res) => {
   });
 });
 
+app.delete("/api/stadiums/:stadiumId", (req, res) => {
+  const { stadiumId } = req.params;
+  const stadiumIdNum = parseInt(stadiumId);
+  const initialLength = stadiums.length;
+
+  // Tìm xem có team nào đang sử dụng stadium này không
+  const teamsUsingStadium = availableTeams.filter(team => team.stadiumId === stadiumIdNum);
+
+  if (teamsUsingStadium.length > 0) {
+    return res.status(400).json({
+      message: "Không thể xóa sân vận động đang được sử dụng bởi các đội.",
+      teams: teamsUsingStadium.map(team => team.name)
+    });
+  }
+
+  stadiums = stadiums.filter((s) => s.stadiumId !== stadiumIdNum);
+
+  if (stadiums.length < initialLength) {
+    res.json({ message: "Stadium deleted successfully" });
+  } else {
+    res.status(404).json({ message: "Stadium not found" });
+  }
+});
+
 app.get("/api/dashboard", (req, res) => {
   const totalTeams = availableTeams.length;
   const sortedSeasons = [...seasons].sort(
@@ -392,9 +142,16 @@ app.get("/api/dashboard", (req, res) => {
     (match) => match.homeScore === null || match.awayScore === null
   ).length;
 
+  // Cải thiện: Implement logic thực tế để tính số bàn thắng cho đội
   const topScorer = teamsInLatestSeason.reduce((top, team) => {
-    // Placeholder: Needs actual goal calculation logic
-    const goals = calculateGoalsForTeam(team.id, latestSeason.id);
+    let goals = 0;
+    matchesInLatestSeason.forEach(match => {
+      if (match.homeTeamId === team.id && match.goals) {
+        goals += match.goals.filter(g => g.team === team.id).length;
+      } else if (match.awayTeamId === team.id && match.goals) {
+        goals += match.goals.filter(g => g.team === team.id).length;
+      }
+    });
     return goals > (top.goals || 0) ? { name: team.name, goals } : top;
   }, {});
 
@@ -495,6 +252,15 @@ app.post("/api/teams/available", (req, res) => {
     .json({ message: "Team created successfully", team: { ...newTeam, stadium: stadiums.find(s => s.stadiumId === newTeam.stadiumId) } });
 });
 
+app.get("/api/teams/position", (req, res) =>{
+  const teamId = req.query.teamId;
+  if (!teamId) {
+    return res.status(402).json({ message: "teamId not found" });
+  }
+  const teamPosition = teamsPosition[teamId]
+  res.json({ teams: teamPosition });
+});
+
 app.get("/api/teams/available", (req, res) => {
   const availableTeamsOnly = availableTeams.filter((team) => !team.season).map(team => ({
     ...team,
@@ -547,71 +313,111 @@ app.get("/api/seasons/:seasonId/teams", (req, res) => {
 
 // New endpoint to get rounds for a specific season
 app.get("/api/seasons/:seasonId/rounds", (req, res) => {
-    const { seasonId } = req.params;
-    const season = seasons.find(s => s.id === seasonId);
-    if (season) {
-        return res.json({ rounds: season.rounds || [] });
-    }
-    return res.status(404).json({ message: "Season not found" });
+  const { seasonId } = req.params;
+  const season = seasons.find(s => s.id === seasonId);
+  if (season) {
+    return res.json({ rounds: season.rounds || [] });
+  }
+  return res.status(404).json({ message: "Season not found" });
 });
 
 // Endpoint to get a specific round of a season
 app.get("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
-    const { seasonId, roundId } = req.params;
-    const season = seasons.find(s => s.id === seasonId);
-    if (season) {
-        const round = season.rounds.find(r => r.roundId === roundId);
-        if (round) {
-            return res.json(round);
-        } else {
-            return res.status(404).json({ message: "Round not found" });
-        }
+  const { seasonId, roundId } = req.params;
+  const season = seasons.find(s => s.id === seasonId);
+  if (season) {
+    const round = season.rounds.find(r => r.roundId === roundId);
+    if (round) {
+      return res.json(round);
+    } else {
+      return res.status(404).json({ message: "Round not found" });
     }
-    return res.status(404).json({ message: "Season not found" });
+  }
+  return res.status(404).json({ message: "Season not found" });
 });
 
 // New endpoint to add rounds to a specific season
 app.post("/api/seasons/:seasonId/rounds", (req, res) => {
-    const { seasonId } = req.params;
-    const newRounds = req.body;
-    const season = seasons.find(s => s.id === seasonId);
+  const { seasonId } = req.params;
+  const newRounds = req.body;
+  const season = seasons.find(s => s.id === seasonId);
 
-    if (!season) {
-        return res.status(404).json({ message: "Season not found" });
+  if (!season) {
+    return res.status(404).json({ message: "Season not found" });
+  }
+
+  if (!Array.isArray(newRounds) || newRounds.length !== 2) {
+    return res.status(400).json({ message: "Must provide exactly two rounds (Lượt đi and Lượt về)." });
+  }
+
+  // Check if roundIds already exist for this season
+  for (const newRound of newRounds) {
+    if (season.rounds && season.rounds.some(round => round.roundId === newRound.roundId)) {
+      return res.status(400).json({ message: `Round ID ${newRound.roundId} already exists for this season.` });
     }
+  }
 
-    if (!Array.isArray(newRounds) || newRounds.length !== 2) {
-        return res.status(400).json({ message: "Must provide exactly two rounds (Lượt đi and Lượt về)." });
-    }
-
-    // Check if roundIds already exist for this season
-    for (const newRound of newRounds) {
-        if (season.rounds && season.rounds.some(round => round.roundId === newRound.roundId)) {
-            return res.status(400).json({ message: `Round ID ${newRound.roundId} already exists for this season.` });
-        }
-    }
-
-    season.rounds = [...(season.rounds || []), ...newRounds];
-    res.status(201).json({ message: "Rounds added successfully", rounds: newRounds });
+  season.rounds = [...(season.rounds || []), ...newRounds];
+  res.status(201).json({ message: "Rounds added successfully", rounds: newRounds });
 });
 
 // Endpoint to update a specific round of a season
 app.put("/api/seasons/:seasonId/rounds/:roundId", (req, res) => {
-    const { seasonId, roundId } = req.params;
-    const updatedRound = req.body;
-    const season = seasons.find(s => s.id === seasonId);
+  const { seasonId, roundId } = req.params;
+  const updatedRound = req.body;
+  const season = seasons.find(s => s.id === seasonId);
 
-    if (!season) {
-        return res.status(404).json({ message: "Season not found" });
+  if (!season) {
+    return res.status(404).json({ message: "Season not found" });
+  }
+
+  const roundIndex = season.rounds.findIndex(r => r.roundId === roundId);
+  if (roundIndex === -1) {
+    return res.status(404).json({ message: "Round not found" });
+  }
+
+  season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
+  res.json(season.rounds[roundIndex]);
+});
+let playerCards = {
+  "2022-2023": [
+    {
+      id: 1,
+      name: "Cầu thủ A1",
+      teamId: 1,
+      team: "Team A",
+      playerType: "Trong nước",
+      soThe: 3,
+      playerState: false,
+    },
+    {
+      id: 2,
+      name: "Cầu thủ B2",
+      teamId: 2,
+      team: "Team B",
+      playerType: "Trong nước",
+      soThe: 1,
+      playerState: true,
+    },
+    {
+      id: 3,
+      name: "Cầu thủ C3",
+      teamId: 3,
+      team: "Team C",
+      playerType: "Trong nước",
+      soThe: 2,
+      playerState: false,
     }
-
-    const roundIndex = season.rounds.findIndex(r => r.roundId === roundId);
-    if (roundIndex === -1) {
-        return res.status(404).json({ message: "Round not found" });
-    }
-
-    season.rounds[roundIndex] = { ...season.rounds[roundIndex], ...updatedRound };
-    res.json(season.rounds[roundIndex]);
+  ],
+  "2024-2025": [],
+};
+app.get("/api/seasons/cards", (req, res) => {
+  const season = req.query.season;
+  if (!season) {
+    return res.status(404).json({ message: "Season not found" });
+  }
+  const cards = playerCards[season]
+  res.json({ cards: cards });
 });
 
 app.put("/api/teams/:id", upload.none(), (req, res) => {
@@ -920,6 +726,33 @@ app.put("/api/players/:playerId", (req, res) => {
   });
 });
 
+// New endpoint to get the playing history of a player
+app.get("/api/players/:playerId/teams", (req, res) => {
+  const { playerId } = req.params;
+  const playerIdInt = parseInt(playerId);
+  const playingHistory = [];
+
+  for (const season in players) {
+    for (const teamId in players[season]) {
+      const teamIdInt = parseInt(teamId);
+      const player = players[season][teamIdInt].find(p => p.id === playerIdInt);
+      if (player) {
+        playingHistory.push({
+          season: season,
+          teamId: teamIdInt,
+          teamName: getTeamName(teamIdInt) // Use helper function to get team name
+        });
+      }
+    }
+  }
+
+  if (playingHistory.length > 0) {
+    res.json(playingHistory);
+  } else {
+    res.status(404).json({ message: "Player not found in any team roster." });
+  }
+});
+
 app.get("/api/standings", (req, res) => {
   const season = req.query.season;
   if (!season) {
@@ -939,7 +772,7 @@ app.get("/api/standings", (req, res) => {
     )
     : [];
 
-  if (!teamsInSeason || teamsInSeason.length === 0) {
+  if (!teamsInSeason || teamsInSeason.length=== 0) {
     return res
       .status(404)
       .json({ message: `Không tìm thấy đội nào cho mùa giải ${season}.` });
@@ -1017,11 +850,16 @@ app.get("/api/standings", (req, res) => {
 });
 
 app.get("/api/matches", (req, res) => {
-  const { season } = req.query;
+  const season = req.query.season;
+  const team = req.query.team;
   let filteredMatches = matchesData;
 
   if (season) {
     filteredMatches = filteredMatches.filter(match => match.season === season);
+  } else if (team) {
+    filteredMatches = filteredMatches.filter(match => match.homeTeamId === team || match.awayTeamId === team);
+  } else {
+    return res.status(404).json({ message: "Vui lòng truyền vào teamId hoặc season" });
   }
 
   const matchesWithDetails = filteredMatches.map(match => ({
@@ -1029,7 +867,7 @@ app.get("/api/matches", (req, res) => {
     homeTeamName: getTeamName(match.homeTeamId),
     awayTeamName: getTeamName(match.awayTeamId),
     stadiumName: getStadiumName(match.stadiumId),
-    roundName: getRoundName(match.season, match.round), // Add roundName
+    roundName: getRoundName(match.season, match.round),
   }));
 
   res.json(matchesWithDetails);
@@ -1049,7 +887,7 @@ app.get("/api/matches/:matchId", (req, res) => {
     homeTeamName: getTeamName(match.homeTeamId),
     awayTeamName: getTeamName(match.awayTeamId),
     stadiumName: getStadiumName(match.stadiumId),
-    roundName: getRoundName(match.season, match.round), // Add roundName
+    roundName: getRoundName(match.season, match.round),
   };
 
   res.json(matchWithDetails);
@@ -1074,7 +912,6 @@ app.post("/api/matches", (req, res) => {
   matchesData.push(newMatch);
   res.status(201).json({ message: "Match created", match: newMatch });
 });
-
 app.put("/api/matches/:matchId", (req, res) => {
   const { matchId } = req.params;
   const matchIdNum = parseInt(matchId);
@@ -1082,22 +919,248 @@ app.put("/api/matches/:matchId", (req, res) => {
 
   const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
   if (matchIndex === -1) {
-    return res.status(404).json({ message: "Match not found" });
+      return res.status(404).json({ message: "Match not found" });
+  } else {
+      updatedMatchData.isFinished =
+          updatedMatchData.homeScore !== null && updatedMatchData.awayScore !== null;
   }
 
   matchesData[matchIndex] = {
-    ...matchesData[matchIndex],
-    ...updatedMatchData,
+      ...matchesData[matchIndex],
+      ...updatedMatchData,
+      goals: updatedMatchData.goals // Ensure goals are updated
   };
   res.json({ message: "Match updated", match: matchesData[matchIndex] });
 });
+app.delete("/api/matches/:matchId", (req, res) => {
+  const { matchId } = req.params;
+  const matchIdNum = parseInt(matchId);
+
+  try {
+    const initialLength = matchesData.length;
+    matchesData = matchesData.filter(match => match.matchId !== matchIdNum);
+
+    if (matchesData.length < initialLength) {
+      res.json({ message: "Match deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Match not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/api/matches/:matchId/goals/:goalId", (req, res) => {
+  const { matchId, goalId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const goalIdNum = parseInt(goalId);
+
+  const match = matchesData.find((m) => m.matchId === matchIdNum);
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const goal = match.goals?.find((g) => g.goalId === goalIdNum);
+  if (!goal) {
+    return res.status(404).json({ message: "Goal not found" });
+  }
+
+  res.json(goal);
+});
+app.post("/api/matches/:matchId/goals", (req, res) => {
+  const { matchId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const newGoal = {
+    goalId: Date.now(),
+    time: req.body.time, // Giữ lại các thông tin khác
+    team: req.body.team,
+    player: parseInt(req.body.playerId), // Thay playerName bằng playerId
+    // ... các thông tin khác của bàn thắng
+  };
+
+  const match = matchesData.find((m) => m.matchId === matchIdNum);
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  match.goals = [...(match.goals || []), newGoal];
+  res.status(201).json({ message: "Goal added successfully", goal: newGoal });
+});
+app.put("/api/matches/:matchId/goals/:goalId", (req, res) => {
+
+  const { matchId, goalId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const goalIdNum = parseInt(goalId);
+  const updatedGoalData = {
+    time: req.body.time,
+    team: req.body.team,
+    player: parseInt(req.body.player),
+    type: req.body.type,
+  };
+
+  const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
+  if (matchIndex === -1) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const goalIndex = matchesData[matchIndex].goals.findIndex(
+    (g) => g.goalId === goalIdNum
+  );
+  if (goalIndex === -1) {
+    return res.status(404).json({ message: "Goal not found" });
+  }
+
+  matchesData[matchIndex].goals[goalIndex] = {
+    ...matchesData[matchIndex].goals[goalIndex],
+    ...updatedGoalData,
+  };
+  res.json({ message: "Goal updated successfully", goal: matchesData[matchIndex].goals[goalIndex] });
+});
+app.delete("/api/matches/:matchId/goals/:goalId", (req, res) => {
+  const { matchId, goalId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const goalIdNum = parseInt(goalId);
+
+  const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
+  if (matchIndex === -1) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const initialLength = matchesData[matchIndex].goals.length;
+  matchesData[matchIndex].goals = matchesData[matchIndex].goals.filter(
+    (g) => g.goalId !== goalIdNum
+  );
+
+  if (matchesData[matchIndex].goals.length < initialLength) {
+    res.json({ message: "Goal deleted successfully" });
+  } else {
+    res.status(404).json({ message: "Goal not found" });
+  }
+});
+
+app.get("/api/matches/:matchId/cards/:cardId", (req, res) => {
+  const { matchId, cardId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const cardIdNum = parseInt(cardId);
+
+  const match = matchesData.find((m) => m.matchId === matchIdNum);
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const card = match.cards?.find((c) => c.cardId === cardIdNum);
+  if (!card) {
+    return res.status(404).json({ message: "Card not found" });
+  }
+
+  res.json(card);
+});
+
+// POST a new card to a match
+app.post("/api/matches/:matchId/cards", (req, res) => {
+  const { matchId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const newCard = {
+    cardId: Date.now(),
+    time: req.body.time,
+    type: req.body.type,
+    teamId: parseInt(req.body.teamId),
+    playerId: parseInt(req.body.player),
+  };
+
+  const match = matchesData.find((m) => m.matchId === matchIdNum);
+  if (!match) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  match.cards = [...(match.cards || []), newCard];
+  res.status(201).json({ message: "Card added successfully", card: newCard });
+});
+
+// PUT (update) an existing card of a match
+app.put("/api/matches/:matchId/cards/:cardId", (req, res) => {
+  const { matchId, cardId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const cardIdNum = parseInt(cardId);
+  const updatedCardData = {
+    time: req.body.time,
+    type: req.body.type,
+    teamId: parseInt(req.body.teamId),
+    playerId: parseInt(req.body.player),
+  };
+
+  const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
+  if (matchIndex === -1) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const cardIndex = matchesData[matchIndex].cards.findIndex(
+    (c) => c.cardId === cardIdNum
+  );
+  if (cardIndex === -1) {
+    return res.status(404).json({ message: "Card not found" });
+  }
+
+  matchesData[matchIndex].cards[cardIndex] = {
+    ...matchesData[matchIndex].cards[cardIndex],
+    ...updatedCardData,
+  };
+
+  res.json({ message: "Card updated successfully", card: matchesData[matchIndex].cards[cardIndex] });
+});
+
+// DELETE a specific card of a match
+app.delete("/api/matches/:matchId/cards/:cardId", (req, res) => {
+  const { matchId, cardId } = req.params;
+  const matchIdNum = parseInt(matchId);
+  const cardIdNum = parseInt(cardId);
+
+  const matchIndex = matchesData.findIndex((m) => m.matchId === matchIdNum);
+  if (matchIndex === -1) {
+    return res.status(404).json({ message: "Match not found" });
+  }
+
+  const initialLength = matchesData[matchIndex].cards.length;
+  matchesData[matchIndex].cards = matchesData[matchIndex].cards.filter(
+    (c) => c.cardId !== cardIdNum
+  );
+
+  if (matchesData[matchIndex].cards.length < initialLength) {
+    res.json({ message: "Card deleted successfully" });
+  } else {
+    res.status(404).json({ message: "Card not found" });
+  }
+});
+
 app.post('/api/settings', (req, res) => {
   const newSettings = req.body;
-  console.log('Received settings from frontend:', newSettings);
+  settingsData = newSettings; // Update the settings data
   res.status(200).json({ message: 'Settings saved successfully' });
+});
+
+app.get('/api/settings', (req, res) => {
+  res.status(200).json(settingsData); // Send the current settings data
+});
+// Endpoint to get types settings
+app.get('/api/types-settings', (req, res) => {
+  res.json(typeSettings);
+});
+
+// Endpoint to save types settings
+app.post('/api/types-settings', (req, res) => {
+  typeSettings = req.body;
+  res.json({ message: 'Types settings saved successfully' });
+})
+
+app.get("/api/teams/position", (req, res) =>{
+  const teamId = req.query.teamId;
+  if (!teamId) {
+    return res.status(402).json({ message: "teamId not found" });
+  }
+  const teamPosition = teamsPosition[teamId]
+  res.json({ teams: teamPosition });
 });
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
 });

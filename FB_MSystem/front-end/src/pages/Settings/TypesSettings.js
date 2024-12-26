@@ -1,24 +1,16 @@
+
 // pages/Settings/TypesSettings.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './TypesSettings.module.css';
 
 function TypesSettings({ API_URL }) {
     const [goalTypes, setGoalTypes] = useState([
-        { id: Date.now() + '-0', code: 'BT001', name: 'Bàn thắng thường', description: 'Bàn thắng được ghi trong tình huống thông thường.' },
-        { id: Date.now() + '-1', code: 'BT002', name: 'Phản lưới nhà', description: 'Bàn thắng do cầu thủ tự đưa bóng vào lưới nhà.' },
-        { id: Date.now() + '-2', code: 'BT003', name: 'Penalty', description: 'Bàn thắng từ chấm phạt đền.' },
-    ]);
-    const [cardTypes, setCardTypes] = useState([
-        { id: Date.now() + '-3', code: 'TP001', name: 'Vàng', description: 'Cảnh cáo cho hành vi phi thể thao.' },
-        { id: Date.now() + '-4', code: 'TP002', name: 'Đỏ', description: 'Truất quyền thi đấu do lỗi nghiêm trọng.' },
-    ]);
-    const [priorityOptions, setPriorityOptions] = useState([
-        { code: 'points', name: 'Điểm số' },
-        { code: 'goalDifference', name: 'Hiệu số' },
-        { code: 'goalsScored', name: 'Số bàn thắng' },
-    ]);
-    const [rankingPriorityOrder, setRankingPriorityOrder] = useState(['points', 'goalDifference', 'goalsScored']);
+]);
+    const [cardTypes, setCardTypes] = useState([]);
+    const [priorityOptions, setPriorityOptions] = useState([]);
+    const [rankingPriorityOrder, setRankingPriorityOrder] = useState(['UT1', 'UT2', 'UT3']);
     const [saveStatus, setSaveStatus] = useState(null);
+    const nextPriorityCode = useRef(priorityOptions.length + 1);
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -30,6 +22,14 @@ function TypesSettings({ API_URL }) {
                     setCardTypes(data.cardTypes ? data.cardTypes.map(ct => ({ ...ct, id: ct.id || Date.now() + '-' + Math.random() })) : cardTypes);
                     setPriorityOptions(data.priorityOptions || priorityOptions);
                     setRankingPriorityOrder(data.rankingPriorityOrder || rankingPriorityOrder);
+                    // Update the ref based on loaded data
+                    if (data.priorityOptions && data.priorityOptions.length > 0) {
+                        const maxCodeNumber = data.priorityOptions.reduce((max, option) => {
+                            const number = parseInt(option.code.replace('UT', ''), 10);
+                            return number > max ? number : max;
+                        }, 0);
+                        nextPriorityCode.current = maxCodeNumber + 1;
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching types settings:", error);
@@ -85,9 +85,11 @@ function TypesSettings({ API_URL }) {
     };
 
     const addPriorityOption = () => {
-        const newPriority = { code: generateUniqueCode('PR'), name: '' };
+        const newCode = `UT${nextPriorityCode.current}`;
+        const newPriority = { code: newCode, name: '' };
         setPriorityOptions([...priorityOptions, newPriority]);
-        setRankingPriorityOrder([...rankingPriorityOrder, newPriority.code]);
+        setRankingPriorityOrder([...rankingPriorityOrder, newCode]);
+        nextPriorityCode.current++;
     };
 
     const removePriorityOption = (codeToRemove) => {
@@ -113,14 +115,32 @@ function TypesSettings({ API_URL }) {
         }
     };
 
+    const toggleRankingPriority = (code) => {
+        if (rankingPriorityOrder.includes(code)) {
+            setRankingPriorityOrder(rankingPriorityOrder.filter(c => c !== code));
+        } else {
+            setRankingPriorityOrder([...rankingPriorityOrder, code]);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaveStatus('loading');
+
+        // Ensure priority options codes are in UT format before saving
+        const updatedPriorityOptions = priorityOptions.map((option, index) => ({
+            ...option,
+            code: `UT${index + 1}`,
+        }));
+        setPriorityOptions(updatedPriorityOptions);
+        setRankingPriorityOrder(rankingPriorityOrder.map((code, index) => `UT${index + 1}`));
+        nextPriorityCode.current = updatedPriorityOptions.length + 1;
 
         const settingsData = {
             goalTypes: goalTypes,
             cardTypes: cardTypes,
             rankingPriorityOrder: rankingPriorityOrder,
+            priorityOptions: updatedPriorityOptions, // Save the updated priority options
         };
 
         try {
@@ -242,14 +262,30 @@ function TypesSettings({ API_URL }) {
                     <table className={styles["settings-table"]}>
                         <thead>
                             <tr>
+                                <th>Chọn</th>
                                 <th>Mã</th>
                                 <th>Tên loại ưu tiên</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {priorityOptions.map((option) => (
+                            {priorityOptions.sort((a, b) => {
+                                const indexA = rankingPriorityOrder.indexOf(a.code);
+                                const indexB = rankingPriorityOrder.indexOf(b.code);
+
+                                if (indexA === -1 && indexB === -1) return 0;
+                                if (indexA === -1) return 1;
+                                if (indexB === -1) return -1;
+                                return indexA - indexB;
+                            }).map((option) => (
                                 <tr key={option.code}>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={rankingPriorityOrder.includes(option.code)}
+                                            onChange={() => toggleRankingPriority(option.code)}
+                                        />
+                                    </td>
                                     <td>
                                         <input
                                             type="text"
@@ -268,7 +304,7 @@ function TypesSettings({ API_URL }) {
                                         {rankingPriorityOrder.includes(option.code) && (
                                             <>
                                                 <button
-                                                    style={{ backgroundColor: '#007bff', color: 'white' }}
+                                                    style={{ backgroundColor: '#007bff', color: 'white', marginRight: '5px' }}
                                                     type="button"
                                                     onClick={() => movePriorityUp(option.code)}
                                                     disabled={rankingPriorityOrder.indexOf(option.code) === 0}
@@ -276,16 +312,16 @@ function TypesSettings({ API_URL }) {
                                                     Lên
                                                 </button>
                                                 <button
-                                                    style={{ backgroundColor: '#007bff', color: 'white' }}
+                                                    style={{ backgroundColor: '#007bff', color: 'white', marginRight: '5px' }}
                                                     type="button"
                                                     onClick={() => movePriorityDown(option.code)}
                                                     disabled={rankingPriorityOrder.indexOf(option.code) === rankingPriorityOrder.length - 1}
                                                 >
                                                     Xuống
                                                 </button>
-                                                <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removePriorityOption(option.code)}>Xóa</button>
                                             </>
                                         )}
+                                        <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removePriorityOption(option.code)}>Xóa</button>
                                     </td>
                                 </tr>
                             ))}
