@@ -1,12 +1,14 @@
+const { UUID } = require('sequelize');
 const { BangXepHang, DoiBong, UtXepHang } = require('../models');
+const LoaiUuTien = require('../models/loaiuutien');
 
 const BangXepHangController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-
+            const utxh = UtXepHang;
             // Lấy danh sách tiêu chí xếp hạng (tầm quan trọng được xác định bởi MucDoUuTien)
-            const tieuChiXepHang = await UtXepHang.findAll({
+            const tieuChiXepHang = await utxh.findAll({
                 where: { MaMuaGiai },
                 attributes: ['MaLoaiUuTien', 'MucDoUuTien'],
                 order: [['MucDoUuTien', 'ASC']],  // Sắp xếp theo tầm quan trọng (MucDoUuTien tăng dần)
