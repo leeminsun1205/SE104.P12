@@ -693,3 +693,4 @@ VALUES
 
 -- SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
 -- select * from thamso
+-- drop database se104

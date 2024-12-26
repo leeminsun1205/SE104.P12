@@ -1,17 +1,33 @@
-const { BangXepHang, DoiBong } = require('../models');
+const { BangXepHang, DoiBong, UtXepHang } = require('../models');
 
 const BangXepHangController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-            const { sortBy = 'DiemSo', order = 'DESC' } = req.query;  // Mặc định sắp xếp theo DiemSo giảm dần
 
-            // Danh sách các cột cho phép sắp xếp
+            // Lấy danh sách tiêu chí xếp hạng (tầm quan trọng được xác định bởi MucDoUuTien)
+            const tieuChiXepHang = await UtXepHang.findAll({
+                where: { MaMuaGiai },
+                attributes: ['MaLoaiUuTien', 'MucDoUuTien'],
+                order: [['MucDoUuTien', 'ASC']],  // Sắp xếp theo tầm quan trọng (MucDoUuTien tăng dần)
+            });
+
+            // Nếu không có tiêu chí xếp hạng, trả về lỗi
+            if (!tieuChiXepHang || tieuChiXepHang.length === 0) {
+                return res.status(400).json({ message: 'Không có tiêu chí xếp hạng cho mùa giải này.' });
+            }
+
+            // Tạo mảng các tiêu chí sắp xếp (theo thứ tự giảm dần mặc định)
+            const orderBy = tieuChiXepHang.map(tieuChi => [tieuChi.MaLoaiUuTien, 'DESC']);
+
+            // Danh sách các cột hợp lệ trong bảng xếp hạng
             const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
-            
-            // Kiểm tra nếu cột sắp xếp không hợp lệ
-            if (!validSortColumns.includes(sortBy)) {
-                return res.status(400).json({ message: `Cột sắp xếp không hợp lệ: ${sortBy}` });
+
+            // Kiểm tra tính hợp lệ của các tiêu chí
+            for (const [column, _] of orderBy) {
+                if (!validSortColumns.includes(column)) {
+                    return res.status(400).json({ message: `Cột sắp xếp không hợp lệ: ${column}` });
+                }
             }
 
             // Truy vấn bảng xếp hạng
@@ -25,7 +41,7 @@ const BangXepHangController = {
                     },
                 ],
                 attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],  // Lấy các thuộc tính từ BangXepHang
-                order: [[sortBy, order.toUpperCase()]],  // Sắp xếp theo tiêu chí và thứ tự do người dùng chọn
+                order: orderBy,  // Sắp xếp theo các tiêu chí đã được cấu hình, mặc định giảm dần
             });
 
             // Kiểm tra nếu không tìm thấy bảng xếp hạng
