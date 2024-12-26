@@ -70,7 +70,7 @@ function LookUpMatch({ API_URL }) {
     return matches
       .filter(
         (match) =>
-          match.homeTeamId === selectedTeam || match.awayTeamId === selectedTeam
+          match.homeTeamId === parseInt(selectedTeam, 10) || match.awayTeamId === parseInt(selectedTeam, 10)
       )
       .filter((match) => {
         const query = searchQuery.toLowerCase();
@@ -79,7 +79,7 @@ function LookUpMatch({ API_URL }) {
             match.awayTeamName.toLowerCase().includes(query) ||
             match.stadiumName.toLowerCase().includes(query) ||
             match.date.includes(query) ||
-            match.roundName.toLowerCase().includes(query) // Search by round name
+            match.roundName.toLowerCase().includes(query) 
         );
       })
       .sort((a, b) => {
