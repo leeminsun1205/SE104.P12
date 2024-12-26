@@ -37,11 +37,12 @@ import TopScorers from './pages/TopScorers/TopScorers';
 import TopScorersStandings from './pages/Standings/TopScorersStandings';
 import CombinedStandingsPage from './pages/Standings/CombinedStandingsPage'; 
 import SeasonalStandings from './pages/SeasonalStandings/SeasonalStandings'; 
+import CardsList from './pages/Standings/CardsList';
 import LookUp from './pages/LookUp/LookUp';
 import LookUpMatch from './pages/LookUp/LookUpMatch';
 import LookUpSeason from './pages/LookUp/LookUpSeason';
 import LookUpAchievements from './pages/LookUp/LookUpAchievements';
-
+import PlayerCardList from './pages/PlayerCardList/PlayerCardList';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -237,7 +238,7 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/match/:season/:round/:id" element={<MatchDetails API_URL={API_URL} />} />
             <Route path="/standings" element={<Standings API_URL={API_URL} />} />
             <Route path="/create" element={<CreateNew />} />
-            <Route path="/invoices" element={<InvoiceForm onAddInvoice={onAddInvoice} />} />
+            <Route path="/invoices" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
             <Route path="/invoices/:invoiceId" element={<Invoices invoices={invoices} />} />
             <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
             <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
@@ -251,11 +252,13 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/seasons/:seasonId/top-scorers" element={<TopScorers API_URL={API_URL} />} />
             <Route path="/top-scorers" element={<TopScorersStandings API_URL={API_URL} />} />
             <Route path="/seasons/:seasonId/standings" element={<SeasonalStandings API_URL={API_URL} />} />
+            <Route path="/cards" element={<CardsList API_URL={API_URL} />} />
             <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
             <Route path="/lookup" element={<LookUp />} />
-            <Route path="/lookup/match" element={<LookUpMatch />} />
-            <Route path="/lookup/season" element={<LookUpSeason />} />
-            <Route path="/lookup/achievements" element={<LookUpAchievements />} />
+            <Route path="/lookup/match" element={<LookUpMatch API_URL={API_URL}/>} />
+            <Route path="/lookup/season" element={<LookUpSeason API_URL={API_URL}/>} />
+            <Route path="/lookup/achievements" element={<LookUpAchievements API_URL={API_URL}/>} />
+            <Route path="/player-card-list" element={<PlayerCardList />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

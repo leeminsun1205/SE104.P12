@@ -154,7 +154,7 @@ function LookUpMatch({ API_URL }) {
       </div>
 
       {selectedTeam === "" ? (
-        <h2 className={styles.matchesTitle}>Vui lòng chọn một mùa giải</h2>
+        <h2 className={styles.matchesTitle}>Vui lòng chọn một đội bóng</h2>
       ) : (
         <>
           <h2 className={styles.matchesTitle}>Danh sách trận đấu</h2>

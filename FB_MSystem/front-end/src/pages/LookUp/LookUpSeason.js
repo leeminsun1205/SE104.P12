@@ -57,13 +57,20 @@ function LookUpSeason({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("Dữ liệu giải đấu từ API:", data); // Debug API response
-                setStandings(data.map((team)=>{
-                    const winner = team.posiotion==1 ? 'Có' :'Không';
-                    return {
-                        ...team,
-                        winner: winner,
-                    }
-                }));
+                // Fix: Access the 'teams' property of the response data
+                if (data && data.teams) {
+                    setStandings(data.teams.map((team)=>{
+                        const winner = team.posiotion === 1 ? 'Có' :'Không';
+                        return {
+                            ...team,
+                            winner: winner,
+                        }
+                    }));
+                } else {
+                    console.error("Dữ liệu giải đấu không đúng định dạng:", data);
+                    setError("Failed to load standings: Invalid data format.");
+                    setStandings([]);
+                }
             } catch (error) {
                 console.error("Lỗi khi fetch dữ liệu giải đấu:", error);
                 setError("Failed to load standings.");

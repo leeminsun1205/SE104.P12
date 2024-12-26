@@ -244,7 +244,82 @@ let typeSettings = {
   ],
   rankingPriorityOrder: ["UT1", "UT2", "UT3"],
 };
-
+let settingsData = {
+  minPlayers: 15,
+  maxPlayers: 22,
+  maxForeignPlayers: 3,
+  minAge: 16,
+  maxAge: 40,
+  minCapacity: 10000,
+  minStar: 2,
+  participationFee: 1000000000,
+  winPoints: 3,
+  drawPoints: 1,
+  losePoints: 0,
+  maxGoalTime: 90,
+};
+let teamsPosition = {
+  1: [
+    {
+      season: "2022-2023",
+      win: 2,
+      loss: 0,
+      draw: 0,
+      difference: 2,
+      point: 6,
+      posiotion: 1,
+    },
+    {
+      season: "2023-2024",
+      win: 1,
+      loss: 1,
+      draw: 0,
+      point: 3,
+      difference: 1,
+      posiotion: 2,
+    },
+  ],
+  2: [
+    {
+      season: "2022-2023",
+      win: 1,
+      loss: 1,
+      draw: 0,
+      difference: 1,
+      point: 3,
+      posiotion: 2,
+    },
+    {
+      season: "2023-2024",
+      win: 0,
+      loss: 1,
+      draw: 1,
+      point: 1,
+      difference: -2,
+      posiotion: 3,
+    },
+  ],
+  3: [
+    {
+      season: "2022-2023",
+      win: 0,
+      loss: 2,
+      draw: 0,
+      difference: -3,
+      point: 0,
+      posiotion: 3,
+    },
+    {
+      season: "2023-2024",
+      win: 1,
+      loss: 0,
+      draw: 1,
+      point: 4,
+      difference: 1,
+      posiotion: 1,
+    },
+  ],
+};
 module.exports = {
   availableTeams,
   seasons,
@@ -253,4 +328,6 @@ module.exports = {
   stadiums,
   matchesData,
   typeSettings,
+  settingsData,
+  teamsPosition
 };

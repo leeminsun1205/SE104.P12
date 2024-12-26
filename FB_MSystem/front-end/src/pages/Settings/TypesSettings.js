@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './TypesSettings.module.css';
 
 function TypesSettings({ API_URL }) {
-    const [goalTypes, setGoalTypes] = useState([]);
+    const [goalTypes, setGoalTypes] = useState([
+]);
     const [cardTypes, setCardTypes] = useState([]);
     const [priorityOptions, setPriorityOptions] = useState([]);
     const [rankingPriorityOrder, setRankingPriorityOrder] = useState(['UT1', 'UT2', 'UT3']);

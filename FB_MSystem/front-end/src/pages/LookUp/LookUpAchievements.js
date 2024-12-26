@@ -56,7 +56,8 @@ function LookUpAchievements({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("Dữ liệu giải đấu từ API:", data); // Debug API response
-                const result = data.filter(team => team.posiotion === 1);
+                // Access the array from the 'teams' property
+                const result = data.teams.filter(team => team.posiotion === 1);
                 const seasonsWinner = result.map(team => team.season);
                 setAchievements(seasonsWinner);
             } catch (error) {

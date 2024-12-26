@@ -1,8 +1,8 @@
-.standingsContainer {
+.cardListContainer {
   padding: 24px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   max-width: 1200px;
   background-color: #ffffff;
   border-radius: 12px;
@@ -10,12 +10,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.standingsContainer:hover {
+.cardListContainer:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
-.standingsTitle {
+.cardListTitle {
   font-size: 28px;
   font-weight: bold;
   
@@ -32,7 +32,7 @@
   margin-top: 20px;
 }
 
-.standingsTable {
+.cardListTable {
   width: 95%;
   border-collapse: separate;
   border-spacing: 0 10px;
@@ -42,13 +42,13 @@
   background-color: #fdfdfd;
 }
 
-.standingsTable thead {
+.cardListTable thead {
   background-color: #007bff;
   color: #ffffff;
   text-transform: uppercase;
 }
 
-.standingsTable th {
+.cardListTable th {
   padding: 14px;
   cursor: pointer;
   text-align: center;
@@ -56,12 +56,12 @@
   background-color: #007bff;
 }
 
-.standingsTable th:hover {
+.cardListTable th:hover {
   background-color: #0056b3;
   transition: background-color 0.2s ease;
 }
 
-.standingsTable td {
+.cardListTable td {
   padding: 14px;
   text-align: center;
   background-color: #ffffff;
@@ -71,12 +71,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.standingsTable tbody tr {
+.cardListTable tbody tr {
   margin-bottom: 10px;
   display: table-row;
 }
 
-.standingsTable tbody tr:hover td {
+.cardListTable tbody tr:hover td {
   transform: scale(1.03);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
@@ -92,17 +92,17 @@
   text-decoration: underline;
 }
 
-.standingsTable tbody tr td:last-child {
+.cardListTable tbody tr td:last-child {
   font-weight: bold;
   color: #28a745;
 }
 
-.standingsRow {
+.cardListRow {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.standingsRow:hover {
+.cardListRow:hover {
   background-color: #f8f9fa;
 }
 .pagination {
