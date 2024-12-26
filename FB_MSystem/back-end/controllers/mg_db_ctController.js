@@ -84,14 +84,13 @@ const MgDbCtController = {
                     HieuSo: 0,
                 });
             }
-    
+
             res.status(201).json(newLink);
         } catch (error) {
             console.error('Lỗi khi tạo liên kết:', error);
             res.status(500).json({ error: 'Lỗi khi tạo liên kết.' });
         }
     },
-
 
     // Cập nhật liên kết giữa mùa giải, đội bóng, và cầu thủ
     async update(req, res) {
@@ -132,41 +131,6 @@ const MgDbCtController = {
             res.status(200).json(link);
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi cập nhật liên kết.' });
-        }
-    },
-
-    // Thêm đội vào mùa giải
-    async addTeamToSeason(req, res) {
-        try {
-            const { MaMuaGiai, MaDoiBong } = req.params;
-    
-            // Kiểm tra xem đội bóng đã tồn tại trong mùa giải chưa
-            const existingTeamInSeason = await BangXepHang.findOne({
-                where: { MaMuaGiai, MaDoiBong }
-            });
-    
-            if (existingTeamInSeason) {
-                return res.status(400).json({ error: 'Đội bóng này đã tồn tại trong mùa giải.' });
-            }
-    
-            // Thêm đội bóng vào mùa giải trong bảng xếp hạng
-            const newTeamInSeason = await BangXepHang.create({
-                MaMuaGiai,
-                MaDoiBong,
-                SoTran: 0,
-                SoTranThang: 0,
-                SoTranHoa: 0,
-                SoTranThua: 0,
-                SoBanThang: 0,
-                SoBanThua: 0,
-                DiemSo: 0,
-                HieuSo: 0
-            });
-    
-            res.status(201).json(newTeamInSeason);
-        } catch (error) {
-            console.error('Lỗi khi thêm đội bóng vào mùa giải:', error);
-            res.status(500).json({ error: 'Lỗi khi thêm đội bóng vào mùa giải.' });
         }
     },
 

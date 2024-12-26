@@ -12,11 +12,6 @@ const BangXepHangController = {
                         as: 'DoiBong',  // Đảm bảo alias khớp với alias trong định nghĩa BangXepHang
                         attributes: ['TenDoiBong'],  // Chỉ lấy thuộc tính TenDoiBong của DoiBong
                     },
-                    {
-                        model: MgDbCt, 
-                        as: 'MgDbCt',  // Alias MgDbCt trong BangXepHang
-                        attributes: []  // Không lấy thêm thuộc tính nào từ MgDbCt
-                    }
                 ],
                 attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],  // Lấy các thuộc tính từ BangXepHang
                 order: [['DiemSo', 'DESC']]  // Sắp xếp theo điểm số giảm dần
@@ -34,7 +29,6 @@ const BangXepHangController = {
             res.status(500).json({ error: error.message });
         }
     },
-
 };
 
 module.exports = BangXepHangController;

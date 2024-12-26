@@ -36,12 +36,10 @@ MgDbCt.associate = (models) => {
         foreignKey: 'MaCauThu',
         as: 'CauThu', // Alias cho cầu thủ
     });
-    MgDbCt.associate = (models) => {
-        MgDbCt.belongsTo(models.BangXepHang, {
-            foreignKey: 'MaDoiBong',  // Chìa khóa ngoại trong MgDbCt
-            as: 'BangXepHang',
-        });
-    };
+    MgDbCt.belongsTo(models.BangXepHang, {
+        foreignKey: 'MaDoiBong',  // Chìa khóa ngoại trong MgDbCt
+        as: 'BangXepHang',        // Tên alias để truy vấn
+    });
 };
 
 module.exports = MgDbCt;
