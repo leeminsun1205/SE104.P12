@@ -1,4 +1,4 @@
-const { TranDau, VongDau, MgDbCt, BanThang, VuaPhaLuoi } = require('../models');
+const { TranDau, VongDau, MgDb, DbCt, BanThang, VuaPhaLuoi } = require('../models');
 
 // Hàm tự động cập nhật trận đấu
 const autoUpdateMatch = async (MaTranDau, MaDoiBong, MaCauThu, MaLoaiBanThang, ThoiDiem) => {
@@ -25,14 +25,22 @@ const autoUpdateMatch = async (MaTranDau, MaDoiBong, MaCauThu, MaLoaiBanThang, T
         throw new Error('Đội bóng không thuộc trận đấu này.');
     }
 
-    const isPlayerInTeam = await MgDbCt.findOne({
-        where: { MaMuaGiai, MaDoiBong, MaCauThu },
+    // Kiểm tra cầu thủ có thuộc đội bóng trong mùa giải không
+    const isPlayerInTeam = await MgDb.findOne({
+        where: { MaMuaGiai, MaDoiBong },
+        include: {
+            model: DbCt,
+            as: 'DbCt',
+            where: { MaCauThu },
+            required: true,
+        },
     });
 
     if (!isPlayerInTeam) {
-        throw new Error('Cầu thủ không thuộc đội bóng.');
+        throw new Error('Cầu thủ không thuộc đội bóng trong mùa giải này.');
     }
 
+    // Cập nhật số bàn thắng cho đội nhà hoặc đội khách
     if (MaDoiBong === tranDau.MaDoiBongNha) {
         tranDau.BanThangDoiNha = tranDau.BanThangDoiNha ? tranDau.BanThangDoiNha + 1 : 1;
     } else if (MaDoiBong === tranDau.MaDoiBongKhach) {
@@ -54,7 +62,6 @@ const autoUpdateMatch = async (MaTranDau, MaDoiBong, MaCauThu, MaLoaiBanThang, T
 
     return { banThang, tranDau, vuaPhaLuoi };
 };
-
 
 // Hàm tự động cập nhật vua phá lưới
 const autoUpdateTopScorer = async (MaCauThu, MaMuaGiai, MaDoiBong, MaTranDau) => {
@@ -91,7 +98,6 @@ const autoUpdateTopScorer = async (MaCauThu, MaMuaGiai, MaDoiBong, MaTranDau) =>
 
     return vuaPhaLuoi;
 };
-
 
 module.exports = {
     autoUpdateMatch,

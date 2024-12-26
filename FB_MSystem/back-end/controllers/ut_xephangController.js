@@ -1,4 +1,4 @@
-const { UtXepHang, LoaiUuTien, MuaGiai } = require('../models');
+const { UtXepHang, LoaiUuTien} = require('../models');
 
 const UtXepHangController = {
     async getByMuaGiai(req, res) {

@@ -1,4 +1,4 @@
-const { VongDau, MgDbCt} = require('../models'); 
+const { VongDau } = require('../models'); 
 const { autoSchedule } = require('../services/autoSchedule');
 const VongDauController = {
     async getAll(req, res) {

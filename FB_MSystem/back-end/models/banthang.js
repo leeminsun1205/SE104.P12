@@ -26,6 +26,7 @@ const BanThang = sequelize.define('BanThang', {
     ThoiDiem: {
         type: DataTypes.TINYINT,
         allowNull: false,
+        validate: { min: 1 },
     },
 }, {
     tableName: 'BANTHANG',
@@ -46,7 +47,6 @@ BanThang.associate = (models) => {
         foreignKey: 'MaTranDau',
         as: 'TranDau',
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     });
 
     // Một bàn thắng thuộc một đội bóng
@@ -54,7 +54,6 @@ BanThang.associate = (models) => {
         foreignKey: 'MaDoiBong',
         as: 'DoiBong',
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     });
 
     // Một bàn thắng được ghi bởi một cầu thủ
@@ -62,7 +61,6 @@ BanThang.associate = (models) => {
         foreignKey: 'MaCauThu',
         as: 'CauThu',
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     });
 
     // Một bàn thắng có loại bàn thắng
@@ -70,7 +68,6 @@ BanThang.associate = (models) => {
         foreignKey: 'MaLoaiBanThang',
         as: 'LoaiBanThang',
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     });
 };
 

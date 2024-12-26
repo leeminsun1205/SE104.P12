@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const cauThuRoutes = require('./routes/cauThuRoutes');
 const doiBongRoutes = require('./routes/doiBongRoutes');
 const sanThiDauRoutes = require('./routes/sanThiDauRoutes');
-const mgDbCtRoutes = require('./routes/mg_Db_CtRoutes');
+const mgDbRoutes = require('./routes/mg_DbRoutes');
+const dbCtRoutes = require('./routes/db_CtRoutes');
 const bangXepHangRoutes = require('./routes/bangXepHangRoutes');
 const tranDauRoutes = require('./routes/tranDauRoutes');
 const banThangRoutes = require('./routes/banThangRoutes');
@@ -33,7 +34,8 @@ app.use(bodyParser.json());
 app.use('/cau-thu', cauThuRoutes);
 app.use('/doi-bong', doiBongRoutes);
 app.use('/san-thi-dau', sanThiDauRoutes);
-app.use('/mg-db-ct', mgDbCtRoutes);
+app.use('/mg-db', mgDbRoutes);
+app.use('/db-ct', dbCtRoutes);
 
 // Bảng xếp hạng, trận đấu, bàn thắng, ưu tiên xếp hạng, vua phá lưới, loại ưu tiên
 app.use('/bang-xep-hang', bangXepHangRoutes);

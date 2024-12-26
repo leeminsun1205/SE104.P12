@@ -1,4 +1,4 @@
-const { BangXepHang, MgDbCt, ThamSo, TranDau, VongDau } = require('../models');
+const { BangXepHang, ThamSo, TranDau, VongDau } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {

@@ -1,12 +1,11 @@
-const { MgDbCt, CauThu, DoiBong, MuaGiai, BangXepHang, ThamSo } = require('../models');
+const { MgDb, DoiBong, MuaGiai, BangXepHang } = require('../models');
 
-const MgDbCtController = {
-    // Lấy danh sách đội bóng và cầu thủ theo mùa giải
-    // Lấy danh sách đội bóng theo mã mùa giải
+const MgDbController = {
+    // Lấy danh sách đội bóng theo mùa giải
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-            const data = await MgDbCt.findAll({
+            const data = await MgDb.findAll({
                 where: { MaMuaGiai },
                 include: [
                     {
@@ -23,53 +22,31 @@ const MgDbCtController = {
         }
     },
 
-    // Lấy danh sách cầu thủ của đội bóng trong mùa giải
-    async getByDoiBong(req, res) {
-        try {
-            const { MaMuaGiai, MaDoiBong } = req.params;
-            const data = await MgDbCt.findAll({
-                where: { MaMuaGiai, MaDoiBong },
-                include: [
-                    {
-                        model: CauThu,
-                        as: 'CauThu',
-                        attributes: ['MaCauThu', 'TenCauThu', 'NgaySinh', 'ViTri'], // Các cột cần lấy của bảng CauThu
-                    },
-                ],
-            });
-            res.status(200).json(data.map(item => item.CauThu));
-        } catch (error) {
-            console.error("Lỗi khi lấy danh sách cầu thủ của đội bóng trong mùa giải:", error);
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ của đội bóng trong mùa giải.' });
-        }
-    },
-
-    // Thêm liên kết mới giữa mùa giải, đội bóng, và cầu thủ
+    // Thêm liên kết mới giữa mùa giải và đội bóng
     async create(req, res) {
         try {
-            const { MaMuaGiai, MaDoiBong, MaCauThu } = req.params;
-    
+            const { MaMuaGiai, MaDoiBong } = req.body;
+
             // Kiểm tra liên kết đã tồn tại chưa
-            const existingLink = await MgDbCt.findOne({
-                where: { MaMuaGiai, MaDoiBong, MaCauThu },
+            const existingLink = await MgDb.findOne({
+                where: { MaMuaGiai, MaDoiBong },
             });
-    
+
             if (existingLink) {
                 return res.status(400).json({ error: 'Liên kết này đã tồn tại.' });
             }
-    
+
             // Tạo liên kết mới
-            const newLink = await MgDbCt.create({
+            const newLink = await MgDb.create({
                 MaMuaGiai,
                 MaDoiBong,
-                MaCauThu,
             });
-    
-            // Kiểm tra và cập nhật bảng xếp hạng
+
+            // Kiểm tra và cập nhật bảng xếp hạng nếu cần
             const existingRank = await BangXepHang.findOne({
                 where: { MaMuaGiai, MaDoiBong },
             });
-    
+
             if (!existingRank) {
                 await BangXepHang.create({
                     MaMuaGiai,
@@ -92,6 +69,7 @@ const MgDbCtController = {
         }
     },
 
+    // Thêm nhiều liên kết giữa mùa giải và đội bóng
     async createMany(req, res) {
         try {
             const { links } = req.body; // Nhận danh sách các bản ghi từ body
@@ -105,11 +83,11 @@ const MgDbCtController = {
             const missingRanks = new Set();
     
             for (const link of links) {
-                const { MaMuaGiai, MaDoiBong, MaCauThu } = link;
+                const { MaMuaGiai, MaDoiBong } = link;
     
                 // Kiểm tra liên kết đã tồn tại chưa
-                const existingLink = await MgDbCt.findOne({
-                    where: { MaMuaGiai, MaDoiBong, MaCauThu },
+                const existingLink = await MgDb.findOne({
+                    where: { MaMuaGiai, MaDoiBong },
                 });
     
                 if (existingLink) {
@@ -118,7 +96,7 @@ const MgDbCtController = {
                 }
     
                 // Tạo liên kết mới
-                const newLink = await MgDbCt.create({ MaMuaGiai, MaDoiBong, MaCauThu });
+                const newLink = await MgDb.create({ MaMuaGiai, MaDoiBong });
                 createdLinks.push(newLink);
     
                 // Kiểm tra và ghi nhận bảng xếp hạng cần cập nhật
@@ -158,32 +136,30 @@ const MgDbCtController = {
             res.status(500).json({ error: 'Lỗi khi tạo nhiều liên kết.' });
         }
     },
-    
-    // Cập nhật liên kết giữa mùa giải, đội bóng, và cầu thủ
+
+    // Cập nhật liên kết giữa mùa giải và đội bóng
     async update(req, res) {
         try {
-            const { MaMuaGiai, MaDoiBong, MaCauThu } = req.params; // Liên kết cũ
+            const { MaMuaGiai, MaDoiBong } = req.params; // Liên kết cũ
             const updates = req.body; // Dữ liệu mới
 
-            const link = await MgDbCt.findOne({
-                where: { MaMuaGiai, MaDoiBong, MaCauThu },
+            const link = await MgDb.findOne({
+                where: { MaMuaGiai, MaDoiBong },
             });
 
             if (!link) {
                 return res.status(404).json({ error: 'Không tìm thấy liên kết để cập nhật.' });
             }
 
-            // Kiểm tra nếu cần đổi sang liên kết mới (MaMuaGiai, MaDoiBong, MaCauThu khác)
+            // Kiểm tra nếu cần đổi sang liên kết mới (MaMuaGiai, MaDoiBong khác)
             if (
                 updates.MaMuaGiai && updates.MaMuaGiai !== MaMuaGiai ||
-                updates.MaDoiBong && updates.MaDoiBong !== MaDoiBong ||
-                updates.MaCauThu && updates.MaCauThu !== MaCauThu
+                updates.MaDoiBong && updates.MaDoiBong !== MaDoiBong
             ) {
-                const newLink = await MgDbCt.findOne({
+                const newLink = await MgDb.findOne({
                     where: {
                         MaMuaGiai: updates.MaMuaGiai || MaMuaGiai,
                         MaDoiBong: updates.MaDoiBong || MaDoiBong,
-                        MaCauThu: updates.MaCauThu || MaCauThu,
                     },
                 });
 
@@ -201,13 +177,13 @@ const MgDbCtController = {
         }
     },
 
-    // Xóa liên kết giữa mùa giải, đội bóng, và cầu thủ
+    // Xóa liên kết giữa mùa giải và đội bóng
     async delete(req, res) {
         try {
-            const { MaMuaGiai, MaDoiBong, MaCauThu } = req.params;
+            const { MaMuaGiai, MaDoiBong } = req.params;
 
-            const link = await MgDbCt.findOne({
-                where: { MaMuaGiai, MaDoiBong, MaCauThu },
+            const link = await MgDb.findOne({
+                where: { MaMuaGiai, MaDoiBong },
             });
 
             if (!link) {
@@ -217,9 +193,10 @@ const MgDbCtController = {
             await link.destroy();
             res.status(204).send();
         } catch (error) {
+            console.error('Lỗi khi xóa liên kết:', error);
             res.status(500).json({ error: 'Lỗi khi xóa liên kết.' });
         }
     },
 };
 
-module.exports = MgDbCtController;
+module.exports = MgDbController;

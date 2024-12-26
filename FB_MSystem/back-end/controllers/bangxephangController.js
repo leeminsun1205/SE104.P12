@@ -1,4 +1,4 @@
-const { BangXepHang, DoiBong, MgDbCt } = require('../models');
+const { BangXepHang, DoiBong} = require('../models');
 
 const BangXepHangController = {
     async getByMuaGiai(req, res) {

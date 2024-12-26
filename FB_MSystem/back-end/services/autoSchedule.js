@@ -1,31 +1,33 @@
-const { VongDau, TranDau, DoiBong, SanThiDau, MgDbCt } = require('../models');
+const { VongDau, TranDau, DoiBong, MgDb } = require('../models');
 const _ = require('lodash'); // Thư viện lodash để hỗ trợ ngẫu nhiên hóa
 
 async function autoSchedule(maMuaGiai) {
     try {
-        // Lấy danh sách đội bóng thuộc mùa giải
-        const doiBongTrongMua = await MgDbCt.findAll({
+        // Lấy danh sách đội bóng thuộc mùa giải từ MgDb
+        const doiBongTrongMua = await MgDb.findAll({
             where: { MaMuaGiai: maMuaGiai },
-            attributes: ['MaDoiBong'],
-            group: ['MaDoiBong'],
+            attributes: ['MaDoiBong'], // Lấy mã đội bóng
             include: [
                 {
                     model: DoiBong,
                     as: 'DoiBong',
                 },
             ],
+            group: ['MaDoiBong'],
         });
 
+        // Trích xuất danh sách mã đội bóng
         let doiBongList = doiBongTrongMua.map(item => item.MaDoiBong);
 
         const soDoi = doiBongList.length;
         console.log('Đội bóng trong mùa giải:', doiBongTrongMua);
         console.log('Số đội bóng tính được:', soDoi);
+
         if (soDoi < 2) {
             throw new Error('Mùa giải phải có ít nhất 2 đội bóng để tạo vòng đấu.');
         }
 
-        // Xử lý trường hợp số đội lẻ
+        // Xử lý số đội lẻ
         if (soDoi % 2 !== 0) {
             doiBongList.push(null); // Thêm đội "BYE" để xử lý số đội lẻ
         }
@@ -56,7 +58,7 @@ async function autoSchedule(maMuaGiai) {
         await VongDau.bulkCreate(vongDauData, { ignoreDuplicates: true });
         console.log(`Đã tạo ${soVongDau} vòng đấu cho mùa giải ${maMuaGiai}.`);
 
-        // Tạo lịch thi đấu ngay sau khi tạo vòng đấu
+        // Tạo lịch thi đấu
         const tranDauData = [];
 
         const tranDauSanNhaKhach = {}; // Theo dõi số trận sân nhà/khách liên tiếp của mỗi đội

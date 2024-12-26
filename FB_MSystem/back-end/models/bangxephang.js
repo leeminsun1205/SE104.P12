@@ -58,7 +58,6 @@ const BangXepHang = sequelize.define('BangXepHang', {
         type: DataTypes.TINYINT,
         allowNull: false,
         defaultValue: 0,
-        validate: { min: 0 },
     },
 }, {
     tableName: 'BANGXEPHANG',
@@ -77,19 +76,6 @@ BangXepHang.associate = (models) => {
     BangXepHang.belongsTo(models.MuaGiai, {
         foreignKey: 'MaMuaGiai',
         as: 'MuaGiai',
-    });
-
-    // Liên kết với bảng VONGDAU (thông qua MaMuaGiai và MaVongDau)
-    // BangXepHang.belongsTo(models.VongDau, {
-    //     foreignKey: 'MaVongDau',
-    //     targetKey: 'MaVongDau',
-    //     as: 'VongDau',
-    // });
-
-    // Liên kết với bảng MgDbCt
-    BangXepHang.hasMany(models.MgDbCt, {  // Sử dụng hasMany hoặc belongsToMany tùy theo mối quan hệ
-        foreignKey: 'MaDoiBong',  // Chìa khóa ngoại liên kết giữa BangXepHang và MgDbCt
-        as: 'MgDbCt',
     });
 };
 
