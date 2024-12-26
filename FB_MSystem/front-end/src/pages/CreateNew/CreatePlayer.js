@@ -62,7 +62,7 @@ function CreatePlayer({ API_URL, onAddPlayer }) {
       console.log("New Player to Add:", newPlayer);
 
       try {
-        const response = await fetch(`${API_URL}/players`, {
+        const response = await fetch(`${API_URL}/cau-thu`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

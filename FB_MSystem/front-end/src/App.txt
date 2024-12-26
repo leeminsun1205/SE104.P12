@@ -49,7 +49,7 @@ import './App.css';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'http://localhost:5000/api';
 
 function App() {
     const [teams, setTeams] = useState([]);
@@ -64,7 +64,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const seasonsResponse = await fetch(`${API_URL}/mua-giai`);
+                const seasonsResponse = await fetch(`${API_URL}/seasons`);
                 if (!seasonsResponse.ok) {
                     throw new Error(`Failed to fetch seasons: ${seasonsResponse.status}`);
                 }
@@ -94,10 +94,10 @@ function App() {
         try {
             let teamsResponse;
             if (newSeason === "all") {
-                teamsResponse = await fetch(`${API_URL}/doi-bong`);
+                teamsResponse = await fetch(`${API_URL}/teams/all`);
             } else {
-                teamsResponse = await fetch(`${API_URL}/mg-db/mua-giai/${newSeason}/doi-bong`);
-            } 
+                teamsResponse = await fetch(`${API_URL}/teams?season=${newSeason}`);
+            }
             if (!teamsResponse.ok) {
                 throw new Error(`HTTP error! status: ${teamsResponse.status}`);
             }
@@ -121,7 +121,7 @@ function App() {
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
     const handleAddPlayer = async (newPlayer) => {
         try {
-            const response = await fetch(`${API_URL}/cau-thu`, {
+            const response = await fetch(`${API_URL}/players`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newPlayer),
@@ -140,7 +140,7 @@ function App() {
     };
     const handleEditTeam = async (updatedTeam) => {
         try {
-            const response = await fetch(`${API_URL}/doi-bong/${updatedTeam.id}`, {
+            const response = await fetch(`${API_URL}/teams/${updatedTeam.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedTeam),
@@ -161,7 +161,7 @@ function App() {
 
     const handleDeleteTeam = async (id) => {
         try {
-            const response = await fetch(`${API_URL}/doi-bong/${id}`, { method: 'DELETE' });
+            const response = await fetch(`${API_URL}/teams/${id}`, { method: 'DELETE' });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
