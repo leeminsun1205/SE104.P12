@@ -1,5 +1,6 @@
-// /src/pages/TopScorers/TopScorers.js
-import React, { useState, useEffect } from 'react';
+// --- START OF FILE TopScorers.js ---
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './TopScorers.module.css';
 
@@ -9,7 +10,9 @@ function TopScorers({ API_URL }) {
     const [topScorers, setTopScorers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [teams, setTeams] = useState({}); // To store team names by ID
+    const [teams, setTeams] = useState({});
+    const [players, setPlayers] = useState({}); // To store player names
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
         const fetchSeasonTeams = async () => {
@@ -31,6 +34,37 @@ function TopScorers({ API_URL }) {
         };
 
         fetchSeasonTeams();
+    }, [API_URL, seasonId]);
+
+    useEffect(() => {
+        const fetchSeasonPlayers = async () => {
+            try {
+                const response = await fetch(`${API_URL}/players?season=${seasonId}`);
+                if (!response.ok) {
+                    const message = `Could not fetch players for season: ${response.status} - ${response.statusText}`;
+                    throw new Error(message);
+                }
+                const data = await response.json();
+                console.log("Players API Response:", data);
+    
+                // Directly process the array of players
+                if (Array.isArray(data)) {
+                    const playersMap = {};
+                    data.forEach(player => {
+                        playersMap[player.id] = player.name;
+                    });
+                    setPlayers(playersMap);
+                } else {
+                    console.error("API response for players is not an array:", data);
+                    setError("Invalid player data format.");
+                }
+            } catch (error) {
+                console.error("Error fetching players:", error);
+                setError("Failed to load player data.");
+            }
+        };
+    
+        fetchSeasonPlayers();
     }, [API_URL, seasonId]);
 
     useEffect(() => {
@@ -56,10 +90,10 @@ function TopScorers({ API_URL }) {
             matches.forEach(match => {
                 if (match.goals) {
                     match.goals.forEach(goal => {
-                        const playerName = goal.player;
-                        const teamId = goal.teamId; 
-                        playerGoals[playerName] = {
-                            goals: (playerGoals[playerName]?.goals || 0) + 1,
+                        const playerId = goal.player; // Assuming goal.player is the player ID
+                        const teamId = goal.teamId;
+                        playerGoals[playerId] = {
+                            goals: (playerGoals[playerId]?.goals || 0) + 1,
                             teamId: teamId
                         };
                     });
@@ -67,7 +101,7 @@ function TopScorers({ API_URL }) {
             });
 
             const scorersArray = Object.entries(playerGoals)
-                .map(([playerName, data]) => ({ playerName, goals: data.goals, teamId: data.teamId }))
+                .map(([playerId, data]) => ({ playerId: parseInt(playerId), goals: data.goals, teamId: data.teamId }))
                 .sort((a, b) => b.goals - a.goals);
 
             setTopScorers(scorersArray);
@@ -75,6 +109,39 @@ function TopScorers({ API_URL }) {
 
         fetchTopScorers();
     }, [API_URL, seasonId]);
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedTopScorers = useMemo(() => {
+        const sortableScorers = [...topScorers];
+        if (sortConfig.key) {
+            sortableScorers.sort((a, b) => {
+                const aValue = a[sortConfig.key];
+                const bValue = b[sortConfig.key];
+                if (aValue < bValue) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableScorers;
+    }, [topScorers, sortConfig]);
+
+    const getSortIndicator = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ? '↑' : '↓';
+        }
+        return '';
+    };
 
     if (loading) {
         return <div>Đang tải danh sách vua phá lưới...</div>;
@@ -87,21 +154,27 @@ function TopScorers({ API_URL }) {
     return (
         <div className={styles.topScorersPage}>
             <h2 className={styles.title}>Vua phá lưới - Mùa giải {seasonId}</h2>
-            {topScorers.length > 0 ? (
+            {sortedTopScorers.length > 0 ? (
                 <table className={styles.scorersTable}>
                     <thead>
                         <tr>
                             <th>Hạng</th>
-                            <th>Cầu thủ</th>
-                            <th>Đội</th>
-                            <th>Số bàn thắng</th>
+                            <th onClick={() => requestSort('playerId')}> {/* Sort by playerId */}
+                                Cầu thủ {getSortIndicator('playerId')}
+                            </th>
+                            <th onClick={() => requestSort('teamId')}>
+                                Đội {getSortIndicator('teamId')}
+                            </th>
+                            <th onClick={() => requestSort('goals')}>
+                                Số bàn thắng {getSortIndicator('goals')}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {topScorers.map((scorer, index) => (
+                        {sortedTopScorers.map((scorer, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{scorer.playerName}</td>
+                                <td>{players[scorer.playerId] || 'Unknown Player'}</td> {/* Display player name */}
                                 <td>{teams[scorer.teamId] || 'Unknown Team'}</td>
                                 <td>{scorer.goals}</td>
                             </tr>
@@ -118,4 +191,4 @@ function TopScorers({ API_URL }) {
     );
 }
 
-export default TopScorers;
+export default TopScorers;  

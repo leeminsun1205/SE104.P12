@@ -64,6 +64,94 @@ body {
     margin-bottom: 10px;
     transition: background 0.3s ease, transform 0.2s ease;
 }
+.add-team-button {
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    border-radius: 5px;
+    padding: 10px 15px; 
+    cursor: pointer; 
+    font-size: 14px;
+    max-width: 150px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-team-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.add-team-button:active {
+    background-color: #3e8e41;
+    transform: scale(1); 
+}
+
+.add-team-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px #4CAF50; 
+}
+
+.modal-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.modal-list-item label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-list-item:hover {
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #bbb;
+    transform: scale(1.03); /* Phóng to nhẹ khi hover */
+}
+
+.modal-list-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modal-list-item input[type="checkbox"]:hover {
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    transform: scale(1.1); /* Phóng to checkbox nhẹ khi hover */
+}
+
+.modal-list-item input[type="checkbox"]:checked {
+    border-color: #007bff;
+    background-color: #007bff;
+}
+
+/* Hiệu ứng xuất hiện mờ dần */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 .list-item:hover {
     background: #edf2f7;
@@ -157,7 +245,7 @@ body {
     background: #ffffff;
     padding: 24px;
     border-radius: 12px;
-    width: 450px;
+    width: 500px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     position: relative;
     animation: slideDown 0.4s ease;
@@ -217,6 +305,8 @@ body {
     background-color: #357a38;
     transform: translateY(0);
 }
+
+
 /* Keyframes for animations */
 @keyframes fadeIn {
     from {
