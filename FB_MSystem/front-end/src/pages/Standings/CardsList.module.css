@@ -80,6 +80,10 @@
     transform: scale(1.03);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   }
+  .cardsTable tbody tr td:last-child {
+    font-weight: bold;
+    color: #28a745;
+  }
   
   .yellowCard {
     display: inline-block;
