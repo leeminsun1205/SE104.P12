@@ -6,35 +6,43 @@ const BangXepHangController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-            // Gọi hàm cập nhật ThanhTich
-            await updateThanhTichFromBangXepHang(MaMuaGiai);
+            const { sortBy, order } = req.query;  // `sortBy` và `order` là lựa chọn từ phía người dùng
+            const sortCriteriaBody = req.body;  // Lấy tiêu chí sắp xếp từ body
 
-            // Gọi hàm cập nhật LS_GIAIDAU
-            await updateLichSuGiaiDau();
-            const utxh = UtXepHang;
-            // Lấy danh sách tiêu chí xếp hạng (tầm quan trọng được xác định bởi MucDoUuTien)
-            const tieuChiXepHang = await utxh.findAll({
-                where: { MaMuaGiai },
-                attributes: ['MaLoaiUuTien', 'MucDoUuTien'],
-                order: [['MucDoUuTien', 'ASC']],  // Sắp xếp theo tầm quan trọng (MucDoUuTien tăng dần)
-            });
+            let sortCriteria = [];
 
-            // Nếu không có tiêu chí xếp hạng, trả về lỗi
-            if (!tieuChiXepHang || tieuChiXepHang.length === 0) {
-                return res.status(400).json({ message: 'Không có tiêu chí xếp hạng cho mùa giải này.' });
+            // Kiểm tra nếu body không tồn tại hoặc không phải là mảng
+            if (!Array.isArray(sortCriteriaBody) || sortCriteriaBody.length === 0) {
+                return res.status(400).json({ message: 'Danh sách tiêu chí sắp xếp không hợp lệ.' });
             }
 
-            // Tạo mảng các tiêu chí sắp xếp (theo thứ tự giảm dần mặc định)
-            const orderBy = tieuChiXepHang.map(tieuChi => [tieuChi.MaLoaiUuTien, 'DESC']);
-
-            // Danh sách các cột hợp lệ trong bảng xếp hạng
+            // Danh sách các cột hợp lệ
             const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
 
-            // Kiểm tra tính hợp lệ của các tiêu chí
-            for (const [column, _] of orderBy) {
-                if (!validSortColumns.includes(column)) {
-                    return res.status(400).json({ message: `Cột sắp xếp không hợp lệ: ${column}` });
-                }
+            // Nếu người dùng không yêu cầu sắp xếp theo cột nào cụ thể
+            if (!sortBy) {
+                // Lấy tiêu chí mặc định từ body, sắp xếp dựa trên `MucDoUuTien`
+                sortCriteria = sortCriteriaBody
+                    .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien))
+                    .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
+                    .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);  // Mặc định sắp xếp giảm dần
+
+            } else {
+                // Người dùng đã chọn cột sắp xếp
+                // if (!validSortColumns.includes(sortBy)) {
+                //     return res.status(400).json({ message: `Cột sắp xếp không hợp lệ: ${sortBy}` });
+                // }
+
+                // Ưu tiên sắp xếp theo lựa chọn người dùng
+                sortCriteria = [[sortBy, (order || 'DESC').toUpperCase()]];
+
+                // Thêm các tiêu chí mặc định từ body (không trùng với `sortBy`)
+                const remainingCriteria = sortCriteriaBody
+                    .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien) && criterion.MaLoaiUuTien !== sortBy)
+                    .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
+                    .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);
+
+                sortCriteria = [...sortCriteria, ...remainingCriteria];
             }
 
             // Truy vấn bảng xếp hạng
@@ -43,15 +51,14 @@ const BangXepHangController = {
                 include: [
                     {
                         model: DoiBong,
-                        as: 'DoiBong',  // Đảm bảo alias khớp với alias trong định nghĩa BangXepHang
-                        attributes: ['TenDoiBong'],  // Chỉ lấy thuộc tính TenDoiBong của DoiBong
+                        as: 'DoiBong',
+                        attributes: ['TenDoiBong'],
                     },
                 ],
-                attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],  // Lấy các thuộc tính từ BangXepHang
-                order: orderBy,  // Sắp xếp theo các tiêu chí đã được cấu hình, mặc định giảm dần
+                attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
+                order: sortCriteria,  // Sắp xếp theo tiêu chí (mặc định hoặc từ người dùng)
             });
 
-            // Kiểm tra nếu không tìm thấy bảng xếp hạng
             if (bangXepHang.length === 0) {
                 return res.status(404).json({ message: 'Không tìm thấy bảng xếp hạng cho mùa giải này.' });
             }
