@@ -71,7 +71,7 @@ app.use('/mua-giai', muaGiaiRoutes);
 app.use('/bien-nhan', bienNhanRoutes);
 
 // Khởi động server
-const PORT = process.env.PORT || 3000; 
+const PORT = process.env.PORT || 5000; 
 app.listen(PORT, () => {
     console.log(`Server đang khởi chạy tại http://localhost:${PORT}`);
 });
