@@ -6,7 +6,7 @@ const MuaGiaiController = {
     async getAll(req, res) {
         try {
             const muaGiais = await MuaGiai.findAll();
-            res.status(200).json(muaGiais);
+            res.status(200).json({muaGiai: muaGiais});
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách mùa giải.' });
         }

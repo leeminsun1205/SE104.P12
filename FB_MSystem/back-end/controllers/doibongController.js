@@ -8,7 +8,7 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['TenSan'],
+                        attributes: ['MaSan'],
                     },
                 ],
             });
@@ -19,7 +19,7 @@ const DoiBongController = {
                     TenSan: SanThiDau ? SanThiDau.TenSan : null, 
                 };
             });
-            res.status(200).json(results);
+            res.status(200).json({doiBong: results});
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng.', details: error.message });
         }

@@ -17,13 +17,13 @@ function Teams({
   useEffect(() => {
     const fetchAllTeams = async () => {
       try { 
-        const response = await fetch(`${API_URL}/teams/available`);
-        console.log(`${API_URL}/teams/available`)
+        const response = await fetch(`${API_URL}/doi-bong`);
+        console.log(`${API_URL}/doi-bong`)
         if (!response.ok) {
           throw new Error('Failed to fetch teams');
         }
         const data = await response.json();
-        setAllTeams(data.teams);
+        setAllTeams(data.doiBong);
       } catch (error) {
         console.error('Error fetching teams:', error);
         // Handle error appropriately
@@ -63,11 +63,11 @@ function Teams({
   const indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
   const term = searchTerm.trim().toLowerCase();
   const currentTeams = allTeams
-    .filter((team) => team.name.toLowerCase().includes(term))
+    .filter((team) => team.TenDoiBong.toLowerCase().includes(term))
     .slice(indexOfFirstTeam, indexOfLastTeam);
 
   const totalTeams = allTeams.filter((team) =>
-    team.name.toLowerCase().includes(term)
+    team.TenDoiBong.toLowerCase().includes(term)
   ).length;
   const totalPages = Math.ceil(totalTeams / teamsPerPage);
 
@@ -116,23 +116,23 @@ function Teams({
         <>
           <ul>
             {currentTeams.map((team) => (
-              <li key={team.id}>
+              <li key={team.MaDoiBong}>
                 <h3>
-                  <Link to={`/teams/${team.id}`}>{team.name}</Link>
+                  <Link to={`/teams/${team.MaDoiBong}`}>{team.TenDoiBong}</Link>
                 </h3>
-                <p>Thành phố: {team.city}</p>
-                <p>Sân nhà: {team.stadium ? team.stadium.stadiumName : "Chưa xác định"}</p>
+                <p>Thành phố: {team.ThanhPhoTrucThuoc}</p>
+                <p>Sân nhà: {team.MaSan ? team.MaSan.TenSan : "Chưa xác định"}</p>
                 <div className="actions">
                   <button
                     className="toplayer"
-                    onClick={() => handleToPlayer(team.id)}
+                    onClick={() => handleToPlayer(team.MaDoiBong)}
                   >
                     Cầu thủ
                   </button>
-                  <button className="edit" onClick={() => handleEdit(team.id)}>
+                  <button className="edit" onClick={() => handleEdit(team.MaDoiBong)}>
                     Sửa
                   </button>
-                  <button className="delete" onClick={() => handleDelete(team.id)}>
+                  <button className="delete" onClick={() => handleDelete(team.MaDoiBong)}>
                     Xóa
                   </button>
                 </div>

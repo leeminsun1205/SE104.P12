@@ -65,14 +65,17 @@ function App() {
         const fetchData = async () => {
             try {
                 const seasonsResponse = await fetch(`${API_URL}/mua-giai`);
+                console.log("Season Response", seasonsResponse)
                 if (!seasonsResponse.ok) {
                     throw new Error(`Failed to fetch seasons: ${seasonsResponse.status}`);
                 }
+    
                 const seasonsData = await seasonsResponse.json();
-                const updatedSeasons = ['all', ...seasonsData.seasons];
+                console.log("Season Response", seasonsData)
+                const updatedSeasons = ['all', ...seasonsData.muaGiai];
                 setSeasons(updatedSeasons);
 
-                if (seasonsData.seasons.length > 0) { // Check if there are seasons
+                if (seasonsData.muaGiai.length > 0) { // Check if there are seasons
                     setSelectedSeason('all');
                     await handleSeasonChange('all');
                 }
@@ -102,7 +105,7 @@ function App() {
                 throw new Error(`HTTP error! status: ${teamsResponse.status}`);
             }
             const data = await teamsResponse.json();
-            setTeams(data.teams);
+            setTeams(data.doiBong);
         } catch (error) {
             console.error("Error fetching teams for new season:", error);
             setError(error);
