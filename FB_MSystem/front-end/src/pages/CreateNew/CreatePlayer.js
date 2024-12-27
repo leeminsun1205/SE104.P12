@@ -70,7 +70,7 @@ function CreatePlayer({ API_URL, onAddPlayer }) {
         if (response.ok) {
           const data = await response.json();
           alert("Đã thêm cầu thủ thành công!");
-          navigate("/create");
+          navigate("/tao-moi");
           // If you need to update the parent's state with the new player
           if (onAddPlayer) {
             onAddPlayer(data.player);
@@ -222,7 +222,7 @@ function CreatePlayer({ API_URL, onAddPlayer }) {
         <button className="add" type="button" onClick={handleSubmit}>
           Tạo thông tin
         </button>
-        <button className="cancel" type="button" onClick={() => navigate(`/create`)}>
+        <button className="cancel" type="button" onClick={() => navigate(`/tao-moi`)}>
           Hủy
         </button>
         <button className="reset" type="button" onClick={resetForm}>

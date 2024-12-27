@@ -92,7 +92,7 @@ function Teams({
   return (
     <div className="teams">
       <h2>Danh sách đội bóng</h2>
-      <Link to="/create/doi-bong" className="add-player-button">
+      <Link to="/tao-moi/doi-bong" className="add-player-button">
         Thêm đội bóng mới
       </Link>
       <div className="search-container">

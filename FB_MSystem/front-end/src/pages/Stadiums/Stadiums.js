@@ -54,7 +54,7 @@ function Stadiums() {
             <div className={styles["stadiums-list"]}>
                 <h2>Danh sách sân vận động</h2>
                 <div className={styles['actions']}>
-                    <Link to="/create/san-thi-dau" className={styles['add-stadium-button']}>
+                    <Link to="/tao-moi/san-thi-dau" className={styles['add-stadium-button']}>
                         Thêm sân vận động
                     </Link>
                 </div>

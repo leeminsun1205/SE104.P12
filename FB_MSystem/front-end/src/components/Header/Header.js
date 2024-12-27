@@ -61,7 +61,7 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/bang-xep-hang" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Danh sách
                         </NavLink>
-                        <NavLink to="/create" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/tao-moi" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Thêm mới
                         </NavLink>
                         <NavLink to="/bien-nhan" className={({ isActive }) => isActive ? styles.active : styles.navLink}>

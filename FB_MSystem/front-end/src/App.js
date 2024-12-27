@@ -226,8 +226,8 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
                     API_URL={API_URL}
                     onDeleteTeam={onDeleteTeam} />}
             />
-            <Route path="/create/doi-bong" element={<CreateTeam API_URL={API_URL} />} />
-            <Route path="/create/cau-thu" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
+            <Route path="/tao-moi/doi-bong" element={<CreateTeam API_URL={API_URL} />} />
+            <Route path="/tao-moi/cau-thu" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
             <Route path="/doi-bong/edit/:MaDoiBong" element={<EditTeam onEditTeam={onEditTeam} />} />
             <Route path="/doi-bong/:MaDoiBong" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
             <Route path="/doi-bong/:MaDoiBong/cau-thu" element={<Players seasons={seasons} />} />
@@ -237,16 +237,16 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/tran-dau" element={<Matches API_URL={API_URL} />} />
             <Route path="/tran-dau/:MaMuaGiai/:MaVongDau/:MaTranDau" element={<MatchDetails API_URL={API_URL} />} />
             <Route path="/bang-xep-hang" element={<Standings API_URL={API_URL} />} />
-            <Route path="/create" element={<CreateNew />} />
+            <Route path="/tao-moi" element={<CreateNew />} />
             <Route path="/bien-nhan" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
             <Route path="/bien-nhan/:MaBienNhan" element={<Invoices invoices={invoices} />} />
             <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
             <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
             <Route path="/san-thi-dau" element={<Stadiums />} />
-            <Route path="/create/san-thi-dau" element={<CreateStadium />} />
+            <Route path="/tao-moi/san-thi-dau" element={<CreateStadium  API_URL={API_URL}/>} />
             <Route path="/san-thi-dau/:MaSan" element={<StadiumInfo />} />
             <Route path="/mua-giai/:MaMuaGiai" element={<SeasonDetails API_URL={API_URL} />} />
-            <Route path="/create/mua-giai" element={<CreateSeason API_URL={API_URL} />} />
+            <Route path="/tao-moi/mua-giai" element={<CreateSeason API_URL={API_URL} />} />
             <Route path="/mua-giai" element={<SeasonList API_URL={API_URL} />} />
             <Route path="/doi-bong/:MaDoiBong/tran-dau-khac" element={<OtherLeagueMatches />} /> 
             <Route path="/mua-giai/:MaMuaGiai/vua-pha-luoi" element={<TopScorers API_URL={API_URL} />} />

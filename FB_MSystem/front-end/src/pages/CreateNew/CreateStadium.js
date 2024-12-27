@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreateStadium.module.css'; 
 
-function CreateStadium({ onAddStadium }) {
+function CreateStadium({ API_URL, onAddStadium }) {
     const [stadium, setStadium] = useState({
         stadiumName: '',
         address: '',
@@ -85,7 +85,7 @@ function CreateStadium({ onAddStadium }) {
             };
 
             try {
-                const response = await fetch('http://localhost:5000/api/stadiums', {
+                const response = await fetch(`${API_URL}/san-thi-dau`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

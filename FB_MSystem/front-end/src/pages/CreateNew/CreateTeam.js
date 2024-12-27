@@ -17,13 +17,13 @@ const CreateTeam = ({ API_URL }) => {
         description: '',
     });
     const [stadiums, setStadiums] = useState([]);
-    const [selectedStadium, setSelectedStadium] = useState(null);
+    const [, setSelectedStadium] = useState(null);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchStadiums = async () => {
             try {
-                const response = await fetch(`${API_URL}/stadiums`);
+                const response = await fetch(`${API_URL}/san-thi-dau`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch stadiums: ${response.status}`);
                 }
@@ -52,13 +52,13 @@ const CreateTeam = ({ API_URL }) => {
             ...prevState,
             stadiumId: stadiumId,
         }));
-        const selected = stadiums.find(stadium => stadium.stadiumId === stadiumId);
-        setSelectedStadium(selected);
-        if (selected) {
+        const selectedStadium = stadiums.find(stadium => stadium.stadiumId === stadiumId);
+        setSelectedStadium(selectedStadium);
+        if (selectedStadium) {
             setteam(prevState => ({
                 ...prevState,
-                capacity: selected.capacity,
-                standard: selected.standard,
+                capacity: selectedStadium.capacity,
+                standard: selectedStadium.standard,
             }));
         } else {
             setteam(prevState => ({
@@ -90,7 +90,7 @@ const CreateTeam = ({ API_URL }) => {
 
         if (isValid) {
             try {
-                const response = await fetch(`${API_URL}/teams/available`, {
+                const response = await fetch(`${API_URL}/doi-bong`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

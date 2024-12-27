@@ -93,7 +93,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-list-ol"></i> Danh sách
             </NavLink>
             <NavLink
-              to="/create"
+              to="/tao-moi"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }

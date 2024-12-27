@@ -69,7 +69,7 @@ function AllPlayers() {
     <div className="players-container">
       <h2>Danh sách cầu thủ</h2>
 
-      <Link to="/create/cau-thu" className="add-player-button">
+      <Link to="/tao-moi/cau-thu" className="add-player-button">
         Thêm cầu thủ mới
       </Link>
 

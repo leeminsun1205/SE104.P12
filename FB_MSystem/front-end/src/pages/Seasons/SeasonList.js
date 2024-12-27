@@ -42,7 +42,7 @@ function SeasonsList({ API_URL }) {
 
         <div className={styles['seasons-list-container']}>
             <h2>Danh sách các mùa giải</h2>
-            <Link to="/create/mua-giai" className="add-player-button">
+            <Link to="/tao-moi/mua-giai" className="add-player-button">
                 Thêm mùa giải mới
             </Link>
             {seasons.length === 0 ? (

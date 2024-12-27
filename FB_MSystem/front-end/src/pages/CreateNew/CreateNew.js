@@ -10,19 +10,19 @@ function CreateNew() {
     };
 
     const handleToCreateTeam = () => {
-        navigate('/create/team');
+        navigate('/tao-moi/doi-bong');
     };
 
     const handleToCreatePlayer = () => {
-        navigate('/create/player');
+        navigate('/tao-moi/cau-thu');
     };
 
     const handleToCreateStadium = () => {
-        navigate('/create/stadium');
+        navigate('/tao-moi/san-thi-dau');
     };
 
     const handleToCreateSeason = () => {
-        navigate('/create/season');
+        navigate('/tao-moi/mua-giai');
     };
 
     return (
