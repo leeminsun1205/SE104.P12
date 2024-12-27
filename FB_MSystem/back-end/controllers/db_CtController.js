@@ -39,7 +39,7 @@ const DbCtController = {
                 TieuSu: item.CauThu.TieuSu,
             }));
 
-            res.status(200).json(formattedData);
+            res.status(200).json({cauThu: formattedData});
         } catch (error) {
             console.error("Lỗi khi lấy danh sách cầu thủ theo đội bóng:", error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ theo đội bóng.' });

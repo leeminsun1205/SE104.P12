@@ -8,18 +8,18 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['MaSan'],
+                        attributes: ['MaSan', 'TenSan'],  // Lấy cả MaSan và TenSan
                     },
                 ],
             });
             const results = doiBongs.map((doiBong) => {
-                const { SanThiDau, MaSan, ...rest } = doiBong.get();
+                const { SanThiDau, ...rest } = doiBong.get();
                 return {
                     ...rest,
-                    TenSan: SanThiDau ? SanThiDau.TenSan : null, 
+                    TenSan: SanThiDau ? SanThiDau.TenSan : null,  // Sử dụng TenSan đã lấy được
                 };
             });
-            res.status(200).json({doiBong: results});
+            res.status(200).json({ doiBong: results });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng.', details: error.message });
         }

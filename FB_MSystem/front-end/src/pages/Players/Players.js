@@ -7,7 +7,7 @@ import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import "./Players.css";
 
 function Players({ seasons }) {
-  const { teamId } = useParams();
+  const { MaDoiBong } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ function Players({ seasons }) {
   useEffect(() => {
     const fetchTeamName = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/db-ct/${teamId}`);
+        const response = await fetch(`http://localhost:5000/doi-bong/${MaDoiBong}`);
         if (!response.ok) {
           throw new Error("Failed to fetch team data");
         }
@@ -33,14 +33,14 @@ function Players({ seasons }) {
     };
 
     fetchTeamName();
-  }, [teamId]);
+  }, [MaDoiBong]);
 
-  // useEffect thứ hai - Sửa lại URL để bao gồm teamId
+  // useEffect thứ hai - Sửa lại URL để bao gồm MaDoiBong
   useEffect(() => {
     const fetchPlayers = async () => {
       setLoading(true);
       try {
-        let url = `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu`;
+        let url = `http://localhost:5000/db-ct/doi-bong/${MaDoiBong}/cau-thu`;
         if (selectedSeason && selectedSeason !== "all") {
           url += `?season=${selectedSeason}`;
         }
@@ -50,7 +50,7 @@ function Players({ seasons }) {
           throw new Error("Failed to fetch players");
         }
         const data = await response.json();
-        setPlayers(data.players);
+        setPlayers(data.cauThu);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -59,7 +59,7 @@ function Players({ seasons }) {
     };
 
     fetchPlayers();
-  }, [teamId, selectedSeason]);
+  }, [MaDoiBong, selectedSeason]);
 
   useEffect(() => {
     const fetchAvailablePlayers = async () => {
@@ -88,7 +88,7 @@ function Players({ seasons }) {
   const handleDeletePlayer = async (playerId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu/${playerId}`,
+        `http://localhost:5000/db-ct/doi-bong/${MaDoiBong}/cau-thu/${playerId}`,
         {
           method: "DELETE",
           headers: {
@@ -111,7 +111,7 @@ function Players({ seasons }) {
         } else {
           // Lọc bỏ player chỉ trong selectedSeason
           return prevPlayers.filter(
-            (player) => !(player.MaCauThu === playerId && player.season === selectedSeason)
+            (player) => !(player.MaCauThu === playerId && player.MaMuaGiai === selectedSeason)
           );
         }
       });
@@ -128,7 +128,7 @@ function Players({ seasons }) {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu`,
+        `http://localhost:5000/db-ct/doi-bong/${MaDoiBong}/cau-thu`,
         {
           method: "POST",
           headers: {
@@ -167,7 +167,7 @@ function Players({ seasons }) {
     }
   };
   const handleNavigate = (player) => {
-    navigate(`/db-ct/doi-bong/${teamId}/cau-thu/${player.id}`, { state: { player } });
+    navigate(`/db-ct/doi-bong/${MaDoiBong}/cau-thu/${player.id}`, { state: { player } });
   };
   const handleToTeams = () => {
     navigate(`/db-ct/doi-bong`);
@@ -176,7 +176,7 @@ function Players({ seasons }) {
   const handleSeasonChange = (newSeason) => {
     setSelectedSeason(newSeason);
   };
-
+  console.log(players);
   return (
     <div className="players-container">
       <button className="back-to-teams" onClick={() => handleToTeams()}>
@@ -200,7 +200,7 @@ function Players({ seasons }) {
 
       {showAddPlayersModal && (
         <AddPlayersToTeamModal
-          teamId={teamId}
+          teamId={MaDoiBong}
           season={selectedSeason}
           onAddPlayersToTeam={handleAddPlayersToTeam}
           onClose={() => setShowAddPlayersModal(false)}
@@ -217,6 +217,7 @@ function Players({ seasons }) {
           </div>
         </div>
       )}
+      
       {error && <p className="error-message">{error}</p>}
       {loading ? (
         <p>Đang tải...</p>
@@ -233,6 +234,7 @@ function Players({ seasons }) {
         </div>
       )}
     </div>
+    
   );
 }
 
