@@ -1,5 +1,6 @@
 const { DoiBong, SanThiDau } = require('../models');
 const { isDuplicate } = require('../utils/isDuplicate');
+
 const DoiBongController = {
     async getAll(req, res) {
         try {
@@ -8,7 +9,7 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['MaSan', 'TenSan'],  // Lấy cả MaSan và TenSan
+                        attributes: ['MaSan', 'TenSan'],
                     },
                 ],
             });
@@ -16,7 +17,7 @@ const DoiBongController = {
                 const { SanThiDau, ...rest } = doiBong.get();
                 return {
                     ...rest,
-                    TenSan: SanThiDau ? SanThiDau.TenSan : null,  // Sử dụng TenSan đã lấy được
+                    TenSan: SanThiDau ? SanThiDau.TenSan : null,
                 };
             });
             res.status(200).json({ doiBong: results });
@@ -24,7 +25,7 @@ const DoiBongController = {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng.', details: error.message });
         }
     },
-    
+
     async getById(req, res) {
         try {
             const { id } = req.params;
@@ -33,22 +34,23 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['TenSan'], 
+                        attributes: ['TenSan', 'SucChua', 'DiaChiSan', 'TieuChuan'],
                     },
                 ],
             });
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
-            const { SanThiDau, MaSan, ...rest } = doiBong.get(); 
+            const doiBongData = doiBong.get();
+            const { MaSan, ...rest } = doiBongData;
             const result = {
                 ...rest,
-                TenSan: SanThiDau ? SanThiDau.TenSan : null,
+                TenSan: doiBongData.SanThiDau ? doiBongData.SanThiDau.TenSan : null,
             };
-            res.status(200).json(result);
+            res.status(200).json({doiBong: result});
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin đội bóng.', details: error.message });
         }
     },
-    
+
     async create(req, res) {
         try {
             const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin} = req.body;
@@ -59,10 +61,10 @@ const DoiBongController = {
             const doiBong = await DoiBong.create({
                 MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin,
             });
-            res.status(201).json(doiBong);
+            res.status(201).json({doiBong: doiBong});
         } catch (error) {
             console.error('Lỗi khi thêm đội bóng mới:',error);
-            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.', details: error.massage});
+            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.', details: error.message});
         }
     },
 

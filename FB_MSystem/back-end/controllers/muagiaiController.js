@@ -17,7 +17,7 @@ const MuaGiaiController = {
             const { id } = req.params;
             const muaGiai = await MuaGiai.findByPk(id);
             if (!muaGiai) return res.status(404).json({ error: 'Không tìm thấy mùa giải.' });
-            res.status(200).json(muaGiai);
+            res.status(200).json({muaGiai: muaGiai});
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin mùa giải.' });
         }
@@ -71,7 +71,7 @@ const MuaGiaiController = {
                     return res.status(400).json({ error: 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.' });
                 }
             }
-            await muaGiai.update({TenMuaGiai, NgayBatDau, NgayKetThuc });
+            await muaGiai.update({muaGiai: TenMuaGiai, NgayBatDau, NgayKetThuc });
             res.status(200).json(muaGiai);
         } catch (error) {
             console.error('Lỗi khi cập nhật mùa giải:', error);

@@ -2,20 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './EditTeam.css';
 
-const API_URL = 'http://localhost:5000/api';
-
-function EditTeam({ onEditTeam }) {
-  const { id } = useParams();
+function EditTeam({ API_URL, onEditTeam }) {
+  const { MaDoiBong } = useParams();
   const navigate = useNavigate();
   const [team, setTeam] = useState({
-    name: '',
-    city: '',
-    coach: '',
-    stadiumId: null,
+    TenDoiBong: '',
+    ThanhPhoTrucThuoc: '',
+    TenHLV: '',
+    MaSan: null,
+    SucChua: null,
+    TieuChuan: null,
     home_kit_image: null,
     away_kit_image: null,
     third_kit_image: null,
-    description: '',
+    ThongTin: '',
   });
   const [imagePreviews, setImagePreviews] = useState({
     home_kit_image: null,
@@ -23,27 +23,30 @@ function EditTeam({ onEditTeam }) {
     third_kit_image: null,
   });
   const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState({}); // Use an object to store errors for each field
+  const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [availableStadiums, setAvailableStadiums] = useState([]);
 
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await fetch(`${API_URL}/doi-bong/${id}`);
+        const response = await fetch(`${API_URL}/doi-bong/${MaDoiBong}`);
         if (!response.ok) {
           throw new Error('Failed to fetch team data');
         }
-        const data = await response.json();
+        let data = await response.json();
+        data = data.doiBong;
         setTeam({
-          name: data.name || '',
-          city: data.city || '',
-          coach: data.coach || '',
-          stadiumId: data.stadiumId || null,
+          TenDoiBong: data.TenDoiBong || '',
+          ThanhPhoTrucThuoc: data.ThanhPhoTrucThuoc || '',
+          TenHLV: data.TenHLV || '',
+          MaSan: data.MaSan || null,
+          SucChua: data.SucChua || null,
+          TieuChuan: data.TieuChuan || null,
           home_kit_image: data.home_kit_image || null,
           away_kit_image: data.away_kit_image || null,
           third_kit_image: data.third_kit_image || null,
-          description: data.description || '',
+          ThongTin: data.ThongTin || '',
         });
         setImagePreviews({
           home_kit_image: data.home_kit_image,
@@ -74,10 +77,11 @@ function EditTeam({ onEditTeam }) {
 
     fetchTeam();
     fetchStadiums();
-  }, [id]);
+  }, [MaDoiBong, API_URL]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log({ name, value });
     setTeam((prev) => ({ ...prev, [name]: value }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: '' })); // Clear error on change
   };
@@ -94,13 +98,33 @@ function EditTeam({ onEditTeam }) {
     }
   };
 
-  const handleStadiumChange = (e) => {
-    const selectedStadiumId = parseInt(e.target.value, 10);
+  const handleStadiumChange = async (e) => {
+    const selectedStadiumId = e.target.value;
     setTeam((prev) => ({
       ...prev,
-      stadiumId: selectedStadiumId,
+      MaSan: selectedStadiumId,
+      SucChua: null, 
+      TieuChuan: null
     }));
-    setErrors((prevErrors) => ({ ...prevErrors, stadiumId: '' }));
+    setErrors((prevErrors) => ({ ...prevErrors, MaSan: '' }));
+
+    if (selectedStadiumId) {
+      try {
+        const response = await fetch(`${API_URL}/san-thi-dau/${selectedStadiumId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch stadium details');
+        }
+        const data = await response.json();
+        setTeam((prev) => ({
+          ...prev,
+          SucChua: data.SucChua,
+          TieuChuan: data.TieuChuan
+        }));
+      } catch (error) {
+        console.error('Error fetching stadium details:', error);
+        setErrors((prevErrors) => ({ ...prevErrors, MaSan: 'Failed to fetch stadium details' }));
+      }
+    }
   };
 
   const handleSave = async () => {
@@ -111,16 +135,16 @@ function EditTeam({ onEditTeam }) {
     let isValid = true;
     const newErrors = {};
 
-    if (!team.name.trim()) {
-      newErrors.name = 'Tên đội bóng không được để trống.';
+    if (!team.TenDoiBong.trim()) {
+      newErrors.TenDoiBong = 'Tên đội bóng không được để trống.';
       isValid = false;
     }
-    if (!team.city.trim()) {
-      newErrors.city = 'Thành phố không được để trống.';
+    if (!team.ThanhPhoTrucThuoc.trim()) {
+      newErrors.ThanhPhoTrucThuoc = 'Thành phố không được để trống.';
       isValid = false;
     }
-    if (!team.stadiumId) {
-      newErrors.stadiumId = 'Sân vận động không được để trống.';
+    if (!team.MaSan) {
+      newErrors.MaSan = 'Sân vận động không được để trống.';
       isValid = false;
     }
 
@@ -131,17 +155,15 @@ function EditTeam({ onEditTeam }) {
       return;
     }
 
-    const updatedTeam = {
-      ...team,
-    };
-
     const formData = new FormData();
-    for (const key in updatedTeam) {
-      formData.append(key, updatedTeam[key]);
+    for (const key in team) {
+      if (team.hasOwnProperty(key)) {
+        formData.append(key, team[key]);
+      }
     }
 
     try {
-      const response = await fetch(`${API_URL}/doi-bong/${id}`, {
+      const response = await fetch(`${API_URL}/doi-bong/${MaDoiBong}`, {
         method: 'PUT',
         body: formData,
       });
@@ -155,15 +177,15 @@ function EditTeam({ onEditTeam }) {
       console.log("Updated Team Data from Server:", updatedTeamData);
 
       setTeam({
-        ...updatedTeamData.team,
+        ...updatedTeamData.doiBong,
       });
 
-      onEditTeam(updatedTeamData.team);
+      onEditTeam(updatedTeamData.doiBong);
 
       setSuccessMessage('Đội bóng đã được cập nhật thành công!');
       setTimeout(() => {
         setSuccessMessage('');
-        navigate('/teams');
+        navigate('/doi-bong');
       }, 1000);
     } catch (error) {
       console.error("Error updating team:", error);
@@ -184,7 +206,7 @@ function EditTeam({ onEditTeam }) {
 
       {/* Text Inputs */}
       <div>
-        <label htmlFor="name">
+        <label htmlFor="TenDoiBong">
           Tên đội bóng <span style={{ color: 'red' }}>*</span>
         </label>
         <input
@@ -197,7 +219,7 @@ function EditTeam({ onEditTeam }) {
         {errors.TenDoiBong && <p className="error-message">{errors.TenDoiBong}</p>}
       </div>
       <div>
-        <label htmlFor="city">
+        <label htmlFor="ThanhPhoTrucThuoc">
           Thành phố <span style={{ color: 'red' }}>*</span>
         </label>
         <input
@@ -210,7 +232,7 @@ function EditTeam({ onEditTeam }) {
         {errors.ThanhPhoTrucThuoc && <p className="error-message">{errors.ThanhPhoTrucThuoc}</p>}
       </div>
       <div>
-        <label htmlFor="coach">Huấn luyện viên</label>
+        <label htmlFor="TenHLV">Huấn luyện viên</label>
         <input
           type="text"
           name="TenHLV"
@@ -221,7 +243,7 @@ function EditTeam({ onEditTeam }) {
       </div>
 
       <div>
-        <label htmlFor="stadium">
+        <label htmlFor="MaSan">
           Địa điểm sân nhà <span style={{ color: 'red' }}>*</span>
         </label>
         <select
@@ -239,7 +261,22 @@ function EditTeam({ onEditTeam }) {
         </select>
         {errors.MaSan && <p className="error-message">{errors.MaSan}</p>}
       </div>
-
+      <div>
+        <label>Sức chứa:</label>
+        <input
+          name="SucChua"
+          value={team.SucChua || ''}
+          readOnly
+        />
+      </div>
+      <div>
+        <label>Tiêu chuẩn (số sao):</label>
+        <input
+          name="TieuChuan"
+          value={team.TieuChuan || ''}
+          readOnly
+        />
+      </div>
       {/* Image Uploads */}
       {[
         { name: 'home_kit_image', label: 'Quần áo sân nhà' },
@@ -265,16 +302,15 @@ function EditTeam({ onEditTeam }) {
         </div>
       ))}
       <div>
-        <label htmlFor="description">Giới thiệu đội</label>
+        <label htmlFor="ThongTin">Giới thiệu đội</label>
         <textarea
-          name="description"
-          id="description"
-          value={team.description || ''}
+          name="ThongTin"
+          id="ThongTin"
+          value={team.ThongTin || ''}
           onChange={handleChange}
           aria-label="Giới thiệu đội"
         />
       </div>
-
       <div>
         <button className="save" onClick={handleSave} disabled={loading}>
           {loading ? 'Đang lưu...' : 'Lưu'}

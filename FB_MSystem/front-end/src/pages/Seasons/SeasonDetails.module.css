@@ -306,8 +306,34 @@ body {
     transform: translateY(0);
 }
 
+/* ... other styles ... */
 
-/* Keyframes for animations */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pagination-controls button {
+    background-color: #81beff;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.pagination-controls button:hover {
+    background-color: #81beff;
+}
+
+.pagination-controls .active-page {
+    background-color: #007bff; /* Example active color */
+    color: white;
+    border-color: #007bff;
+}
+
+/* Keyframes for animations */  
 @keyframes fadeIn {
     from {
         opacity: 0;

@@ -125,7 +125,6 @@ const MgDbController = {
     
             for (const link of links) {
                 const { MaMuaGiai, MaDoiBong } = link;
-    
                 try {
                     // Kiểm tra điều kiện sân nhà
                     await validateStadiumConditions(MaDoiBong);
@@ -146,7 +145,6 @@ const MgDbController = {
                     // Tạo liên kết mới
                     const newLink = await MgDb.create({ MaMuaGiai, MaDoiBong });
                     createdLinks.push(newLink);
-    
                     // Cập nhật bảng xếp hạng
                     await updateRanking(MaMuaGiai, MaDoiBong);
                 } catch (err) {
