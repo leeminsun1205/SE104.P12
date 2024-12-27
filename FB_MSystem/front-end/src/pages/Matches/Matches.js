@@ -96,13 +96,12 @@ const Matches = ({ API_URL }) => {
           (selectedRound === "" || match.MaVongDau === selectedRound)
       )
       .filter((match) => {
-        console.log("Search query:", searchQuery)
         const query = searchQuery.toLowerCase();
         return (
           match.TenDoiBongNha.toLowerCase().includes(query) ||
           match.TenDoiBongKhach.toLowerCase().includes(query) ||
           match.TenSan.toLowerCase().includes(query) ||
-          match.NgayThiDau.includes(query) ||
+          match.NgayThiDau.includes(query) || 
           match.TenVongDau.toLowerCase().includes(query)
         );
       })
