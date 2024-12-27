@@ -119,16 +119,16 @@ function SeasonalStandings({ API_URL }) {
                         ) : sortedStandings.length > 0 ? (
                             sortedStandings.map((team) => (
                                 <tr
-                                    key={`${team.rank}-${team.TenDoiBong}`}
+                                    key={`${team.XepHang}-${team.TenDoiBong}`}
                                     onClick={() => handleRowClick(team.MaDoiBong)}
                                     className={styles.standingsRow}
                                 >
-                                    <td>{team.rank}</td>
+                                    <td>{team.XepHang}</td>
                                     <td className={styles.teamName}>{team.TenDoiBong}</td>
                                     <td>{team.SoTran}</td>
                                     <td>{team.SoTranThang}</td>
                                     <td>{team.SoTranHoa}</td>
-                                    <td>{team.SOTranThua}</td>
+                                    <td>{team.SoTranThua}</td>
                                     <td>{team.SoBanThang}</td>
                                     <td>{team.SoBanThua}</td>
                                     <td>{team.HieuSo}</td>

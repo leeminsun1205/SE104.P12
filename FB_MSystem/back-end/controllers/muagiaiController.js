@@ -1,4 +1,4 @@
-const { MuaGiai } = require('../models');
+const { MuaGiai, LoaiUuTien, UtXepHang } = require('../models');
 const { isDuplicate } = require('../utils/isDuplicate');
 const { isValidRange } = require('../utils/checkDate');
 
@@ -30,7 +30,7 @@ const MuaGiaiController = {
             if (!MaMuaGiai) {
                 const ngayBatDauDate = new Date(NgayBatDau);
                 const year = ngayBatDauDate.getFullYear();
-                MaMuaGiai = `MG${year}_`;
+                MaMuaGiai = `MG${year}_1`;
             }
 
             if (!isValidRange(NgayBatDau, NgayKetThuc)) {
@@ -40,10 +40,24 @@ const MuaGiaiController = {
             if (isDuplicateName) {
                 return res.status(400).json({ error: `Tên mùa giải "${TenMuaGiai}" đã tồn tại.` });
             }
-            const muaGiai = await MuaGiai.create({
-                MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc,
+
+            // Sử dụng transaction để đảm bảo tính nhất quán
+            const muaGiai = await MuaGiai.sequelize.transaction(async (t) => {
+                const newMuaGiai = await MuaGiai.create({
+                    MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc,
+                }, { transaction: t });
+
+                // Tạo các bản ghi UT_XEPHANG tương ứng
+                await UtXepHang.bulkCreate([
+                    { MaMuaGiai: newMuaGiai.MaMuaGiai, MaLoaiUuTien: 'LUT01', MucDoUuTien: 1 },
+                    { MaMuaGiai: newMuaGiai.MaMuaGiai, MaLoaiUuTien: 'LUT02', MucDoUuTien: 2 },
+                    { MaMuaGiai: newMuaGiai.MaMuaGiai, MaLoaiUuTien: 'LUT03', MucDoUuTien: 3 },
+                ], { transaction: t });
+
+                return newMuaGiai;
             });
-            res.status(201).json({muaGiai: muaGiai});
+
+            res.status(201).json({ muaGiai: muaGiai });
         } catch (error) {
             console.error('Lỗi khi thêm mùa giải:', error);
             res.status(500).json({ error: 'Lỗi khi thêm mùa giải.', details: error.message });
