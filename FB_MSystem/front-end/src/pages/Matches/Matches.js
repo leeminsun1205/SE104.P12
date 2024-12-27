@@ -35,7 +35,7 @@ const Matches = ({ API_URL }) => {
         }
         const data = await response.json();
         console.log("Dữ liệu mùa giải từ API:", data);
-        setAvailableSeasons(data.seasons);
+        setAvailableSeasons(data.muaGiai);
       } catch (error) {
         console.error("Lỗi khi tải danh sách mùa giải:", error);
       }
@@ -43,10 +43,11 @@ const Matches = ({ API_URL }) => {
 
     fetchSeasons();
   }, [API_URL]);
-
+  
   useEffect(() => {
     console.log("Danh sách mùa giải có sẵn:", availableSeasons);
     if (availableSeasons.length > 0) {
+      console.log('aaaa', availableSeasons[0].MaMuaGiai)
       setSelectedSeason(availableSeasons[0].MaMuaGiai);
     }
   }, [availableSeasons]);
@@ -93,6 +94,11 @@ const Matches = ({ API_URL }) => {
 
   // Filter and sort matches
   const filteredAndSortedMatches = useMemo(() => {
+    console.log('tran dau so 123: ', matches.filter(
+      (match) =>
+        match.MaMuaGiai === selectedSeason &&
+        (selectedRound === "" || match.MaVongDau === selectedRound)
+    ))
     return matches
       .filter(
         (match) =>

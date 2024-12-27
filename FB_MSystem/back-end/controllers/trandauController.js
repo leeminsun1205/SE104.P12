@@ -2,22 +2,47 @@ const { BangXepHang, ThamSo, TranDau, VongDau } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
-            const tranDaus = await TranDau.findAll();
-            res.status(200).json(tranDaus);
+            const tranDaus = await TranDau.findAll({
+                include: [
+                    {
+                        model: VongDau, // Liên kết với bảng VongDau
+                        as: 'VongDau', // Alias phải khớp với định nghĩa trong model
+                        attributes: ['MaMuaGiai', 'MaVongDau'], // Lấy thêm MaMuaGiai và MaVongDau
+                    },
+                ],
+            });
+    
+            const results = tranDaus.map((tranDau) => {
+                const { VongDau, ...rest } = tranDau.get(); // Tách VongDau ra khỏi kết quả
+                const MaMuaGiai = VongDau?.MaMuaGiai || null;
+                const MaVongDau = VongDau?.MaVongDau || null;
+                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null; // Trích xuất TenVongDau từ MaVongDau
+    
+                return {
+                    ...rest,
+                    MaMuaGiai,
+                    MaVongDau,
+                    TenVongDau,
+                };
+            });
+    
+            res.status(200).json({ tranDau: results });
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu.' });
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu.', details: error.message });
         }
     },
+    
     async getByMuaGiai(req, res) {
         try {
-            const { MaMuaGiai } = req.params; // Lấy maMuaGiai từ params
+            const { MaMuaGiai } = req.params; // Lấy MaMuaGiai từ params
+    
             const tranDaus = await TranDau.findAll({
                 include: [
                     {
                         model: VongDau, // TranDau liên kết với VongDau
                         as: 'VongDau', // Alias phải khớp với định nghĩa trong model
-                        where: { MaMuaGiai: MaMuaGiai }, // Lọc theo maMuaGiai
-                        attributes: ['MaVongDau'], // Lấy MaVongDau từ VongDau
+                        where: { MaMuaGiai: MaMuaGiai }, // Lọc theo MaMuaGiai
+                        attributes: ['MaVongDau', 'MaMuaGiai'], // Lấy MaVongDau và MaMuaGiai từ VongDau
                     },
                 ],
             });
@@ -27,12 +52,13 @@ const TranDauController = {
             }
     
             const results = tranDaus.map((tranDau) => {
-                const { VongDau, ...rest } = tranDau.get(); // Tách VongDau ra để xử lý riêng
+                const { VongDau, ...rest } = tranDau.get(); // Tách VongDau ra khỏi kết quả
                 const MaVongDau = VongDau?.MaVongDau || null; // Lấy MaVongDau từ VongDau
                 const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null; // Trích xuất TenVongDau từ MaVongDau
                 return {
                     ...rest,
                     MaVongDau,
+                    MaMuaGiai: VongDau?.MaMuaGiai || null, // Lấy MaMuaGiai từ VongDau
                     TenVongDau,
                 };
             });
