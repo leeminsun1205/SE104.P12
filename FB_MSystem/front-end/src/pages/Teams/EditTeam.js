@@ -30,7 +30,7 @@ function EditTeam({ onEditTeam }) {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await fetch(`${API_URL}/teams/${id}`);
+        const response = await fetch(`${API_URL}/doi-bong/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch team data');
         }
@@ -60,7 +60,7 @@ function EditTeam({ onEditTeam }) {
 
     const fetchStadiums = async () => {
       try {
-        const response = await fetch(`${API_URL}/stadiums`);
+        const response = await fetch(`${API_URL}/san-thi-dau`);
         if (!response.ok) {
           throw new Error('Failed to fetch stadiums');
         }
@@ -141,7 +141,7 @@ function EditTeam({ onEditTeam }) {
     }
 
     try {
-      const response = await fetch(`${API_URL}/teams/${id}`, {
+      const response = await fetch(`${API_URL}/doi-bong/${id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -189,12 +189,12 @@ function EditTeam({ onEditTeam }) {
         </label>
         <input
           type="text"
-          name="name"
-          id="name"
-          value={team.name || ''}
+          name="TenDoiBong"
+          id="TenDoiBong"
+          value={team.TenDoiBong || ''}
           onChange={handleChange}
         />
-        {errors.name && <p className="error-message">{errors.name}</p>}
+        {errors.TenDoiBong && <p className="error-message">{errors.TenDoiBong}</p>}
       </div>
       <div>
         <label htmlFor="city">
@@ -202,20 +202,20 @@ function EditTeam({ onEditTeam }) {
         </label>
         <input
           type="text"
-          name="city"
-          id="city"
-          value={team.city || ''}
+          name="ThanhPhoTrucThuoc"
+          id="ThanhPhoTrucThuoc"
+          value={team.ThanhPhoTrucThuoc || ''}
           onChange={handleChange}
         />
-        {errors.city && <p className="error-message">{errors.city}</p>}
+        {errors.ThanhPhoTrucThuoc && <p className="error-message">{errors.ThanhPhoTrucThuoc}</p>}
       </div>
       <div>
         <label htmlFor="coach">Huấn luyện viên</label>
         <input
           type="text"
-          name="coach"
-          id="coach"
-          value={team.coach || ''}
+          name="TenHLV"
+          id="TenHLV"
+          value={team.TenHLV || ''}
           onChange={handleChange}
         />
       </div>
@@ -225,19 +225,19 @@ function EditTeam({ onEditTeam }) {
           Địa điểm sân nhà <span style={{ color: 'red' }}>*</span>
         </label>
         <select
-          name="stadiumId"
-          id="stadium"
-          value={team.stadiumId || ''}
+          name="MaSan"
+          id="MaSan"
+          value={team.MaSan || ''}
           onChange={handleStadiumChange}
         >
           <option value="">Chọn sân vận động</option>
           {availableStadiums.map((stadium) => (
-            <option key={stadium.stadiumId} value={stadium.stadiumId}>
-              {stadium.stadiumName}
+            <option key={stadium.MaSan} value={stadium.MaSan}>
+              {stadium.TenSan}
             </option>
           ))}
         </select>
-        {errors.stadiumId && <p className="error-message">{errors.stadiumId}</p>}
+        {errors.MaSan && <p className="error-message">{errors.MaSan}</p>}
       </div>
 
       {/* Image Uploads */}

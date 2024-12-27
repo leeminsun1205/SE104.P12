@@ -11,7 +11,7 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
     const fetchAvailablePlayers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/players`);
+        const response = await fetch(`http://localhost:5000/cau-thu`);
         if (!response.ok) {
           throw new Error("Failed to fetch available players");
         }
@@ -48,7 +48,7 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
     try {
       // Send the request to add players to the team
       const response = await fetch(
-        `http://localhost:5000/api/teams/${teamId}/players`,
+        `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu`,
         {
           method: "POST",
           headers: {
@@ -76,7 +76,7 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
       // Remove added players from the available players list
       setAvailablePlayers((prevAvailablePlayers) =>
         prevAvailablePlayers.filter(
-          (player) => !selectedPlayers.includes(player.id)
+          (player) => !selectedPlayers.includes(player.MaCauThu)
         )
       );
 
@@ -100,15 +100,15 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
           <>
             <ul className="player-list">
               {availablePlayers.map((player) => (
-                <li key={player.id} className="player-item">
+                <li key={player.MaCauThu} className="player-item">
                   <label className="player-label">
                     <input
                       type="checkbox"
                       className="player-checkbox"
-                      checked={selectedPlayers.includes(player.id)}
-                      onChange={() => handlePlayerSelection(player.id)}
+                      checked={selectedPlayers.includes(player.MaCauThu)}
+                      onChange={() => handlePlayerSelection(player.MaCauThu)}
                     />
-                    <span className="player-name">{player.name}</span>
+                    <span className="player-name">{player.TenCauThu}</span>
                   </label>
                 </li>
               ))}

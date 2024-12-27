@@ -14,13 +14,18 @@ const UtXepHang = sequelize.define('UtXepHang', {
     },
     MucDoUuTien: {
         type: DataTypes.TINYINT,
-        primaryKey: true,
         allowNull: false,
         validate: { min: 1 }, // Mức độ ưu tiên phải >= 1
     },
 }, {
     tableName: 'UT_XEPHANG',
     timestamps: false,
+    indexes: [
+        {
+            unique: true,
+            fields: ['MaMuaGiai', 'MucDoUuTien'],  // Đảm bảo mức độ ưu tiên là duy nhất trong mỗi mùa giải
+        },
+    ],
 });
 
 // Thiết lập quan hệ với các bảng khác

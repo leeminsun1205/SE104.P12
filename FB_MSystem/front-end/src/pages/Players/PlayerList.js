@@ -16,16 +16,16 @@ function PlayerList({ players, onDelete, onNavigate, season }) {
   return (
     <ul className="player-list">
       {players.map((player) => (
-        <li key={player.id} className="player-item">
+        <li key={player.MaCauThu} className="player-item">
           <h3 className="player-name">
-            <Link to={`/teams/${player.teamId}/players/${player.id}`} state={{ player }}>
-              {player.name}
+            <Link to={`/db-ct/doi-bong/${player.MaDoiBong}/cau-thu/${player.MaCauThu}`} state={{ player }}>
+              {player.TenCauThu}
             </Link>
           </h3>
-          <p className="player-info">Vị trí: {player.position}</p>
-          <p className="player-info">Quốc tịch: {player.nationality}</p>
+          <p className="player-info">Vị trí: {player.ViTri}</p>
+          <p className="player-info">Quốc tịch: {player.QuocTich}</p>
           <div className="player-actions">
-            <button className="delete" onClick={() => onDelete(player.id)}>
+            <button className="delete" onClick={() => onDelete(player.MaCauThu)}>
               Xóa
             </button>
             <button className="navigate" onClick={() => onNavigate(player)}>

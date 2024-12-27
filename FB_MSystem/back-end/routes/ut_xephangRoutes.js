@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get('/mua-giai/:MaMuaGiai', ut_XepHangController.getByMuaGiai); // Lấy danh sách ưu tiên xếp hạng theo mùa giải
 router.post('/', ut_XepHangController.create); // Thêm ưu tiên xếp hạng
+router.put('/mua-giai/:MaMuaGiai', ut_XepHangController.updateTieuChi); // Cập nhật lại tiêu chí xếp hạng
 router.delete('/:MaMuaGiai/:MaLoaiUT', ut_XepHangController.delete); // Xóa ưu tiên xếp hạng
 
 module.exports = router;

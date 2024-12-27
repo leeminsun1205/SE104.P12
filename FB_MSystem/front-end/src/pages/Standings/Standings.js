@@ -19,7 +19,7 @@ function Standings({ API_URL }) {
     useEffect(() => {
         const fetchSeasons = async () => {
             try {
-                const response = await fetch(`${API_URL}/seasons`);
+                const response = await fetch(`${API_URL}/mua-giai`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -47,7 +47,7 @@ function Standings({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/standings?season=${selectedSeason}`);
+                const response = await fetch(`${API_URL}/bang-xep-hang/mua-giai/${selectedSeason}`);
                 if (!response.ok) {
                     if (response.status === 404) {
                         console.log(`Standings not found for season: ${selectedSeason}`);
@@ -138,7 +138,7 @@ function Standings({ API_URL }) {
 
     const handleRowClick = (teamId, seasonId) => {
         console.log(`handleRowClick - Team ID: ${teamId}, Season ID: ${seasonId}`); // Debug handleRowClick
-        navigate(`/teams/${teamId}?season=${seasonId}`);
+        navigate(`/doi-bong/${teamId}/mua-giai/${seasonId}`);
     };
 
     return (

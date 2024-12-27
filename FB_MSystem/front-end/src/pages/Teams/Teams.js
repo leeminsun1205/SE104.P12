@@ -49,11 +49,11 @@ function Teams({
   };
 
   const handleToPlayer = (id) => {
-    navigate(`/teams/${id}/players`);
+    navigate(`/doi-bong/${id}/cau-thu`);
   };
 
   const handleEdit = (id) => {
-    navigate(`/teams/edit/${id}`);
+    navigate(`/doi-bong/${id}`);
   };
 
   const clearSearch = () => setSearchTerm("");
@@ -92,7 +92,7 @@ function Teams({
   return (
     <div className="teams">
       <h2>Danh sách đội bóng</h2>
-      <Link to="/create/team" className="add-player-button">
+      <Link to="/create/doi-bong" className="add-player-button">
         Thêm đội bóng mới
       </Link>
       <div className="search-container">
@@ -118,10 +118,10 @@ function Teams({
             {currentTeams.map((team) => (
               <li key={team.MaDoiBong}>
                 <h3>
-                  <Link to={`/teams/${team.MaDoiBong}`}>{team.TenDoiBong}</Link>
+                  <Link to={`/doi-bong/${team.MaDoiBong}`}>{team.TenDoiBong}</Link>
                 </h3>
                 <p>Thành phố: {team.ThanhPhoTrucThuoc}</p>
-                <p>Sân nhà: {team.MaSan ? team.MaSan.TenSan : "Chưa xác định"}</p>
+                <p>Sân nhà: {team.MaSan ? team.TenSan : "Chưa xác định"}</p>
                 <div className="actions">
                   <button
                     className="toplayer"

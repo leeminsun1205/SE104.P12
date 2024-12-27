@@ -14,8 +14,8 @@ const PlayerInfo = () => {
       const fetchPlayerFromAPI = async () => {
         try {
           const url = teamId
-            ? `http://localhost:5000/api/teams/${teamId}/players/${playerId}`
-            : `http://localhost:5000/api/players/${playerId}`;
+            ? `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu/${playerId}`
+            : `http://localhost:5000/cau-thu/${playerId}`;
           
           const response = await fetch(url);
           if (!response.ok) {
@@ -36,7 +36,7 @@ const PlayerInfo = () => {
       const fetchPlayerFromAPI = async () => {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/teams/${teamId}/players/${playerId}`
+            `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu/${playerId}`
           );
           if (!response.ok) {
             throw new Error("Player not found");
@@ -82,37 +82,37 @@ const PlayerInfo = () => {
       <h2>Thông tin cầu thủ</h2>
       <div className="player-details">
         <p>
-          <strong>Tên:</strong> {player.name}
+          <strong>Tên:</strong> {player.TenCauThu}
         </p>
         <p>
-          <strong>Năm sinh:</strong> {player.dob}
+          <strong>Năm sinh:</strong> {player.NgaySinh}
         </p>
         <p>
-          <strong>Tuổi:</strong> {calculateAge(player.dob)}
+          <strong>Tuổi:</strong> {calculateAge(player.NgaySinh)}
         </p>
         <p>
-          <strong>Vị trí:</strong> {player.position}
+          <strong>Vị trí:</strong> {player.ViTri}
         </p>
         <p>
-          <strong>Quốc tịch:</strong> {player.nationality}
+          <strong>Quốc tịch:</strong> {player.QuocTich}
         </p>
-        <p>
+        {/* <p>
           <strong>Nơi sinh:</strong> {player.birthplace}
+        </p> */}
+        <p>
+          <strong>Chiều cao:</strong> {player.ChieuCao} cm
         </p>
         <p>
-          <strong>Chiều cao:</strong> {player.height} cm
+          <strong>Cân nặng:</strong> {player.CanNang} kg
         </p>
         <p>
-          <strong>Cân nặng:</strong> {player.weight} kg
+          <strong>Tiểu sử:</strong> {player.TieuSu}
         </p>
-        <p>
-          <strong>Tiểu sử:</strong> {player.bio}
-        </p>
-        <p>
+        {/* <p>
           <strong>Mùa giải:</strong> {player.season}
-        </p>
+        </p> */}
         <p>
-            <strong>Loại cầu thủ:</strong> {player.playerType}
+            <strong>Loại cầu thủ:</strong> {player.LoaiCauThu}
         </p>
       </div>
     </div>
