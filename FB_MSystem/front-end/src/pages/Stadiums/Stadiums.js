@@ -13,7 +13,7 @@ function Stadiums() {
         const fetchStadiums = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('http://localhost:5000/api/stadiums');
+                const response = await fetch('http://localhost:5000/san-thi-dau');
                 if (!response.ok) {
                     throw new Error('Failed to fetch stadiums');
                 }
@@ -38,7 +38,7 @@ function Stadiums() {
     };
 
     const filteredStadiums = stadiums.filter((stadium) =>
-        stadium.stadiumName.toLowerCase().includes(searchTerm.toLowerCase())
+        stadium.TenSan.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) {
@@ -54,7 +54,7 @@ function Stadiums() {
             <div className={styles["stadiums-list"]}>
                 <h2>Danh sách sân vận động</h2>
                 <div className={styles['actions']}>
-                    <Link to="/create/stadium" className={styles['add-stadium-button']}>
+                    <Link to="/create/san-thi-dau" className={styles['add-stadium-button']}>
                         Thêm sân vận động
                     </Link>
                 </div>
@@ -78,9 +78,9 @@ function Stadiums() {
 
                 <ul>
                     {filteredStadiums.map((stadium) => (
-                        <li key={stadium.stadiumId}>
-                            <Link to={`/stadiums/${stadium.stadiumId}`}>
-                                {stadium.stadiumName}
+                        <li key={stadium.MaSan}>
+                            <Link to={`/san-thi-dau/${stadium.MaSan}`}>
+                                {stadium.TenSan}
                             </Link>
                         </li>
                     ))}

@@ -4,7 +4,7 @@ import styles from './StadiumInfo.module.css';
 import EditStadiumModal from './EditStadiumModal';
 
 function StadiumInfo() {
-  const { stadiumId } = useParams();
+  const { MaSan } = useParams();
   const navigate = useNavigate();
   const [stadium, setStadium] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +17,7 @@ function StadiumInfo() {
     const fetchStadiumData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/stadiums/${stadiumId}`);
+        const response = await fetch(`http://localhost:5000/san-thi-dau/${MaSan}`);
         if (!response.ok) {
           throw new Error('Failed to fetch stadium data');
         }
@@ -32,7 +32,7 @@ function StadiumInfo() {
     };
 
     fetchStadiumData();
-  }, [stadiumId]);
+  }, [MaSan]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -47,7 +47,7 @@ function StadiumInfo() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-        const response = await fetch(`http://localhost:5000/api/stadiums/${stadiumId}`, {
+        const response = await fetch(`http://localhost:5000/san-thi-dau/${MaSan}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ function StadiumInfo() {
             throw new Error('Failed to update stadium data');
         }
 
-        const refetchResponse = await fetch(`http://localhost:5000/api/stadiums/${stadiumId}`);
+        const refetchResponse = await fetch(`http://localhost:5000/san-thi-dau/${MaSan}`);
         if (!refetchResponse.ok) {
             throw new Error('Failed to refetch stadium data');
         }
@@ -103,18 +103,18 @@ function StadiumInfo() {
       <button className={styles['go-back-button']} onClick={() => navigate(-1)}>
         Quay lại
       </button>
-      <h2>Thông tin sân vận động {stadium.stadiumName}</h2>
+      <h2>Thông tin sân vận động {stadium.TenSan}</h2>
 
       <div className={styles['stadium-details']}>
         <ul>
           <li>
-            <strong>Địa chỉ:</strong> {stadium.address}
+            <strong>Địa chỉ:</strong> {stadium.DiaChiSan}
           </li>
           <li>
-            <strong>Sức chứa:</strong> {stadium.capacity}
+            <strong>Sức chứa:</strong> {stadium.SucChua}
           </li>
           <li>
-            <strong>Tiêu chuẩn:</strong> {stadium.standard} sao
+            <strong>Tiêu chuẩn:</strong> {stadium.TieuChuan} sao
           </li>
         </ul>
         <button className={styles['edit-button']} onClick={handleEdit}>
@@ -125,33 +125,33 @@ function StadiumInfo() {
       <EditStadiumModal show={showModal} onHide={handleCloseModal}>
         {isEditing && (
           <div className={styles['stadium-edit-form']}>
-            <h3>Sửa thông tin sân vận động {stadium.stadiumName}</h3>
+            <h3>Sửa thông tin sân vận động {stadium.TenSan}</h3>
             <label htmlFor="address">Địa chỉ:</label>
             <input
               type="text"
-              id="address"
-              name="address"
-              value={editedStadium.address}
+              id="DiaChiSan"
+              name="DiaChiSan"
+              value={editedStadium.DiaChiSan}
               onChange={handleInputChange}
             />
 
             <label htmlFor="capacity">Sức chứa:</label>
             <input
               type="number"
-              id="capacity"
-              name="capacity"
-              value={editedStadium.capacity}
+              id="SucChua"
+              name="SucChua"
+              value={editedStadium.SucChua}
               onChange={handleInputChange}
             />
 
             <label htmlFor="standard">Tiêu chuẩn (sao):</label>
             <input
               type="number"
-              id="standard"
-              name="standard"
+              id="TieuChuan"
+              name="TieuChuan"
               min="1"
               max="5"
-              value={editedStadium.standard}
+              value={editedStadium.TieuChuan}
               onChange={handleInputChange}
             />
 

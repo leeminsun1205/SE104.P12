@@ -14,7 +14,7 @@ function AllPlayers() {
     const fetchAllPlayers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/players`);
+        const response = await fetch(`http://localhost:5000/cau-thu`);
         if (!response.ok) {
           throw new Error("Failed to fetch players");
         }
@@ -33,7 +33,7 @@ function AllPlayers() {
   const handleDeletePlayer = async (playerId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/players/${playerId}`,
+        `http://localhost:5000/cau-thu/${playerId}`,
         {
           method: "DELETE",
         }
@@ -45,7 +45,7 @@ function AllPlayers() {
       }
 
       setPlayers((prevPlayers) =>
-        prevPlayers.filter((player) => player.id !== playerId)
+        prevPlayers.filter((player) => player.MaCauThu !== playerId)
       );
     } catch (error) {
       console.error("Error deleting player:", error);
@@ -54,7 +54,7 @@ function AllPlayers() {
   };
 
   const handleNavigate = (player) => {
-    navigate(`/players/${player.id}`, { state: { player } });
+    navigate(`/cau-thu/${player.MaCauThu}`, { state: { player } });
   };
 
   const handleSearch = (event) => {
@@ -62,14 +62,14 @@ function AllPlayers() {
   };
 
   const filteredPlayers = players.filter((player) =>
-    player.name.toLowerCase().includes(searchTerm.toLowerCase())
+    player.TenCauThu.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="players-container">
       <h2>Danh sách cầu thủ</h2>
 
-      <Link to="/create/player" className="add-player-button">
+      <Link to="/create/cau-thu" className="add-player-button">
         Thêm cầu thủ mới
       </Link>
 

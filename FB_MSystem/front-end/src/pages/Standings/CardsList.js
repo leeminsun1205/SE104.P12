@@ -20,7 +20,7 @@ function CardsList({ API_URL }) {
     useEffect(() => {
         const fetchSeasons = async () => {
             try {
-                const response = await fetch(`${API_URL}/seasons`);
+                const response = await fetch(`${API_URL}/mua-giai`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -39,7 +39,7 @@ function CardsList({ API_URL }) {
         const fetchPlayersData = async () => {
             if (selectedSeason) {
                 try {
-                    const response = await fetch(`${API_URL}/players`);
+                    const response = await fetch(`${API_URL}/cau-thu`);
                     if (!response.ok) {
                         throw new Error(`Could not fetch players: ${response.status}`);
                     }

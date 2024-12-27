@@ -1,13 +1,19 @@
-const { UUID } = require('sequelize');
+const { UUID, MACADDR } = require('sequelize');
 const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, Sequelize } = require('../models');
 const LoaiUuTien = require('../models/loaiuutien');
+const MuaGiaiController = require('./muaGiaiController');
 
 const BangXepHangController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
             const { sortBy, order } = req.query;  // `sortBy` và `order` là lựa chọn từ phía người dùng
-            const utxh = UtXepHang;
+            const utxh = await UtXepHang.findAll({
+                where: {MaMuaGiai : MaMuaGiai}
+            })
+            // const vongDaus = await VongDau.findAll({
+            //     where: { maMuaGiai: maMuaGiai }
+            // });
 
             // Gọi hàm cập nhật ThanhTich
             await updateThanhTichFromBangXepHang(MaMuaGiai);
@@ -17,7 +23,12 @@ const BangXepHangController = {
 
             let sortCriteria = [];
 
-            // Kiểm tra nếu body không tồn tại hoặc không phải là mảng
+            // Kiểm tra nếu body không tồn tại hoặc không phải là mảng]
+
+            // console.error(error);
+            console.log(utxh);
+            console.log(MaMuaGiai);
+
             if (!Array.isArray(utxh) || utxh.length === 0) {
                 return res.status(400).json({ message: 'Danh sách tiêu chí sắp xếp không hợp lệ.' });
             }

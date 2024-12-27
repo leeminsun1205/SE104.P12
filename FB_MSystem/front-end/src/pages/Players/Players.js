@@ -21,7 +21,7 @@ function Players({ seasons }) {
   useEffect(() => {
     const fetchTeamName = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/teams/${teamId}`);
+        const response = await fetch(`http://localhost:5000/db-ct/${teamId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch team data");
         }
@@ -40,7 +40,7 @@ function Players({ seasons }) {
     const fetchPlayers = async () => {
       setLoading(true);
       try {
-        let url = `http://localhost:5000/api/teams/${teamId}/players`;
+        let url = `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu`;
         if (selectedSeason && selectedSeason !== "all") {
           url += `?season=${selectedSeason}`;
         }
@@ -64,7 +64,7 @@ function Players({ seasons }) {
   useEffect(() => {
     const fetchAvailablePlayers = async () => {
       try {
-        let url = `http://localhost:5000/api/players`;
+        let url = `http://localhost:5000/cau-thu`;
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error("Failed to fetch available players");
@@ -88,7 +88,7 @@ function Players({ seasons }) {
   const handleDeletePlayer = async (playerId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/teams/${teamId}/players/${playerId}`,
+        `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu/${playerId}`,
         {
           method: "DELETE",
           headers: {
@@ -128,7 +128,7 @@ function Players({ seasons }) {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/teams/${teamId}/players`,
+        `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu`,
         {
           method: "POST",
           headers: {
@@ -167,10 +167,10 @@ function Players({ seasons }) {
     }
   };
   const handleNavigate = (player) => {
-    navigate(`/teams/${teamId}/players/${player.id}`, { state: { player } });
+    navigate(`/db-ct/doi-bong/${teamId}/cau-thu/${player.id}`, { state: { player } });
   };
   const handleToTeams = () => {
-    navigate(`/teams`);
+    navigate(`/db-ct/doi-bong`);
   };
 
   const handleSeasonChange = (newSeason) => {
