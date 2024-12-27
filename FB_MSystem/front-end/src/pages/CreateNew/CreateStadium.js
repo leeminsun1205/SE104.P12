@@ -5,18 +5,18 @@ import styles from './CreateStadium.module.css';
 
 function CreateStadium({ API_URL, onAddStadium }) {
     const [stadium, setStadium] = useState({
-        stadiumName: '',
-        address: '',
-        capacity: '',
-        standard: '',
+        TenSan: '',
+        DiaChiSan: '',
+        SucChua: '',
+        TieuChuan: '',
     });
 
     const navigate = useNavigate();
     const [errors, setErrors] = useState({
-        stadiumName: '',
-        address: '',
-        capacity: '',
-        standard: '',
+        TenSan: '',
+        DiaChiSan: '',
+        SucChua: '',
+        TieuChuan: '',
     });
 
     const handleChange = (e) => {
@@ -34,16 +34,16 @@ function CreateStadium({ API_URL, onAddStadium }) {
 
     const handleReset = () => {
         setStadium({
-            stadiumName: '',
-            address: '',
-            capacity: '',
-            standard: '',
+            TenSan: '',
+            DiaChiSan: '',
+            SucChua: '',
+            TieuChuan: '',
         });
         setErrors({
-            stadiumName: '',
-            address: '',
-            capacity: '',
-            standard: '',
+            TenSan: '',
+            DiaChiSan: '',
+            SucChua: '',
+            TieuChuan: '',
         });
     };
 
@@ -52,26 +52,26 @@ function CreateStadium({ API_URL, onAddStadium }) {
         let isValid = true;
         const newErrors = {};
 
-        if (!stadium.stadiumName.trim()) {
-            newErrors.stadiumName = 'Tên sân không được để trống.';
+        if (!stadium.TenSan.trim()) {
+            newErrors.TenSan = 'Tên sân không được để trống.';
             isValid = false;
         }
-        if (!stadium.address.trim()) {
-            newErrors.address = 'Địa chỉ không được để trống.';
+        if (!stadium.DiaChiSan.trim()) {
+            newErrors.DiaChiSan = 'Địa chỉ không được để trống.';
             isValid = false;
         }
-        if (!stadium.capacity) {
-            newErrors.capacity = 'Sức chứa không được để trống.';
+        if (!stadium.SucChua) {
+            newErrors.SucChua = 'Sức chứa không được để trống.';
             isValid = false;
-        } else if (isNaN(stadium.capacity) || parseInt(stadium.capacity) <= 0) {
-            newErrors.capacity = 'Sức chứa phải là một số lớn hơn 0.';
+        } else if (isNaN(stadium.SucChua) || parseInt(stadium.SucChua) <= 0) {
+            newErrors.SucChua = 'Sức chứa phải là một số lớn hơn 0.';
             isValid = false;
         }
-        if (!stadium.standard) {
-            newErrors.standard = 'Tiêu chuẩn không được để trống.';
+        if (!stadium.TieuChuan) {
+            newErrors.TieuChuan = 'Tiêu chuẩn không được để trống.';
             isValid = false;
-        } else if (isNaN(stadium.standard) || parseInt(stadium.standard) < 1 || parseInt(stadium.standard) > 5) {
-            newErrors.standard = 'Tiêu chuẩn phải là một số từ 1 đến 5.';
+        } else if (isNaN(stadium.TieuChuan) || parseInt(stadium.TieuChuan) < 1 || parseInt(stadium.TieuChuan) > 5) {
+            newErrors.TieuChuan = 'Tiêu chuẩn phải là một số từ 1 đến 5.';
             isValid = false;
         }
 
@@ -80,8 +80,8 @@ function CreateStadium({ API_URL, onAddStadium }) {
         if (isValid) {
             const newStadium = {
                 ...stadium,
-                capacity: parseInt(stadium.capacity, 10),
-                standard: parseInt(stadium.standard, 10),
+                SucChua: parseInt(stadium.SucChua, 10),
+                TieuChuan: parseInt(stadium.TieuChuan, 10),
             };
 
             try {
@@ -102,7 +102,7 @@ function CreateStadium({ API_URL, onAddStadium }) {
                 if (typeof onAddStadium === 'function') {
                     onAddStadium(data.stadium);
                 }
-                navigate('/stadiums');
+                navigate('/san-thi-dau');
             } catch (error) {
                 console.error('Error creating stadium:', error);
                 // You might want to set a general error message here if the API call fails
@@ -116,48 +116,48 @@ function CreateStadium({ API_URL, onAddStadium }) {
             <h2>Thêm sân vận động mới</h2>
             <form onSubmit={handleSubmit} className={styles['create-stadium-form']}>
                 <div className={styles['form-group']}>
-                    <label htmlFor="stadiumName">Tên sân:</label>
+                    <label htmlFor="TenSan">Tên sân:</label>
                     <input
                         type="text"
-                        id="stadiumName"
-                        name="stadiumName"
-                        value={stadium.stadiumName}
+                        id="TenSan"
+                        name="TenSan"
+                        value={stadium.TenSan}
                         onChange={handleChange}
                     />
-                    {errors.stadiumName && <p className={styles['error-message']}>{errors.stadiumName}</p>}
+                    {errors.TenSan && <p className={styles['error-message']}>{errors.TenSan}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="address">Địa chỉ:</label>
+                    <label htmlFor="DiaChiSan">Địa chỉ:</label>
                     <input
                         type="text"
-                        id="address"
-                        name="address"
-                        value={stadium.address}
+                        id="DiaChiSan"
+                        name="DiaChiSan"
+                        value={stadium.DiaChiSan}
                         onChange={handleChange}
                     />
-                    {errors.address && <p className={styles['error-message']}>{errors.address}</p>}
+                    {errors.DiaChiSan && <p className={styles['error-message']}>{errors.DiaChiSan}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="capacity">Sức chứa:</label>
+                    <label htmlFor="SucChua">Sức chứa:</label>
                     <input
                         type="number"
-                        id="capacity"
-                        name="capacity"
-                        value={stadium.capacity}
+                        id="SucChua"
+                        name="SucChua"
+                        value={stadium.SucChua}
                         onChange={handleChange}
                     />
-                    {errors.capacity && <p className={styles['error-message']}>{errors.capacity}</p>}
+                    {errors.SucChua && <p className={styles['error-message']}>{errors.SucChua}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="standard">Tiêu chuẩn (1-5 sao):</label>
+                    <label htmlFor="TieuChuan">Tiêu chuẩn (1-5 sao):</label>
                     <input
                         type="number"
-                        id="standard"
-                        name="standard"
-                        value={stadium.standard}
+                        id="TieuChuan"
+                        name="TieuChuan"
+                        value={stadium.TieuChuan}
                         onChange={handleChange}
                     />
-                    {errors.standard && <p className={styles['error-message']}>{errors.standard}</p>}
+                    {errors.TieuChuan && <p className={styles['error-message']}>{errors.TieuChuan}</p>}
                 </div>
                 <div className={styles["create-container"]}>
                     <button type="submit" className={styles['submit-button']}>Thêm sân vận động</button>

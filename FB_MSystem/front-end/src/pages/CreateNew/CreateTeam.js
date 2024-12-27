@@ -103,9 +103,10 @@ const CreateTeam = ({ API_URL }) => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    
                     body: JSON.stringify(team),
                 });
-
+                console.log(team);
                 if (response.ok) {
                     console.log('Team created successfully');
                     navigate('/doi-bong');
