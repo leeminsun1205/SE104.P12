@@ -18,34 +18,6 @@ const UtXepHangController = {
         }
     },
 
-    async create(req, res) {
-        try {
-            const { MaMuaGiai, MaLoaiUuTien, MucDoUuTien } = req.body;
-    
-            // Kiểm tra xem đã có MucDoUuTien này trong MaMuaGiai chưa
-            const existingRecord = await UtXepHang.findOne({
-                where: {
-                    MaMuaGiai,
-                    MucDoUuTien,
-                },
-            });
-    
-            if (existingRecord) {
-                return res.status(400).json({ error: 'Mức độ ưu tiên này đã tồn tại trong mùa giải.' });
-            }
-    
-            // Nếu không có, tạo bản ghi mới
-            const utXepHang = await UtXepHang.create({
-                MaMuaGiai, MaLoaiUuTien, MucDoUuTien,
-            });
-    
-            res.status(201).json(utXepHang);
-        } catch (error) {
-            console.error('Lỗi khi thêm ưu tiên xếp hạng:', error);
-            res.status(500).json({ error: 'Lỗi khi thêm ưu tiên xếp hạng.' });
-        }
-    },
-
     async updateTieuChi(req, res) {
         try {
             const { MaMuaGiai } = req.params;
@@ -117,19 +89,6 @@ const UtXepHangController = {
         }
     },     
 
-    async delete(req, res) {
-        try {
-            const { MaMuaGiai, MaLoaiUuTien } = req.params;
-            const utXepHang = await UtXepHang.findOne({
-                where: { MaMuaGiai, MaLoaiUuTien },
-            });
-            if (!utXepHang) return res.status(404).json({ error: 'Không tìm thấy ưu tiên xếp hạng.' });
-            await utXepHang.destroy();
-            res.status(204).send();
-        } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi xóa ưu tiên xếp hạng.' });
-        }
-    },
 };
 
 module.exports = UtXepHangController;
