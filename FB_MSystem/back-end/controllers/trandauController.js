@@ -1,4 +1,4 @@
-const { BangXepHang, ThamSo, TranDau, VongDau, DoiBong, SanThiDau } = require('../models');
+const { BangXepHang, ThamSo, TranDau, VongDau, DoiBong, SanThiDau, } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
@@ -7,32 +7,32 @@ const TranDauController = {
                     {
                         model: VongDau,
                         as: 'VongDau',
-                        attributes: ['MaMuaGiai', 'MaVongDau'], // Lấy thêm MaMuaGiai và MaVongDau
+                        attributes: ['MaMuaGiai', 'MaVongDau'],
                     },
                     {
                         model: DoiBong,
-                        as: 'DoiBongNha', // Alias cho đội bóng nhà
-                        attributes: ['TenDoiBong'], // Lấy tên đội bóng nhà
+                        as: 'DoiBongNha',
+                        attributes: ['TenDoiBong'],
                     },
                     {
                         model: DoiBong,
-                        as: 'DoiBongKhach', // Alias cho đội bóng khách
-                        attributes: ['TenDoiBong'], // Lấy tên đội bóng khách
+                        as: 'DoiBongKhach',
+                        attributes: ['TenDoiBong'],
                     },
                     {
                         model: SanThiDau,
-                        as: 'SanThiDau', // Alias cho sân thi đấu
-                        attributes: ['TenSan'], // Lấy tên sân
+                        as: 'SanThiDau',
+                        attributes: ['TenSan'],
                     },
                 ],
             });
-    
+
             const results = tranDaus.map((tranDau) => {
                 const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
                 const MaMuaGiai = VongDau?.MaMuaGiai || null;
                 const MaVongDau = VongDau?.MaVongDau || null;
                 const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
-    
+
                 return {
                     ...rest,
                     MaMuaGiai,
@@ -43,17 +43,17 @@ const TranDauController = {
                     TenSan: SanThiDau?.TenSan || null,
                 };
             });
-    
+
             res.status(200).json({ tranDau: results });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu.', details: error.message });
         }
     },
-    
+
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-    
+
             const tranDaus = await TranDau.findAll({
                 include: [
                     {
@@ -79,17 +79,17 @@ const TranDauController = {
                     },
                 ],
             });
-    
+
             if (tranDaus.length === 0) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu nào cho mùa giải này.' });
             }
-    
+
             const results = tranDaus.map((tranDau) => {
                 const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
                 const MaMuaGiai = VongDau?.MaMuaGiai || null;
                 const MaVongDau = VongDau?.MaVongDau || null;
                 const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
-    
+
                 return {
                     ...rest,
                     MaMuaGiai,
@@ -100,21 +100,61 @@ const TranDauController = {
                     TenSan: SanThiDau?.TenSan || null,
                 };
             });
-    
+
             res.status(200).json({ tranDau: results });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu theo mùa giải.', details: error.message });
         }
     },
-    
+
     async getById(req, res) {
         try {
-            const { id } = req.params;
-            const tranDau = await TranDau.findByPk(id);
-            if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
-            res.status(200).json(tranDau);
+            const { MaTranDau } = req.params;
+            const tranDau = await TranDau.findByPk(MaTranDau, { // Use findByPk for fetching by ID
+                include: [
+                    {
+                        model: VongDau,
+                        as: 'VongDau',
+                        attributes: ['MaMuaGiai', 'MaVongDau'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongNha',
+                        attributes: ['TenDoiBong'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongKhach',
+                        attributes: ['TenDoiBong'],
+                    },
+                    {
+                        model: SanThiDau,
+                        as: 'SanThiDau',
+                        attributes: ['TenSan'],
+                    },
+                ],
+            });
+    
+            if (!tranDau) {
+                return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
+            } else { // Only proceed if tranDau exists
+                const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
+                const MaMuaGiai = VongDau?.MaMuaGiai || null;
+                const MaVongDau = VongDau?.MaVongDau || null;
+                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
+                const result = {
+                    ...rest,
+                    MaMuaGiai,
+                    MaVongDau,
+                    TenVongDau,
+                    TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
+                    TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
+                    TenSan: SanThiDau?.TenSan || null,
+                };
+                res.status(200).json({ tranDau: result });
+            }
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.' });
+            res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.', details: error.message });
         }
     },
 
@@ -134,7 +174,7 @@ const TranDauController = {
         try {
             const { id } = req.params;
             const updates = req.body;
-    
+
             // Truy vấn TranDau kèm theo VongDau để lấy MaMuaGiai
             const tranDau = await TranDau.findByPk(id, {
                 include: {
@@ -143,14 +183,14 @@ const TranDauController = {
                     attributes: ['MaMuaGiai'], // Chỉ lấy cột MaMuaGiai từ VongDau
                 },
             });
-    
+
             if (!tranDau) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
             }
-    
+
             console.log('TinhTrang hiện tại:', tranDau.TinhTrang);
             console.log('TinhTrang muốn cập nhật:', updates.TinhTrang);
-    
+
             if (tranDau.TinhTrang === false && updates.TinhTrang === true) {
                 tranDau.BanThangDoiNha = 0;
                 tranDau.BanThangDoiKhach = 0;
@@ -158,25 +198,25 @@ const TranDauController = {
                 await tranDau.save();
                 console.log('Trận đấu đã bắt đầu!');
             }
-    
+
             console.log('tranDau.TinhTrang từ DB:', tranDau.TinhTrang);
-    
+
             if (updates.TinhTrang === false && tranDau.TinhTrang === true) {
                 // Lấy MaMuaGiai từ VongDau
                 const maMuaGiai = tranDau.VongDau.MaMuaGiai;
-    
+
                 // Lấy điểm số từ bảng ThamSo
                 const thamSo = await ThamSo.findOne(); // Giả sử bảng ThamSo chỉ có một bản ghi
                 if (!thamSo) {
                     return res.status(500).json({ error: 'Không tìm thấy thông tin điểm số trong bảng ThamSo.' });
                 }
-    
+
                 console.log('Điểm số từ ThamSo:', {
                     DiemThang: thamSo.DiemThang,
                     DiemHoa: thamSo.DiemHoa,
                     DiemThua: thamSo.DiemThua,
                 });
-    
+
                 // Truy vấn đồng thời các đội bóng trong BangXepHang
                 const [doiNha, doiKhach] = await Promise.all([
                     BangXepHang.findOne({
@@ -186,11 +226,11 @@ const TranDauController = {
                         where: { MaDoiBong: tranDau.MaDoiBongKhach, MaMuaGiai: maMuaGiai },
                     }),
                 ]);
-    
+
                 if (!doiNha || !doiKhach) {
                     return res.status(404).json({ error: 'Không tìm thấy đội bóng trong bảng xếp hạng.' });
                 }
-    
+
                 // Logic cập nhật bảng xếp hạng
                 if (tranDau.BanThangDoiKhach > tranDau.BanThangDoiNha) {
                     doiKhach.SoTranThang += 1;
@@ -208,28 +248,28 @@ const TranDauController = {
                     doiNha.DiemSo += thamSo.DiemHoa;
                     doiKhach.DiemSo += thamSo.DiemHoa;
                 }
-    
+
                 doiNha.SoTran += 1;
                 doiKhach.SoTran += 1;
-    
+
                 doiNha.SoBanThang += tranDau.BanThangDoiNha;
                 doiNha.SoBanThua += tranDau.BanThangDoiKhach;
                 doiKhach.SoBanThang += tranDau.BanThangDoiKhach;
                 doiKhach.SoBanThua += tranDau.BanThangDoiNha;
-    
+
                 doiNha.HieuSo = doiNha.SoBanThang - doiNha.SoBanThua;
                 doiKhach.HieuSo = doiKhach.SoBanThang - doiKhach.SoBanThua;
-    
+
                 await doiNha.save();
                 await doiKhach.save();
-    
+
                 console.log('Kết thúc trận đấu, cập nhật bảng xếp hạng thành công!');
-    
+
                 tranDau.TinhTrang = false;
                 await tranDau.save();
                 console.log('Cập nhật TinhTrang về false thành công!');
             }
-    
+
             res.status(200).json(tranDau);
         } catch (error) {
             console.error('Lỗi khi cập nhật trận đấu:', error);

@@ -24,7 +24,6 @@ function MatchDetails({ API_URL }) {
   });
   const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
   const [awayTeamPlayers, setAwayTeamPlayers] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -38,7 +37,7 @@ function MatchDetails({ API_URL }) {
         setEditedMatch(matchData);
 
         const homeResponse = await fetch(
-          `${API_URL}/teams/${matchData.MaDoiBongNha}/players?season=${matchData.MaMuaGiai}`
+          `${API_URL}/mg-db/mua-giai/${MaMuaGiai}/doi-bong/${matchData.MaDoiBongNha}`
         );
         if (!homeResponse.ok)
           console.error("Failed to fetch home team players");
@@ -46,7 +45,7 @@ function MatchDetails({ API_URL }) {
         setHomeTeamPlayers(homeData.players);
 
         const awayResponse = await fetch(
-          `${API_URL}/teams/${matchData.MaDoiBongKhach}/players?season=${matchData.MaMuaGiai}`
+          `${API_URL}/mg-db/mua-giai/${MaMuaGiai}/doi-bong/${matchData.MaDoiBongKhach}`
         );
         if (!awayResponse.ok)
           console.error("Failed to fetch away team players");
@@ -80,7 +79,7 @@ function MatchDetails({ API_URL }) {
   const removeGoal = async (goalId) => {
     try {
       const response = await fetch(
-        `${API_URL}/matches/${match.matchId}/goals/${goalId}`,
+        `${API_URL}/tran-dau/${MaTranDau}/goals/${goalId}`,
         {
           method: "DELETE",
         }
@@ -90,11 +89,11 @@ function MatchDetails({ API_URL }) {
       }
       setMatch((prevMatch) => ({
         ...prevMatch,
-        goals: prevMatch.goals.filter((goal) => goal.goalId !== goalId),
+        goals: prevMatch.goals.filter((goal) => goal.MaBanThang !== goalId),
       }));
       setEditedMatch((prevEditedMatch) => ({
         ...prevEditedMatch,
-        goals: prevEditedMatch.goals.filter((goal) => goal.goalId !== goalId),
+        goals: prevEditedMatch.goals.filter((goal) => goal.MaBanThang !== goalId),
       }));
     } catch (error) {
       console.error("Error deleting goal:", error);
@@ -147,10 +146,10 @@ function MatchDetails({ API_URL }) {
     });
   };
 
-  const removeCard = async (cardId) => {
+  const removeCard = async (MaThePhat) => {
     try {
       const response = await fetch(
-        `${API_URL}/matches/${match.matchId}/cards/${cardId}`,
+        `${API_URL}/tran-dau/${MaTranDau}/the-phat/${MaThePhat}`,
         {
           method: "DELETE",
         }
@@ -160,11 +159,11 @@ function MatchDetails({ API_URL }) {
       }
       setMatch((prevMatch) => ({
         ...prevMatch,
-        cards: prevMatch.cards.filter((card) => card.cardId !== cardId),
+        cards: prevMatch.cards.filter((card) => card.MaThePhat !== MaThePhat),
       }));
       setEditedMatch((prevEditedMatch) => ({
         ...prevEditedMatch,
-        cards: prevEditedMatch.cards.filter((card) => card.cardId !== cardId),
+        cards: prevEditedMatch.cards.filter((card) => card.MaThePhat !== MaThePhat),
       }));
     } catch (error) {
       console.error("Error deleting card:", error);
@@ -173,12 +172,12 @@ function MatchDetails({ API_URL }) {
 
   const handleSaveGoals = async () => {
     try {
-      const newGoals = sortedGoals.filter((goal) => !goal.goalId);
-      const existingGoals = sortedGoals.filter((goal) => goal.goalId);
+      const newGoals = sortedGoals.filter((goal) => !goal.MaBanThang);
+      const existingGoals = sortedGoals.filter((goal) => goal.MaBanThang);
 
       for (const newGoal of newGoals) {
         const response = await fetch(
-          `${API_URL}/matches/${match.matchId}/goals`,
+          `${API_URL}/tran-dau/${MaTranDau}/ban-thang`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -191,7 +190,7 @@ function MatchDetails({ API_URL }) {
 
       for (const existingGoal of existingGoals) {
         const response = await fetch(
-          `${API_URL}/matches/${match.matchId}/goals/${existingGoal.goalId}`,
+          `${API_URL}/tran-dau/${MaTranDau}/ban-thang/${existingGoal.MaBanThang}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -202,7 +201,7 @@ function MatchDetails({ API_URL }) {
           throw new Error(`Could not update goal: ${response.statusText}`);
       }
 
-      const response = await fetch(`${API_URL}/matches/${match.matchId}`);
+      const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`);
       if (!response.ok)
         throw new Error(
           `Could not fetch updated match data: ${response.statusText}`
@@ -218,12 +217,12 @@ function MatchDetails({ API_URL }) {
 
   const handleSaveCards = async () => {
     try {
-      const newCards = sortedCards.filter((card) => !card.cardId);
-      const existingCards = sortedCards.filter((card) => card.cardId);
+      const newCards = sortedCards.filter((card) => !card.MaThePhat);
+      const existingCards = sortedCards.filter((card) => card.MaThePhat);
 
       for (const newCard of newCards) {
         const response = await fetch(
-          `${API_URL}/matches/${match.matchId}/cards`,
+          `${API_URL}/tran-dau/${MaTranDau}/the-phat`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -236,7 +235,7 @@ function MatchDetails({ API_URL }) {
 
       for (const existingCard of existingCards) {
         const response = await fetch(
-          `${API_URL}/matches/${match.matchId}/cards/${existingCard.cardId}`,
+          `${API_URL}/tran-dau/${MaTranDau}/the-phat/${existingCard.MaThePhat}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -247,7 +246,7 @@ function MatchDetails({ API_URL }) {
           throw new Error(`Could not update card: ${response.statusText}`);
       }
 
-      const response = await fetch(`${API_URL}/matches/${match.matchId}`);
+      const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`);
       if (!response.ok)
         throw new Error(
           `Could not fetch updated match data: ${response.statusText}`
@@ -376,7 +375,7 @@ function MatchDetails({ API_URL }) {
         <p>{error.message}</p>
         <button
           className={styles.backButton}
-          onClick={() => navigate("/matches")}
+          onClick={() => navigate("/tran-dau")}
         >
           Quay lại danh sách trận đấu
         </button>
@@ -391,7 +390,7 @@ function MatchDetails({ API_URL }) {
         <p>Vui lòng kiểm tra lại thông tin.</p>
         <button
           className={styles.backButton}
-          onClick={() => navigate("/matches")}
+          onClick={() => navigate("/tran-dau")}
         >
           Quay lại danh sách trận đấu
         </button>
@@ -418,14 +417,14 @@ function MatchDetails({ API_URL }) {
   const handleEditCards = () => {
     setIsEditingCards(true);
   };
-
+  console.log("Match oi:", match)
   return (
     <div className={styles.matchDetails}>
       <h1 className={styles.matchTitle}>
-        {match?.homeTeamName} <span>vs</span> {match?.awayTeamName}
+        {match?.TenDoiBongNha} <span>vs</span> {match?.TenDoiBongKhach}
       </h1>
 
-      {match?.isFinished && (
+      {match?.TinhTrang && (
         <div>
           <button className={styles.smallDetailsButton} onClick={toggleResult}>
             {showResult ? "Ẩn kết quả trận đấu" : "Hiện kết quả trận đấu"}
@@ -433,18 +432,18 @@ function MatchDetails({ API_URL }) {
         </div>
       )}
 
-      {match?.isFinished && showResult && (
+      {match?.TinhTrang && showResult && (
         <div className={styles.matchDetailsContainer}>
           <table className={styles.matchDetailsTable}>
             <tbody>
               <tr>
                 <td>
                   <span className={styles.label}>Đội 1:</span>{" "}
-                  {match?.homeTeamName}
+                  {match?.TenDoiBongNha}
                 </td>
                 <td>
                   <span className={styles.label}>Đội 2:</span>{" "}
-                  {match?.awayTeamName}
+                  {match?.TenDoiBongKhach}
                 </td>
               </tr>
               <tr>
@@ -516,7 +515,7 @@ function MatchDetails({ API_URL }) {
                         </thead>
                         <tbody>
                           {sortedGoals.map((goal, index) => (
-                            <tr key={`goal-${goal.goalId || index}`}>
+                            <tr key={`goal-${goal.MaBanThang || index}`}>
                               <td>
                                 {isEditingGoals ? (
                                   <select
@@ -557,16 +556,16 @@ function MatchDetails({ API_URL }) {
                                     }
                                   >
                                     <option value={match.homeTeamId}>
-                                      {match.homeTeamName}
+                                      {match.TenDoiBongNha}
                                     </option>
                                     <option value={match.awayTeamId}>
-                                      {match.awayTeamName}
+                                      {match.TenDoiBongKhach}
                                     </option>
                                   </select>
                                 ) : goal.teamId === match.homeTeamId ? (
-                                  match.homeTeamName
+                                  match.TenDoiBongNha
                                 ) : (
-                                  match.awayTeamName
+                                  match.TenDoiBongKhach
                                 )}
                               </td>
                               <td>
@@ -607,7 +606,7 @@ function MatchDetails({ API_URL }) {
                                 <td>
                                   <button
                                     type="button"
-                                    onClick={() => removeGoal(goal.goalId)}
+                                    onClick={() => removeGoal(goal.MaBanThang)}
                                     className={styles.removeButton}
                                   >
                                     Xóa
@@ -681,7 +680,7 @@ function MatchDetails({ API_URL }) {
                         </thead>
                         <tbody>
                           {sortedCards.map((card, index) => (
-                            <tr key={`card-${card.cardId || index}`}>
+                            <tr key={`card-${card.MaThePhat || index}`}>
                               <td>
                                 {isEditingCards ? (
                                   <select
@@ -722,16 +721,16 @@ function MatchDetails({ API_URL }) {
                                     }
                                   >
                                     <option value={match.homeTeamId}>
-                                      {match.homeTeamName}
+                                      {match.TenDoiBongNha}
                                     </option>
                                     <option value={match.awayTeamId}>
-                                      {match.awayTeamName}
+                                      {match.TenDoiBongKhach}
                                     </option>
                                   </select>
                                 ) : card.teamId === match.homeTeamId ? (
-                                  match.homeTeamName
+                                  match.TenDoiBongNha
                                 ) : (
-                                  match.awayTeamName
+                                  match.TenDoiBongKhach
                                 )}
                               </td>
                               <td>
@@ -778,7 +777,7 @@ function MatchDetails({ API_URL }) {
                                 <td>
                                   <button
                                     type="button"
-                                    onClick={() => removeCard(card.cardId)}
+                                    onClick={() => removeCard(card.MaThePhat)}
                                     className={styles.removeButton}
                                   >
                                     Xóa
@@ -824,7 +823,7 @@ function MatchDetails({ API_URL }) {
       )}
       <button
         className={styles.backButton}
-        onClick={() => navigate("/matches")}
+        onClick={() => navigate("/tran-dau")}
       >
         Quay lại danh sách trận đấu
       </button>

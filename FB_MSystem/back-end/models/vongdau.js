@@ -35,14 +35,16 @@ const VongDau = sequelize.define('VongDau', {
     timestamps: false,
 });
 
-// Thiết lập quan hệ với các bảng khác
 VongDau.associate = (models) => {
-    // Một vòng đấu thuộc một mùa giải
     VongDau.belongsTo(models.MuaGiai, {
         foreignKey: 'MaMuaGiai',
         as: 'MuaGiai',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
+    });
+    VongDau.hasMany(models.TranDau, {
+        foreignKey: 'MaVongDau',
+        as: 'TranDaus',
     });
 };
 
