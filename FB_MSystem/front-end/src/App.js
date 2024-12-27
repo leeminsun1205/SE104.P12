@@ -142,7 +142,7 @@ function App() {
     };
     const handleEditTeam = async (updatedTeam) => {
         try {
-            const response = await fetch(`${API_URL}/doi-bong/${updatedTeam.id}`, {
+            const response = await fetch(`${API_URL}/doi-bong/${updatedTeam.MaDoiBong}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedTeam),
@@ -151,11 +151,11 @@ function App() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const updatedTeamData = await response.json();
-
-            // Update the teams array with the updated team data
+            console.log("Updated Team Data", updatedTeamData)
             setTeams((prevTeams) =>
-                prevTeams.map((team) => (team.id === updatedTeam.id ? updatedTeamData.team : team))
+                prevTeams.map((team) => (team.MaDoiBong === updatedTeam.MaDoiBong ? updatedTeamData : team))
             );
+            console.log(teams)
         } catch (error) {
             console.error("Error updating team:", error);
         }

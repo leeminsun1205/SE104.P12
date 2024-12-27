@@ -74,7 +74,10 @@ button.cancel:hover {
 button:hover {
   opacity: 0.9;
 }
-
+.error-text {
+  color: red;
+  font-weight: 600;
+}
 .loader {
   text-align: center;
   font-size: 1.2rem;

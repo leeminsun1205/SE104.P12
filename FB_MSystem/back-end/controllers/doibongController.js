@@ -1,6 +1,6 @@
 const { DoiBong, SanThiDau } = require('../models');
 const { isDuplicate } = require('../utils/isDuplicate');
-
+const { Op } = require('sequelize'); 
 const DoiBongController = {
     async getAll(req, res) {
         try {
@@ -17,7 +17,7 @@ const DoiBongController = {
                 const { SanThiDau, ...rest } = doiBong.get();
                 return {
                     ...rest,
-                    MaSan: SanThiDau?.MaSan || null, // Thêm MaSan vào kết quả
+                    MaSan: SanThiDau?.MaSan || null, 
                     TenSan: SanThiDau?.TenSan || null,
                     SucChua: SanThiDau?.SucChua || null,
                     TieuChuan: SanThiDau?.TieuChuan || null,
@@ -42,14 +42,16 @@ const DoiBongController = {
                 ],
             });
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
-            const { SanThiDau, ...rest } = doiBong.get();
+            const doiBongData = doiBong.get();
+            const sanThiDau = doiBongData.SanThiDau;
+            const { SanThiDau: excludedSanThiDau, ...rest } = doiBongData; // Exclude SanThiDau here
             const result = {
                 ...rest,
-                MaSan: SanThiDau?.MaSan || null,
-                TenSan: SanThiDau?.TenSan || null,
-                TieuChuan: SanThiDau?.TieuChuan || null,
-                SucChua: SanThiDau?.SucChua || null,
-                DiaChi: SanThiDau?.DiaChi || null,
+                MaSan: sanThiDau?.MaSan || null,
+                TenSan: sanThiDau?.TenSan || null,
+                TieuChuan: sanThiDau?.TieuChuan || null,
+                SucChua: sanThiDau?.SucChua || null,
+                DiaChi: sanThiDau?.DiaChiSan || null, // Corrected to DiaChiSan
             };
             res.status(200).json({doiBong: result});
         } catch (error) {
@@ -82,12 +84,31 @@ const DoiBongController = {
             if (!doiBong) {
                 return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
             }
+
+            // Kiểm tra tên đội bóng (giữ nguyên)
             if (TenDoiBong && TenDoiBong !== doiBong.TenDoiBong) {
-                const isDuplicateName = await isDuplicate(DoiBong, 'TenDoiBong', TenDoiBong);
+                const isDuplicateName = await DoiBong.findOne({ where: { TenDoiBong } });
                 if (isDuplicateName) {
                     return res.status(400).json({ error: `Tên đội bóng "${TenDoiBong}" đã tồn tại.` });
                 }
             }
+
+            // Kiểm tra sân vận động
+            if (MaSan && MaSan !== doiBong.MaSan) {
+                // Tìm xem có đội bóng nào khác đang sử dụng sân này không
+                const sanDangDuocSuDung = await DoiBong.findOne({
+                    where: {
+                        MaSan: MaSan,
+                        MaDoiBong: { [Op.ne]: id } // Loại trừ đội bóng hiện tại
+                    }
+                });
+
+                if (sanDangDuocSuDung) {
+                    const sanThiDau = await SanThiDau.findByPk(MaSan);
+                    return res.status(400).json({ error: `Sân "${sanThiDau.TenSan}" không khả dụng.` });
+                }
+            }
+
             await doiBong.update({ MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin });
             res.status(200).json(doiBong);
         } catch (error) {
