@@ -96,6 +96,7 @@ const Matches = ({ API_URL }) => {
           (selectedRound === "" || match.MaVongDau === selectedRound)
       )
       .filter((match) => {
+        console.log("Search query:", searchQuery)
         const query = searchQuery.toLowerCase();
         return (
           match.TenDoiBongNha.toLowerCase().includes(query) ||

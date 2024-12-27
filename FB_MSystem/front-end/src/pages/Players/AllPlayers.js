@@ -26,7 +26,6 @@ function AllPlayers({ API_URL }) {
         setLoading(false);
       }
     };
-
     fetchAllPlayers();
   }, []);
 
@@ -58,6 +57,7 @@ function AllPlayers({ API_URL }) {
   };
 
   const handleSearch = (event) => {
+    console.log('Search: ', event.target.value);
     setSearchTerm(event.target.value);
   };
 
