@@ -169,7 +169,7 @@ const MgDbController = {
         try {
             const { MaMuaGiai, MaDoiBong } = req.params; // Liên kết cũ
             const updates = req.body; // Dữ liệu mới
-
+            console.log({ MaMuaGiai, MaDoiBong })
             const link = await MgDb.findOne({
                 where: { MaMuaGiai, MaDoiBong },
             });

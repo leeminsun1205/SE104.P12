@@ -228,7 +228,7 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/tao-moi/cau-thu" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
             <Route path="/doi-bong/:MaDoiBong/edit" element={<EditTeam API_URL = {API_URL} onEditTeam={onEditTeam} />} />
             <Route path="/doi-bong/:MaDoiBong" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
-            <Route path="/doi-bong/:MaDoiBong/cau-thu" element={<Players seasons={seasons} />} />
+            <Route path="/doi-bong/:MaDoiBong/cau-thu" element={<Players API_URL = {API_URL} seasons={seasons} />} />
             <Route path="/doi-bong/:MaDoiBong/cau-thu/:MaCauThu" element={<PlayerInfo API_URL={API_URL}/>} />
             <Route path="/cau-thu" element={<AllPlayers API_URL={API_URL}/>} />
             <Route path="/cau-thu/:MaCauThu" element={<PlayerInfo API_URL={API_URL}/>} />

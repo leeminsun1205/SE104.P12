@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./PlayerInfo.css";
 import { calculateAge } from "./PlayerList";
 
-const PlayerInfo = () => {
+const PlayerInfo = ({ API_URL }) => {
   const { teamId, playerId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,20 +14,20 @@ const PlayerInfo = () => {
       const fetchPlayerFromAPI = async () => {
         try {
           const url = teamId
-            ? `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu/${playerId}`
-            : `http://localhost:5000/cau-thu/${playerId}`;
+            ? `${API_URL}/db-ct/doi-bong/${teamId}/cau-thu/${playerId}`
+            : `${API_URL}/cau-thu/${playerId}`;
           
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error("Player not found");
-          }
-          const data = await response.json();
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error("Player not found");
+            }
+            const data = await response.json();
           setPlayer(data);
         } catch (err) {
           setError(err.message);
         }
       };
-
+      
       fetchPlayerFromAPI();
     }
   }, [teamId, playerId, player]);

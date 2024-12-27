@@ -26,7 +26,7 @@ function Players({ API_URL, seasons }) {
           throw new Error("Failed to fetch team data");
         }
         const data = await response.json();
-        setTeamName(data.name);
+        setTeamName(data.doiBong.TenDoiBong);
       } catch (error) {
         console.error("Error fetching team name:", error);
       }
@@ -34,16 +34,17 @@ function Players({ API_URL, seasons }) {
 
     fetchTeamName();
   }, [MaDoiBong]);
-  // useEffect thứ hai - Sửa lại URL để bao gồm MaDoiBong
+
+  // Fetch players based on the selected season
   useEffect(() => {
     const fetchPlayers = async () => {
       setLoading(true);
+      setError(null); // Reset error on new fetch
       try {
         let url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu`;
         if (selectedSeason && selectedSeason !== "all") {
-          url = `${API_URL}/cau-thu`;
+          url += `?season=${selectedSeason}`; // Add season as a query parameter
         }
-
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error("Failed to fetch players");
@@ -58,17 +59,17 @@ function Players({ API_URL, seasons }) {
     };
 
     fetchPlayers();
-  }, [MaDoiBong, selectedSeason]);
+  }, [MaDoiBong, selectedSeason]); // Include selectedSeason in the dependency array
 
   useEffect(() => {
     const fetchAvailablePlayers = async () => {
       try {
-        let url = `http://localhost:5000/cau-thu`;
-        const response = await fetch(url);
+        const response = await fetch(`${API_URL}/cau-thu`);
         if (!response.ok) {
           throw new Error("Failed to fetch available players");
         }
         const data = await response.json();
+        console.log(data)
         setAvailablePlayers(data);
       } catch (error) {
         console.error("Error fetching available players:", error);
@@ -77,7 +78,7 @@ function Players({ API_URL, seasons }) {
     };
 
     fetchAvailablePlayers();
-  }, [selectedSeason]);
+  }, []); // Fetch available players only once
 
   const handleAddPlayer = (newPlayer) => {
     setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
@@ -86,57 +87,51 @@ function Players({ API_URL, seasons }) {
 
   const handleDeletePlayer = async (playerId) => {
     try {
+      let url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu/${playerId}`;
+      if (selectedSeason && selectedSeason !== "all") {
+        url += `?season=${selectedSeason}`; // Add season as a query parameter for deletion
+      }
       const response = await fetch(
-        `http://localhost:5000/db-ct/doi-bong/${MaDoiBong}/cau-thu/${playerId}`,
+        url,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ season: selectedSeason }),
         }
       );
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to delete player");
       }
-  
-      // Cập nhật state players dựa trên selectedSeason
-      setPlayers((prevPlayers) => {
-        if (selectedSeason === "all") {
-          // Lọc bỏ player khỏi tất cả các mùa giải
-          return prevPlayers.filter((player) => player.MaCauThu !== playerId);
-        } else {
-          // Lọc bỏ player chỉ trong selectedSeason
-          return prevPlayers.filter(
-            (player) => !(player.MaCauThu === playerId && player.MaMuaGiai === selectedSeason)
-          );
-        }
-      });
+
+      // Update state to remove the deleted player
+      setPlayers((prevPlayers) =>
+        prevPlayers.filter((player) => player.MaCauThu !== playerId)
+      );
     } catch (error) {
       console.error("Error deleting player:", error);
       setError(error.message);
     }
   };
-  
 
  const handleAddPlayersToTeam = async (selectedPlayerIds) => {
     if (selectedPlayerIds.length === 0) return;
 
     setLoading(true);
     try {
+      const playersToAdd = selectedPlayerIds.map(playerId => ({
+        MaDoiBong: MaDoiBong,
+        MaCauThu: playerId,
+        MaMuaGiai: selectedSeason // Ensure the selected season is included
+      }));
+
       const response = await fetch(
-        `http://localhost:5000/db-ct/doi-bong/${MaDoiBong}/cau-thu`,
+        `${API_URL}/mg-db/createMany`, // Assuming this endpoint handles adding players to teams for a season
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            season: selectedSeason,
-            playerIds: selectedPlayerIds,
-          }),
+          body: JSON.stringify(playersToAdd),
         }
       );
 
@@ -145,13 +140,14 @@ function Players({ API_URL, seasons }) {
         throw new Error(errorData.message || "Failed to add players to team");
       }
 
-      // Get updated players from response data
-      const { updatedPlayers } = await response.json();
+      // After successfully adding players, refetch the players for the current season
+      const fetchPlayersResponse = await fetch(`${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu?season=${selectedSeason}`);
+      if (fetchPlayersResponse.ok) {
+        const newData = await fetchPlayersResponse.json();
+        setPlayers(newData.cauThu);
+      }
 
-      // Add new players to the existing list
-      setPlayers((prevPlayers) => [...prevPlayers, ...updatedPlayers]);
-
-      // Filter out added players from the available players list
+      // Filter out added players from the available players list (optional, depends on your logic)
       setAvailablePlayers((prevAvailablePlayers) =>
         prevAvailablePlayers.filter(
           (player) => !selectedPlayerIds.includes(player.id)
@@ -198,6 +194,7 @@ function Players({ API_URL, seasons }) {
 
       {showAddPlayersModal && (
         <AddPlayersToTeamModal
+          aAPI_URl={'http://localhost:5000'}
           teamId={MaDoiBong}
           season={selectedSeason}
           onAddPlayersToTeam={handleAddPlayersToTeam}
@@ -215,7 +212,7 @@ function Players({ API_URL, seasons }) {
           </div>
         </div>
       )}
-      
+
       {error && <p className="error-message">{error}</p>}
       {loading ? (
         <p>Đang tải...</p>
@@ -228,11 +225,11 @@ function Players({ API_URL, seasons }) {
         />
       ) : (
         <div className="empty-state">
-          <p>Không tìm thấy cầu thủ trong đội {teamName}</p>
+          <p>Không tìm thấy cầu thủ trong đội {teamName} cho mùa giải này.</p>
         </div>
       )}
     </div>
-    
+
   );
 }
 

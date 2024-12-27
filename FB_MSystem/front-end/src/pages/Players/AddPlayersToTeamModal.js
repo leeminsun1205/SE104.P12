@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AddPlayersToTeamModal.css";
 
-function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) {
+function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, onClose }) {
   const [availablePlayers, setAvailablePlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -11,18 +11,15 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
     const fetchAvailablePlayers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/cau-thu`);
+        const response = await fetch(`${aAPI_URl}/cau-thu`);
         if (!response.ok) {
           throw new Error("Failed to fetch available players");
         }
         let data = await response.json();
-
-        // Filter out players that are already in a team for the selected season
-        if (season) {
-          data = data.filter(player => player.season !== season);
-        }
-
-        setAvailablePlayers(data);
+        const filteredPlayers = data.cauThu.filter(player => {
+          return player.MaCauThu !== teamId || player.MaMuaGiai !== season;
+        });
+        setAvailablePlayers(filteredPlayers);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -46,18 +43,17 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
   const handleAddPlayers = async () => {
     setLoading(true);
     try {
-      // Send the request to add players to the team
       const response = await fetch(
-        `http://localhost:5000/db-ct/doi-bong/${teamId}/cau-thu`,
+        `${aAPI_URl}/db-cb/createMany`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            season: season,
-            playerIds: selectedPlayers,
-          }),
+          body: JSON.stringify({links: selectedPlayers.map(playerId => ({
+            MaCauThu: playerId,
+            MaDoiBong: teamId,
+          }))}),
         }
       );
 
@@ -65,20 +61,7 @@ function AddPlayersToTeamModal({ teamId, season, onAddPlayersToTeam, onClose }) 
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add players to team");
       }
-
-      // Assuming the backend returns the updated list of players for the team
-      const updatedPlayers = await response.json();
-
-      // Instead of updating the state directly, call onAddPlayersToTeam
-      // to let the parent component (Players.js) manage the state
       onAddPlayersToTeam(selectedPlayers);
-
-      // Remove added players from the available players list
-      setAvailablePlayers((prevAvailablePlayers) =>
-        prevAvailablePlayers.filter(
-          (player) => !selectedPlayers.includes(player.MaCauThu)
-        )
-      );
 
       setSelectedPlayers([]); // Clear selected players
       onClose();
