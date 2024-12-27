@@ -1,21 +1,45 @@
-const { DbCt, CauThu, ThamSo } = require('../models');
+const { DbCt, CauThu, ThamSo, MgDb } = require('../models');
 
 const DbCtController = {
     // Lấy danh sách cầu thủ theo đội bóng
     async getByDoiBong(req, res) {
         try {
             const { MaDoiBong } = req.params;
+
+            // Nối bảng DbCt với MgDb để lấy thông tin MaMuaGiai
             const data = await DbCt.findAll({
                 where: { MaDoiBong },
                 include: [
                     {
                         model: CauThu,
                         as: 'CauThu',
-                        attributes: ['MaCauThu', 'TenCauThu', 'NgaySinh', 'ViTri'], // Các cột cần lấy của bảng CauThu
+                        attributes: ['MaCauThu', 'TenCauThu', 'NgaySinh', 'QuocTich', 'LoaiCauThu', 'ViTri', 'ChieuCao', 'CanNang', 'SoAo', 'TieuSu'], // Các cột cần lấy của bảng CauThu
                     },
+                    {
+                        model: MgDb,  // Nối với bảng MgDb
+                        as: 'MgDb',
+                        attributes: ['MaMuaGiai'], // Các cột cần lấy của bảng MgDb
+                    }
                 ],
             });
-            res.status(200).json(data.map(item => item.CauThu));
+
+            // Chỉ lấy các trường cần thiết
+            const formattedData = data.map(item => ({
+                MaMuaGiai: item.MgDb ? item.MgDb.MaMuaGiai : null,  // Lấy MaMuaGiai từ bảng MgDb
+                MaDoiBong: item.MaDoiBong,
+                MaCauThu: item.CauThu.MaCauThu,
+                TenCauThu: item.CauThu.TenCauThu,
+                NgaySinh: item.CauThu.NgaySinh,
+                QuocTich: item.CauThu.QuocTich,
+                LoaiCauThu: item.CauThu.LoaiCauThu,
+                ViTri: item.CauThu.ViTri,
+                ChieuCao: item.CauThu.ChieuCao,
+                CanNang: item.CauThu.CanNang,
+                SoAo: item.CauThu.SoAo,
+                TieuSu: item.CauThu.TieuSu,
+            }));
+
+            res.status(200).json(formattedData);
         } catch (error) {
             console.error("Lỗi khi lấy danh sách cầu thủ theo đội bóng:", error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ theo đội bóng.' });

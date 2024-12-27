@@ -1,4 +1,4 @@
-const { MgDb, DoiBong} = require('../models');
+const { MgDb, DoiBong, DbCt, CauThu } = require('../models');
 const { updateRanking, validateStadiumConditions, validatePlayerConditions} = require('../services/mg_DbServices')
 const MgDbController = {
     // Lấy danh sách đội bóng theo mùa giải

@@ -107,11 +107,11 @@ function Players({ seasons }) {
       setPlayers((prevPlayers) => {
         if (selectedSeason === "all") {
           // Lọc bỏ player khỏi tất cả các mùa giải
-          return prevPlayers.filter((player) => player.id !== playerId);
+          return prevPlayers.filter((player) => player.MaCauThu !== playerId);
         } else {
           // Lọc bỏ player chỉ trong selectedSeason
           return prevPlayers.filter(
-            (player) => !(player.id === playerId && player.season === selectedSeason)
+            (player) => !(player.MaCauThu === playerId && player.season === selectedSeason)
           );
         }
       });
