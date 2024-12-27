@@ -8,7 +8,7 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['MaSan', 'TenSan'],  // Lấy cả MaSan và TenSan
+                        attributes: ['MaSan', 'TenSan', 'SucChua', 'TieuChuan'],
                     },
                 ],
             });
@@ -16,7 +16,10 @@ const DoiBongController = {
                 const { SanThiDau, ...rest } = doiBong.get();
                 return {
                     ...rest,
-                    TenSan: SanThiDau ? SanThiDau.TenSan : null,  // Sử dụng TenSan đã lấy được
+                    MaSan: SanThiDau?.MaSan || null, // Thêm MaSan vào kết quả
+                    TenSan: SanThiDau?.TenSan || null,
+                    SucChua: SanThiDau?.SucChua || null,
+                    TieuChuan: SanThiDau?.TieuChuan || null,
                 };
             });
             res.status(200).json({ doiBong: results });
@@ -33,15 +36,18 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['TenSan'], 
+                        attributes: ['MaSan', 'TenSan', 'TieuChuan', 'SucChua'],
                     },
                 ],
             });
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
-            const { SanThiDau, MaSan, ...rest } = doiBong.get(); 
+            const { SanThiDau, ...rest } = doiBong.get();
             const result = {
                 ...rest,
-                TenSan: SanThiDau ? SanThiDau.TenSan : null,
+                MaSan: SanThiDau?.MaSan || null,
+                TenSan: SanThiDau?.TenSan || null,
+                TieuChuan: SanThiDau?.TieuChuan || null,
+                SucChua: SanThiDau?.SucChua || null,
             };
             res.status(200).json(result);
         } catch (error) {

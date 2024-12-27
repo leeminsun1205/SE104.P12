@@ -5,7 +5,7 @@ import styles from './CardsList.module.css';
 import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
 
 function CardsList({ API_URL }) {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [selectedSeason, setSelectedSeason] = useState('');
     const [cards, setCards] = useState([]);
     const [availableSeasons, setAvailableSeasons] = useState([]);
@@ -45,7 +45,7 @@ function CardsList({ API_URL }) {
                     }
                     const data = await response.json();
                     const playersMap = {};
-                    data.forEach(player => playersMap[player.id] = player);
+                    data.forEach(player => playersMap[player.MaCauThu] = player);
                     setPlayers(playersMap);
                 } catch (error) {
                     console.error("Error fetching players:", error);
@@ -72,7 +72,7 @@ function CardsList({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/matches?season=${selectedSeason}`);
+                const response = await fetch(`${API_URL}/tran-dau/mua-giai${selectedSeason}`);
                 if (!response.ok) {
                     if (response.status === 404) {
                         console.log(`Matches not found for season: ${selectedSeason}`);

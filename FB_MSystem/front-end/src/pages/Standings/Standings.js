@@ -176,19 +176,19 @@ function Standings({ API_URL }) {
                                     return (
                                         <tr
                                             key={`${team.rank}-${team.name}-${team.season}`}
-                                            onClick={() => handleRowClick(team.id, selectedSeason)}
+                                            onClick={() => handleRowClick(team.MaDoiBong, selectedSeason)}
                                             className={styles.standingsRow}
                                         >
                                             <td>{team.rank}</td>
                                             <td className={styles.teamName}>{team.name}</td>
-                                            <td>{team.played}</td>
-                                            <td>{team.won}</td>
-                                            <td>{team.drawn}</td>
-                                            <td>{team.lost}</td>
-                                            <td>{team.goalsFor}</td>
-                                            <td>{team.goalsAgainst}</td>
-                                            <td>{team.goalDifference}</td>
-                                            <td>{team.points}</td>
+                                            <td>{team.SoTran}</td>
+                                            <td>{team.SoTranThang}</td>
+                                            <td>{team.SoTranHoa}</td>
+                                            <td>{team.SoTranThua}</td>
+                                            <td>{team.SoBanThan}</td>
+                                            <td>{team.SoBanThua}</td>
+                                            <td>{team.HieuSo}</td>
+                                            <td>{team.DiemSo}</td>
                                         </tr>
                                     );
                                 })

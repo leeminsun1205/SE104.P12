@@ -4,20 +4,19 @@ import './CreateTeam.css';
 
 const CreateTeam = ({ API_URL }) => {
     const navigate = useNavigate();
-    const [team, setteam] = useState({
-        name: '',
-        city: '',
-        coach: '',
-        stadiumId: '',
-        capacity: '',
-        standard: '',
+    const [team, setTeam] = useState({
+        TenDoiBong: '',
+        ThanhPhoTrucThuoc: '',
+        TenHLV: '',
+        MaSan: '',
+        SucChua: '',
+        TieuChuan: '',
         home_kit_image: '',
         away_kit_image: '',
         third_kit_image: '',
-        description: '',
+        ThongTin: '',
     });
     const [stadiums, setStadiums] = useState([]);
-    const [, setSelectedStadium] = useState(null);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -39,7 +38,7 @@ const CreateTeam = ({ API_URL }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setteam(prevState => ({
+        setTeam(prevState => ({
             ...prevState,
             [name]: value,
         }));
@@ -47,24 +46,25 @@ const CreateTeam = ({ API_URL }) => {
     };
 
     const handleStadiumChange = (e) => {
-        const stadiumId = parseInt(e.target.value);
-        setteam(prevState => ({
+        const stadiumId = e.target.value;
+        setTeam(prevState => ({
             ...prevState,
-            stadiumId: stadiumId,
+            MaSan: stadiumId,
         }));
-        const selectedStadium = stadiums.find(stadium => stadium.stadiumId === stadiumId);
-        setSelectedStadium(selectedStadium);
+        console.log('Heheheh', team)
+        const selectedStadium = stadiums.find(stadium => stadium.MaSan === stadiumId);
         if (selectedStadium) {
-            setteam(prevState => ({
+            // Set initial values, which can be overridden by user input
+            setTeam(prevState => ({
                 ...prevState,
-                capacity: selectedStadium.capacity,
-                standard: selectedStadium.standard,
+                SucChua: selectedStadium.SucChua,
+                TieuChuan: selectedStadium.TieuChuan,
             }));
         } else {
-            setteam(prevState => ({
+            setTeam(prevState => ({
                 ...prevState,
-                capacity: '',
-                standard: '',
+                SucChua: '',
+                TieuChuan: '',
             }));
         }
     };
@@ -73,16 +73,24 @@ const CreateTeam = ({ API_URL }) => {
         event.preventDefault();
         let isValid = true;
         const newErrors = {};
-        if (!team.name) {
-            newErrors.name = 'Tên đội bóng không được để trống';
+        if (!team.TenDoiBong) {
+            newErrors.TenDoiBong = 'Tên đội bóng không được để trống';
             isValid = false;
         }
-        if (!team.city) {
-            newErrors.city = 'Thành pho không được để trống';
+        if (!team.ThanhPhoTrucThuoc) {
+            newErrors.ThanhPhoTrucThuoc = 'Thành phố không được để trống';
             isValid = false;
         }
-        if (!team.stadiumId) {
-            newErrors.stadiumId = 'Sân vận động không được để trống';
+        if (!team.MaSan) {
+            newErrors.MaSan = 'Sân vận động không được để trống';
+            isValid = false;
+        }
+        if (!team.SucChua) {
+            newErrors.SucChua = 'Sức chứa không được để trống';
+            isValid = false;
+        }
+        if (!team.TieuChuan) {
+            newErrors.TieuChuan = 'Tiêu chuẩn không được để trống';
             isValid = false;
         }
 
@@ -100,7 +108,7 @@ const CreateTeam = ({ API_URL }) => {
 
                 if (response.ok) {
                     console.log('Team created successfully');
-                    navigate('/teams');
+                    navigate('/doi-bong');
                 } else {
                     console.error('Failed to create team');
                 }
@@ -115,19 +123,18 @@ const CreateTeam = ({ API_URL }) => {
     };
 
     const handleReset = () => {
-        setteam({
-            name: '',
-            city: '',
-            coach: '',
-            stadiumId: '',
-            capacity: '',
-            standard: '',
+        setTeam({
+            TenDoiBong: '',
+            ThanhPhoTrucThuoc: '',
+            TenHLV: '',
+            MaSan: '',
+            SucChua: '',
+            TieuChuan: '',
             home_kit_image: '',
             away_kit_image: '',
             third_kit_image: '',
-            description: '',
+            ThongTin: '',
         });
-        setSelectedStadium(null);
         setErrors({});
     };
 
@@ -136,69 +143,71 @@ const CreateTeam = ({ API_URL }) => {
             <h2>Thêm đội bóng mới</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="name">Tên đội bóng:</label>
+                    <label htmlFor="TenDoiBong">Tên đội bóng:</label>
                     <input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={team.name}
+                        id="TenDoiBong"
+                        name="TenDoiBong"
+                        value={team.TenDoiBong}
                         onChange={handleChange}
                     />
-                    {errors.name && <p className="error-message">{errors.name}</p>}
+                    {errors.TenDoiBong && <p className="error-message">{errors.TenDoiBong}</p>}
                 </div>
                 <div>
-                    <label htmlFor="city">Thành phố:</label>
+                    <label htmlFor="ThanhPhoTrucThuoc">Thành phố:</label>
                     <input
                         type="text"
-                        id="city"
-                        name="city"
-                        value={team.city}
+                        id="ThanhPhoTrucThuoc"
+                        name="ThanhPhoTrucThuoc"
+                        value={team.ThanhPhoTrucThuoc}
                         onChange={handleChange}
                     />
-                    {errors.city && <p className="error-message">{errors.city}</p>}
+                    {errors.ThanhPhoTrucThuoc && <p className="error-message">{errors.ThanhPhoTrucThuoc}</p>}
                 </div>
                 <div>
-                    <label htmlFor="coach">Huấn luyện viên:</label>
+                    <label htmlFor="TenHLV">Huấn luyện viên:</label>
                     <input
                         type="text"
-                        id="coach"
-                        name="coach"
-                        value={team.coach}
+                        id="TenHLV"
+                        name="TenHLV"
+                        value={team.TenHLV}
                         onChange={handleChange}
                     />
-                    {errors.coach && <p className="error-message">{errors.coach}</p>}
+                    {errors.TenHLV && <p className="error-message">{errors.TenHLV}</p>}
                 </div>
                 <div>
-                    <label htmlFor="stadiumId">Sân nhà:</label>
-                    <select id="stadiumId" name="stadiumId" onChange={handleStadiumChange} value={team.stadiumId}>
+                    <label htmlFor="MaSan">Sân nhà:</label>
+                    <select id="MaSan" name="MaSan" onChange={handleStadiumChange} value={team.MaSan}>
                         <option value="">Lựa chọn sân vận động</option>
                         {stadiums.map(stadium => (
-                            <option key={stadium.stadiumId} value={stadium.stadiumId}>
-                                {stadium.stadiumName}
+                            <option key={stadium.MaSan} value={stadium.MaSan}>
+                                {stadium.TenSan}
                             </option>
                         ))}
                     </select>
-                    {errors.stadiumId && <p className="error-message">{errors.stadiumId}</p>}
+                    {errors.MaSan && <p className="error-message">{errors.MaSan}</p>}
                 </div>
                 <div>
-                    <label htmlFor="capacity">Sức chứa:</label>
+                    <label htmlFor="SucChua">Sức chứa:</label>
                     <input
                         type="number"
-                        id="capacity"
-                        name="capacity"
-                        value={team.capacity}
-                        readOnly
+                        id="SucChua"
+                        name="SucChua"
+                        value={team.SucChua}
+                        onChange={handleChange} // Added onChange
                     />
+                    {errors.SucChua && <p className="error-message">{errors.SucChua}</p>}
                 </div>
                 <div>
-                    <label htmlFor="standard">Tiêu chuẩn (số sao):</label>
+                    <label htmlFor="TieuChuan">Tiêu chuẩn (số sao):</label>
                     <input
                         type="number"
-                        id="standard"
-                        name="standard"
-                        value={team.standard}
-                        readOnly
+                        id="TieuChuan"
+                        name="TieuChuan"
+                        value={team.TieuChuan}
+                        onChange={handleChange} // Added onChange
                     />
+                    {errors.TieuChuan && <p className="error-message">{errors.TieuChuan}</p>}
                 </div>
                 <div>
                     <label htmlFor="home_kit_image">Áo sân nhà:</label>
@@ -231,11 +240,11 @@ const CreateTeam = ({ API_URL }) => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="description">Mô tả đội bóng:</label>
+                    <label htmlFor="ThongTin">Mô tả đội bóng:</label>
                     <textarea
-                        id="description"
-                        name="description"
-                        value={team.description}
+                        id="ThongTin"
+                        name="ThongTin"
+                        value={team.ThongTin}
                         onChange={handleChange}
                     />
                 </div>
