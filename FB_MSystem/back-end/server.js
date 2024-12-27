@@ -48,7 +48,7 @@ app.use('/doi-bong', doiBongRoutes);
 app.use('/san-thi-dau', sanThiDauRoutes);
 app.use('/mg-db', mgDbRoutes);
 app.use('/db-ct', dbCtRoutes);
-app.use('/setting', settingRoutes);
+app.use('/settings/types', settingRoutes);
 
 // Bảng xếp hạng, trận đấu, bàn thắng, ưu tiên xếp hạng, vua phá lưới, loại ưu tiên
 app.use('/bang-xep-hang', bangXepHangRoutes);
