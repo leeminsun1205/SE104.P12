@@ -189,7 +189,7 @@ const Matches = ({ API_URL }) => {
   // Function to handle saving the edited match
   const handleSaveEditedMatch = async (updatedMatch) => {
     try {
-      const response = await fetch(`${API_URL}/tran-dau/${updatedMatch.matchId}`, {
+      const response = await fetch(`${API_URL}/tran-dau/${updatedMatch.MaTranDau}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -335,7 +335,7 @@ const Matches = ({ API_URL }) => {
                 <tbody>
                   {currentMatches.map((match) => (
                     <tr
-                      key={match.matchId}
+                      key={match.MaTranDau}
                       className={styles.row}
                       onClick={() =>
                         navigate(`/tran-dau/${match.MaMuaGiai}/${match.MaVongDau}/${match.MaTranDau}`)
@@ -508,7 +508,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     return (
       <select name="player" value={value} onChange={onChange}>
         <option value="">Chọn cầu thủ</option>
-        {playersInTeam.map(player => <option key={player.id} value={player.id}>{player.name}</option>)}
+        {playersInTeam.map(player => <option key={player.MaCauThu} value={player.MaCauThu}>{player.TenCauThu}</option>)}
       </select>
     );
   };
