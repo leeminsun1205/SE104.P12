@@ -35,14 +35,14 @@ const Option = styled.option`
 `;
 
 function SeasonSelector({ seasons, onSeasonChange, selectedSeason }) {
-    const filteredSeasons = seasons.filter(season => season.name);
+    const filteredSeasons = seasons.filter(season => season.TenMuaGiai);
     return (
       <div>
         <select value={selectedSeason} onChange={(e) => onSeasonChange(e.target.value)}>
           <option value="">Chọn mùa giải</option>
           {filteredSeasons.map(season => (
-            <option key={season.id} value={season.id}>
-              {season.name}
+            <option key={season.MaMuaGiai} value={season.MaMuaGiai}>
+              {season.TenMuaGiai}
             </option>
           ))}
         </select>

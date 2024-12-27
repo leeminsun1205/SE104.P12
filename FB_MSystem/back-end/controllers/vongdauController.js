@@ -3,9 +3,9 @@ const { autoSchedule } = require('../services/autoSchedule');
 const VongDauController = {
     async getByMuaGiai(req, res) {
         try {
-            const { MaMuaGiai } = req.params;
+            const { maMuaGiai } = req.params;
             const vongDaus = await VongDau.findAll({
-                where: { MaMuaGiai: MaMuaGiai },
+                where: { maMuaGiai: maMuaGiai },
             });
     
             if (vongDaus.length === 0) {

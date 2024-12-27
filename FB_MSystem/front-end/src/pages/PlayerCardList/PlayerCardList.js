@@ -19,13 +19,13 @@ function PlayerCardList({ API_URL }) {
   useEffect(() => {
     const fetchSeasons = async () => {
     try {
-        const response = await fetch(`${API_URL}/seasons`);
+        const response = await fetch(`${API_URL}/mua-giai`);
         if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         console.log("Dữ liệu mùa giải từ API:", data);
-        setAvailableSeasons(data.seasons);
+        setAvailableSeasons(data.muaGiai);
     } catch (error) {
         console.error("Lỗi khi tải danh sách mùa giải:", error);
     }

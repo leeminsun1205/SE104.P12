@@ -33,7 +33,6 @@ const Matches = ({ API_URL }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Dữ liệu mùa giải từ API:", data);
         setAvailableSeasons(data.muaGiai);
       } catch (error) {
         console.error("Lỗi khi tải danh sách mùa giải:", error);
@@ -42,9 +41,8 @@ const Matches = ({ API_URL }) => {
 
     fetchSeasons();
   }, [API_URL]);
-  
+
   useEffect(() => {
-    console.log("Danh sách mùa giải có sẵn:", availableSeasons);
     if (availableSeasons.length > 0) {
       setSelectedSeason(availableSeasons[0].MaMuaGiai);
     }
@@ -91,12 +89,6 @@ const Matches = ({ API_URL }) => {
 
   // Filter and sort matches
   const filteredAndSortedMatches = useMemo(() => {
-    console.log('asdasd', matches
-      .filter(
-        (match) =>
-          match.MaMuaGiai === selectedSeason &&
-          (selectedRound === "" || match.MaVongDau === selectedRound)
-      ))  
     return matches
       .filter(
         (match) =>
@@ -148,16 +140,23 @@ const Matches = ({ API_URL }) => {
     }
     return pageNumbers;
   };
-  console.log(selectedSeason)
+
   const rounds = useMemo(() => {
-    const seasonData = availableSeasons.find(s => s.MaMuaGiai === selectedSeason);
-    return seasonData?.rounds?.map(round => ({ id: round.MaVongDau, name: round.TenVongDau })) || [];
-  }, [availableSeasons, selectedSeason]);
+    return matches
+      .filter(match => match.MaMuaGiai === selectedSeason)
+      .map(match => ({ MaVongDau: match.MaVongDau, TenVongDau: match.TenVongDau }))
+      // Ensure unique rounds
+      .filter((round, index, self) =>
+        index === self.findIndex((r) => r.MaVongDau === round.MaVongDau)
+      )
+      .sort((a, b) => parseInt(a.TenVongDau) - parseInt(b.TenVongDau)) // Sort rounds numerically
+      || [];
+  }, [matches, selectedSeason]);
 
   const handleSeasonChange = (season) => {
     setSelectedSeason(season);
     setSelectedRound("");
-    setCurrentPage(1); // Reset to the first page when season changes
+    setCurrentPage(1);
   };
   const handleSort = (key) => {
     setSortConfig((prev) => ({
@@ -241,15 +240,13 @@ const Matches = ({ API_URL }) => {
   if (error) {
     return <div>Lỗi khi tải dữ liệu: {error.message}</div>;
   }
-
   return (
     <div className={styles.matchesPage}>
       <div className={styles.filterContainer}>
-        {/* Season Selector */}
         <div className={styles.seasonSelector}>
           <SeasonSelector
             onSeasonChange={handleSeasonChange}
-            seasons={availableSeasons.map(season => ({ id: season.MaMuaGiai, name: season.name }))}
+            seasons={availableSeasons.map(season => ({ MaMuaGiai: season.MaMuaGiai, TenMuaGiai: season.TenMuaGiai }))}
             selectedSeason={selectedSeason}
             id="season"
           />
@@ -266,8 +263,8 @@ const Matches = ({ API_URL }) => {
           >
             <option value="">Chọn vòng đấu</option>
             {rounds.map((round) => (
-              <option key={round.id} value={round.id}>
-                {round.name}
+              <option key={round.MaVongDau} value={round.MaVongDau}>
+                {round.TenVongDau}
               </option>
             ))}
           </select>
@@ -315,7 +312,7 @@ const Matches = ({ API_URL }) => {
                       "Đội nhà",
                       "Đội khách",
                       "Sân thi đấu",
-                      "Vòng đấu", // Display round name
+                      "Vòng đấu",
                       "Hành động",
                     ].map(
                       (key) =>
@@ -341,7 +338,7 @@ const Matches = ({ API_URL }) => {
                       key={match.matchId}
                       className={styles.row}
                       onClick={() =>
-                        navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
+                        navigate(`/tran-dau/${match.MaMuaGiai}/${match.MaVongDau}/${match.MaTranDau}`)
                       }
                     >
                       <td className={styles.cell}>{match.NgayThiDau}</td>
@@ -349,7 +346,7 @@ const Matches = ({ API_URL }) => {
                       <td className={styles.cell}>{match.TenDoiBongNha}</td>
                       <td className={styles.cell}>{match.TenDoiBongKhach}</td>
                       <td className={styles.cell}>{match.TenSan}</td>
-                      <td className={styles.cell}>{match.MaVongDau}</td>
+                      <td className={styles.cell}>{match.TenVongDau}</td>
                       <td>
                         <button
                           className={styles.editButton}
@@ -520,7 +517,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     <form onSubmit={handleSubmit} className={styles.editMatchForm}>
       <div className={styles.formGroup}>
         <label htmlFor="date">Ngày thi đấu:</label>
-        <input type="date" id="date" name="date" value={editedMatch.date} onChange={handleChange} required />
+        <input type="date" id="date" name="date" value={editedMatch.NgayThiDau} onChange={handleChange} required />
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="time">Giờ:</label>
@@ -528,7 +525,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="homeTeamId">Đội nhà:</label>
-        <select id="homeTeamId" name="homeTeamId" value={editedMatch.homeTeamId} onChange={handleChange} required>
+        <select id="homeTeamId" name="homeTeamId" value={editedMatch.MaDoiBongNha} onChange={handleChange} required>
           <option value="">Chọn đội nhà</option>
           {availableTeams.map(team => (
             <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
@@ -537,7 +534,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="awayTeamId">Đội khách:</label>
-        <select id="awayTeamId" name="awayTeamId" value={editedMatch.awayTeamId} onChange={handleChange} required>
+        <select id="awayTeamId" name="awayTeamId" value={editedMatch.MaDoiBongKhach} onChange={handleChange} required>
           <option value="">Chọn đội khách</option>
           {availableTeams.map(team => (
             <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
@@ -546,10 +543,10 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="stadiumId">Sân thi đấu:</label>
-        <select id="stadiumId" name="stadiumId" value={editedMatch.stadiumId} onChange={handleChange} required>
+        <select id="stadiumId" name="stadiumId" value={editedMatch.MaSan} onChange={handleChange} required>
           <option value="">Chọn sân vận động</option>
           {availableStadiums.map(stadium => (
-            <option key={stadium.stadiumId} value={stadium.stadiumId}>{stadium.stadiumName}</option>
+            <option key={stadium.MaSan} value={stadium.MaSan}>{stadium.TenSan}</option>
           ))}
         </select>
       </div>
@@ -560,21 +557,21 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
           <div key={index} className={styles.goalEntry}>
             <input
               type="text"
-              name="time"
+              name="ThoiDiem"
               placeholder="Phút"
               value={goal.ThoiDiem}
               onChange={(e) => handleGoalChange(index, e)}
             />
             <TeamSelect
-              value={goal.team}
-              onChange={(e) => handleGoalChange(index, e)}
-              homeTeamId={editedMatch.homeTeamId}
-              awayTeamId={editedMatch.awayTeamId}
+              value={goal.MaDoiBong}
+              onChange={(e) => handleGoalChange(index, { target: { name: 'MaDoiBong', value: e.target.value } })}
+              homeTeamId={editedMatch.MaDoiBongNha}
+              awayTeamId={editedMatch.MaDoiBongKhach}
             />
             <PlayerSelect
-              value={goal.player}
-              onChange={(e) => handleGoalChange(index, e)}
-              teamId={goal.team}
+              value={goal.MaCauThu}
+              onChange={(e) => handleGoalChange(index, { target: { name: 'MaCauThu', value: e.target.value } })}
+              teamId={goal.MaDoiBong}
             />
             <button type="button" onClick={() => removeGoal(index)}>Xóa</button>
           </div>

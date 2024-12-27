@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./CreatePlayer.css";
 
 function CreatePlayer({ API_URL, onAddPlayer }) {
-  console.log("onAddPlayer in CreatePlayer:", onAddPlayer);
   const navigate = useNavigate();
   const [player, setPlayer] = useState({
     name: "",
@@ -59,8 +58,6 @@ function CreatePlayer({ API_URL, onAddPlayer }) {
         weight: player.weight ? parseInt(player.weight, 10) : null,
       };
 
-      console.log("New Player to Add:", newPlayer);
-
       try {
         const response = await fetch(`${API_URL}/cau-thu`, {
           method: "POST",
@@ -72,7 +69,6 @@ function CreatePlayer({ API_URL, onAddPlayer }) {
 
         if (response.ok) {
           const data = await response.json();
-          console.log("Player added successfully:", data.player);
           alert("Đã thêm cầu thủ thành công!");
           navigate("/create");
           // If you need to update the parent's state with the new player

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import styles from "./MatchDetails.module.css";
 
 function MatchDetails({ API_URL }) {
-  const { season, round, id } = useParams();
+  const { MaMuaGiai, MaVongDau, MaTranDau } = useParams();
   const navigate = useNavigate();
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ function MatchDetails({ API_URL }) {
       setLoading(true);
       setError(null);
       try {
-        const matchResponse = await fetch(`${API_URL}/matches/${id}`);
+        const matchResponse = await fetch(`${API_URL}/tran-dau/${MaTranDau}`);
         if (!matchResponse.ok)
           throw new Error(`HTTP error! status: ${matchResponse.status}`);
         const matchData = await matchResponse.json();
@@ -38,7 +38,7 @@ function MatchDetails({ API_URL }) {
         setEditedMatch(matchData);
 
         const homeResponse = await fetch(
-          `${API_URL}/teams/${matchData.homeTeamId}/players?season=${matchData.season}`
+          `${API_URL}/teams/${matchData.MaDoiBongNha}/players?season=${matchData.MaMuaGiai}`
         );
         if (!homeResponse.ok)
           console.error("Failed to fetch home team players");
@@ -46,7 +46,7 @@ function MatchDetails({ API_URL }) {
         setHomeTeamPlayers(homeData.players);
 
         const awayResponse = await fetch(
-          `${API_URL}/teams/${matchData.awayTeamId}/players?season=${matchData.season}`
+          `${API_URL}/teams/${matchData.MaDoiBongKhach}/players?season=${matchData.MaMuaGiai}`
         );
         if (!awayResponse.ok)
           console.error("Failed to fetch away team players");
@@ -61,7 +61,7 @@ function MatchDetails({ API_URL }) {
     };
 
     fetchData();
-  }, [API_URL, id]);
+  }, [API_URL, MaTranDau]);
 
   const addGoal = () => {
     if (!editedMatch) {

@@ -84,8 +84,6 @@ function CreateStadium({ onAddStadium }) {
                 standard: parseInt(stadium.standard, 10),
             };
 
-            console.log('Creating Stadium:', newStadium);
-
             try {
                 const response = await fetch('http://localhost:5000/api/stadiums', {
                     method: 'POST',
@@ -101,7 +99,6 @@ function CreateStadium({ onAddStadium }) {
                 }
 
                 const data = await response.json();
-                console.log("Calling onAddStadium with:", data.stadium);
                 if (typeof onAddStadium === 'function') {
                     onAddStadium(data.stadium);
                 }

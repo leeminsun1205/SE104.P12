@@ -176,7 +176,6 @@ function Players({ seasons }) {
   const handleSeasonChange = (newSeason) => {
     setSelectedSeason(newSeason);
   };
-  console.log(players);
   return (
     <div className="players-container">
       <button className="back-to-teams" onClick={() => handleToTeams()}>

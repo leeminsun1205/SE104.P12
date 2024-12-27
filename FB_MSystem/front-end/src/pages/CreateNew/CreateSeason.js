@@ -79,7 +79,6 @@ function CreateSeason({ API_URL }) {
                     },
                     body: JSON.stringify(season),
                 });
-                console.log(season)
 
                 if (!response.ok) {
                     const errorData = await response.json();
