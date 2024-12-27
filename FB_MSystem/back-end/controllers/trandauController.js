@@ -1,28 +1,46 @@
-const { BangXepHang, ThamSo, TranDau, VongDau } = require('../models');
+const { BangXepHang, ThamSo, TranDau, VongDau, DoiBong, SanThiDau } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
             const tranDaus = await TranDau.findAll({
                 include: [
                     {
-                        model: VongDau, // Liên kết với bảng VongDau
-                        as: 'VongDau', // Alias phải khớp với định nghĩa trong model
+                        model: VongDau,
+                        as: 'VongDau',
                         attributes: ['MaMuaGiai', 'MaVongDau'], // Lấy thêm MaMuaGiai và MaVongDau
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongNha', // Alias cho đội bóng nhà
+                        attributes: ['TenDoiBong'], // Lấy tên đội bóng nhà
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongKhach', // Alias cho đội bóng khách
+                        attributes: ['TenDoiBong'], // Lấy tên đội bóng khách
+                    },
+                    {
+                        model: SanThiDau,
+                        as: 'SanThiDau', // Alias cho sân thi đấu
+                        attributes: ['TenSan'], // Lấy tên sân
                     },
                 ],
             });
     
             const results = tranDaus.map((tranDau) => {
-                const { VongDau, ...rest } = tranDau.get(); // Tách VongDau ra khỏi kết quả
+                const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
                 const MaMuaGiai = VongDau?.MaMuaGiai || null;
                 const MaVongDau = VongDau?.MaVongDau || null;
-                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null; // Trích xuất TenVongDau từ MaVongDau
+                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
     
                 return {
                     ...rest,
                     MaMuaGiai,
                     MaVongDau,
                     TenVongDau,
+                    TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
+                    TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
+                    TenSan: SanThiDau?.TenSan || null,
                 };
             });
     
@@ -34,15 +52,30 @@ const TranDauController = {
     
     async getByMuaGiai(req, res) {
         try {
-            const { MaMuaGiai } = req.params; // Lấy MaMuaGiai từ params
+            const { MaMuaGiai } = req.params;
     
             const tranDaus = await TranDau.findAll({
                 include: [
                     {
-                        model: VongDau, // TranDau liên kết với VongDau
-                        as: 'VongDau', // Alias phải khớp với định nghĩa trong model
-                        where: { MaMuaGiai: MaMuaGiai }, // Lọc theo MaMuaGiai
-                        attributes: ['MaVongDau', 'MaMuaGiai'], // Lấy MaVongDau và MaMuaGiai từ VongDau
+                        model: VongDau,
+                        as: 'VongDau',
+                        where: { MaMuaGiai: MaMuaGiai },
+                        attributes: ['MaVongDau', 'MaMuaGiai'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongNha',
+                        attributes: ['TenDoiBong'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongKhach',
+                        attributes: ['TenDoiBong'],
+                    },
+                    {
+                        model: SanThiDau,
+                        as: 'SanThiDau',
+                        attributes: ['TenSan'],
                     },
                 ],
             });
@@ -52,14 +85,19 @@ const TranDauController = {
             }
     
             const results = tranDaus.map((tranDau) => {
-                const { VongDau, ...rest } = tranDau.get(); // Tách VongDau ra khỏi kết quả
-                const MaVongDau = VongDau?.MaVongDau || null; // Lấy MaVongDau từ VongDau
-                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null; // Trích xuất TenVongDau từ MaVongDau
+                const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
+                const MaMuaGiai = VongDau?.MaMuaGiai || null;
+                const MaVongDau = VongDau?.MaVongDau || null;
+                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
+    
                 return {
                     ...rest,
+                    MaMuaGiai,
                     MaVongDau,
-                    MaMuaGiai: VongDau?.MaMuaGiai || null, // Lấy MaMuaGiai từ VongDau
                     TenVongDau,
+                    TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
+                    TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
+                    TenSan: SanThiDau?.TenSan || null,
                 };
             });
     
