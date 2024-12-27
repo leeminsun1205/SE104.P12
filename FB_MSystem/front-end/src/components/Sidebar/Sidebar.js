@@ -109,7 +109,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-file-invoice"></i> Biên nhận lệ phí
             </NavLink>
             <NavLink
-              to="/lookup"
+              to="/tra-cuu"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }

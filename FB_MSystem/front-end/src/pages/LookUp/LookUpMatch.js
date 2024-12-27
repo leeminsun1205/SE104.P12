@@ -19,7 +19,7 @@ function LookUpMatch({ API_URL }) {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await fetch(`${API_URL}/teams/all`);
+        const response = await fetch(`${API_URL}/doi-bong`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

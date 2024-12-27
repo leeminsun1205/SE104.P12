@@ -231,9 +231,9 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/doi-bong/edit/:MaDoiBong" element={<EditTeam onEditTeam={onEditTeam} />} />
             <Route path="/doi-bong/:MaDoiBong" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
             <Route path="/doi-bong/:MaDoiBong/cau-thu" element={<Players seasons={seasons} />} />
-            <Route path="/doi-bong/:MaDoiBong/cau-thu/:MaCauThu" element={<PlayerInfo />} />
-            <Route path="/cau-thu" element={<AllPlayers />} />
-            <Route path="/cau-thu/:MaCauThu" element={<PlayerInfo />} />
+            <Route path="/doi-bong/:MaDoiBong/cau-thu/:MaCauThu" element={<PlayerInfo API_URL={API_URL}/>} />
+            <Route path="/cau-thu" element={<AllPlayers API_URL={API_URL}/>} />
+            <Route path="/cau-thu/:MaCauThu" element={<PlayerInfo API_URL={API_URL}/>} />
             <Route path="/tran-dau" element={<Matches API_URL={API_URL} />} />
             <Route path="/tran-dau/:MaMuaGiai/:MaVongDau/:MaTranDau" element={<MatchDetails API_URL={API_URL} />} />
             <Route path="/bang-xep-hang" element={<Standings API_URL={API_URL} />} />
@@ -242,9 +242,9 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/bien-nhan/:MaBienNhan" element={<Invoices invoices={invoices} />} />
             <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
             <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
-            <Route path="/san-thi-dau" element={<Stadiums />} />
+            <Route path="/san-thi-dau" element={<Stadiums API_URL={API_URL}/>} />
             <Route path="/tao-moi/san-thi-dau" element={<CreateStadium  API_URL={API_URL}/>} />
-            <Route path="/san-thi-dau/:MaSan" element={<StadiumInfo />} />
+            <Route path="/san-thi-dau/:MaSan" element={<StadiumInfo API_URL={API_URL}/>} />
             <Route path="/mua-giai/:MaMuaGiai" element={<SeasonDetails API_URL={API_URL} />} />
             <Route path="/tao-moi/mua-giai" element={<CreateSeason API_URL={API_URL} />} />
             <Route path="/mua-giai" element={<SeasonList API_URL={API_URL} />} />
@@ -254,10 +254,10 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/mua-giai/:MaMuaGiai/bang-xep-hang" element={<SeasonalStandings API_URL={API_URL} />} />
             <Route path="/the-phat" element={<CardsList API_URL={API_URL} />} />
             <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
-            <Route path="/lookup" element={<LookUp />} />
-            <Route path="/lookup/tran-dau" element={<LookUpMatch API_URL={API_URL}/>} />
-            <Route path="/lookup/mua-giai" element={<LookUpSeason API_URL={API_URL}/>} />
-            <Route path="/lookup/thanh-tich" element={<LookUpAchievements API_URL={API_URL}/>} />
+            <Route path="/tra-cuu" element={<LookUp />} />
+            <Route path="/tra-cuu/tran-dau" element={<LookUpMatch API_URL={API_URL}/>} />
+            <Route path="/tra-cuu/mua-giai" element={<LookUpSeason API_URL={API_URL}/>} />
+            <Route path="/tra-cuu/thanh-tich" element={<LookUpAchievements API_URL={API_URL}/>} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

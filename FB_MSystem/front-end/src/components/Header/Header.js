@@ -67,7 +67,7 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/bien-nhan" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Biên nhận lệ phí
                         </NavLink>
-                        <NavLink to="/lookup" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/tra-cuu" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Tra cứu
                         </NavLink>
                     </div>

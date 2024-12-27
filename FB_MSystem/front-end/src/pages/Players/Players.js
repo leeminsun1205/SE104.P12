@@ -6,7 +6,7 @@ import AddPlayersToTeamModal from "./AddPlayersToTeamModal";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import "./Players.css";
 
-function Players({ seasons }) {
+function Players({ API_URL, seasons }) {
   const { MaDoiBong } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState([]);
@@ -34,15 +34,14 @@ function Players({ seasons }) {
 
     fetchTeamName();
   }, [MaDoiBong]);
-
   // useEffect thứ hai - Sửa lại URL để bao gồm MaDoiBong
   useEffect(() => {
     const fetchPlayers = async () => {
       setLoading(true);
       try {
-        let url = `http://localhost:5000/db-ct/doi-bong/${MaDoiBong}/cau-thu`;
+        let url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu`;
         if (selectedSeason && selectedSeason !== "all") {
-          url += `?season=${selectedSeason}`;
+          url = `${API_URL}/cau-thu`;
         }
 
         const response = await fetch(url);

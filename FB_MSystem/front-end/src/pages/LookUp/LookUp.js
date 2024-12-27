@@ -10,15 +10,15 @@ function LookUp() {
     };
 
     const handleToLookUpMatch = () => {
-        navigate('/lookup/match');
+        navigate('/tra-cuu/tran-dau');
     };
 
     const handleToLookUpSeason = () => {
-        navigate('/lookup/season');
+        navigate('/tra-cuu/mua-giai');
     };
 
     const handleToLookUpAchievements = () => {
-        navigate('/lookup/achievements');
+        navigate('/tra-cuu/thanh-tich');
     };
 
     return (

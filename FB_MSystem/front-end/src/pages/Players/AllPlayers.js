@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import PlayerList from "./PlayerList";
 import "./Players.css";
 
-function AllPlayers() {
+function AllPlayers({ API_URL }) {
   const navigate = useNavigate();
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,12 +14,12 @@ function AllPlayers() {
     const fetchAllPlayers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/cau-thu`);
+        const response = await fetch(`${API_URL}/cau-thu`);
+        const data = await response.json();
         if (!response.ok) {
           throw new Error("Failed to fetch players");
         }
-        const data = await response.json();
-        setPlayers(data);
+        setPlayers(data.cauThu);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -33,7 +33,7 @@ function AllPlayers() {
   const handleDeletePlayer = async (playerId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/cau-thu/${playerId}`,
+        `${API_URL}/cau-thu/${playerId}`,
         {
           method: "DELETE",
         }

@@ -112,7 +112,7 @@ const PlayerInfo = () => {
           <strong>Mùa giải:</strong> {player.season}
         </p> */}
         <p>
-            <strong>Loại cầu thủ:</strong> {player.LoaiCauThu}
+            <strong>Loại cầu thủ:</strong> {player.LoaiCauThu ? "Trong nước" : "Nước ngoài"}
         </p>
       </div>
     </div>
