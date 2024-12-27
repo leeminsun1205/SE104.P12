@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from './SeasonalStandings.module.css'; // Tạo một file CSS riêng
 
 function SeasonalStandings({ API_URL }) {
-    const { seasonId } = useParams();
+    const { MaMuaGiai } = useParams();
     const navigate = useNavigate();
     const [standings, setStandings] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -18,10 +18,10 @@ function SeasonalStandings({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/standings?season=${seasonId}`);
+                const response = await fetch(`${API_URL}/bang-xep-hang/mua-giai/${MaMuaGiai}`);
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Standings not found for season: ${seasonId}`);
+                        console.log(`Standings not found for season: ${MaMuaGiai}`);
                         setNotFound(true);
                         setStandings([]);
                     } else {
@@ -42,7 +42,7 @@ function SeasonalStandings({ API_URL }) {
         };
 
         fetchStandings();
-    }, [API_URL, seasonId]);
+    }, [API_URL, MaMuaGiai]);
 
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -83,7 +83,7 @@ function SeasonalStandings({ API_URL }) {
     };
 
     const handleRowClick = (teamId) => {
-        navigate(`/teams/${teamId}?season=${seasonId}`);
+        navigate(`/doi-bong/${teamId}?mua-giai=${MaMuaGiai}`);
     };
 
     if (loading) {
@@ -96,7 +96,7 @@ function SeasonalStandings({ API_URL }) {
 
     return (
         <div className={styles.standingsContainer}>
-            <h2 className={styles.standingsTitle}>Bảng xếp hạng - Mùa giải {seasonId}</h2>
+            <h2 className={styles.standingsTitle}>Bảng xếp hạng - Mùa giải {MaMuaGiai}</h2>
             <div className={styles.tableWrapper}>
                 <table className={styles.standingsTable}>
                     <thead>
@@ -119,20 +119,20 @@ function SeasonalStandings({ API_URL }) {
                         ) : sortedStandings.length > 0 ? (
                             sortedStandings.map((team) => (
                                 <tr
-                                    key={`${team.rank}-${team.name}`}
-                                    onClick={() => handleRowClick(team.id)}
+                                    key={`${team.rank}-${team.TenDoiBong}`}
+                                    onClick={() => handleRowClick(team.MaDoiBong)}
                                     className={styles.standingsRow}
                                 >
                                     <td>{team.rank}</td>
-                                    <td className={styles.teamName}>{team.name}</td>
-                                    <td>{team.played}</td>
-                                    <td>{team.won}</td>
-                                    <td>{team.drawn}</td>
-                                    <td>{team.lost}</td>
-                                    <td>{team.goalsFor}</td>
-                                    <td>{team.goalsAgainst}</td>
-                                    <td>{team.goalDifference}</td>
-                                    <td>{team.points}</td>
+                                    <td className={styles.teamName}>{team.TenDoiBong}</td>
+                                    <td>{team.SoTran}</td>
+                                    <td>{team.SoTranThang}</td>
+                                    <td>{team.SoTranHoa}</td>
+                                    <td>{team.SOTranThua}</td>
+                                    <td>{team.SoBanThang}</td>
+                                    <td>{team.SoBanThua}</td>
+                                    <td>{team.HieuSo}</td>
+                                    <td>{team.DiemSo}</td>
                                 </tr>
                             ))
                         ) : (
@@ -141,7 +141,7 @@ function SeasonalStandings({ API_URL }) {
                     </tbody>
                 </table>
             </div>
-            <button className={styles.backButton} onClick={() => navigate(`/seasons/${seasonId}`)}>
+            <button className={styles.backButton} onClick={() => navigate(`/mua-giai/${MaMuaGiai}`)}>
                 Quay lại thông tin mùa giải
             </button>
         </div>
