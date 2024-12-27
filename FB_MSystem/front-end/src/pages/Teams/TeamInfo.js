@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './TeamInfo.css';
 import defaultHomeImage from '../../assets/images/teams/default_home.png';
 import defaultAwayImage from '../../assets/images/teams/default_away.png';
 import defaultThirdImage from '../../assets/images/teams/default_away.png';
 
-function TeamInfo({ teams }) {
-  const { id } = useParams();
+function TeamInfo({ API_URL, teams }) {
+  const { MaDoiBong } = useParams();
   const navigate = useNavigate();
-  const teamId = parseInt(id, 10);
-  const team = teams.find((t) => t.id === teamId);
+  const [error, setError] = useState(null)
+  const [stadiums, setStadiums] = useState({})
 
-  const handleToPlayer = (id) => {
-    navigate(`/doi-bong/${id}/cau-thu`);
+  useEffect(() => {
+    const fetchStadiums = async () => {
+      try {
+        const response = await fetch(`${API_URL}/doi-bong/${MaDoiBong}`);
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(`Failed to fetch available teams: ${response.status} - ${message}`);
+        }
+        const data = await response.json();
+        setStadiums(data.doiBong.SanThiDau);
+      } catch (error) {
+        console.error("Error fetching available teams:", error);
+        setError(error.message);
+      }
+    };
+
+    fetchStadiums();
+  }, [stadiums]);
+
+  const team = teams.find((t) => t.MaDoiBong === MaDoiBong);
+  const handleToPlayer = (MaDoiBong) => {
+    navigate(`/doi-bong/${MaDoiBong}/cau-thu`);
   };
-
-  // const handleToOtherMatches = (id) => {
-  //   navigate(`/doi-bong/${id}/other-matches`); 
-  // };
 
   const handleStadiumClick = (stadiumId) => {
     navigate(`/san-thi-dau/${stadiumId}`);
@@ -27,16 +43,15 @@ function TeamInfo({ teams }) {
     return (
       <div className="team-info">
         <p>Không tìm thấy đội bóng.</p>
-        <button className="go-back-button" onClick={() => navigate(-1)}>
+        <button className="go-back-team-button" onClick={() => navigate(-1)}>
           Quay lại
         </button>
       </div>
     );
   }
-
   return (
     <div className="team-info">
-      <button className="go-back-button" onClick={() => navigate(-1)}>
+      <button className="go-back-team-button" onClick={() => navigate(-1)}>
         Quay lại
       </button>
       <div className="team-details">
@@ -51,18 +66,18 @@ function TeamInfo({ teams }) {
           <li>
             <strong>Sân nhà:</strong>{" "}
             <span
-              onClick={() => handleStadiumClick(team.MaSan)}
+              onClick={() => handleStadiumClick(stadiums.MaSan)}
               style={{ cursor: 'pointer', textDecoration: 'underline' }}
             >
-              {team.SanThiDau ? team.SanThiDau.TenSan : 'N/A'}
+              {team.TenSan ? team.TenSan : 'N/A'}
             </span>
           </li>
           <li>
-            <strong>Sức chứa:</strong> {team.SucChua}
+            <strong>Sức chứa:</strong> {stadiums.SucChua}
           </li>
           <li>
-            <strong>Đạt tiêu chuẩn (số sao):</strong> {team.TieuChuan}{" "}
-            <strong>của Liên đoàn bóng đá Thế giới</strong>
+            <strong>Đạt tiêu chuẩn (số sao):</strong> {stadiums.TieuChuan}{" "}
+            <strong>của LĐBĐTG</strong>
           </li>
         </ul>
         <p className="team-description">
@@ -112,15 +127,9 @@ function TeamInfo({ teams }) {
         </div>
       </div>
       <div className="action">
-        <button className="to-player" onClick={() => handleToPlayer(team.MaDoi)}>
+        <button className="to-player" onClick={() => handleToPlayer(team.MaDoiBong)}>
           Cầu thủ
         </button>
-        {/* <button
-          className="to-other-matches"
-          onClick={() => handleToOtherMatches(team.MaDoi)}
-        >
-          Giải đấu khác
-        </button> */}
       </div>
     </div>
   );

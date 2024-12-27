@@ -1,5 +1,6 @@
 const { DoiBong, SanThiDau } = require('../models');
 const { isDuplicate } = require('../utils/isDuplicate');
+
 const DoiBongController = {
     async getAll(req, res) {
         try {
@@ -27,7 +28,7 @@ const DoiBongController = {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng.', details: error.message });
         }
     },
-    
+
     async getById(req, res) {
         try {
             const { id } = req.params;
@@ -36,7 +37,7 @@ const DoiBongController = {
                     {
                         model: SanThiDau,
                         as: 'SanThiDau',
-                        attributes: ['MaSan', 'TenSan', 'TieuChuan', 'SucChua'],
+                        attributes: ['MaSan', 'TenSan', 'SucChua', 'DiaChiSan', 'TieuChuan'],
                     },
                 ],
             });
@@ -48,13 +49,14 @@ const DoiBongController = {
                 TenSan: SanThiDau?.TenSan || null,
                 TieuChuan: SanThiDau?.TieuChuan || null,
                 SucChua: SanThiDau?.SucChua || null,
+                DiaChi: SanThiDau?.DiaChi || null,
             };
-            res.status(200).json(result);
+            res.status(200).json({doiBong: result});
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin đội bóng.', details: error.message });
         }
     },
-    
+
     async create(req, res) {
         try {
             const { MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin} = req.body;
@@ -65,10 +67,10 @@ const DoiBongController = {
             const doiBong = await DoiBong.create({
                 MaDoiBong, TenDoiBong, ThanhPhoTrucThuoc, MaSan, TenHLV, ThongTin,
             });
-            res.status(201).json(doiBong);
+            res.status(201).json({doiBong: doiBong});
         } catch (error) {
             console.error('Lỗi khi thêm đội bóng mới:',error);
-            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.', details: error.massage});
+            res.status(500).json({ error: 'Lỗi khi thêm đội bóng mới.', details: error.message});
         }
     },
 

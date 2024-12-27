@@ -53,7 +53,7 @@ function Teams({
   };
 
   const handleEdit = (id) => {
-    navigate(`/doi-bong/${id}`);
+    navigate(`/doi-bong/${id}/edit`);
   };
 
   const clearSearch = () => setSearchTerm("");

@@ -169,7 +169,7 @@ function App() {
             }
 
             // Remove the team from the teams array
-            setTeams((prevTeams) => prevTeams.filter((team) => team.id !== id));
+            setTeams((prevTeams) => prevTeams.filter((team) => team.MaDoiBong !== id));
         } catch (error) {
             console.error("Error deleting team:", error);
         }
@@ -180,7 +180,6 @@ function App() {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
-
     return (
         <Router>
             <div className="app">
@@ -213,7 +212,6 @@ function App() {
         </Router>
     );
 }
-
 function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeasonChange, onEditTeam, onDeleteTeam, invoices, onAddInvoice, handleAddPlayer }) {
     return (
         <Routes>
@@ -228,7 +226,7 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             />
             <Route path="/tao-moi/doi-bong" element={<CreateTeam API_URL={API_URL} />} />
             <Route path="/tao-moi/cau-thu" element={<CreatePlayer API_URL={API_URL} onAddPlayer={handleAddPlayer} />} />
-            <Route path="/doi-bong/edit/:MaDoiBong" element={<EditTeam onEditTeam={onEditTeam} />} />
+            <Route path="/doi-bong/:MaDoiBong/edit" element={<EditTeam API_URL = {API_URL} onEditTeam={onEditTeam} />} />
             <Route path="/doi-bong/:MaDoiBong" element={<TeamInfo teams={teams} API_URL={API_URL} />} />
             <Route path="/doi-bong/:MaDoiBong/cau-thu" element={<Players seasons={seasons} />} />
             <Route path="/doi-bong/:MaDoiBong/cau-thu/:MaCauThu" element={<PlayerInfo API_URL={API_URL}/>} />
@@ -240,8 +238,8 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/tao-moi" element={<CreateNew />} />
             <Route path="/bien-nhan" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
             <Route path="/bien-nhan/:MaBienNhan" element={<Invoices invoices={invoices} />} />
-            <Route path="/settings/general" element={<Settings API_URL={API_URL} />} />
-            <Route path="/settings/types" element={<TypesSettings API_URL={API_URL} />} />
+            <Route path="/cai-dat/chung" element={<Settings API_URL={API_URL} />} />
+            <Route path="/cai-dat/cac-loai" element={<TypesSettings API_URL={API_URL} />} />
             <Route path="/san-thi-dau" element={<Stadiums API_URL={API_URL}/>} />
             <Route path="/tao-moi/san-thi-dau" element={<CreateStadium  API_URL={API_URL}/>} />
             <Route path="/san-thi-dau/:MaSan" element={<StadiumInfo API_URL={API_URL}/>} />
