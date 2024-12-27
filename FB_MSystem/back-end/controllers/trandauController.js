@@ -1,4 +1,5 @@
-const { BangXepHang, ThamSo, TranDau, VongDau, DoiBong, SanThiDau } = require('../models');
+const { VongDau } = require('../models');
+const { BangXepHang, ThamSo, TranDau, DoiBong, SanThiDau, BanThang } = require('../models');
 const TranDauController = {
     async getAll(req, res) {
         try {
@@ -28,9 +29,9 @@ const TranDauController = {
             });
     
             const results = tranDaus.map((tranDau) => {
-                const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
-                const MaMuaGiai = VongDau?.MaMuaGiai || null;
-                const MaVongDau = VongDau?.MaVongDau || null;
+                const { vongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
+                const MaMuaGiai = vongDau?.MaMuaGiai || null;
+                const MaVongDau = vongDau?.MaVongDau || null;
                 const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
     
                 return {
@@ -85,9 +86,9 @@ const TranDauController = {
             }
     
             const results = tranDaus.map((tranDau) => {
-                const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
-                const MaMuaGiai = VongDau?.MaMuaGiai || null;
-                const MaVongDau = VongDau?.MaVongDau || null;
+                const { vongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
+                const MaMuaGiai = vongDau?.MaMuaGiai || null;
+                const MaVongDau = vongDau?.MaVongDau || null;
                 const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
     
                 return {
@@ -109,14 +110,61 @@ const TranDauController = {
     
     async getById(req, res) {
         try {
-            const { id } = req.params;
-            const tranDau = await TranDau.findByPk(id);
-            if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
-            res.status(200).json(tranDau);
+            const { id } = req.params; // Lấy ID từ tham số
+    
+            // Tìm trận đấu theo ID
+            const tranDau = await TranDau.findOne({
+                where: { id }, // Lọc theo ID
+                include: [
+                    {
+                        model: VongDau,
+                        as: 'VongDau',
+                        attributes: ['MaMuaGiai', 'MaVongDau'], // Lấy thêm MaMuaGiai và MaVongDau
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongNha', // Alias cho đội bóng nhà
+                        attributes: ['TenDoiBong'], // Lấy tên đội bóng nhà
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongKhach', // Alias cho đội bóng khách
+                        attributes: ['TenDoiBong'], // Lấy tên đội bóng khách
+                    },
+                    {
+                        model: SanThiDau,
+                        as: 'SanThiDau', // Alias cho sân thi đấu
+                        attributes: ['TenSan'], // Lấy tên sân
+                    },
+                ],
+            });
+    
+            if (!tranDau) {
+                return res.status(404).json({ error: 'Không tìm thấy trận đấu với ID đã cho.' });
+            }
+    
+            // Lấy thông tin chi tiết trận đấu
+            const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
+            const MaMuaGiai = VongDau?.MaMuaGiai || null;
+            const MaVongDau = VongDau?.MaVongDau || null;
+            const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
+    
+            const result = {
+                ...rest,
+                MaMuaGiai,
+                MaVongDau,
+                TenVongDau,
+                TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
+                TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
+                TenSan: SanThiDau?.TenSan || null,
+            };
+    
+            res.status(200).json({ tranDau: result });
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.' });
+            console.error(error);
+            res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.', details: error.message });
         }
-    },
+    }, 
 
     async create(req, res) {
         try {
