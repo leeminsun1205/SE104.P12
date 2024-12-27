@@ -62,5 +62,11 @@ const CauThu = sequelize.define(
         },
     }
 );
+CauThu.associate = (models) => {
+    CauThu.hasMany(models.DbCt,{ 
+        as: 'DbCt', 
+        foreignKey: 'MaCauThu'
+    });
+}
 
 module.exports = CauThu;

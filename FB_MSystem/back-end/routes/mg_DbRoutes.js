@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Lấy danh sách đội bóng theo mùa giải
 router.get('/mua-giai/:MaMuaGiai/doi-bong', MgDbController.getByMuaGiai);
-
+router.get('/mua-giai/:MaMuaGiai/doi-bong/:MaDoiBong', MgDbController.getCauThuByMuaGiaiAndDoiBong);
 // Thêm liên kết mới giữa mùa giải và đội bóng
 router.post('/create', MgDbController.create);
 

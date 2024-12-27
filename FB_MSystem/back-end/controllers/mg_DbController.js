@@ -22,6 +22,62 @@ const MgDbController = {
         }
     },
 
+    async getCauThuByMuaGiaiAndDoiBong(req, res) {
+        try {
+            const { MaMuaGiai, MaDoiBong } = req.params;
+
+            // Lấy thông tin DoiBong thuộc MuaGiai
+            const mgDbEntry = await MgDb.findOne({
+                where: { MaMuaGiai, MaDoiBong },
+                include: [
+                    {
+                        model: DoiBong,
+                        as: 'DoiBong',
+                    },
+                ],
+            });
+
+            if (!mgDbEntry || !mgDbEntry.DoiBong) {
+                return res.status(404).json({ error: 'Không tìm thấy đội bóng trong mùa giải này.' });
+            }
+
+            // Lấy danh sách cầu thủ thuộc DoiBong thông qua DbCt
+            const dbCtEntries = await DbCt.findAll({
+                where: { MaDoiBong: MaDoiBong },
+                include: [
+                    {
+                        model: CauThu,
+                        as: 'CauThu',
+                        attributes: [
+                            'MaCauThu',
+                            'TenCauThu',
+                            'NgaySinh',
+                            'QuocTich',
+                            'LoaiCauThu',
+                            'ViTri',
+                            'ChieuCao',
+                            'CanNang',
+                            'SoAo',
+                            'TieuSu',
+                        ],
+                    },
+                ],
+            });
+
+            const cauThus = dbCtEntries.map(dbCt => ({
+                MaMuaGiai: MaMuaGiai,
+                MaDoiBong: MaDoiBong,
+                TenDoiBong: mgDbEntry.DoiBong.TenDoiBong,
+                ...dbCt.CauThu.get(),
+            }));
+
+            res.status(200).json({ cauThu: cauThus });
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách cầu thủ theo mùa giải và đội bóng:", error);
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách cầu thủ.' });
+        }
+    },
+
     async create(req, res) {
         try {
             const { MaMuaGiai, MaDoiBong } = req.body;
