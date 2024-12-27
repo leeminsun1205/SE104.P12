@@ -25,11 +25,11 @@ const Matches = ({ API_URL }) => {
   // State for modal and editing
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
-
+  console.log("chỗ này", selectedSeason)
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const response = await fetch(`${API_URL}/seasons`);
+        const response = await fetch(`${API_URL}/mua-giai`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -47,7 +47,7 @@ const Matches = ({ API_URL }) => {
   useEffect(() => {
     console.log("Danh sách mùa giải có sẵn:", availableSeasons);
     if (availableSeasons.length > 0) {
-      setSelectedSeason(availableSeasons[0].id);
+      setSelectedSeason(availableSeasons[0].MaMuaGiai);
     }
   }, [availableSeasons]);
 
@@ -56,7 +56,7 @@ const Matches = ({ API_URL }) => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${API_URL}/matches?season=${selectedSeason}`
+          `${API_URL}/tran-dau/mua-giai/${selectedSeason}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -72,11 +72,12 @@ const Matches = ({ API_URL }) => {
 
     const fetchPlayersForSeason = async () => {
       try {
-        const response = await fetch(`${API_URL}/players`);
+        const response = await fetch(`${API_URL}/cau-thu`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log(data)
         // Assuming the API returns players grouped by season and team
         setPlayers(data);
       } catch (error) {
@@ -95,17 +96,17 @@ const Matches = ({ API_URL }) => {
     return matches
       .filter(
         (match) =>
-          match.season === selectedSeason &&
-          (selectedRound === "" || match.round === selectedRound)
+          match.MaMuaGiai === selectedSeason &&
+          (selectedRound === "" || match.MaVongDau === selectedRound)
       )
       .filter((match) => {
         const query = searchQuery.toLowerCase();
         return (
-          match.homeTeamName.toLowerCase().includes(query) ||
-          match.awayTeamName.toLowerCase().includes(query) ||
-          match.stadiumName.toLowerCase().includes(query) ||
-          match.date.includes(query) ||
-          match.roundName.toLowerCase().includes(query) // Search by round name
+          match.TenDoiBongNha.toLowerCase().includes(query) ||
+          match.TenDoiBongKhach.toLowerCase().includes(query) ||
+          match.TenSan.toLowerCase().includes(query) ||
+          match.NgayThiDau.includes(query) ||
+          match.TenVongDau.toLowerCase().includes(query) // Search by round name
         );
       })
       .sort((a, b) => {
@@ -143,10 +144,10 @@ const Matches = ({ API_URL }) => {
     }
     return pageNumbers;
   };
-
+  console.log(selectedSeason)
   const rounds = useMemo(() => {
-    const seasonData = availableSeasons.find(s => s.id === selectedSeason);
-    return seasonData?.rounds?.map(round => ({ id: round.roundId, name: round.name })) || [];
+    const seasonData = availableSeasons.find(s => s.MaMuaGiai === selectedSeason);
+    return seasonData?.rounds?.map(round => ({ id: round.MaVongDau, name: round.TenVongDau })) || [];
   }, [availableSeasons, selectedSeason]);
 
   const handleSeasonChange = (season) => {
@@ -156,7 +157,7 @@ const Matches = ({ API_URL }) => {
   };
   const handleMatchClick = (match) => {
     const { season, round, matchId } = match;
-    navigate(`/match/${season}/${round}/${matchId}`);
+    navigate(`/tran-dau/${season}/${round}/${matchId}`);
   };
   const handleSort = (key) => {
     setSortConfig((prev) => ({
@@ -248,7 +249,7 @@ const Matches = ({ API_URL }) => {
         <div className={styles.seasonSelector}>
           <SeasonSelector
             onSeasonChange={handleSeasonChange}
-            seasons={availableSeasons.map(season => ({ id: season.id, name: season.name }))}
+            seasons={availableSeasons.map(season => ({ id: season.MaMuaGiai, name: season.name }))}
             selectedSeason={selectedSeason}
             id="season"
           />
@@ -343,12 +344,12 @@ const Matches = ({ API_URL }) => {
                         navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
                       }
                     >
-                      <td className={styles.cell}>{match.date}</td>
-                      <td className={styles.cell}>{match.time}</td>
-                      <td className={styles.cell}>{match.homeTeamName}</td>
-                      <td className={styles.cell}>{match.awayTeamName}</td>
-                      <td className={styles.cell}>{match.stadiumName}</td>
-                      <td className={styles.cell}>{match.roundName}</td>
+                      <td className={styles.cell}>{match.NgayThiDau}</td>
+                      <td className={styles.cell}>{match.GioThiDau}</td>
+                      <td className={styles.cell}>{match.TenDoiBongNha}</td>
+                      <td className={styles.cell}>{match.TenDoiBongKhach}</td>
+                      <td className={styles.cell}>{match.TenSan}</td>
+                      <td className={styles.cell}>{match.MaVongDau}</td>
                       <td>
                         <button
                           className={styles.editButton}
@@ -363,7 +364,7 @@ const Matches = ({ API_URL }) => {
                           className={styles.deleteButton}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteMatch(match.matchId);
+                            handleDeleteMatch(match.MaTranDau);
                           }}
                         >
                           Xóa
@@ -491,10 +492,10 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     <select name="team" value={value} onChange={onChange}>
       <option value="">Chọn đội</option>
       {availableTeams.map(team => {
-        if (team.id === parseInt(homeTeamId)) {
-          return <option key={team.id} value={team.id}>{team.name} (Home)</option>;
-        } else if (team.id === parseInt(awayTeamId)) {
-          return <option key={team.id} value={team.id}>{team.name} (Away)</option>;
+        if (team.MaDoiBong === parseInt(homeTeamId)) {
+          return <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong} (Home)</option>;
+        } else if (team.MaDoiBong === parseInt(awayTeamId)) {
+          return <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong} (Away)</option>;
         }
         return null;
       })}
@@ -523,14 +524,14 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="time">Giờ:</label>
-        <input type="time" id="time" name="time" value={editedMatch.time} onChange={handleChange} required />
+        <input type="time" id="time" name="time" value={editedMatch.GioThiDau} onChange={handleChange} required />
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="homeTeamId">Đội nhà:</label>
         <select id="homeTeamId" name="homeTeamId" value={editedMatch.homeTeamId} onChange={handleChange} required>
           <option value="">Chọn đội nhà</option>
           {availableTeams.map(team => (
-            <option key={team.id} value={team.id}>{team.name}</option>
+            <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
           ))}
         </select>
       </div>
@@ -539,7 +540,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
         <select id="awayTeamId" name="awayTeamId" value={editedMatch.awayTeamId} onChange={handleChange} required>
           <option value="">Chọn đội khách</option>
           {availableTeams.map(team => (
-            <option key={team.id} value={team.id}>{team.name}</option>
+            <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
           ))}
         </select>
       </div>
@@ -561,7 +562,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
               type="text"
               name="time"
               placeholder="Phút"
-              value={goal.time}
+              value={goal.ThoiDiem}
               onChange={(e) => handleGoalChange(index, e)}
             />
             <TeamSelect

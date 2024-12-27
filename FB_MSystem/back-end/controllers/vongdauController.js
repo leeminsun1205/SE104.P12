@@ -3,24 +3,40 @@ const { autoSchedule } = require('../services/autoSchedule');
 const VongDauController = {
     async getByMuaGiai(req, res) {
         try {
-            const { maMuaGiai } = req.params;
+            const { MaMuaGiai } = req.params;
             const vongDaus = await VongDau.findAll({
-                where: { maMuaGiai: maMuaGiai }
+                where: { MaMuaGiai: MaMuaGiai },
             });
+    
             if (vongDaus.length === 0) {
                 return res.status(404).json({ error: 'Không tìm thấy vòng đấu nào cho mùa giải này.' });
             }
-            res.status(200).json({vongDau: vongDaus});
+    
+            const results = vongDaus.map((vongDau) => {
+                const { MaVongDau, ...rest } = vongDau.get();
+                const TenVongDau = MaVongDau.split('VD').pop(); // Trích xuất "12" từ "MG2025_1VD12"
+                return { ...rest, MaVongDau, TenVongDau };
+            });
+    
+            res.status(200).json({ vongDau: results });
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách vòng đấu theo mùa giải.' });
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách vòng đấu theo mùa giải.', details: error.message });
         }
     },
+    
     async getAll(req, res) {
         try {
             const vongDaus = await VongDau.findAll();
-            res.status(200).json({vongDau: vongDaus});
+    
+            const results = vongDaus.map((vongDau) => {
+                const { MaVongDau, ...rest } = vongDau.get();
+                const TenVongDau = MaVongDau.split('VD').pop(); // Trích xuất "12" từ "MG2025_1VD12"
+                return { ...rest, MaVongDau, TenVongDau };
+            });
+    
+            res.status(200).json({ vongDau: results });
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách vòng đấu.' });
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách vòng đấu.', details: error.message });
         }
     },
 

@@ -28,7 +28,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           type="text"
           id="homeTeam"
           name="homeTeamName"
-          value={editedMatch?.homeTeamName || ""}
+          value={editedMatch?.TenDoiBongNha || ""}
           readOnly
         />
       </div>
@@ -41,7 +41,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           type="text"
           id="awayTeam"
           name="awayTeamName"
-          value={editedMatch?.awayTeamName || ""}
+          value={editedMatch?.TenDoiBongKhach || ""}
           readOnly
         />
       </div>
@@ -80,7 +80,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           type="date"
           id="date"
           name="date"
-          value={editedMatch?.date || ""}
+          value={editedMatch?.NgayThiDau || ""}
           onChange={handleInputChange}
         />
       </div>
@@ -93,7 +93,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           type="time"
           id="time"
           name="time"
-          value={editedMatch?.time || ""}
+          value={editedMatch?.GioThiDau || ""}
           onChange={handleInputChange}
         />
       </div>
@@ -106,7 +106,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           type="text"
           id="stadium"
           name="stadiumName"
-          value={editedMatch?.stadiumName || ""}
+          value={editedMatch?.TenSan || ""}
           readOnly
         />
       </div>

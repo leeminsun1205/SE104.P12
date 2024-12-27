@@ -8,7 +8,41 @@ const TranDauController = {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu.' });
         }
     },
-
+    async getByMuaGiai(req, res) {
+        try {
+            const { MaMuaGiai } = req.params; // Lấy maMuaGiai từ params
+            const tranDaus = await TranDau.findAll({
+                include: [
+                    {
+                        model: VongDau, // TranDau liên kết với VongDau
+                        as: 'VongDau', // Alias phải khớp với định nghĩa trong model
+                        where: { MaMuaGiai: MaMuaGiai }, // Lọc theo maMuaGiai
+                        attributes: ['MaVongDau'], // Lấy MaVongDau từ VongDau
+                    },
+                ],
+            });
+    
+            if (tranDaus.length === 0) {
+                return res.status(404).json({ error: 'Không tìm thấy trận đấu nào cho mùa giải này.' });
+            }
+    
+            const results = tranDaus.map((tranDau) => {
+                const { VongDau, ...rest } = tranDau.get(); // Tách VongDau ra để xử lý riêng
+                const MaVongDau = VongDau?.MaVongDau || null; // Lấy MaVongDau từ VongDau
+                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null; // Trích xuất TenVongDau từ MaVongDau
+                return {
+                    ...rest,
+                    MaVongDau,
+                    TenVongDau,
+                };
+            });
+    
+            res.status(200).json({ tranDau: results });
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu theo mùa giải.', details: error.message });
+        }
+    },
+    
     async getById(req, res) {
         try {
             const { id } = req.params;

@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', tranDauController.getAll);
 router.get('/:id', tranDauController.getById);
+router.get('/mua-giai/:MaMuaGiai', tranDauController.getByMuaGiai);
 
 
 

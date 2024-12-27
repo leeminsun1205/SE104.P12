@@ -15,7 +15,7 @@ function HomePage() {
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedSeason, setSelectedSeason] = useState("MG2025_1"); // Mùa giải mặc định
+    const [MaMuaGiai, setSelectedSeason] = useState("MG2025_1"); // Mùa giải mặc định
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +32,7 @@ function HomePage() {
 
                 // Fetch teams for the selected season
                 const teamsResponse = await fetch(
-                    `http://localhost:5000/mg-db/mua-giai/${selectedSeason}/doi-bong`
+                    `http://localhost:5000/mg-db/mua-giai/${MaMuaGiai}/doi-bong`
                 );
                 if (!teamsResponse.ok) {
                     throw new Error("Failed to fetch teams");
@@ -48,7 +48,7 @@ function HomePage() {
         };
 
         fetchData();
-    }, [selectedSeason]); // Depend on selectedSeason
+    }, [MaMuaGiai]); // Depend on selectedSeason
 
     const handleSeasonChange = (newSeason) => {
         setSelectedSeason(newSeason);
