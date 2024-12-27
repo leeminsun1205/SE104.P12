@@ -1,4 +1,4 @@
-const { CauThu, ThamSo } = require('../models');
+const { CauThu, ThamSo, Mg_Db, Db_Ct } = require('../models');
 
 const CauThuController = {
     async getAll(req, res) {
