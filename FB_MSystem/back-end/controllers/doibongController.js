@@ -44,14 +44,14 @@ const DoiBongController = {
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
             const doiBongData = doiBong.get();
             const sanThiDau = doiBongData.SanThiDau;
-            const { SanThiDau: excludedSanThiDau, ...rest } = doiBongData; // Exclude SanThiDau here
+            const { SanThiDau: excludedSanThiDau, ...rest } = doiBongData; 
             const result = {
                 ...rest,
                 MaSan: sanThiDau?.MaSan || null,
                 TenSan: sanThiDau?.TenSan || null,
                 TieuChuan: sanThiDau?.TieuChuan || null,
                 SucChua: sanThiDau?.SucChua || null,
-                DiaChi: sanThiDau?.DiaChiSan || null, // Corrected to DiaChiSan
+                DiaChi: sanThiDau?.DiaChiSan || null, 
             };
             res.status(200).json({doiBong: result});
         } catch (error) {

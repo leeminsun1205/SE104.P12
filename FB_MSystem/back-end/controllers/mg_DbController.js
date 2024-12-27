@@ -11,7 +11,7 @@ const MgDbController = {
                     {
                         model: DoiBong,
                         as: 'DoiBong',
-                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan'], // Các cột cần lấy của bảng DoiBong
+                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan'], 
                     },
                 ],
             });

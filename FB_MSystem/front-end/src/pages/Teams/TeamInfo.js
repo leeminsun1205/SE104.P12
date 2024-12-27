@@ -20,7 +20,8 @@ function TeamInfo({ API_URL, teams }) {
           throw new Error(`Failed to fetch available teams: ${response.status} - ${message}`);
         }
         const data = await response.json();
-        setStadiums(data.doiBong.SanThiDau);
+        console.log(data)
+        setStadiums(data.doiBong);
       } catch (error) {
         console.error("Error fetching available teams:", error);
         setError(error.message);
@@ -29,7 +30,7 @@ function TeamInfo({ API_URL, teams }) {
 
     fetchStadiums();
   }, [stadiums]);
-
+  console.log(stadiums)
   const team = teams.find((t) => t.MaDoiBong === MaDoiBong);
   const handleToPlayer = (MaDoiBong) => {
     navigate(`/doi-bong/${MaDoiBong}/cau-thu`);
