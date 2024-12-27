@@ -11,14 +11,30 @@ function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, o
     const fetchAvailablePlayers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${aAPI_URl}/cau-thu`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch available players");
+        const allPlayersResponse = await fetch(`${aAPI_URl}/cau-thu`);
+        if (!allPlayersResponse.ok) {
+          throw new Error("Failed to fetch all players");
         }
-        let data = await response.json();
-        const filteredPlayers = data.cauThu.filter(player => {
-          return player.MaCauThu !== teamId || player.MaMuaGiai !== season;
-        });
+        const allPlayersData = await allPlayersResponse.json();
+        const allPlayers = allPlayersData.cauThu;
+
+        // Fetch players currently in the team for the selected season
+        const currentTeamPlayersResponse = await fetch(
+          `${aAPI_URl}/db-ct/doi-bong/${teamId}/cau-thu?season=${season}`
+        );
+        if (!currentTeamPlayersResponse.ok) {
+          throw new Error("Failed to fetch current team players");
+        }
+        const currentTeamPlayersData = await currentTeamPlayersResponse.json();
+        const currentTeamPlayerIds = currentTeamPlayersData.cauThu.map(
+          (player) => player.MaCauThu
+        );
+
+        // Filter out players already in the team for the current season
+        const filteredPlayers = allPlayers.filter(
+          (player) => !currentTeamPlayerIds.includes(player.MaCauThu)
+        );
+
         setAvailablePlayers(filteredPlayers);
       } catch (error) {
         setError(error.message);
@@ -27,10 +43,15 @@ function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, o
       }
     };
 
+    // Fetch available players only if a season is selected
     if (season) {
       fetchAvailablePlayers();
+    } else {
+      // Optionally handle the case where no season is selected (e.g., display all players)
+      // For now, let's set availablePlayers to an empty array or handle it as needed.
+      setAvailablePlayers([]);
     }
-  }, [teamId, season]);
+  }, [aAPI_URl, teamId, season]);
 
   const handlePlayerSelection = (playerId) => {
     setSelectedPlayers((prevSelectedPlayers) =>
@@ -43,27 +64,26 @@ function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, o
   const handleAddPlayers = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${aAPI_URl}/db-cb/createMany`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({links: selectedPlayers.map(playerId => ({
-            MaCauThu: playerId,
-            MaDoiBong: teamId,
-          }))}),
-        }
-      );
+      const playersToAdd = selectedPlayers.map((playerId) => ({
+        MaCauThu: playerId,
+        MaDoiBong: teamId,
+        MaMuaGiai: season, // Ensure you send the season information
+      }));
+
+      const response = await fetch(`${aAPI_URl}/db-ct/createMany`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ links: playersToAdd }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add players to team");
       }
       onAddPlayersToTeam(selectedPlayers);
-
-      setSelectedPlayers([]); // Clear selected players
+      setSelectedPlayers([]);
       onClose();
     } catch (error) {
       setError(error.message);

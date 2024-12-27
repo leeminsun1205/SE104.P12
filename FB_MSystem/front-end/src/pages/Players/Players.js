@@ -125,7 +125,7 @@ function Players({ API_URL, seasons }) {
       }));
 
       const response = await fetch(
-        `${API_URL}/mg-db/createMany`, // Assuming this endpoint handles adding players to teams for a season
+        `${API_URL}/db-ct/createMany`, // Assuming this endpoint handles adding players to teams for a season
         {
           method: "POST",
           headers: {
