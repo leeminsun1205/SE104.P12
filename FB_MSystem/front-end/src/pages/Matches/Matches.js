@@ -25,7 +25,6 @@ const Matches = ({ API_URL }) => {
   // State for modal and editing
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
-  console.log("chỗ này", selectedSeason)
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
@@ -47,7 +46,6 @@ const Matches = ({ API_URL }) => {
   useEffect(() => {
     console.log("Danh sách mùa giải có sẵn:", availableSeasons);
     if (availableSeasons.length > 0) {
-      console.log('aaaa', availableSeasons[0].MaMuaGiai)
       setSelectedSeason(availableSeasons[0].MaMuaGiai);
     }
   }, [availableSeasons]);
@@ -63,7 +61,7 @@ const Matches = ({ API_URL }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setMatches(data);
+        setMatches(data.tranDau);
       } catch (e) {
         setError(e);
       } finally {
@@ -78,7 +76,6 @@ const Matches = ({ API_URL }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data)
         // Assuming the API returns players grouped by season and team
         setPlayers(data);
       } catch (error) {
@@ -94,11 +91,12 @@ const Matches = ({ API_URL }) => {
 
   // Filter and sort matches
   const filteredAndSortedMatches = useMemo(() => {
-    console.log('tran dau so 123: ', matches.filter(
-      (match) =>
-        match.MaMuaGiai === selectedSeason &&
-        (selectedRound === "" || match.MaVongDau === selectedRound)
-    ))
+    console.log('asdasd', matches
+      .filter(
+        (match) =>
+          match.MaMuaGiai === selectedSeason &&
+          (selectedRound === "" || match.MaVongDau === selectedRound)
+      ))  
     return matches
       .filter(
         (match) =>
@@ -112,7 +110,7 @@ const Matches = ({ API_URL }) => {
           match.TenDoiBongKhach.toLowerCase().includes(query) ||
           match.TenSan.toLowerCase().includes(query) ||
           match.NgayThiDau.includes(query) ||
-          match.TenVongDau.toLowerCase().includes(query) // Search by round name
+          match.TenVongDau.toLowerCase().includes(query)
         );
       })
       .sort((a, b) => {
@@ -161,10 +159,6 @@ const Matches = ({ API_URL }) => {
     setSelectedRound("");
     setCurrentPage(1); // Reset to the first page when season changes
   };
-  const handleMatchClick = (match) => {
-    const { season, round, matchId } = match;
-    navigate(`/tran-dau/${season}/${round}/${matchId}`);
-  };
   const handleSort = (key) => {
     setSortConfig((prev) => ({
       key,
@@ -196,7 +190,7 @@ const Matches = ({ API_URL }) => {
   // Function to handle saving the edited match
   const handleSaveEditedMatch = async (updatedMatch) => {
     try {
-      const response = await fetch(`${API_URL}/matches/${updatedMatch.matchId}`, {
+      const response = await fetch(`${API_URL}/tran-dau/${updatedMatch.matchId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -210,7 +204,7 @@ const Matches = ({ API_URL }) => {
 
       // Update the matches state
       setMatches(matches.map(match =>
-        match.matchId === updatedMatch.matchId ? updatedMatch : match
+        match.MaTranDau === updatedMatch.MaTranDau ? updatedMatch : match
       ));
       handleCloseEditModal();
     } catch (error) {
@@ -223,7 +217,7 @@ const Matches = ({ API_URL }) => {
   const handleDeleteMatch = async (matchId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa trận đấu này?")) {
       try {
-        const response = await fetch(`${API_URL}/matches/${matchId}`, {
+        const response = await fetch(`${API_URL}/tran-dau/${matchId}`, {
           method: 'DELETE',
         });
 
@@ -232,7 +226,7 @@ const Matches = ({ API_URL }) => {
         }
 
         // Update the matches state by removing the deleted match
-        setMatches(matches.filter(match => match.matchId !== matchId));
+        setMatches(matches.filter(match => match.MaTranDau !== matchId));
       } catch (error) {
         console.error("Lỗi khi xóa trận đấu:", error);
         // Handle error, e.g., show a notification

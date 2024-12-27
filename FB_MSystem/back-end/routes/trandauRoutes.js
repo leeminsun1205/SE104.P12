@@ -17,9 +17,6 @@ router.post('/', tranDauController.create);
 
 
 router.put('/:id', tranDauController.update);
-
-
-
 router.delete('/:id', tranDauController.delete);
 
 
