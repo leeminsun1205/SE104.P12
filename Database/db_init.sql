@@ -298,6 +298,24 @@ select * from thamso;
 -- DESCRIBE TRANDAU;
 -- select * from trandau;
 -- DROP TABLE IF EXISTS TRANDAU;
+INSERT INTO LOAIBANTHANG (MaLoaiBanThang, TenLoaiBanThang, MoTa)
+VALUES
+    ('LBT01', 'Bình thường', 'Bàn thắng ghi bình thường'),
+    ('LBT02', 'Phạt đền', 'Bàn thắng từ quả phạt đền'),
+    ('LBT03', 'Phản lưới nhà', 'Bàn thắng phản lưới nhà');
+
+INSERT INTO LOAIUUTIEN (MaLoaiUuTien, TenLoaiUuTien, MoTa)
+VALUES
+    ('LUT01', 'Hiệu số', 'Ưu tiên tính hiệu số'),
+    ('LUT02', 'Số bàn thắng', 'Ưu tiên tính số bàn thắng'),
+    ('LUT03', 'Đối đầu', 'Ưu tiên kết quả đối đầu');
+
+INSERT INTO LOAITHEPHAT (MaLoaiThePhat, TenLoaiThePhat, MoTa)
+VALUES
+    ('LTP01', 'Thẻ vàng', 'Thẻ cảnh cáo cầu thủ'),
+    ('LTP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
+    ('LTP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
+
 INSERT INTO MUAGIAI (MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc)
 VALUES
 ('MG2025_1', 'Giải vô địch quốc gia V-league 2025', '2025-01-01', '2025-06-30');
@@ -671,25 +689,5 @@ INSERT INTO BIENNHAN (MaBienNhan, MaDoiBong, LePhi, NgayBatDau, NgayHetHan, Ngay
 ('BN00010', 'DB010', 1000000000, @NgayBatDau, @NgayHetHan, '2024-12-15', 1);
 
 
-
-INSERT INTO LOAIBANTHANG (MaLoaiBanThang, TenLoaiBanThang, MoTa)
-VALUES
-    ('LBT01', 'Bình thường', 'Bàn thắng ghi bình thường'),
-    ('LBT02', 'Phạt đền', 'Bàn thắng từ quả phạt đền'),
-    ('LBT03', 'Phản lưới nhà', 'Bàn thắng phản lưới nhà');
-
-INSERT INTO LOAIUUTIEN (MaLoaiUuTien, TenLoaiUuTien, MoTa)
-VALUES
-    ('LUT01', 'Hiệu số', 'Ưu tiên tính hiệu số'),
-    ('LUT02', 'Số bàn thắng', 'Ưu tiên tính số bàn thắng'),
-    ('LUT03', 'Đối đầu', 'Ưu tiên kết quả đối đầu');
-
-INSERT INTO LOAITHEPHAT (MaLoaiThePhat, TenLoaiThePhat, MoTa)
-VALUES
-    ('LTP01', 'Thẻ vàng', 'Thẻ cảnh cáo cầu thủ'),
-    ('LTP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
-    ('LTP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
-
-
 -- SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
-select * from trandau
+select * from thamso
