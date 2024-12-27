@@ -36,6 +36,7 @@ const thanhTichRoutes = require('./routes/thanhTichRoutes');
 const vongDauRoutes = require('./routes/vongDauRoutes');
 const muaGiaiRoutes = require('./routes/muaGiaiRoutes');
 const bienNhanRoutes = require('./routes/bienNhanRoutes');
+const settingRoutes = require('./routes/settingRoutes');
 
 // Middleware
 app.use(bodyParser.json());
@@ -47,6 +48,7 @@ app.use('/doi-bong', doiBongRoutes);
 app.use('/san-thi-dau', sanThiDauRoutes);
 app.use('/mg-db', mgDbRoutes);
 app.use('/db-ct', dbCtRoutes);
+app.use('/settings/types', settingRoutes);
 
 // Bảng xếp hạng, trận đấu, bàn thắng, ưu tiên xếp hạng, vua phá lưới, loại ưu tiên
 app.use('/bang-xep-hang', bangXepHangRoutes);

@@ -316,9 +316,9 @@ function MatchDetails({ API_URL }) {
 
   const getAvailablePlayersForTeam = (teamId) => {
     const teamIdInt = parseInt(teamId);
-    if (match?.homeTeamId === teamIdInt) {
+    if (match?.MaDoiBongNha === teamIdInt) {
       return homeTeamPlayers;
-    } else if (match?.awayTeamId === teamIdInt) {
+    } else if (match?.MaDoiBongKhach === teamIdInt) {
       return awayTeamPlayers;
     }
     return [];
@@ -531,8 +531,8 @@ function MatchDetails({ API_URL }) {
                                     <option value="">Chọn cầu thủ</option>
                                     {getAvailablePlayersForTeam(goal.teamId).map(
                                       (player) => (
-                                        <option key={player.id} value={player.id}>
-                                          {player.name}
+                                        <option key={player.MaCauThu} value={player.MaCauThu}>
+                                          {player.TenCauThu}
                                         </option>
                                       )
                                     )}
@@ -555,14 +555,14 @@ function MatchDetails({ API_URL }) {
                                       )
                                     }
                                   >
-                                    <option value={match.homeTeamId}>
+                                    <option value={match.MaDoiBongNha}>
                                       {match.TenDoiBongNha}
                                     </option>
-                                    <option value={match.awayTeamId}>
+                                    <option value={match.MaDoiBongKhach}>
                                       {match.TenDoiBongKhach}
                                     </option>
                                   </select>
-                                ) : goal.teamId === match.homeTeamId ? (
+                                ) : goal.teamId === match.MaDoiBongNha ? (
                                   match.TenDoiBongNha
                                 ) : (
                                   match.TenDoiBongKhach
@@ -720,14 +720,14 @@ function MatchDetails({ API_URL }) {
                                       )
                                     }
                                   >
-                                    <option value={match.homeTeamId}>
+                                    <option value={match.MaDoiBongNha}>
                                       {match.TenDoiBongNha}
                                     </option>
-                                    <option value={match.awayTeamId}>
+                                    <option value={match.MaDoiBongKhach}>
                                       {match.TenDoiBongKhach}
                                     </option>
                                   </select>
-                                ) : card.teamId === match.homeTeamId ? (
+                                ) : card.teamId === match.MaDoiBongNha ? (
                                   match.TenDoiBongNha
                                 ) : (
                                   match.TenDoiBongKhach

@@ -15,13 +15,13 @@ function TypesSettings({ API_URL }) {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await fetch(`${API_URL}/types-settings`);
+                const response = await fetch(`${API_URL}/settings/types`);
                 if (response.ok) {
                     const data = await response.json();
-                    setGoalTypes(data.goalTypes ? data.goalTypes.map(gt => ({ ...gt, id: gt.id || Date.now() + '-' + Math.random() })) : goalTypes);
-                    setCardTypes(data.cardTypes ? data.cardTypes.map(ct => ({ ...ct, id: ct.id || Date.now() + '-' + Math.random() })) : cardTypes);
-                    setPriorityOptions(data.priorityOptions || priorityOptions);
-                    setRankingPriorityOrder(data.rankingPriorityOrder || rankingPriorityOrder);
+                    setGoalTypes(data.settings.LoaiBanThang ? data.settings.LoaiBanThang.map(gt => ({ ...gt, MaLoaiBanThang: gt.MaLoaiBanThang || Date.now() + '-' + Math.random() })) : goalTypes);
+                    setCardTypes(data.settings.LoaiThePhat ? data.settings.LoaiThePhat.map(ct => ({ ...ct, MaLoaiThePhat: ct.MaLoaiThePhat || Date.now() + '-' + Math.random() })) : cardTypes);
+                    setPriorityOptions(data.settings.MaLoaiUuTien || priorityOptions);
+                    setRankingPriorityOrder(data.settings.Ut_XepHang || rankingPriorityOrder);
                     // Update the ref based on loaded data
                     if (data.priorityOptions && data.priorityOptions.length > 0) {
                         const maxCodeNumber = data.priorityOptions.reduce((max, option) => {
@@ -40,40 +40,42 @@ function TypesSettings({ API_URL }) {
     }, [API_URL]);
 
     // Goal Types Handlers
-    const handleGoalTypeChange = (id, field, value) => {
+    const handleGoalTypeChange = (MaLoaiBanThang, field, value) => {
         const newGoalTypes = goalTypes.map(goalType =>
-            goalType.id === id ? { ...goalType, [field]: value } : goalType
+            goalType.MaLoaiBanThang === MaLoaiBanThang
+                ? { ...goalType, [field]: value }
+                : goalType
         );
         setGoalTypes(newGoalTypes);
     };
 
-    const generateUniqueCode = (prefix) => {
-        return `${prefix}${Date.now().toString().slice(-5)}`; // Simple unique code
-    };
+    // const generateUniqueCode = (prefix) => {
+    //     return `${prefix}${Date.now().toString().slice(-5)}`; // Simple unique code
+    // };
 
     const addGoalType = () => {
-        setGoalTypes([...goalTypes, { id: Date.now(), code: generateUniqueCode('BT'), name: '', description: '' }]);
+        setGoalTypes([...goalTypes, { id: Date.now(), name: '', description: '' }]);
     };
 
-    const removeGoalType = (id) => {
-        const newGoalTypes = goalTypes.filter(goalType => goalType.id !== id);
+    const removeGoalType = (MaLoaiBanThang) => {
+        const newGoalTypes = goalTypes.filter(goalType => goalType.MaLoaiBanThang !== MaLoaiBanThang);
         setGoalTypes(newGoalTypes);
     };
 
     // Card Types Handlers
-    const handleCardTypeChange = (id, field, value) => {
+    const handleCardTypeChange = (MaLoaiThePhat, field, value) => {
         const newCardTypes = cardTypes.map(cardType =>
-            cardType.id === id ? { ...cardType, [field]: value } : cardType
+            cardType.MaLoaiThePhat === MaLoaiThePhat ? { ...cardType, [field]: value } : cardType
         );
         setCardTypes(newCardTypes);
     };
 
     const addCardType = () => {
-        setCardTypes([...cardTypes, { id: Date.now(), code: generateUniqueCode('TP'), name: '', description: '' }]);
+        setCardTypes([...cardTypes, { MaLoaiThePhat: Date.now(), TenLoaiThePhat: '', MoTa: '' }]);
     };
 
     const removeCardType = (id) => {
-        const newCardTypes = cardTypes.filter(cardType => cardType.id !== id);
+        const newCardTypes = cardTypes.filter(cardType => cardType.MaLoaiThePhat !== id);
         setCardTypes(newCardTypes);
     };
 
@@ -144,7 +146,7 @@ function TypesSettings({ API_URL }) {
         };
 
         try {
-            const response = await fetch(`${API_URL}/types-settings`, {
+            const response = await fetch(`${API_URL}/settings/types`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -181,29 +183,29 @@ function TypesSettings({ API_URL }) {
                             </thead>
                             <tbody>
                                 {goalTypes.map((goalType) => (
-                                    <tr key={goalType.id}>
+                                    <tr key={goalType.MaLoaiBanThang}>
                                         <td>
                                             <input
                                                 type="text"
-                                                value={goalType.code}
+                                                value={goalType.MaLoaiBanThang}
                                                 readOnly
                                             />
                                         </td>
                                         <td>
                                             <input
                                                 type="text"
-                                                value={goalType.name}
-                                                onChange={(e) => handleGoalTypeChange(goalType.id, 'name', e.target.value)}
+                                                value={goalType.TenLoaiBanThang}
+                                                onChange={(e) => handleGoalTypeChange(goalType.MaLoaiBanThang, 'name', e.target.value)}
                                             />
                                         </td>
                                         <td>
                                             <textarea
-                                                value={goalType.description}
-                                                onChange={(e) => handleGoalTypeChange(goalType.id, 'description', e.target.value)}
+                                                value={goalType.MoTa}
+                                                onChange={(e) => handleGoalTypeChange(goalType.MaLoaiBanThang, 'description', e.target.value)}
                                             />
                                         </td>
                                         <td>
-                                            <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removeGoalType(goalType.id)}>Xóa</button>
+                                            <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removeGoalType(goalType.MaLoaiBanThang)}>Xóa</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -225,29 +227,29 @@ function TypesSettings({ API_URL }) {
                             </thead>
                             <tbody>
                                 {cardTypes.map((cardType) => (
-                                    <tr key={cardType.id}>
+                                    <tr key={cardType.MaLoaiThePhat}>
                                         <td>
                                             <input
                                                 type="text"
-                                                value={cardType.code}
+                                                value={cardType.MaLoaiThePhat}
                                                 readOnly
                                             />
                                         </td>
                                         <td>
                                             <input
                                                 type="text"
-                                                value={cardType.name}
-                                                onChange={(e) => handleCardTypeChange(cardType.id, 'name', e.target.value)}
+                                                value={cardType.TenLoaiThePhat}
+                                                onChange={(e) => handleCardTypeChange(cardType.MaLoaiThePhat, 'name', e.target.value)}
                                             />
                                         </td>
                                         <td>
                                             <textarea
-                                                value={cardType.description}
-                                                onChange={(e) => handleCardTypeChange(cardType.id, 'description', e.target.value)}
+                                                value={cardType.MoTa}
+                                                onChange={(e) => handleCardTypeChange(cardType.MaLoaiThePhat, 'description', e.target.value)}
                                             />
                                         </td>
                                         <td>
-                                            <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removeCardType(cardType.id)}>Xóa</button>
+                                            <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removeCardType(cardType.MaLoaiThePhat)}>Xóa</button>
                                         </td>
                                     </tr>
                                 ))}

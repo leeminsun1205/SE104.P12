@@ -2,26 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styles from './Settings.module.css';
 
 function Setting({ API_URL }) {
-    const [teamSettings, setTeamSettings] = useState({
-        minPlayers: 15,
-        maxPlayers: 22,
-        maxForeignPlayers: 3,
-        minAge: 16,
-        maxAge: 40,
-        minCapacity: 10000,
-        minStar: 2,
-        participationFee: 1000000000,
-        winPoints: 3,
-        drawPoints: 1,
-        losePoints: 0,
-        maxGoalTime: 90,
-    });
+    const [teamSettings, setTeamSettings] = useState({});
     const [saveStatus, setSaveStatus] = useState(null); // 'success', 'error', null
 
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await fetch(`${API_URL}/settings`);
+                const response = await fetch(`${API_URL}/tham-so`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch settings. HTTP status: ${response.status}`);
                 }
@@ -40,49 +27,30 @@ function Setting({ API_URL }) {
         setTeamSettings({ ...teamSettings, [name]: value });
     };
 
-    const handlePriorityOrderChange = (index, value) => {
-        const newPriorityOrder = [...teamSettings.priorityOrder];
-        newPriorityOrder[index] = value;
-
-        newPriorityOrder.forEach((item, i) => {
-            if (item === value && i !== index) {
-                newPriorityOrder[i] = getNewValue(value, newPriorityOrder);
-            }
-        });
-
-        setTeamSettings({
-            ...teamSettings,
-            priorityOrder: newPriorityOrder,
-        });
-    };
-
-    const getNewValue = (currentValue, priorityOrder) => {
-        const allValues = ['Điểm số', 'Hiệu số', 'Số bàn thắng'];
-        const availableValues = allValues.filter(val => !priorityOrder.includes(val) && val !== currentValue);
-        return availableValues[0];
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaveStatus('loading');
 
         try {
-            const response = await fetch(`${API_URL}/settings`, {
-                method: 'POST',
+            console.log("Dữ liệu gửi đi:", teamSettings); // Kiểm tra dữ liệu trước khi gửi
+
+            const response = await fetch(`${API_URL}/tham-so`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(teamSettings),
             });
 
+            console.log("Phản hồi từ server:", response.status);
+            const responseData = await response.json();
+            console.log("Dữ liệu phản hồi:", responseData);
+
             if (!response.ok) {
                 throw new Error(`Failed to save settings. HTTP status: ${response.status}`);
             }
 
             setSaveStatus('success');
-            // Optionally, you can handle the response data if the server sends any back
-            // const data = await response.json();
-            // console.log("Settings saved successfully:", data);
         } catch (error) {
             console.error("Error saving settings:", error);
             setSaveStatus('error');
@@ -99,18 +67,19 @@ function Setting({ API_URL }) {
                         <label>Số cầu thủ tối thiểu của 1 đội</label>
                         <input
                             type="number"
-                            name="minPlayers"
-                            value={teamSettings.minPlayers}
+                            name="SoLuongCauThuToiThieu" // Đã sửa
+                            value={teamSettings.SoLuongCauThuToiThieu}
                             onChange={handleChangeTeamSettings}
                         />
                     </div>
 
+                    {/* Các input khác tương tự */}
                     <div className={styles["setting-group"]}>
                         <label>Số cầu thủ tối đa của 1 đội</label>
                         <input
                             type="number"
-                            name="maxPlayers"
-                            value={teamSettings.maxPlayers}
+                            name="SoLuongCauThuToiDa" // Đã sửa
+                            value={teamSettings.SoLuongCauThuToiDa}
                             onChange={handleChangeTeamSettings}
                         />
                     </div>
@@ -119,8 +88,8 @@ function Setting({ API_URL }) {
                         <label>Số cầu thủ ngoại tối đa</label>
                         <input
                             type="number"
-                            name="maxForeignPlayers"
-                            value={teamSettings.maxForeignPlayers}
+                            name="SoCauThuNgoaiToiDa" // Đã sửa
+                            value={teamSettings.SoCauThuNgoaiToiDa}
                             onChange={handleChangeTeamSettings}
                         />
                     </div>
@@ -129,8 +98,8 @@ function Setting({ API_URL }) {
                         <label>Tuổi thi đấu tối thiểu</label>
                         <input
                             type="number"
-                            name="minAge"
-                            value={teamSettings.minAge}
+                            name="TuoiToiThieu" // Đã sửa
+                            value={teamSettings.TuoiToiThieu}
                             onChange={handleChangeTeamSettings}
                         /> tuổi
                     </div>
@@ -139,8 +108,28 @@ function Setting({ API_URL }) {
                         <label>Tuổi thi đấu tối đa</label>
                         <input
                             type="number"
-                            name="maxAge"
-                            value={teamSettings.maxAge}
+                            name="TuoiToiDa" // Đã sửa
+                            value={teamSettings.TuoiToiDa}
+                            onChange={handleChangeTeamSettings}
+                        /> tuổi
+                    </div>
+
+                    <div className={styles["setting-group"]}>
+                        <label>Ngày bắt đầu lệ phí</label>
+                        <input
+                            type="date"
+                            name="NgayBatDauLePhi" // Đã sửa
+                            value={teamSettings.NgayBatDauLePhi}
+                            onChange={handleChangeTeamSettings}
+                        /> tuổi
+                    </div>
+
+                    <div className={styles["setting-group"]}>
+                        <label>Ngày kết thúc lệ phí</label>
+                        <input
+                            type="date"
+                            name="NgayHetHanLePhi" // Đã sửa
+                            value={teamSettings.NgayHetHanLePhi}
                             onChange={handleChangeTeamSettings}
                         /> tuổi
                     </div>
@@ -149,8 +138,8 @@ function Setting({ API_URL }) {
                         <label>Sức chứa tối thiểu sân đấu</label>
                         <input
                             type="number"
-                            name="minCapacity"
-                            value={teamSettings.minCapacity}
+                            name="SucChuaToiThieu" // Đã sửa
+                            value={teamSettings.SucChuaToiThieu}
                             onChange={handleChangeTeamSettings}
                         /> người
                     </div>
@@ -159,8 +148,8 @@ function Setting({ API_URL }) {
                         <label>Số sao đạt chuẩn tối thiểu</label>
                         <input
                             type="number"
-                            name="minStar"
-                            value={teamSettings.minStar}
+                            name="TieuChuanToiThieu" // Đã sửa
+                            value={teamSettings.TieuChuanToiThieu}
                             onChange={handleChangeTeamSettings}
                         /> sao
                     </div>
@@ -169,8 +158,8 @@ function Setting({ API_URL }) {
                         <label>Lệ phí tham gia</label>
                         <input
                             type="number"
-                            name="participationFee"
-                            value={teamSettings.participationFee}
+                            name="LePhi" // Đã sửa
+                            value={teamSettings.LePhi}
                             onChange={handleChangeTeamSettings}
                         /> VND
                     </div>
@@ -182,8 +171,8 @@ function Setting({ API_URL }) {
                         <label>Thời điểm ghi bàn tối đa</label>
                         <input
                             type="number"
-                            name="maxGoalTime"
-                            value={teamSettings.maxGoalTime}
+                            name="ThoiDiemGhiBanToiDa" // Đã sửa
+                            value={teamSettings.ThoiDiemGhiBanToiDa}
                             onChange={handleChangeTeamSettings}
                         /> phút
                     </div>
@@ -195,8 +184,8 @@ function Setting({ API_URL }) {
                         <label>Điểm khi thắng</label>
                         <input
                             type="number"
-                            name="winPoints"
-                            value={teamSettings.winPoints}
+                            name="DiemThang" // Đã sửa
+                            value={teamSettings.DiemThang}
                             onChange={handleChangeTeamSettings}
                         />
                     </div>
@@ -205,8 +194,8 @@ function Setting({ API_URL }) {
                         <label>Điểm khi hòa</label>
                         <input
                             type="number"
-                            name="drawPoints"
-                            value={teamSettings.drawPoints}
+                            name="DiemHoa" // Đã sửa
+                            value={teamSettings.DiemHoa}
                             onChange={handleChangeTeamSettings}
                         />
                     </div>
@@ -215,8 +204,8 @@ function Setting({ API_URL }) {
                         <label>Điểm khi thua</label>
                         <input
                             type="number"
-                            name="losePoints"
-                            value={teamSettings.losePoints}
+                            name="DiemThua" // Đã sửa
+                            value={teamSettings.DiemThua}
                             onChange={handleChangeTeamSettings}
                         />
                     </div>
