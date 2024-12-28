@@ -47,12 +47,12 @@ function Invoices({ invoices }) {
 
   const invoiceFields = [
     { label: "Số biên nhận", value: invoiceData?.MaBienNhan },
-    { label: "Tên đội bóng", value: invoiceData?.TenDoiBongTenDoiBong },
+    { label: "Tên đội bóng", value: invoiceData?.TenDoiBong },
     { label: "Số tiền", value: invoiceData?.LePhi ? formatCurrency(invoiceData.LePhi) : "" },
     { label: "Bằng chữ", value: toVietnameseCurrencyString(invoiceData?.LePhi) },
-    { label: "Đã nhận", value: invoiceData?.receivedAmount ? formatCurrency(invoiceData.receivedAmount) : "" },
-    { label: "Số tiền còn lại", value: invoiceData?.LePhi && invoiceData?.receivedAmount ? formatCurrency(invoiceData.LePhi - invoiceData.receivedAmount) : "" },
-    { label: "Ngày nhận", value: invoiceData?.receivedDate },
+    { label: "Đã nhận", value: invoiceData?.SoTienDaNhan ? formatCurrency(invoiceData.SoTienDaNhan) : "" },
+    { label: "Số tiền còn lại", value: invoiceData?.LePhi && invoiceData?.SoTienDaNhan ? formatCurrency(invoiceData.LePhi - invoiceData.SoTienDaNhan) : "" },
+    { label: "Ngày nhận", value: invoiceData?.NgayThanhToan },
     { label: "Lý do", value: invoiceData?.LyDo },
     { label: "Tình trạng", value: invoiceData?.TinhTrang },
   ];
