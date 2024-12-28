@@ -17,7 +17,7 @@ const BangXepHangController = {
     
             console.log('array: ', utxh);
             if (!utxh || utxh.length === 0) { // Kiểm tra nếu utxh không tồn tại hoặc rỗng
-                sortCriteria = [['DiemSo', 'DESC'], ['HieuSo', 'DESC']]; // Sắp xếp mặc định
+                sortCriteria = [['DiemSo', 'DESC'], ['SoBanThang', 'DESC'], ['HieuSo', 'DESC']]; // Sắp xếp mặc định
             } else if (!sortBy) {
                 sortCriteria = utxh
                     .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien))
