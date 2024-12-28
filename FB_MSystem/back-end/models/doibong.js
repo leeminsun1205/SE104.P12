@@ -48,9 +48,17 @@ DoiBong.associate = (models) => {
         foreignKey: 'MaSan',
         as: 'SanThiDau',
     });
-    DoiBong.belongsTo(models.DbCt, {
-        foreignKey: 'MaDoiBong', 
-        as: 'DbCt',
+    // DoiBong.belongsTo(models.DbCt, {
+    //     foreignKey: 'MaDoiBong', 
+    //     as: 'DbCt',
+    // });
+    DoiBong.hasMany(models.DbCt, {
+        foreignKey: 'MaDoiBong',
+        as: 'CacCauThu',
+    });
+    DoiBong.hasMany(models.MgDb, {
+        foreignKey: 'MaDoiBong',
+        as: 'CacMuaGiaiThamGia',
     });
 };
 module.exports = DoiBong;

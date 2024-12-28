@@ -23,13 +23,17 @@ DbCt.associate = (models) => {
         foreignKey: 'MaDoiBong',
         as: 'DoiBong', // Alias cho mùa giải
     });
-    DbCt.belongsTo(models.MgDb, {
-        foreignKey: 'MaDoiBong',
-        as: 'MgDb', // Alias cho mùa giải
-    });
+    // DbCt.belongsTo(models.MgDb, {
+    //     foreignKey: 'MaDoiBong',
+    //     as: 'MgDb', // Alias cho mùa giải
+    // });
     DbCt.belongsTo(models.CauThu, {
         foreignKey: 'MaCauThu',
         as: 'CauThu', // Alias cho đội bóng
+    });
+    DbCt.hasMany(models.MgDb, { // Một cầu thủ trong đội bóng có thể tham gia nhiều mùa giải (lý thuyết, có thể không đúng trong thực tế)
+        foreignKey: 'MaDoiBong',
+        as: 'MgDb',
     });
 };
 
