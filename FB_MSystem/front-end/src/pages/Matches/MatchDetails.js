@@ -24,6 +24,37 @@ function MatchDetails({ API_URL }) {
   });
   const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
   const [awayTeamPlayers, setAwayTeamPlayers] = useState([]);
+  const [loaiBanThangOptions, setLoaiBanThangOptions] = useState([]);
+  const [loaiBanThangLoading, setLoaiBanThangLoading] = useState(true);
+  const [loaiBanThangError, setLoaiBanThangError] = useState(null);
+  const [matchGoals, setMatchGoals] = useState([]);
+  const [matchGoalsLoading, setMatchGoalsLoading] = useState(true);
+  const [matchGoalsError, setMatchGoalsError] = useState(null);
+  const [matchCards, setMatchCards] = useState([]);
+  const [matchCardsLoading, setMatchCardsLoading] = useState(true);
+  const [matchCardsError, setMatchCardsError] = useState(null);
+
+  useEffect(() => {
+    const fetchLoaiBanThang = async () => {
+      setLoaiBanThangLoading(true);
+      setLoaiBanThangError(null);
+      try {
+        const response = await fetch(`${API_URL}/loai-ban-thang`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setLoaiBanThangOptions(data);
+      } catch (e) {
+        console.error("Error fetching loại bàn thắng:", e);
+        setLoaiBanThangError(e);
+      } finally {
+        setLoaiBanThangLoading(false);
+      }
+    };
+
+    fetchLoaiBanThang();
+  }, [API_URL]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +93,50 @@ function MatchDetails({ API_URL }) {
     fetchData();
   }, [API_URL, MaTranDau, MaMuaGiai]);
 
+  useEffect(() => {
+    const fetchMatchGoals = async () => {
+      setMatchGoalsLoading(true);
+      setMatchGoalsError(null);
+      try {
+        const response = await fetch(`${API_URL}/ban-thang/tran-dau/${MaTranDau}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMatchGoals(data);
+      } catch (error) {
+        console.error("Error fetching match goals:", error);
+        setMatchGoalsError(error);
+      } finally {
+        setMatchGoalsLoading(false);
+      }
+    };
+
+    fetchMatchGoals();
+  }, [API_URL, MaTranDau]);
+
+  useEffect(() => {
+    const fetchMatchCards = async () => {
+      setMatchCardsLoading(true);
+      setMatchCardsError(null);
+      try {
+        const response = await fetch(`${API_URL}/the-phat/tran-dau/${MaTranDau}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMatchCards(data);
+      } catch (error) {
+        console.error("Error fetching match cards:", error);
+        setMatchCardsError(error);
+      } finally {
+        setMatchCardsLoading(false);
+      }
+    };
+
+    fetchMatchCards();
+  }, [API_URL, MaTranDau]);
+
   const handleStartMatch = async () => {
     try {
       const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`, {
@@ -76,6 +151,7 @@ function MatchDetails({ API_URL }) {
         throw new Error(`Không thể bắt đầu trận đấu: ${message}`);
       }
       const updatedMatchData = await response.json();
+      console.log(updatedMatchData.tranDau)
       setMatch(updatedMatchData.tranDau);
     } catch (error) {
       console.error("Lỗi khi bắt đầu trận đấu:", error);
@@ -97,6 +173,7 @@ function MatchDetails({ API_URL }) {
         throw new Error(`Không thể kết thúc trận đấu: ${message}`);
       }
       const updatedMatchData = await response.json();
+      console.log(updatedMatchData.tranDau)
       setMatch(updatedMatchData.tranDau);
     } catch (error) {
       console.error("Lỗi khi kết thúc trận đấu:", error);
@@ -109,23 +186,21 @@ function MatchDetails({ API_URL }) {
       console.error("editedMatch is null");
       return;
     }
+    console.log(editedMatch);
     setEditedMatch({
       ...editedMatch,
       banThang: [
         ...(editedMatch.banThang || []),
-        { MaCauThu: null, MaDoiBong: null, LoaiBanThang: "", ThoiDiem: "" },
+        { MaCauThu: null, MaDoiBong: null, MaLoaiBanThang: "", ThoiDiem: "" },
       ],
     });
   };
 
   const removeGoal = async (goalId) => {
     try {
-      const response = await fetch(
-        `${API_URL}/ban-thang/${MaTranDau}/${goalId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${API_URL}/ban-thang/${goalId}`, {
+        method: "DELETE",
+      });
       if (!response.ok) {
         throw new Error(`Could not delete goal: ${response.statusText}`);
       }
@@ -135,8 +210,18 @@ function MatchDetails({ API_URL }) {
       }));
       setEditedMatch((prevEditedMatch) => ({
         ...prevEditedMatch,
-        banThang: prevEditedMatch.banThang.filter((goal) => goal.MaBanThang !== goalId),
+        banThang: prevEditedMatch.banThang.filter(
+          (goal) => goal.MaBanThang !== goalId
+        ),
       }));
+      const fetchUpdatedGoals = async () => {
+        const response = await fetch(`${API_URL}/ban-thang/tran-dau/${MaTranDau}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMatchGoals(data);
+        }
+      };
+      fetchUpdatedGoals();
     } catch (error) {
       console.error("Error deleting goal:", error);
     }
@@ -146,16 +231,17 @@ function MatchDetails({ API_URL }) {
       if (i === index) {
         let updatedValue = value;
         if (field === "MaCauThu") {
-          const parsedValue = parseInt(value);
-          updatedValue = isNaN(parsedValue) ? null : parsedValue;
+          updatedValue = value;
         } else if (field === "MaDoiBong") {
-          const parsedValue = parseInt(value);
-          updatedValue = isNaN(parsedValue) ? null : parsedValue;
+          updatedValue = value;
+        } else if (field === "MaLoaiBanThang") {
+          updatedValue = value;
         }
         const updatedGoal = {
           ...goal,
           [field]: updatedValue,
         };
+        console.log(updatedGoal);
         return updatedGoal;
       }
       return goal;
@@ -168,7 +254,7 @@ function MatchDetails({ API_URL }) {
       if (i === index) {
         const updatedCard = {
           ...card,
-          [field]: field === "MaCauThu" ? parseInt(value) || null : value,
+          [field]: field === "MaCauThu" ? value || null : value,
         };
         return updatedCard;
       }
@@ -208,8 +294,19 @@ function MatchDetails({ API_URL }) {
       }));
       setEditedMatch((prevEditedMatch) => ({
         ...prevEditedMatch,
-        thePhat: prevEditedMatch.thePhat.filter((card) => card.MaThePhat !== MaThePhat),
+        thePhat: prevEditedMatch.thePhat.filter(
+          (card) => card.MaThePhat !== MaThePhat
+        ),
       }));
+      // Refetch match cards after deleting a card
+      const fetchUpdatedCards = async () => {
+        const response = await fetch(`${API_URL}/the-phat/tran-dau/${MaTranDau}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMatchCards(data);
+        }
+      };
+      fetchUpdatedCards();
     } catch (error) {
       console.error("Error deleting card:", error);
     }
@@ -219,10 +316,11 @@ function MatchDetails({ API_URL }) {
     try {
       const newGoals = sortedGoals.filter((goal) => !goal.MaBanThang);
       const existingGoals = sortedGoals.filter((goal) => goal.MaBanThang);
-
+  
       for (const newGoal of newGoals) {
+        console.log(JSON.stringify(newGoal));
         const response = await fetch(
-          `${API_URL}/bang-thang/tran-dau/${MaTranDau}`,
+          `${API_URL}/ban-thang/tran-dau/${MaTranDau}/doi-bong/${newGoal.MaDoiBong}/cau-thu/${newGoal.MaCauThu}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -255,6 +353,14 @@ function MatchDetails({ API_URL }) {
       setMatch(data.tranDau);
       setEditedMatch(data.tranDau);
       setIsEditingGoals(false);
+      const fetchUpdatedGoals = async () => {
+        const response = await fetch(`${API_URL}/ban-thang/tran-dau/${MaTranDau}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMatchGoals(data);
+        }
+      };
+      fetchUpdatedGoals();
     } catch (error) {
       console.error("Error updating goals:", error);
     }
@@ -264,16 +370,14 @@ function MatchDetails({ API_URL }) {
     try {
       const newCards = sortedCards.filter((card) => !card.MaThePhat);
       const existingCards = sortedCards.filter((card) => card.MaThePhat);
-
+    
       for (const newCard of newCards) {
-        const response = await fetch(
-          `${API_URL}/the-phat/tran-dau/${MaTranDau}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newCard),
-          }
-        );
+        console.log(newCard)  
+        const response = await fetch(`${API_URL}/the-phat/${MaTranDau}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newCard),
+        });
         if (!response.ok)
           throw new Error(`Could not add card: ${response.statusText}`);
       }
@@ -300,6 +404,15 @@ function MatchDetails({ API_URL }) {
       setMatch(data.tranDau);
       setEditedMatch(data.tranDau);
       setIsEditingCards(false);
+      // Refetch match cards after saving
+      const fetchUpdatedCards = async () => {
+        const response = await fetch(`${API_URL}/the-phat/tran-dau/${MaTranDau}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMatchCards(data);
+        }
+      };
+      fetchUpdatedCards();
     } catch (error) {
       console.error("Error updating cards:", error);
     }
@@ -359,10 +472,10 @@ function MatchDetails({ API_URL }) {
   };
 
   const getAvailablePlayersForTeam = (MaDoiBong) => {
-    const MaDoiBongInt = parseInt(MaDoiBong);
-    if (match?.MaDoiBongNha === MaDoiBongInt) {
+    const MaDoiBongInt = MaDoiBong;
+    if (match?.DoiBongNha?.MaDoiBong === MaDoiBongInt) {
       return homeTeamPlayers;
-    } else if (match?.MaDoiBongKhach === MaDoiBongInt) {
+    } else if (match?.DoiBongKhach?.MaDoiBong === MaDoiBongInt) {
       return awayTeamPlayers;
     }
     return [];
@@ -373,9 +486,13 @@ function MatchDetails({ API_URL }) {
     if (goalSortConfig.key !== null) {
       sortableGoals.sort((a, b) => {
         const aValue =
-          goalSortConfig.key === "MaCauThu" ? getPlayerName(a.MaCauThu) : a[goalSortConfig.key];
+          goalSortConfig.key === "MaCauThu"
+            ? getPlayerName(a.MaCauThu)
+            : a[goalSortConfig.key];
         const bValue =
-          goalSortConfig.key === "MaCauThu" ? getPlayerName(b.MaCauThu) : b[goalSortConfig.key];
+          goalSortConfig.key === "MaCauThu"
+            ? getPlayerName(b.MaCauThu)
+            : b[goalSortConfig.key];
         if (aValue < bValue)
           return goalSortConfig.direction === "ascending" ? -1 : 1;
         if (aValue > bValue)
@@ -426,7 +543,6 @@ function MatchDetails({ API_URL }) {
       </div>
     );
   }
-
   if (!match) {
     return (
       <div className={styles.notFound}>
@@ -461,7 +577,6 @@ function MatchDetails({ API_URL }) {
   const handleEditCards = () => {
     setIsEditingCards(true);
   };
-
   return (
     <div className={styles.matchDetails}>
       <h1 className={styles.matchTitle}>
@@ -480,7 +595,7 @@ function MatchDetails({ API_URL }) {
         </button>
       )}
 
-      {!match?.TinhTrang && (
+      {match?.TinhTrang && (
         <div>
           <button className={styles.smallDetailsButton} onClick={toggleResult}>
             {showResult ? "Ẩn kết quả trận đấu" : "Hiện kết quả trận đấu"}
@@ -488,7 +603,7 @@ function MatchDetails({ API_URL }) {
         </div>
       )}
 
-      {!match?.TinhTrang && showResult && (
+      {match?.TinhTrang && showResult && (
         <div className={styles.matchDetailsContainer}>
           <table className={styles.matchDetailsTable}>
             <tbody>
@@ -505,9 +620,13 @@ function MatchDetails({ API_URL }) {
               <tr>
                 <td>
                   <span className={styles.label}>Tỷ số:</span>{" "}
-                  {match.BanThangDoiNha !== null && match?.BanThangDoiKhach !== null ? (
-                    match?.BanThangDoiNha - match?.BanThangDoiKhach
-                  ) : "Chưa thi đấu"}
+                  {match.BanThangDoiNha !== null && match?.BanThangDoiKhach !== null
+                    ? `${
+                        match?.BanThangDoiNha === null ? 0 : match?.BanThangDoiNha
+                      }-${
+                        match?.BanThangDoiKhach === null ? 0 : match?.BanThangDoiKhach
+                      }`
+                    : "Chưa thi đấu"}
                 </td>
                 <td>
                   <span className={styles.label}>Sân đấu:</span>{" "}
@@ -552,7 +671,7 @@ function MatchDetails({ API_URL }) {
                   </div>
                   {showGoals && (
                     <div>
-                      <span className={styles.label}>Bàn thắng:</span>
+                      <span className={styles.label}>Bàn thắng (Chỉnh sửa):</span>
                       <table className={styles.goalTable}>
                         <thead>
                           <tr>
@@ -561,9 +680,9 @@ function MatchDetails({ API_URL }) {
                               {getSortIndicator("MaCauThu", goalSortConfig)}
                             </th>
                             <th>Đội</th>
-                            <th onClick={() => sortGoals("LoaiBanThang")}>
+                            <th onClick={() => sortGoals("MaMaLoaiBanThang")}>
                               Loại bàn thắng{" "}
-                              {getSortIndicator("LoaiBanThang", goalSortConfig)}
+                              {getSortIndicator("MaMaLoaiBanThang", goalSortConfig)}
                             </th>
                             <th onClick={() => sortGoals("ThoiDiem")}>
                               Thời điểm ghi bàn{" "}
@@ -583,7 +702,7 @@ function MatchDetails({ API_URL }) {
                                       handleGoalChange(
                                         index,
                                         "MaCauThu",
-                                        parseInt(e.target.value) || null
+                                        e.target.value || null
                                       )
                                     }
                                   >
@@ -610,7 +729,7 @@ function MatchDetails({ API_URL }) {
                                       handleGoalChange(
                                         index,
                                         "MaDoiBong",
-                                        parseInt(e.target.value) || null
+                                        e.target.value
                                       )
                                     }
                                   >
@@ -629,20 +748,33 @@ function MatchDetails({ API_URL }) {
                                 )}
                               </td>
                               <td>
-                                {isEditingGoals ? (
-                                  <input
-                                    type="text"
-                                    value={goal.LoaiBanThang}
+                                {isEditingGoals && !loaiBanThangLoading && !loaiBanThangError ? (
+                                  <select
+                                    value={goal.MaLoaiBanThang}
                                     onChange={(e) =>
                                       handleGoalChange(
                                         index,
-                                        "LoaiBanThang",
+                                        "MaLoaiBanThang",
                                         e.target.value
                                       )
                                     }
-                                  />
+                                  >
+                                    <option value="">Chọn loại bàn thắng</option>
+                                    {loaiBanThangOptions.map((option) => (
+                                      <option
+                                        key={option.MaLoaiBanThang}
+                                        value={option.MaLoaiBanThang}
+                                      >
+                                        {option.TenLoaiBanThang}
+                                      </option>
+                                    ))}
+                                  </select>
+                                ) : loaiBanThangLoading ? (
+                                  "Đang tải loại bàn thắng..."
+                                ) : loaiBanThangError ? (
+                                  "Lỗi tải loại bàn thắng"
                                 ) : (
-                                  goal.LoaiBanThang
+                                  goal.MaLoaiBanThang
                                 )}
                               </td>
                               <td>
@@ -705,6 +837,36 @@ function MatchDetails({ API_URL }) {
                     </div>
                   )}
 
+                  <div>
+                    <span className={styles.label}>Tất cả bàn thắng trong trận:</span>
+                    {matchGoalsLoading ? (
+                      <p>Đang tải thông tin bàn thắng...</p>
+                    ) : matchGoalsError ? (
+                      <p>Lỗi khi tải thông tin bàn thắng: {matchGoalsError.message}</p>
+                    ) : (
+                      <table className={styles.goalTable}>
+                        <thead>
+                          <tr>
+                            <th>Cầu thủ</th>
+                            <th>Đội</th>
+                            <th>Loại bàn thắng</th>
+                            <th>Thời điểm ghi bàn</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {matchGoals.map((goal) => (
+                            <tr key={goal.MaBanThang}>
+                              <td>{getPlayerName(goal.MaCauThu)}</td>
+                              <td>{goal.DoiBong.TenDoiBong}</td>
+                              <td>{goal.LoaiBanThang.TenLoaiBanThang}</td>
+                              <td>{goal.ThoiDiem}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+
                   <div className={styles.editSection}>
                     {showCards && !isEditingCards && match && (
                       <button
@@ -718,7 +880,7 @@ function MatchDetails({ API_URL }) {
 
                   {showCards && (
                     <div>
-                      <span className={styles.label}>Thẻ phạt:</span>
+                      <span className={styles.label}>Thẻ phạt (Chỉnh sửa):</span>
                       <table className={styles.cardTable}>
                         <thead>
                           <tr>
@@ -735,6 +897,7 @@ function MatchDetails({ API_URL }) {
                               Thời điểm{" "}
                               {getSortIndicator("ThoiDiem", cardSortConfig)}
                             </th>
+                            {isEditingCards && <th>Lý do</th>}
                             {isEditingCards && <th>Hành động</th>}
                           </tr>
                         </thead>
@@ -749,7 +912,7 @@ function MatchDetails({ API_URL }) {
                                       handleCardChange(
                                         index,
                                         "MaCauThu",
-                                        parseInt(e.target.value) || null
+                                        e.target.value || null
                                       )
                                     }
                                   >
@@ -769,14 +932,13 @@ function MatchDetails({ API_URL }) {
                                 )}
                               </td>
                               <td>
-                                {isEditingCards ? (
-                                  <select
+                                {isEditingCards ? (                                  <select
                                     value={card.MaDoiBong || ""}
                                     onChange={(e) =>
                                       handleCardChange(
                                         index,
                                         "MaDoiBong",
-                                        parseInt(e.target.value) || null
+                                        e.target.value
                                       )
                                     }
                                   >
@@ -788,7 +950,7 @@ function MatchDetails({ API_URL }) {
                                       {match.DoiBongKhach.TenDoiBong}
                                     </option>
                                   </select>
-                                ) : card.MaDoiBong === match.MaDoiBongNha ? (
+                                ) : card.MaDoiBong === match.DoiBongNha.MaDoiBong ? (
                                   match.DoiBongNha.TenDoiBong
                                 ) : (
                                   match.DoiBongKhach.TenDoiBong
@@ -796,8 +958,8 @@ function MatchDetails({ API_URL }) {
                               </td>
                               <td>
                                 {isEditingCards ? (
-                                  <select
-                                    value={card.LoaiThePhat}
+                                  <input
+                                    value={card.MaLoaiThePhat}
                                     onChange={(e) =>
                                       handleCardChange(
                                         index,
@@ -806,9 +968,7 @@ function MatchDetails({ API_URL }) {
                                       )
                                     }
                                   >
-                                    <option value="Yellow">Thẻ vàng</option>
-                                    <option value="Red">Thẻ đỏ</option>
-                                  </select>
+                                  </input>
                                 ) : card.LoaiThePhat === "Red" ? (
                                   <span className={styles.redCard}>Thẻ đỏ</span>
                                 ) : (
@@ -826,6 +986,23 @@ function MatchDetails({ API_URL }) {
                                       handleCardChange(
                                         index,
                                         "ThoiDiem",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                ) : (
+                                  card.ThoiDiem
+                                )}
+                              </td>
+                              <td>
+                                {isEditingCards ? (
+                                  <input
+                                    type="text"
+                                    value={card.LyDo}
+                                    onChange={(e) =>
+                                      handleCardChange(
+                                        index,
+                                        "LyDo",
                                         e.target.value
                                       )
                                     }
@@ -876,6 +1053,48 @@ function MatchDetails({ API_URL }) {
                       )}
                     </div>
                   )}
+
+                  <div>
+                    <span className={styles.label}>Tất cả thẻ phạt trong trận:</span>
+                    {matchCardsLoading ? (
+                      <p>Đang tải thông tin thẻ phạt...</p>
+                    ) : matchCardsError ? (
+                      <p>Lỗi khi tải thông tin thẻ phạt: {matchCardsError.message}</p>
+                    ) : (
+                      <table className={styles.cardTable}>
+                        <thead>
+                          <tr>
+                            <th>Cầu thủ</th>
+                            <th>Đội</th>
+                            <th>Loại thẻ</th>
+                            <th>Thời điểm</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {matchCards.map((card) => (
+                            <tr key={card.MaThePhat}>
+                              <td>{getPlayerName(card.MaCauThu)}</td>
+                              <td>
+                                {card.MaDoiBong === match.DoiBongNha.MaDoiBong
+                                  ? match.DoiBongNha.TenDoiBong
+                                  : match.DoiBongKhach.TenDoiBong}
+                              </td>
+                              <td>
+                                {card.LoaiThePhat === "Red" ? (
+                                  <span className={styles.redCard}>Thẻ đỏ</span>
+                                ) : (
+                                  <span className={styles.yellowCard}>
+                                    Thẻ vàng
+                                  </span>
+                                )}
+                              </td>
+                              <td>{card.ThoiDiem}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
                 </td>
               </tr>
             </tbody>

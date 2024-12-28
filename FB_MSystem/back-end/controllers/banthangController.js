@@ -83,18 +83,19 @@ const BanThangController = {
         try {
             const { MaTranDau, MaDoiBong, MaCauThu } = req.params;
             const { MaLoaiBanThang, ThoiDiem } = req.body;
-    
+            console.log(req.params)
+            console.log(req.body)
             if (!MaLoaiBanThang || !ThoiDiem) {
                 return res.status(400).json({ error: 'Thiếu dữ liệu cần thiết để tạo bàn thắng.' });
             }
     
             // Lấy thông tin từ bảng ThamSo
-            const thamSo = await ThamSo.findOne();
+            const thamSo = await ThamSo.findOne(); // Changed to findOne()
+            console.log(thamSo)
             if (!thamSo) {
                 return res.status(500).json({ error: 'Tham số hệ thống chưa được cấu hình.' });
             }
-    
-            const { ThoiDiemGhiBanToiDa } = thamSo;
+            const { ThoiDiemGhiBanToiDa } = thamSo; // Access property directly
     
             // Kiểm tra điều kiện ThoiDiem
             if (ThoiDiem > ThoiDiemGhiBanToiDa) {
@@ -111,7 +112,6 @@ const BanThangController = {
                 MaLoaiBanThang,
                 ThoiDiem
             );
-    
             res.status(201).json({ banThang, tranDau, vuaPhaLuoi });
         } catch (error) {
             console.error(error);
