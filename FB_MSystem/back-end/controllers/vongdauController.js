@@ -118,8 +118,7 @@ const VongDauController = {
             }
 
             // Cập nhật vòng đấu
-            await vongDau.update(updates.vongDau);
-    
+            await vongDau.update(updates);
             res.status(200).json({
                 message: 'Vòng đấu đã được cập nhật thành công.',
                 vongDau,

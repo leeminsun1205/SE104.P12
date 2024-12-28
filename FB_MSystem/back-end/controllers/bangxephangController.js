@@ -9,17 +9,16 @@ const BangXepHangController = {
             const { MaMuaGiai } = req.params;
             const { sortBy, order } = req.query;
             const utxh = await UtXepHang.findAll({
-                where: { MaMuaGiai: MaMuaGiai }
+                where: { MaMuaGiai: MaMuaGiai } // Đã sửa lỗi chính tả
             });
-
+    
             let sortCriteria = [];
             const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
-
-            if (!Array.isArray(utxh) || utxh.length === 0) {
-                return res.status(400).json({ message: 'Danh sách tiêu chí sắp xếp không hợp lệ.' });
-            }
-
-            if (!sortBy) {
+    
+            console.log('array: ', utxh);
+            if (!utxh || utxh.length === 0) { // Kiểm tra nếu utxh không tồn tại hoặc rỗng
+                sortCriteria = [['DiemSo', 'DESC'], ['SoBanThang', 'DESC'], ['HieuSo', 'DESC']]; // Sắp xếp mặc định
+            } else if (!sortBy) {
                 sortCriteria = utxh
                     .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien))
                     .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
@@ -35,7 +34,7 @@ const BangXepHangController = {
                     .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);
                 sortCriteria = [...sortCriteria, ...remainingCriteria];
             }
-
+    
             const bangXepHang = await BangXepHang.findAll({
                 where: { MaMuaGiai },
                 include: [
@@ -48,12 +47,11 @@ const BangXepHangController = {
                 attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
                 order: sortCriteria,
             });
-
+    
             if (bangXepHang.length === 0) {
                 return res.status(404).json({ message: 'Không tìm thấy bảng xếp hạng cho mùa giải này.' });
             }
-
-            // Thêm trường XepHang sau khi sắp xếp
+    
             const bangXepHangWithRank = bangXepHang.map((item, index) => {
                 return {
                     ...item.get({ plain: true }),
@@ -61,7 +59,7 @@ const BangXepHangController = {
                     XepHang: index + 1,
                 };
             });
-
+    
             res.status(200).json(bangXepHangWithRank);
         } catch (error) {
             console.error('Lỗi khi truy vấn bảng xếp hạng:', error);
