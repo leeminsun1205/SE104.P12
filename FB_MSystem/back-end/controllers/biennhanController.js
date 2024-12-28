@@ -4,12 +4,12 @@ const BienNhanController = {
     async getAll(req, res) {
         try {
             const bienNhans = await BienNhan.findAll({
-                attributes: ['MaBienNhan', 'LePhi', 'NgayBatDau', 'NgayHetHan', 'NgayThanhToan', 'TinhTrang'],
+                attributes: ['MaBienNhan', 'LePhi', 'NgayThanhToan', 'LyDo', 'TinhTrang'],
                 include: [
                     {
                         model: DoiBong,
                         as: 'DoiBong',
-                        attributes: ['TenDoiBong'], 
+                        attributes: ['TenDoiBong', 'MaDoiBong'], 
                     },
                 ],
             });
@@ -17,6 +17,7 @@ const BienNhanController = {
                 const { DoiBong, ...rest } = bienNhan.get(); 
                 return {
                     ...rest,
+                    MaDoiBong: DoiBong ? DoiBong.MaDoiBong : null, 
                     TenDoiBong: DoiBong ? DoiBong.TenDoiBong : null, 
                 };
             });
@@ -57,10 +58,9 @@ const BienNhanController = {
                 MaBienNhan,
                 MaDoiBong,
                 LePhi,
-                NgayBatDau,
-                NgayHetHan,
                 NgayThanhToan,
                 TinhTrang,
+                LyDo,
             });
     
             res.status(201).json(bienNhan);

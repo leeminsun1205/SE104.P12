@@ -46,12 +46,11 @@ CREATE TABLE BIENNHAN (
 	MaBienNhan	CHAR(10) NOT NULL,
 	MaDoiBong CHAR(10) NOT NULL UNIQUE,
 	LePhi BIGINT NOT NULL, -- VND
-	NgayBatDau DATE NOT NULL,
-	NgayHetHan DATE NOT NULL,
 	NgayThanhToan DATE,
+    LyDo VARCHAR(1000),
 	TinhTrang BIT NOT NULL, -- false: Chưa thanh toán, true: Đã thanh toán
-	CONSTRAINT CK_NgayBatDau_NgayHetHan_BN CHECK (NgayBatDau < NgayHetHan),     
-	CONSTRAINT CK_HopLe CHECK ((NgayThanhToan IS NULL AND TinhTrang = 0) OR (NgayThanhToan >= NgayBatDau AND TinhTrang = 1)),
+-- 	CONSTRAINT CK_NgayBatDau_NgayHetHan_BN CHECK (NgayBatDau < NgayHetHan),     
+	CONSTRAINT CK_HopLe CHECK ((NgayThanhToan IS NULL AND TinhTrang = 0) OR (NgayThanhToan IS NOT NULL AND TinhTrang = 1)),
     CONSTRAINT PK_BIENNHAN PRIMARY KEY (MaBienNhan),
     CONSTRAINT FK_BIENNHAN_DOIBONG FOREIGN KEY (MaDoiBong) REFERENCES DOIBONG(MaDoiBong) ON DELETE CASCADE                         
 );
@@ -316,9 +315,9 @@ VALUES
     ('LTP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
     ('LTP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
 
-INSERT INTO MUAGIAI (MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc)
-VALUES
-('MG2025_1', 'Giải vô địch quốc gia V-league 2025', '2025-01-01', '2025-06-30');
+-- INSERT INTO MUAGIAI (MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc)
+-- VALUES
+-- ('MG2025_1', 'Giải vô địch quốc gia V-league 2025', '2025-01-01', '2025-06-30');
 
 INSERT INTO SANTHIDAU (MaSan, TenSan, DiaChiSan, SucChua, TieuChuan)
 VALUES

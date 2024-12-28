@@ -115,26 +115,6 @@ function Setting({ API_URL }) {
                     </div>
 
                     <div className={styles["setting-group"]}>
-                        <label>Ngày bắt đầu lệ phí</label>
-                        <input
-                            type="date"
-                            name="NgayBatDauLePhi" // Đã sửa
-                            value={teamSettings.NgayBatDauLePhi}
-                            onChange={handleChangeTeamSettings}
-                        /> tuổi
-                    </div>
-
-                    <div className={styles["setting-group"]}>
-                        <label>Ngày kết thúc lệ phí</label>
-                        <input
-                            type="date"
-                            name="NgayHetHanLePhi" // Đã sửa
-                            value={teamSettings.NgayHetHanLePhi}
-                            onChange={handleChangeTeamSettings}
-                        /> tuổi
-                    </div>
-
-                    <div className={styles["setting-group"]}>
                         <label>Sức chứa tối thiểu sân đấu</label>
                         <input
                             type="number"
