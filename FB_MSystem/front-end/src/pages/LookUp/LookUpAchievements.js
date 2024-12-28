@@ -44,7 +44,7 @@ function LookUpAchievements({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/teams/${selectedTeam}/position`);
+                const response = await fetch(`${API_URL}/doi-bong/${selectedTeam}/position`);
                 if (!response.ok) {
                     if (response.status === 402) {
                         console.log(`Team not found: ${selectedTeam}`);
@@ -136,7 +136,7 @@ function LookUpAchievements({ API_URL }) {
 
     const handleRowClick = (seasonId) => {
         console.log(`handleRowClick Season ID: ${seasonId}`); // Debug handleRowClick
-        navigate(`/season/${seasonId}`);
+        navigate(`/mua-giai/${seasonId}`);
     };
 
     return (

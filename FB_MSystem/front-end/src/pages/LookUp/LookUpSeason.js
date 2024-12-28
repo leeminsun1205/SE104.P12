@@ -25,7 +25,7 @@ function LookUpSeason({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("LookUpSeason: Dữ liệu thống kê đội bóng từ API:", data);
-                setTeamStatistics(data.teams);
+                setTeamStatistics(data.doiBong);
             } catch (error) {
                 console.error("LookUpSeason: Lỗi khi tải dữ liệu thống kê đội bóng:", error);
                 setError("Failed to load team statistics.");
@@ -100,8 +100,8 @@ function LookUpSeason({ API_URL }) {
                     <tbody>
                         {sortedStatistics.length > 0 ? (
                             sortedStatistics.map((team) => (
-                                <tr key={team.name} className={styles.standingsRow}>
-                                    <td>{team.name}</td>
+                                <tr key={team.TenDoiBong} className={styles.standingsRow}>
+                                    <td>{team.TenDoiBong}</td>
                                     <td>{team.participations}</td>
                                     <td>{team.wins}</td>
                                     <td>{team.runnerUps}</td>
