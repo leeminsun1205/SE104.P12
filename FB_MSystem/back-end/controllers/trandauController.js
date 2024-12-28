@@ -1,4 +1,6 @@
-const { BangXepHang, ThamSo, TranDau, DoiBong, SanThiDau, VongDau, BanThang } = require('../models');
+const { BangXepHang, ThamSo, TranDau, DoiBong, SanThiDau, VongDau, BanThang, Sequelize } = require('../models');
+const { Op } = Sequelize;
+
 const TranDauController = {
     async getAll(req, res) {
         try {
@@ -71,7 +73,7 @@ const TranDauController = {
                         attributes: ['TenSan'],
                     },
                 ],
-                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] } 
+                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
             });
             if (tranDaus.length === 0) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu nào cho mùa giải này.' });
@@ -119,22 +121,77 @@ const TranDauController = {
                 ],
                 attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
             });
-    
+
             if (!tranDau) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
             }
-    
+
             const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
             const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
-    
+
             const result = {
                 ...tranDau.get(),
                 TenVongDau: tenVongDau,
             };
-    
+
             res.status(200).json({ tranDau: result });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.', details: error.message });
+        }
+    },
+
+    async getByDoiBong(req, res) {
+        try {
+            const { MaDoiBong } = req.params;
+            const tranDaus = await TranDau.findAll({
+                where: {
+                    [Op.or]: [
+                        { MaDoiBongNha: MaDoiBong },
+                        { MaDoiBongKhach: MaDoiBong }
+                    ]
+                },
+                include: [
+                    {
+                        model: VongDau,
+                        as: 'VongDau',
+                        attributes: ['MaMuaGiai', 'MaVongDau'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongNha',
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongKhach',
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
+                    },
+                    {
+                        model: SanThiDau,
+                        as: 'SanThiDau',
+                        attributes: ['TenSan'],
+                    },
+                ],
+                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
+            });
+
+            if (tranDaus.length === 0) {
+                return res.status(404).json({ error: 'Không tìm thấy trận đấu nào cho đội bóng này.' });
+            }
+
+            const results = tranDaus.map((tranDau) => {
+                const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
+                const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
+
+                return {
+                    ...tranDau.get(),
+                    TenVongDau: tenVongDau,
+                };
+            });
+
+            res.status(200).json({ tranDau: results });
+        } catch (error) {
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu theo đội bóng.', details: error.message });
         }
     },
 

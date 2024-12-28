@@ -24,6 +24,7 @@ function MatchDetails({ API_URL }) {
   });
   const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
   const [awayTeamPlayers, setAwayTeamPlayers] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -59,7 +60,7 @@ function MatchDetails({ API_URL }) {
     };
 
     fetchData();
-  }, [API_URL, MaTranDau]);
+  }, [API_URL, MaTranDau, MaMuaGiai]);
 
   const addGoal = () => {
     if (!editedMatch) {
@@ -68,9 +69,9 @@ function MatchDetails({ API_URL }) {
     }
     setEditedMatch({
       ...editedMatch,
-      goals: [
+      banThang: [
         ...(editedMatch.banThang || []),
-        { player: "", MaDoiBong: null, type: "", ThoiDiem: "" },
+        { MaCauThu: null, MaDoiBong: null, LoaiBanThang: "", ThoiDiem: "" },
       ],
     });
   };
@@ -78,7 +79,7 @@ function MatchDetails({ API_URL }) {
   const removeGoal = async (goalId) => {
     try {
       const response = await fetch(
-        `${API_URL}/tran-dau/${MaTranDau}/goals/${goalId}`,
+        `${API_URL}/tran-dau/${MaTranDau}/ban-thang/${goalId}`,
         {
           method: "DELETE",
         }
@@ -88,11 +89,11 @@ function MatchDetails({ API_URL }) {
       }
       setMatch((prevMatch) => ({
         ...prevMatch,
-        goals: prevMatch.banThang.filter((goal) => goal.MaBanThang !== goalId),
+        banThang: prevMatch.banThang.filter((goal) => goal.MaBanThang !== goalId),
       }));
       setEditedMatch((prevEditedMatch) => ({
         ...prevEditedMatch,
-        goals: prevEditedMatch.banThang.filter((goal) => goal.MaBanThang !== goalId),
+        banThang: prevEditedMatch.banThang.filter((goal) => goal.MaBanThang !== goalId),
       }));
     } catch (error) {
       console.error("Error deleting goal:", error);
@@ -102,7 +103,10 @@ function MatchDetails({ API_URL }) {
     const updatedGoals = editedMatch.banThang.map((goal, i) => {
       if (i === index) {
         let updatedValue = value;
-        if (field === "player") {
+        if (field === "MaCauThu") {
+          const parsedValue = parseInt(value);
+          updatedValue = isNaN(parsedValue) ? null : parsedValue;
+        } else if (field === "MaDoiBong") {
           const parsedValue = parseInt(value);
           updatedValue = isNaN(parsedValue) ? null : parsedValue;
         }
@@ -114,7 +118,7 @@ function MatchDetails({ API_URL }) {
       }
       return goal;
     });
-    setEditedMatch({ ...editedMatch, goals: updatedGoals });
+    setEditedMatch({ ...editedMatch, banThang: updatedGoals });
   };
 
   const handleCardChange = (index, field, value) => {
@@ -140,7 +144,7 @@ function MatchDetails({ API_URL }) {
       ...editedMatch,
       thePhat: [
         ...(editedMatch.thePhat || []),
-        { MaCauThu: "", MaDoiBong: null, LoaiThePhat: "Yellow", ThoiDiem: "" },
+        { MaCauThu: null, MaDoiBong: null, LoaiThePhat: "Yellow", ThoiDiem: "" },
       ],
     });
   };
@@ -206,8 +210,8 @@ function MatchDetails({ API_URL }) {
           `Could not fetch updated match data: ${response.statusText}`
         );
       const data = await response.json();
-      setMatch(data);
-      setEditedMatch(data);
+      setMatch(data.tranDau);
+      setEditedMatch(data.tranDau);
       setIsEditingGoals(false);
     } catch (error) {
       console.error("Error updating goals:", error);
@@ -251,8 +255,8 @@ function MatchDetails({ API_URL }) {
           `Could not fetch updated match data: ${response.statusText}`
         );
       const data = await response.json();
-      setMatch(data);
-      setEditedMatch(data);
+      setMatch(data.tranDau);
+      setEditedMatch(data.tranDau);
       setIsEditingCards(false);
     } catch (error) {
       console.error("Error updating cards:", error);
@@ -299,7 +303,6 @@ function MatchDetails({ API_URL }) {
   };
 
   const getPlayerName = (MaCauThu) => {
-
     if (!homeTeamPlayers.length || !awayTeamPlayers.length) {
       console.warn("Player arrays are empty in getPlayerName");
       return "Unknown Player";
@@ -328,9 +331,9 @@ function MatchDetails({ API_URL }) {
     if (goalSortConfig.key !== null) {
       sortableGoals.sort((a, b) => {
         const aValue =
-          goalSortConfig.key === "cauThu" ? getPlayerName(a.cauThu) : a[goalSortConfig.key];
+          goalSortConfig.key === "MaCauThu" ? getPlayerName(a.MaCauThu) : a[goalSortConfig.key];
         const bValue =
-          goalSortConfig.key === "cauThu" ? getPlayerName(b.cauThu) : b[goalSortConfig.key];
+          goalSortConfig.key === "MaCauThu" ? getPlayerName(b.MaCauThu) : b[goalSortConfig.key];
         if (aValue < bValue)
           return goalSortConfig.direction === "ascending" ? -1 : 1;
         if (aValue > bValue)
@@ -361,7 +364,7 @@ function MatchDetails({ API_URL }) {
       });
     }
     return sortableCards;
-  }, [editedMatch?.cards, cardSortConfig, homeTeamPlayers, awayTeamPlayers]);
+  }, [editedMatch?.thePhat, cardSortConfig, homeTeamPlayers, awayTeamPlayers]);
 
   if (loading) {
     return <div>Đang tải thông tin trận đấu...</div>;
@@ -416,7 +419,7 @@ function MatchDetails({ API_URL }) {
   const handleEditCards = () => {
     setIsEditingCards(true);
   };
-  console.log(match)
+
   return (
     <div className={styles.matchDetails}>
       <h1 className={styles.matchTitle}>
@@ -448,9 +451,9 @@ function MatchDetails({ API_URL }) {
               <tr>
                 <td>
                   <span className={styles.label}>Tỷ số:</span>{" "}
-                  {match.BanThangDoiNha && match?.BanThangDoiKhach ? 
-                  match?.BanThangDoiNha - match?.BanThangDoiKhach
-                  : "Chưa thi đấu"}
+                  {match.BanThangDoiNha !== null && match?.BanThangDoiKhach !== null ? (
+                    match?.BanThangDoiNha - match?.BanThangDoiKhach
+                  ) : "Chưa thi đấu"}
                 </td>
                 <td>
                   <span className={styles.label}>Sân đấu:</span>{" "}
@@ -459,7 +462,7 @@ function MatchDetails({ API_URL }) {
               </tr>
               <tr>
                 <td>
-                  <span className={styles.label}>Ngày:</span> 
+                  <span className={styles.label}>Ngày:</span>
                   {match?.NgayThiDau}
                 </td>
                 <td>
@@ -499,14 +502,14 @@ function MatchDetails({ API_URL }) {
                       <table className={styles.goalTable}>
                         <thead>
                           <tr>
-                            <th onClick={() => sortGoals("player")}>
+                            <th onClick={() => sortGoals("MaCauThu")}>
                               Cầu thủ{" "}
-                              {getSortIndicator("player", goalSortConfig)}
+                              {getSortIndicator("MaCauThu", goalSortConfig)}
                             </th>
                             <th>Đội</th>
-                            <th onClick={() => sortGoals("type")}>
+                            <th onClick={() => sortGoals("LoaiBanThang")}>
                               Loại bàn thắng{" "}
-                              {getSortIndicator("type", goalSortConfig)}
+                              {getSortIndicator("LoaiBanThang", goalSortConfig)}
                             </th>
                             <th onClick={() => sortGoals("ThoiDiem")}>
                               Thời điểm ghi bàn{" "}
@@ -521,11 +524,11 @@ function MatchDetails({ API_URL }) {
                               <td>
                                 {isEditingGoals ? (
                                   <select
-                                    value={goal.player || ""}
+                                    value={goal.MaCauThu || ""}
                                     onChange={(e) =>
                                       handleGoalChange(
                                         index,
-                                        "player",
+                                        "MaCauThu",
                                         parseInt(e.target.value) || null
                                       )
                                     }
@@ -539,8 +542,8 @@ function MatchDetails({ API_URL }) {
                                       )
                                     )}
                                   </select>
-                                ) : goal.player ? (
-                                  getPlayerName(goal.player)
+                                ) : goal.MaCauThu ? (
+                                  getPlayerName(goal.MaCauThu)
                                 ) : (
                                   "Chưa chọn cầu thủ"
                                 )}
@@ -557,6 +560,7 @@ function MatchDetails({ API_URL }) {
                                       )
                                     }
                                   >
+                                    <option value="">Chọn đội</option>
                                     <option value={match.DoiBongNha.MaDoiBong}>
                                       {match.DoiBongNha.TenDoiBong}
                                     </option>
@@ -574,17 +578,17 @@ function MatchDetails({ API_URL }) {
                                 {isEditingGoals ? (
                                   <input
                                     type="text"
-                                    value={goal.type}
+                                    value={goal.LoaiBanThang}
                                     onChange={(e) =>
                                       handleGoalChange(
                                         index,
-                                        "type",
+                                        "LoaiBanThang",
                                         e.target.value
                                       )
                                     }
                                   />
                                 ) : (
-                                  goal.type
+                                  goal.LoaiBanThang
                                 )}
                               </td>
                               <td>
@@ -669,9 +673,9 @@ function MatchDetails({ API_URL }) {
                               {getSortIndicator("MaCauThu", cardSortConfig)}
                             </th>
                             <th>Đội</th>
-                            <th onClick={() => sortCards("type")}>
+                            <th onClick={() => sortCards("LoaiThePhat")}>
                               Loại thẻ{" "}
-                              {getSortIndicator("type", cardSortConfig)}
+                              {getSortIndicator("LoaiThePhat", cardSortConfig)}
                             </th>
                             <th onClick={() => sortCards("ThoiDiem")}>
                               Thời điểm{" "}
@@ -722,17 +726,18 @@ function MatchDetails({ API_URL }) {
                                       )
                                     }
                                   >
+                                    <option value="">Chọn đội</option>
                                     <option value={match.DoiBongNha.MaDoiBong}>
                                       {match.DoiBongNha.TenDoiBong}
                                     </option>
                                     <option value={match.DoiBongKhach.MaDoiBong}>
-                                      {match.DoiBongKhach.MaDoiBong}
+                                      {match.DoiBongKhach.TenDoiBong}
                                     </option>
                                   </select>
                                 ) : card.MaDoiBong === match.MaDoiBongNha ? (
-                                  match.TenDoiBongNha
+                                  match.DoiBongNha.TenDoiBong
                                 ) : (
-                                  match.TenDoiBongKhach
+                                  match.DoiBongKhach.TenDoiBong
                                 )}
                               </td>
                               <td>

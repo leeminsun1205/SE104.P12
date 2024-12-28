@@ -1,5 +1,5 @@
 // const { UUID, MACADDR } = require('sequelize');
-const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, Sequelize } = require('../models');
+const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, MuaGiai, Sequelize } = require('../models');
 // const LoaiUuTien = require('../models/loaiuutien');
 // const MuaGiaiController = require('./muaGiaiController');
 
@@ -11,17 +11,17 @@ const BangXepHangController = {
             const utxh = await UtXepHang.findAll({
                 where: { MaMuaGiai: MaMuaGiai }
             });
-    
+
             await updateThanhTichFromBangXepHang(MaMuaGiai);
             await updateLichSuGiaiDau();
-    
+
             let sortCriteria = [];
             const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
-    
+
             if (!Array.isArray(utxh) || utxh.length === 0) {
                 return res.status(400).json({ message: 'Danh sách tiêu chí sắp xếp không hợp lệ.' });
             }
-    
+
             if (!sortBy) {
                 sortCriteria = utxh
                     .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien))
@@ -38,7 +38,7 @@ const BangXepHangController = {
                     .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);
                 sortCriteria = [...sortCriteria, ...remainingCriteria];
             }
-    
+
             const bangXepHang = await BangXepHang.findAll({
                 where: { MaMuaGiai },
                 include: [
@@ -51,11 +51,11 @@ const BangXepHangController = {
                 attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
                 order: sortCriteria,
             });
-    
+
             if (bangXepHang.length === 0) {
                 return res.status(404).json({ message: 'Không tìm thấy bảng xếp hạng cho mùa giải này.' });
             }
-    
+
             // Thêm trường XepHang sau khi sắp xếp
             const bangXepHangWithRank = bangXepHang.map((item, index) => {
                 return {
@@ -64,10 +64,76 @@ const BangXepHangController = {
                     XepHang: index + 1,
                 };
             });
-    
+
             res.status(200).json(bangXepHangWithRank);
         } catch (error) {
             console.error('Lỗi khi truy vấn bảng xếp hạng:', error);
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    async getAll(req, res) {
+        try {
+            const allSeasons = await MuaGiai.findAll({
+                order: [['NgayBatDau', 'ASC']]
+            });
+    
+            const allBangXepHang = {};
+    
+            for (const season of allSeasons) {
+                const MaMuaGiai = season.MaMuaGiai;
+                const utxh = await UtXepHang.findAll({
+                    where: { MaMuaGiai: MaMuaGiai }
+                });
+    
+                let sortCriteria = [];
+                const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
+    
+                if (!Array.isArray(utxh) || utxh.length === 0) {
+                    // Sử dụng tiêu chí sắp xếp mặc định nếu không có tiêu chí cụ thể
+                    sortCriteria = [['DiemSo', 'DESC'], ['HieuSo', 'DESC']];
+                } else {
+                    sortCriteria = utxh
+                        .filter(criterion => validSortColumns.includes(criterion.MaLoaiUuTien))
+                        .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
+                        .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);
+                }
+    
+                const bangXepHang = await BangXepHang.findAll({
+                    where: { MaMuaGiai },
+                    include: [
+                        {
+                            model: DoiBong,
+                            as: 'DoiBong',
+                            attributes: ['TenDoiBong'],
+                        },
+                    ],
+                    attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
+                    order: sortCriteria,
+                });
+    
+                const bangXepHangWithRank = bangXepHang.map((item, index) => ({
+                    SoTran: item.SoTran,
+                    SoTranThang: item.SoTranThang,
+                    SoTranHoa: item.SoTranHoa,
+                    SoTranThua: item.SoTranThua,
+                    SoBanThang: item.SoBanThang,
+                    SoBanThua: item.SoBanThua,
+                    DiemSo: item.DiemSo,
+                    HieuSo: item.HieuSo,
+                    DoiBong: {
+                        TenDoiBong: item.DoiBong.TenDoiBong
+                    },
+                    TenDoiBong: item.DoiBong.TenDoiBong,
+                    XepHang: index + 1,
+                }));
+    
+                allBangXepHang[season.MaMuaGiai] = bangXepHangWithRank;
+            }
+    
+            res.status(200).json(allBangXepHang);
+        } catch (error) {
+            console.error('Lỗi khi truy vấn bảng xếp hạng của tất cả mùa giải:', error);
             res.status(500).json({ error: error.message });
         }
     },

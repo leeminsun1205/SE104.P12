@@ -24,7 +24,7 @@ function Standings({ API_URL }) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setSeasonsStandings(data.seasons.filter(season => season !== 'all'));
+                setSeasonsStandings(data.muaGiai.filter(season => season !== 'all'));
             } catch (error) {
                 console.error("Error fetching seasons:", error);
                 setError("Failed to load seasons.");
@@ -32,7 +32,7 @@ function Standings({ API_URL }) {
         };
 
         fetchSeasons();
-    }, [API_URL]); // Added API_URL to dependency array
+    }, [API_URL]);
 
     useEffect(() => {
         if (!selectedSeason) {
@@ -72,7 +72,7 @@ function Standings({ API_URL }) {
         };
 
         fetchStandings();
-    }, [selectedSeason, API_URL]); // Added API_URL to dependency array
+    }, [selectedSeason, API_URL]);
 
     const handleSeasonChange = (season) => {
         console.log("Mùa giải được chọn:", season); // Debug season selection
@@ -137,7 +137,7 @@ function Standings({ API_URL }) {
     }
 
     const handleRowClick = (teamId, seasonId) => {
-        console.log(`handleRowClick - Team ID: ${teamId}, Season ID: ${seasonId}`); // Debug handleRowClick
+        console.log(`handleRowClick - Team ID: ${teamId}, Season ID: ${seasonId}`);
         navigate(`/doi-bong/${teamId}/mua-giai/${seasonId}`);
     };
 
@@ -156,27 +156,27 @@ function Standings({ API_URL }) {
                 <table className={styles.standingsTable}>
                     <thead>
                         <tr>
-                            <th onClick={() => requestSort('rank')}>Hạng {getSortIndicator('rank')}</th>
-                            <th onClick={() => requestSort('name')}>Đội {getSortIndicator('name')}</th>
-                            <th onClick={() => requestSort('played')}>Trận {getSortIndicator('played')}</th>
-                            <th onClick={() => requestSort('won')}>Thắng {getSortIndicator('won')}</th>
-                            <th onClick={() => requestSort('drawn')}>Hòa {getSortIndicator('drawn')}</th>
-                            <th onClick={() => requestSort('lost')}>Thua {getSortIndicator('lost')}</th>
-                            <th onClick={() => requestSort('goalsFor')}>Bàn thắng {getSortIndicator('goalsFor')}</th>
-                            <th onClick={() => requestSort('goalsAgainst')}>Bàn thua {getSortIndicator('goalsAgainst')}</th>
-                            <th onClick={() => requestSort('goalDifference')}>Hiệu số {getSortIndicator('goalDifference')}</th>
-                            <th onClick={() => requestSort('points')}>Điểm {getSortIndicator('points')}</th>
+                            <th onClick={() => requestSort('XepHang')}>Hạng {getSortIndicator('XepHang')}</th>
+                            <th onClick={() => requestSort('TenDoiBong')}>Đội {getSortIndicator('TenDoiBong')}</th>
+                            <th onClick={() => requestSort('SoTran')}>Trận {getSortIndicator('SoTran')}</th>
+                            <th onClick={() => requestSort('SoTranThang')}>Thắng {getSortIndicator('SoTranThang')}</th>
+                            <th onClick={() => requestSort('SoTranHoa')}>Hòa {getSortIndicator('SoTranHoa')}</th>
+                            <th onClick={() => requestSort('SoTranThua')}>Thua {getSortIndicator('SoTranThua')}</th>
+                            <th onClick={() => requestSort('SoBanThang')}>Bàn thắng {getSortIndicator('SoBanThang')}</th>
+                            <th onClick={() => requestSort('SoBanThua')}>Bàn thua {getSortIndicator('SoBanThua')}</th>
+                            <th onClick={() => requestSort('HieuSo')}>Hiệu số {getSortIndicator('HieuSo')}</th>
+                            <th onClick={() => requestSort('DiemSo')}>Điểm {getSortIndicator('DiemSo')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedSeason ? (
                             currentItems.length > 0 ? (
                                 currentItems.map((team) => {
-                                    console.log("Đội trong map:", team); // Debug team object in map
+                                    console.log("Đội trong map:", team);
                                     return (
                                         <tr
-                                            key={`${team.XepHang}-${team.TenDoiBong}-${team.MaMuaGiai}`}
-                                            onClick={() => handleRowClick(team.MaDoiBong, selectedSeason)}
+                                            key={`${team.XepHang}-${team.TenDoiBong}`}
+                                            onClick={() => handleRowClick(team.DoiBong.MaDoiBong, selectedSeason)}
                                             className={styles.standingsRow}
                                         >
                                             <td>{team.XepHang}</td>
@@ -185,7 +185,7 @@ function Standings({ API_URL }) {
                                             <td>{team.SoTranThang}</td>
                                             <td>{team.SoTranHoa}</td>
                                             <td>{team.SoTranThua}</td>
-                                            <td>{team.SoBanThan}</td>
+                                            <td>{team.SoBanThang}</td>
                                             <td>{team.SoBanThua}</td>
                                             <td>{team.HieuSo}</td>
                                             <td>{team.DiemSo}</td>
