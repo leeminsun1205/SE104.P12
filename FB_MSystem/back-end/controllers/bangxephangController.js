@@ -1,3 +1,5 @@
+// --- START OF FILE bangxephangController.js ---
+
 // const { UUID, MACADDR } = require('sequelize');
 const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, MuaGiai, Sequelize } = require('../models');
 // const LoaiUuTien = require('../models/loaiuutien');
@@ -77,18 +79,18 @@ const BangXepHangController = {
             const allSeasons = await MuaGiai.findAll({
                 order: [['NgayBatDau', 'ASC']]
             });
-    
+
             const allBangXepHang = {};
-    
+
             for (const season of allSeasons) {
                 const MaMuaGiai = season.MaMuaGiai;
                 const utxh = await UtXepHang.findAll({
                     where: { MaMuaGiai: MaMuaGiai }
                 });
-    
+
                 let sortCriteria = [];
                 const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
-    
+
                 if (!Array.isArray(utxh) || utxh.length === 0) {
                     // Sử dụng tiêu chí sắp xếp mặc định nếu không có tiêu chí cụ thể
                     sortCriteria = [['DiemSo', 'DESC'], ['HieuSo', 'DESC']];
@@ -98,7 +100,7 @@ const BangXepHangController = {
                         .sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)
                         .map(criterion => [criterion.MaLoaiUuTien, 'DESC']);
                 }
-    
+
                 const bangXepHang = await BangXepHang.findAll({
                     where: { MaMuaGiai },
                     include: [
@@ -111,7 +113,7 @@ const BangXepHangController = {
                     attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
                     order: sortCriteria,
                 });
-    
+
                 const bangXepHangWithRank = bangXepHang.map((item, index) => ({
                     SoTran: item.SoTran,
                     SoTranThang: item.SoTranThang,
@@ -127,13 +129,58 @@ const BangXepHangController = {
                     TenDoiBong: item.DoiBong.TenDoiBong,
                     XepHang: index + 1,
                 }));
-    
+
                 allBangXepHang[season.MaMuaGiai] = bangXepHangWithRank;
             }
-    
+
             res.status(200).json(allBangXepHang);
         } catch (error) {
             console.error('Lỗi khi truy vấn bảng xếp hạng của tất cả mùa giải:', error);
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    async getTeamPositions(req, res) {
+        try {
+            // Fetch aggregate win counts from ThanhTich
+            const totalWins = await ThanhTich.findAll({
+                attributes: [
+                    'MaDoiBong',
+                    [Sequelize.fn('SUM', Sequelize.col('SoTranThang')), 'TongSoTranThang'],
+                ],
+                group: ['MaDoiBong'],
+                raw: true, // To get plain JSON objects
+            });
+
+            const totalWinsMap = totalWins.reduce((acc, curr) => {
+                acc[curr.MaDoiBong] = curr.TongSoTranThang;
+                return acc;
+            }, {});
+
+            // Fetch other team statistics from LichSuGiaiDau
+            const teamPositions = await LichSuGiaiDau.findAll({
+                include: [
+                    {
+                        model: DoiBong,
+                        as: 'DoiBong',
+                        attributes: ['TenDoiBong'],
+                    },
+                ],
+                attributes: ['MaDoiBong', 'SoLanThamGia', 'TongSoTran', 'SoLanVoDich', 'SoLanAQuan', 'SoLanHangBa'],
+            });
+
+            const formattedData = teamPositions.map(item => ({
+                TenDoiBong: item.DoiBong.TenDoiBong,
+                SoLanThamGia: item.SoLanThamGia,
+                SoLanVoDich: item.SoLanVoDich,
+                SoLanAQuan: item.SoLanAQuan,
+                SoLanHangBa: item.SoLanHangBa,
+                TongSoTranThang: totalWinsMap[item.MaDoiBong] || 0, // Get total wins from the map
+            }));
+
+            res.status(200).json({ doiBong: formattedData });
+        } catch (error) {
+            console.error("Lỗi khi truy vấn thống kê vị trí đội bóng:", error);
             res.status(500).json({ error: error.message });
         }
     },
