@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
 
-function HomePage() {
+function HomePage( {API_URL } ) {
     const [leagueInfo, setLeagueInfo] = useState({
         name: "",
         season: "",
@@ -22,10 +22,9 @@ function HomePage() {
             try {
                 // Fetch league info
                 setLeagueInfo({
-                    name: "Giải Bóng đá Vô địch Quốc gia Việt Nam",
-                    season: "2023-2024",
-                    numTeams: 5,
-                    format: "Vòng tròn hai lượt tính điểm",
+                    name: "Quản lý đội bóng Quốc gia",
+                    link: "https://github.com/leeminsun1205/SE104.P12",
+                    format: "Nhập môn Công nghệ phần mềm",
                     startDate: "01/08/2023",
                     endDate: "31/05/2024",
                 });
@@ -38,7 +37,7 @@ function HomePage() {
                     throw new Error("Failed to fetch teams");
                 }
                 const teamsData = await teamsResponse.json();
-                
+                console.log(teamsData)
                 setTeams(teamsData);
             } catch (error) {
                 setError(error.message);
@@ -78,27 +77,15 @@ function HomePage() {
                 </header>
 
                 <section className={styles.leagueInfo}>
-                    <h2>Thông tin giải đấu</h2>
+                    <h2>Thông tin phần mềm</h2>
                     <ul>
-                        <li>Tên giải đấu: {leagueInfo.name}</li>
-                        <li>Mùa giải: {leagueInfo.season}</li>
-                        <li>Số đội tham gia: {leagueInfo.numTeams}</li>
-                        <li>Thể thức thi đấu: {leagueInfo.format}</li>
+                        <li>Tên phần mềm: {leagueInfo.name}</li>
+                        <li>Github: {leagueInfo.link}</li>
+                        <li>Môn: {leagueInfo.format}</li>
                         <li>
-                            Thời gian diễn ra: {leagueInfo.startDate} -{" "}
+                            Thời gian thực hiện: {leagueInfo.startDate} -{" "}
                             {leagueInfo.endDate}
                         </li>
-                    </ul>
-                </section>
-
-                <section className={styles.teams}>
-                    <h2>Các đội bóng tham gia</h2>
-                    <ul>
-                        {teams.map((team) => (
-                            <li key={team.MaDoiBong}>
-                                <Link to={`/doi-bong/${team.MaDoiBong}`}>{team.TenDoiBong}</Link>
-                            </li>
-                        ))}
                     </ul>
                 </section>
 

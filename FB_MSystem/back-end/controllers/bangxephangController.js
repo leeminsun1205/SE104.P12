@@ -41,7 +41,7 @@ const BangXepHangController = {
                     {
                         model: DoiBong,
                         as: 'DoiBong',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                 ],
                 attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
@@ -56,6 +56,7 @@ const BangXepHangController = {
                 return {
                     ...item.get({ plain: true }),
                     TenDoiBong: item.DoiBong.TenDoiBong,
+                    MaDoiBong: item.DoiBong.MaDoiBong,
                     XepHang: index + 1,
                 };
             });

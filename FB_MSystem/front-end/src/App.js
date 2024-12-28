@@ -213,7 +213,7 @@ function App() {
 function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeasonChange, onEditTeam, onDeleteTeam, invoices, onAddInvoice, handleAddPlayer }) {
     return (
         <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage API_URL={API_URL}/>} />
             <Route path="/temp" element={<Temp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/doi-bong"

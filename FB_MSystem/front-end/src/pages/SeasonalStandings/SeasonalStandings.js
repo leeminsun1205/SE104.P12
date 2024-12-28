@@ -83,7 +83,7 @@ function SeasonalStandings({ API_URL }) {
     };
 
     const handleRowClick = (teamId) => {
-        navigate(`/doi-bong/${teamId}?mua-giai=${MaMuaGiai}`);
+        navigate(`/doi-bong/${teamId}`);
     };
 
     if (loading) {
@@ -93,7 +93,6 @@ function SeasonalStandings({ API_URL }) {
     if (error) {
         return <div>Lỗi: {error}</div>;
     }
-
     return (
         <div className={styles.standingsContainer}>
             <h2 className={styles.standingsTitle}>Bảng xếp hạng - Mùa giải {MaMuaGiai}</h2>
