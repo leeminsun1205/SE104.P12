@@ -130,6 +130,8 @@
   border-radius: 8px;
   width: 80%; /* Chiều rộng của modal */
   max-width: 600px; /* Chiều rộng tối đa */
+  overflow-y: auto; /* Thêm dòng này */
+  max-height: 80vh; /* Optional: Giới hạn chiều cao tối đa của modal */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   position: relative; /* Để định vị nút đóng */
 }
@@ -185,6 +187,10 @@
   background-color: #f44336;
   color: white;
 }
+.cancelButton:hover {
+  background-color: #cd382e;
+  color: white;
+}
 .readOnlyField {
   background-color: #f0f0f0;
   color: #777;
@@ -234,4 +240,24 @@
   color: #fff;
   border: 1px solid #0056b3;
   font-weight: bold;
+}
+.goalsContainer {
+  max-height: 200px; /* Điều chỉnh chiều cao tối đa tùy ý */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.goalEntry {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  align-items: center;
+}
+
+.goalEntry input[type="text"],
+.goalEntry select,
+.goalEntry button {
+  padding: 5px;
 }

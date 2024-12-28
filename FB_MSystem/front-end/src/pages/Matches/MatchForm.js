@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import styles from "./MatchForm.module.css";
 
-function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players }) {
+function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players, availableTeams, availableStadiums }) {
   const [editedMatch, setEditedMatch] = useState(initialMatch);
 
   useEffect(() => {
@@ -28,53 +27,58 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players }) 
         <label className={styles.label} htmlFor="homeTeam">
           Đội nhà:
         </label>
-        <input
+        <select
           className={styles.input}
-          type="text"
           id="homeTeam"
-          name="DoiBongNha"
-          value={editedMatch?.DoiBongNha?.TenDoiBong || ""}
-          readOnly
-        />
+          name="MaDoiBongNha"
+          value={editedMatch?.MaDoiBongNha || ""}
+          disabled // Added disabled attribute
+        >
+          <option value="">Chọn đội nhà</option>
+          {availableTeams.map((team) => (
+            <option key={team.MaDoiBong} value={team.MaDoiBong}>
+              {team.TenDoiBong}
+            </option>
+          ))}
+        </select>
       </div>
       <div className={styles.formGroup}>
         <label className={styles.label} htmlFor="awayTeam">
           Đội khách:
         </label>
-        <input
+        <select
           className={styles.input}
-          type="text"
           id="awayTeam"
-          name="DoiBongKhach"
-          value={editedMatch?.DoiBongKhach?.TenDoiBong || ""}
-          readOnly
-        />
+          name="MaDoiBongKhach"
+          value={editedMatch?.MaDoiBongKhach || ""}
+          disabled // Added disabled attribute
+        >
+          <option value="">Chọn đội khách</option>
+          {availableTeams.map((team) => (
+            <option key={team.MaDoiBong} value={team.MaDoiBong}>
+              {team.TenDoiBong}
+            </option>
+          ))}
+        </select>
       </div>
       <div className={styles.formGroup}>
-        <label className={styles.label} htmlFor="homeScore">
-          Bàn thắng đội nhà:
+        <label className={styles.label} htmlFor="stadium">
+          Sân vận động:
         </label>
-        <input
+        <select
           className={styles.input}
-          type="number"
-          id="homeScore"
-          name="BanThangDoiNha"
-          value={editedMatch?.BanThangDoiNha || 0}
+          id="stadium"
+          name="MaSan"
+          value={editedMatch?.MaSan || ""}
           onChange={handleInputChange}
-        />
-      </div>
-      <div className={styles.formGroup}>
-        <label className={styles.label} htmlFor="awayScore">
-          Bàn thắng đội khách:
-        </label>
-        <input
-          className={styles.input}
-          type="number"
-          id="awayScore"
-          name="BanThangDoiKhach"
-          value={editedMatch?.BanThangDoiKhach || 0}
-          onChange={handleInputChange}
-        />
+        >
+          <option value="">Chọn sân vận động</option>
+          {availableStadiums.map((stadium) => (
+            <option key={stadium.MaSan} value={stadium.MaSan}>
+              {stadium.TenSan}
+            </option>
+          ))}
+        </select>
       </div>
       <div className={styles.formGroup}>
         <label className={styles.label} htmlFor="date">
@@ -102,25 +106,12 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players }) 
           onChange={handleInputChange}
         />
       </div>
-      <div className={styles.formGroup}>
-        <label className={styles.label} htmlFor="stadium">
-          Sân vận động:
-        </label>
-        <input
-          className={styles.input}
-          type="text"
-          id="stadium"
-          name="SanThiDau"
-          value={editedMatch?.SanThiDau?.TenSan || ""}
-          readOnly
-        />
-      </div>
 
       <div className={styles.buttonGroup}>
         <button className={styles.saveButton} type="submit">
-          Lưu
+          Lưu Thay Đổi
         </button>
-        <button className={styles.cancelButton} type="button" onClick={onCancel}>
+        <button type="button" className={styles.cancelButton} onClick={onCancel}>
           Hủy
         </button>
       </div>
