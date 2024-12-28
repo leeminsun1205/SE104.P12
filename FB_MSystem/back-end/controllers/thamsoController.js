@@ -87,6 +87,20 @@ const ThamSoController = {
             });
         }
     },
+
+    async getLePhi(req, res) {
+        try {
+            const thamSo = await ThamSo.findOne(); // Lấy bản ghi tham số duy nhất
+            if (thamSo) {
+                res.status(200).json({ lePhi: thamSo.LePhi });
+            } else {
+                res.status(404).json({ message: 'Không tìm thấy tham số hệ thống.' });
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy lệ phí:', error);
+            res.status(500).json({ error: 'Lỗi khi lấy lệ phí.' });
+        }
+    },
 };
 
 module.exports = ThamSoController;

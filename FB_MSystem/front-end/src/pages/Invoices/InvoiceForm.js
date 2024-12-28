@@ -18,6 +18,9 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [errorTeams, setErrorTeams] = useState(null);
   const [showIncrementButtons, setShowIncrementButtons] = useState(false);
+  const [lePhiThamSo, setLePhiThamSo] = useState(null); // State để lưu trữ lệ phí từ ThamSo
+  const [loadingLePhi, setLoadingLePhi] = useState(true);
+  const [errorLePhi, setErrorLePhi] = useState(null);
 
   useEffect(() => {
     setFormData((prevFormData) => ({
@@ -42,6 +45,25 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
     };
 
     fetchAvailableTeams();
+
+    const fetchLePhi = async () => {
+      try {
+        const response = await fetch(`${API_URL}/tham-so/le-phi`); // Gọi endpoint mới tạo
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setLePhiThamSo(data.lePhi);
+        setFormData(prevFormData => ({ ...prevFormData, LePhi: data.lePhi.toString() })); // Cập nhật luôn vào form data
+      } catch (error) {
+        setErrorLePhi(error);
+      } finally {
+        setLoadingLePhi(false);
+      }
+    };
+
+    fetchLePhi();
+
   }, []);
 
   const handleChange = (e) => {
