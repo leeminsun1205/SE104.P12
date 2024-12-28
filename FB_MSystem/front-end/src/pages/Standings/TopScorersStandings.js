@@ -19,12 +19,12 @@ function TopScorersStandings({ API_URL }) {
     useEffect(() => {
         const fetchSeasons = async () => {
             try {
-                const response = await fetch(`${API_URL}/seasons`);
+                const response = await fetch(`${API_URL}/mua-giai`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setAvailableSeasons(data.seasons.filter(season => season !== 'all'));
+                setAvailableSeasons(data.muaGiai.filter(season => season !== 'all'));
             } catch (error) {
                 console.error("Error fetching seasons:", error);
                 setError("Failed to load seasons.");
@@ -38,14 +38,14 @@ function TopScorersStandings({ API_URL }) {
         const fetchSeasonTeams = async () => {
             if (selectedSeason) {
                 try {
-                    const response = await fetch(`${API_URL}/teams?season=${selectedSeason}`);
+                    const response = await fetch(`${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong`);
                     if (!response.ok) {
                         throw new Error(`Could not fetch teams for season: ${response.status}`);
                     }
                     const data = await response.json();
                     const teamsMap = {};
-                    data.teams.forEach(team => {
-                        teamsMap[team.id] = team.name;
+                    data.forEach(team => {
+                        teamsMap[team.MaDoiBong] = team.TenDoiBong;
                     });
                     setTeams(teamsMap);
                 } catch (error) {
@@ -73,7 +73,7 @@ function TopScorersStandings({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/matches?season=${selectedSeason}`);
+                const response = await fetch(`${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong`);
                 if (!response.ok) {
                     if (response.status === 404) {
                         console.log(`Matches not found for season: ${selectedSeason}`);
@@ -117,7 +117,7 @@ function TopScorersStandings({ API_URL }) {
 
             if (selectedSeason) {
                 try {
-                    const response = await fetch(`${API_URL}/teams?season=${selectedSeason}`);
+                    const response = await fetch(`${API_URL}/mg-db/mua-giai${selectedSeason}/mua-giai`);
                     if (!response.ok) {
                         throw new Error(`Could not fetch teams for season: ${response.status}`);
                     }

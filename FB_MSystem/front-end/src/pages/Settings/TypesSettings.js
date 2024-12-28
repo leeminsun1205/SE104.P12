@@ -14,9 +14,24 @@ function TypesSettings({ API_URL }) {
                 const response = await fetch(`${API_URL}/settings/types`);
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
                     setGoalTypes(data.settings.LoaiBanThang ? data.settings.LoaiBanThang.map(gt => ({ ...gt, MaLoaiBanThang: gt.MaLoaiBanThang })) : []);
                     setCardTypes(data.settings.LoaiThePhat ? data.settings.LoaiThePhat.map(ct => ({ ...ct, MaLoaiThePhat: ct.MaLoaiThePhat })) : []);
-                    setPriorityOptions(data.settings.MaLoaiUuTien ? data.settings.MaLoaiUuTien.map(pu => ({ ...pu, priorityLevel: pu.priorityLevel })) : []);
+
+                    const loaiUuTienData = data.settings.LoaiUuTien || [];
+                    const utXepHangData = data.settings.Ut_XepHang || [];
+
+                    const loaiUuTienMap = new Map(loaiUuTienData.map(item => [item.MaLoaiUuTien, item.TenLoaiUuTien]));
+                    const utXepHangMap = new Map(utXepHangData.map(item => [item.MaLoaiUuTien, item.MucDoUuTien]));
+
+                    const mappedPriorityOptions = Array.from(utXepHangMap.keys()).map(maLoaiUuTien => ({
+                        code: maLoaiUuTien,
+                        name: loaiUuTienMap.get(maLoaiUuTien) || 'N/A',
+                        priorityLevel: utXepHangMap.get(maLoaiUuTien),
+                    }));
+
+                    setPriorityOptions(mappedPriorityOptions);
+
                 }
             } catch (error) {
                 console.error("Error fetching types settings:", error);
@@ -26,7 +41,6 @@ function TypesSettings({ API_URL }) {
         fetchSettings();
     }, [API_URL]);
 
-    // Hàm tạo mã loại bàn thắng tự động
     const generateGoalTypeCode = () => {
         if (!goalTypes || goalTypes.length === 0) {
             return 'LBT01';
@@ -36,7 +50,6 @@ function TypesSettings({ API_URL }) {
         return `LBT${number.toString().padStart(2, '0')}`;
     };
 
-    // Hàm tạo mã loại thẻ phạt tự động
     const generateCardTypeCode = () => {
         if (!cardTypes || cardTypes.length === 0) {
             return 'LTP01';
@@ -98,8 +111,15 @@ function TypesSettings({ API_URL }) {
         const settingsData = {
             LoaiBanThang: goalTypes,
             LoaiThePhat: cardTypes,
-            MaLoaiUuTien: sortedPriorityOptions,
-            Ut_XepHang: sortedPriorityOptions.map(option => option.code),
+            MaLoaiUuTien: sortedPriorityOptions.map(option => ({
+                MaLoaiUuTien: option.code,
+                TenLoaiUuTien: option.name,
+                MucDoUuTien: option.priorityLevel,
+            })),
+            Ut_XepHang: sortedPriorityOptions.map(option => ({
+                MaLoaiUuTien: option.code,
+                MucDoUuTien: option.priorityLevel,
+            })),
         };
 
         try {

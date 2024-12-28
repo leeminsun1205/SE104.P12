@@ -11,7 +11,7 @@ const MgDbController = {
                     {
                         model: DoiBong,
                         as: 'DoiBong',
-                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan'],
+                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan', 'TenHLV', 'ThanhPhoTrucThuoc'],
                     },
                 ],
             });
