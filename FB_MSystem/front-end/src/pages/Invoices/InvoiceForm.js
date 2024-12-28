@@ -9,7 +9,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
     MaBienNhan: "",
     TenDoiBong: "",
     LePhi: "",
-    receivedAmount: "",
+    SoTienDaNhan: "",
     NgayThanhToan: "",
     LyDo: "",
     TinhTrang: "Đã hoàn thành",
@@ -63,7 +63,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
 
   const calculateRemainingAmount = () => {
     const amount = parseFloat(formData.LePhi) || 0;
-    const receivedAmount = parseFloat(formData.receivedAmount) || 0;
+    const receivedAmount = parseFloat(formData.SoTienDaNhan) || 0;
     return amount - receivedAmount;
   };
 
@@ -116,9 +116,9 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
         />
         <label>Số tiền đã nhận (VNĐ):</label>
         <input
-          name="receivedAmount"
+          name="SoTienDaNhan"
           type="number"
-          value={formData.receivedAmount}
+          value={formData.SoTienDaNhan}
           onChange={handleChange}
           placeholder="Số tiền đã nhận"
         />
