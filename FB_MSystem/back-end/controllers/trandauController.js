@@ -306,7 +306,7 @@ const TranDauController = {
                 await tranDau.save();
                 console.log('Cập nhật TinhTrang về false thành công!');
             }
-
+            await tranDau.update(updates);
             res.status(200).json(tranDau);
         } catch (error) {
             console.error('Lỗi khi cập nhật trận đấu:', error);
