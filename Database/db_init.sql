@@ -300,11 +300,7 @@ INSERT INTO THAMSO (
 ) VALUES (
     1, 5000, 3, 18, 40, 11, 25, 5, 1000000000, '2024-12-23', '2025-1-23', 90, 3, 1, 0
 );
-INSERT INTO UTXT (MaMuaGiai, MaLoaiUuTien, MucDoUuTien)
-VALUES
-    ('UTXH01', 'Bình thường', 'Bàn thắng ghi bình thường'),
-    ('UTXH02', 'Phạt đền', 'Bàn thắng từ quả phạt đền'),
-    ('UTXH03', 'Phản lưới nhà', 'Bàn thắng phản lưới nhà');
+
 
 INSERT INTO LOAIBANTHANG (MaLoaiBanThang, TenLoaiBanThang, MoTa)
 VALUES
@@ -1592,6 +1588,11 @@ INSERT INTO VUAPHALUOI (MaCauThu, MaMuaGiai, MaDoiBong, SoTran, SoBanThang) VALU
 ('CT000205', 'MG2023_1', 'DB014', 1, 1),
 ('CT000121', 'MG2023_1', 'DB005', 1, 1);
 
+INSERT INTO UT_XEPHANG (MaMuaGiai, MaLoaiUuTien, MucDoUuTien)
+VALUES
+    ('MG2023_1', 'LUT01', 1),
+    ('MG2023_1', 'LUT02', 2),
+    ('MG2023_1', 'LUT03', 3);
 -- SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';
 use  se104;
 select * from loaibanthang;
