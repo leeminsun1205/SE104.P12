@@ -17,7 +17,33 @@ function SeasonDetails({ API_URL }) {
     const [selectedTeamsToAdd, setSelectedTeamsToAdd] = useState([]);
     const [isCreatingRound, setIsCreatingRound] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [priority, setPriority] = useState([]);
     const teamsPerPage = 5;
+
+    useEffect(() => {
+        const fetchPriority = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(`${API_URL}/ut-xep-hang/mua-giai/${MaMuaGiai}`);
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error("HTTP Error fetching season:", response.status, response.statusText);
+                    console.error("Response Body:", text);
+                    throw new Error(`Could not fetch season details: ${response.status} - ${response.statusText}`);
+                }
+                const data = await response.json();
+                setPriority(data);
+            } catch (err) {
+                console.error("Error fetching season details:", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPriority();
+    }, [API_URL, MaMuaGiai]);
 
     useEffect(() => {
         const fetchSeasonDetails = async () => {
@@ -40,10 +66,10 @@ function SeasonDetails({ API_URL }) {
                 setLoading(false);
             }
         };
-    
+
         fetchSeasonDetails();
     }, [API_URL, MaMuaGiai]);
-    
+
     useEffect(() => {
         const fetchTeamsForSeason = async () => {
             if (season && season.MaMuaGiai) {
@@ -56,7 +82,7 @@ function SeasonDetails({ API_URL }) {
                         throw new Error(`Failed to fetch teams for season: ${response.status} - ${message}`);
                     }
                     const data = await response.json();
-                    setTeams(data || []); 
+                    setTeams(data || []);
                 } catch (error) {
                     console.error("Error fetching teams for season:", error);
                     setError(error.message);
@@ -65,7 +91,7 @@ function SeasonDetails({ API_URL }) {
                 }
             }
         };
-    
+
         fetchTeamsForSeason();
     }, [API_URL, season]);
 
@@ -275,20 +301,27 @@ function SeasonDetails({ API_URL }) {
     const currentTeams = availableTeamsForSeason.slice(indexOfFirstTeam, indexOfLastTeam);
     const totalPages = Math.ceil(availableTeamsForSeason.length / teamsPerPage);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    console.log(priority)
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>{season.TenMuaGiai}</h2>
             <p className={styles.paragraph}><strong>Mã mùa giải:</strong> {season.MaMuaGiai}</p>
-            <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong><strong></strong> {new Date(season.NgayBatDau).toLocaleDateString()}</p>
-            <p className={styles.paragraph}><strong>Ngày kết thúc:</strong><strong></strong> {new Date(season.NgayKetThuc).toLocaleDateString()}</p>
-
-            <div className={styles.navigationLinks}>
-                <Link to={`/mua-giai/${MaMuaGiai}/bang-xep-hang`} className={styles.link}>
-                    Xem Bảng Xếp Hạng
-                </Link>
-                <Link to={`/mua-giai/${MaMuaGiai}/vua-pha-luoi`} className={styles.link}>
-                    Xem Vua Phá Lưới
-                </Link>
+            <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong> {new Date(season.NgayBatDau).toLocaleDateString()}</p>
+            <p className={styles.paragraph}><strong>Ngày kết thúc:</strong> {new Date(season.NgayKetThuc).toLocaleDateString()}</p>
+            <div className={styles.infoAndLinks}>
+                <div className={styles.priorityInfo}>
+                    <p className={styles.paragraph}><strong>Tên loại ưu tiên:</strong> {priority[0]?.LoaiUuTien?.TenLoaiUuTien} -  <strong>Mức độ ưu tiên: </strong>{priority[0]?.MucDoUuTien}</p>
+                    <p className={styles.paragraph}><strong>Tên loại ưu tiên:</strong> {priority[1]?.LoaiUuTien?.TenLoaiUuTien} -  <strong>Mức độ ưu tiên: </strong>{priority[1]?.MucDoUuTien}</p>
+                    <p className={styles.paragraph}><strong>Tên loại ưu tiên:</strong> {priority[2]?.LoaiUuTien?.TenLoaiUuTien} -  <strong>Mức độ ưu tiên: </strong>{priority[2]?.MucDoUuTien}</p>
+                </div>
+                <div className={styles.navigationLinks}>
+                    <Link to={`/mua-giai/${MaMuaGiai}/bang-xep-hang`} className={styles.link}>
+                        Xem Bảng Xếp Hạng
+                    </Link>
+                    <Link to={`/mua-giai/${MaMuaGiai}/vua-pha-luoi`} className={styles.link}>
+                        Xem Vua Phá Lưới
+                    </Link>
+                </div>
             </div>
 
             <div>
@@ -297,7 +330,7 @@ function SeasonDetails({ API_URL }) {
                     <ul className={styles.list}>
                         {rounds.map(round => (
                             <li key={round.MaVongDau} className={styles['list-item']}>
-                                {round.LuotDau} (
+                                Vòng {round.TenVongDau} (
                                 {new Date(round.NgayBatDau).toLocaleDateString()} -
                                 {new Date(round.NgayKetThuc).toLocaleDateString()}
                                 )
@@ -374,7 +407,7 @@ function SeasonDetails({ API_URL }) {
                                         <li key={team.MaDoiBong} className={styles['modal-list-item']}>
                                             <label>
                                                 <input
-                                                    type="checkbox" 
+                                                    type="checkbox"
                                                     checked={selectedTeamsToAdd.some(item => item.MaDoiBong === team.MaDoiBong)}
                                                     onChange={() => handleToggleTeamSelection(team.MaDoiBong)}
                                                 />
