@@ -25,22 +25,17 @@ const TranDauController = {
                         attributes: ['TenSan'],
                     },
                 ],
+                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
             });
 
             const results = tranDaus.map((tranDau) => {
-                const { vongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
-                const MaMuaGiai = vongDau?.MaMuaGiai || null;
-                const MaVongDau = vongDau?.MaVongDau || null;
-                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
+                // Access MaVongDau from the included VongDau object
+                const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
+                const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
 
                 return {
-                    ...rest,
-                    MaMuaGiai,
-                    MaVongDau,
-                    TenVongDau,
-                    TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
-                    TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
-                    TenSan: SanThiDau?.TenSan || null,
+                    ...tranDau.get(),
+                    TenVongDau: tenVongDau,
                 };
             });
 
@@ -53,14 +48,13 @@ const TranDauController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-
+            console.log(req.params)
             const tranDaus = await TranDau.findAll({
                 include: [
                     {
                         model: VongDau,
                         as: 'VongDau',
-                        where: { MaMuaGiai: MaMuaGiai },
-                        attributes: ['MaVongDau', 'MaMuaGiai'],
+                        attributes: ['MaMuaGiai', 'MaVongDau'],
                     },
                     {
                         model: DoiBong,
@@ -78,29 +72,20 @@ const TranDauController = {
                         attributes: ['TenSan'],
                     },
                 ],
+                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] } 
             });
-
             if (tranDaus.length === 0) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu nào cho mùa giải này.' });
             }
-
             const results = tranDaus.map((tranDau) => {
-                const { vongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
-                const MaMuaGiai = vongDau?.MaMuaGiai || null;
-                const MaVongDau = vongDau?.MaVongDau || null;
-                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
+                const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
+                const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
 
                 return {
-                    ...rest,
-                    MaMuaGiai,
-                    MaVongDau,
-                    TenVongDau,
-                    TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
-                    TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
-                    TenSan: SanThiDau?.TenSan || null,
+                    ...tranDau.get(),
+                    TenVongDau: tenVongDau,
                 };
             });
-
             res.status(200).json({ tranDau: results });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy danh sách trận đấu theo mùa giải.', details: error.message });
@@ -133,30 +118,26 @@ const TranDauController = {
                         attributes: ['TenSan'],
                     },
                 ],
+                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
             });
-    
             if (!tranDau) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
-            } else { // Only proceed if tranDau exists
-                const { VongDau, DoiBongNha, DoiBongKhach, SanThiDau, ...rest } = tranDau.get();
-                const MaMuaGiai = VongDau?.MaMuaGiai || null;
-                const MaVongDau = VongDau?.MaVongDau || null;
-                const TenVongDau = MaVongDau ? MaVongDau.split('VD').pop() : null;
-                const result = {
-                    ...rest,
-                    MaMuaGiai,
-                    MaVongDau,
-                    TenVongDau,
-                    TenDoiBongNha: DoiBongNha?.TenDoiBong || null,
-                    TenDoiBongKhach: DoiBongKhach?.TenDoiBong || null,
-                    TenSan: SanThiDau?.TenSan || null,
-                };
+            } else {
+                const results = tranDaus.map((tranDau) => {
+                    const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
+                    const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
+    
+                    return {
+                        ...tranDau.get(),
+                        TenVongDau: tenVongDau,
+                    };
+                });
                 res.status(200).json({ tranDau: result });
             }
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.', details: error.message });
         }
-    }, 
+    },
 
     async create(req, res) {
         try {

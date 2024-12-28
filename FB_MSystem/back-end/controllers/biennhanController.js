@@ -1,15 +1,15 @@
 const { BienNhan, DoiBong, ThamSo } = require('../models');
-const { isValidRange } = require('../utils/checkDate');
+
 const BienNhanController = {
     async getAll(req, res) {
         try {
             const bienNhans = await BienNhan.findAll({
-                attributes: ['MaBienNhan', 'LePhi', 'NgayBatDau', 'NgayHetHan', 'NgayThanhToan', 'TinhTrang'],
+                attributes: ['MaBienNhan', 'LePhi', 'NgayThanhToan', 'LyDo', 'TinhTrang'],
                 include: [
                     {
                         model: DoiBong,
                         as: 'DoiBong',
-                        attributes: ['TenDoiBong'], 
+                        attributes: ['TenDoiBong', 'MaDoiBong'], 
                     },
                 ],
             });
@@ -17,6 +17,7 @@ const BienNhanController = {
                 const { DoiBong, ...rest } = bienNhan.get(); 
                 return {
                     ...rest,
+                    MaDoiBong: DoiBong ? DoiBong.MaDoiBong : null, 
                     TenDoiBong: DoiBong ? DoiBong.TenDoiBong : null, 
                 };
             });
@@ -51,16 +52,13 @@ const BienNhanController = {
                 return res.status(500).json({ error: 'Không tìm thấy giá trị tham số trong hệ thống.' });
             }
             const LePhi = thamSo.LePhi; 
-            const NgayBatDau = thamSo.NgayBatDauLePhi;
-            const NgayHetHan = thamSo.NgayHetHanLePhi;
             const bienNhan = await BienNhan.create({
                 MaBienNhan,
                 MaDoiBong,
                 LePhi,
-                NgayBatDau,
-                NgayHetHan,
                 NgayThanhToan,
                 TinhTrang,
+                LyDo,
             });
     
             res.status(201).json(bienNhan);
@@ -96,11 +94,11 @@ const BienNhanController = {
                     const ngayBatDau = new Date(bienNhan.NgayBatDau);
                     const ngayHetHan = new Date(bienNhan.NgayHetHan);
     
-                    if (ngayThanhToan < ngayBatDau || ngayThanhToan > ngayHetHan) {
-                        return res.status(400).json({
-                            error: 'Ngày thanh toán phải nằm trong khoảng từ Ngày bắt đầu đến Ngày hết hạn.',
-                        });
-                    }
+                    // if (ngayThanhToan < ngayBatDau || ngayThanhToan > ngayHetHan) {
+                    //     return res.status(400).json({
+                    //         error: 'Ngày thanh toán phải nằm trong khoảng từ Ngày bắt đầu đến Ngày hết hạn.',
+                    //     });
+                    // }
     
                     updates.NgayThanhToan = ngayThanhToan;
                     updates.TinhTrang = true; // Đặt TinhTrang thành true nếu NgayThanhToan hợp lệ

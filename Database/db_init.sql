@@ -46,12 +46,11 @@ CREATE TABLE BIENNHAN (
 	MaBienNhan	CHAR(10) NOT NULL,
 	MaDoiBong CHAR(10) NOT NULL UNIQUE,
 	LePhi BIGINT NOT NULL, -- VND
-	NgayBatDau DATE NOT NULL,
-	NgayHetHan DATE NOT NULL,
 	NgayThanhToan DATE,
+    LyDo VARCHAR(1000),
 	TinhTrang BIT NOT NULL, -- false: Chưa thanh toán, true: Đã thanh toán
-	CONSTRAINT CK_NgayBatDau_NgayHetHan_BN CHECK (NgayBatDau < NgayHetHan),     
-	CONSTRAINT CK_HopLe CHECK ((NgayThanhToan IS NULL AND TinhTrang = 0) OR (NgayThanhToan >= NgayBatDau AND TinhTrang = 1)),
+-- 	CONSTRAINT CK_NgayBatDau_NgayHetHan_BN CHECK (NgayBatDau < NgayHetHan),     
+	CONSTRAINT CK_HopLe CHECK ((NgayThanhToan IS NULL AND TinhTrang = 0) OR (NgayThanhToan IS NOT NULL AND TinhTrang = 1)),
     CONSTRAINT PK_BIENNHAN PRIMARY KEY (MaBienNhan),
     CONSTRAINT FK_BIENNHAN_DOIBONG FOREIGN KEY (MaDoiBong) REFERENCES DOIBONG(MaDoiBong) ON DELETE CASCADE                         
 );
@@ -316,9 +315,9 @@ VALUES
     ('LTP02', 'Thẻ đỏ', 'Thẻ truất quyền thi đấu'),
     ('LTP03', 'Thẻ xanh', 'Thẻ thể hiện hành vi đẹp');
 
-INSERT INTO MUAGIAI (MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc)
-VALUES
-('MG2025_1', 'Giải vô địch quốc gia V-league 2025', '2025-01-01', '2025-06-30');
+-- INSERT INTO MUAGIAI (MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc)
+-- VALUES
+-- ('MG2025_1', 'Giải vô địch quốc gia V-league 2025', '2025-01-01', '2025-06-30');
 
 INSERT INTO SANTHIDAU (MaSan, TenSan, DiaChiSan, SucChua, TieuChuan)
 VALUES
@@ -672,21 +671,17 @@ VALUES
 -- INSERT INTO DB_CT (MaDoiBong, MaCauThu) VALUES ('DB0010', 'CT000159');
 -- INSERT INTO DB_CT (MaDoiBong, MaCauThu) VALUES ('DB0010', 'CT000160');
 
--- Giả sử NgayBatDau và NgayHetHan là cố định
-SET @NgayBatDau = '2024-01-01';
-SET @NgayHetHan = '2024-12-31';
-
-INSERT INTO BIENNHAN (MaBienNhan, MaDoiBong, LePhi, NgayBatDau, NgayHetHan, NgayThanhToan, TinhTrang) VALUES
-('BN00001', 'DB001', 1000000000, @NgayBatDau, @NgayHetHan, '2024-03-01', 1),
-('BN00002', 'DB002', 1000000000, @NgayBatDau, @NgayHetHan, '2024-04-15', 1),
-('BN00003', 'DB003', 1000000000, @NgayBatDau, @NgayHetHan, '2024-05-20', 1),
-('BN00004', 'DB004', 1000000000, @NgayBatDau, @NgayHetHan, '2024-06-10', 1),
-('BN00005', 'DB005', 1000000000, @NgayBatDau, @NgayHetHan, '2024-07-25', 1),
-('BN00006', 'DB006', 1000000000, @NgayBatDau, @NgayHetHan, '2024-08-05', 1),
-('BN00007', 'DB007', 1000000000, @NgayBatDau, @NgayHetHan, '2024-09-12', 1),
-('BN00008', 'DB008', 1000000000, @NgayBatDau, @NgayHetHan, '2024-10-18', 1),
-('BN00009', 'DB009', 1000000000, @NgayBatDau, @NgayHetHan, '2024-11-22', 1),
-('BN00010', 'DB010', 1000000000, @NgayBatDau, @NgayHetHan, '2024-12-15', 1);
+INSERT INTO BIENNHAN (MaBienNhan, MaDoiBong, LePhi, NgayThanhToan, TinhTrang, LyDo) VALUES
+('BN00001', 'DB001', 1000000000, '2024-03-01', 1, 'Lệ phí tham gia giải đấu'),
+('BN00002', 'DB002', 1000000000, '2024-04-15', 1, 'Lệ phí tham gia giải đấu'),
+('BN00003', 'DB003', 1000000000, '2024-05-20', 1, 'Lệ phí tham gia giải đấu'),
+('BN00004', 'DB004', 1000000000, '2024-06-10', 1, 'Lệ phí tham gia giải đấu'),
+('BN00005', 'DB005', 1000000000, '2024-07-25', 1, 'Lệ phí tham gia giải đấu'),
+('BN00006', 'DB006', 1000000000, '2024-08-05', 1, 'Lệ phí tham gia giải đấu'),
+('BN00007', 'DB007', 1000000000, '2024-09-12', 1, 'Lệ phí tham gia giải đấu'),
+('BN00008', 'DB008', 1000000000, '2024-10-18', 1, 'Lệ phí tham gia giải đấu'),
+('BN00009', 'DB009', 1000000000, '2024-11-22', 1, 'Lệ phí tham gia giải đấu'),
+('BN00010', 'DB010', 1000000000, '2024-12-15', 1, 'Lệ phí tham gia giải đấu');
 
 
 -- SELECT * FROM MG_DB_CT WHERE MaMuaGiai = 'MG2025_1';

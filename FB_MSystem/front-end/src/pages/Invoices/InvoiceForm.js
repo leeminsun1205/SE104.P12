@@ -6,13 +6,13 @@ import { toVietnameseCurrencyString } from "./utils";
 function InvoiceForm({ API_URL, onAddInvoice }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    receiptNumber: "",
-    teamName: "",
-    amount: "",
+    MaBienNhan: "",
+    TenDoiBong: "",
+    LePhi: "",
     receivedAmount: "",
-    receivedDate: "",
-    reason: "",
-    status: "Đã hoàn thành",
+    NgayThanhToan: "",
+    LyDo: "",
+    TinhTrang: "Đã hoàn thành",
   });
   const [availableTeams, setAvailableTeams] = useState([]);
   const [loadingTeams, setLoadingTeams] = useState(true);
@@ -21,7 +21,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      receiptNumber: Date.now().toString(),
+      MaBienNhan: Date.now().toString(),
     }));
 
     // Fetch available teams
@@ -29,7 +29,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
       try {
         const response = await fetch(`${API_URL}/doi-bong/`);
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response.TinhTrang}`);
         }
         const data = await response.json();
         setAvailableTeams(data.doiBong);
@@ -53,17 +53,17 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newInvoice = {
-      id: formData.receiptNumber,
+      id: formData.MaBienNhan,
       ...formData,
     };
 
     console.log(newInvoice);
     onAddInvoice(newInvoice);
-    navigate(`/bien-nhan/${formData.receiptNumber}`);
+    navigate(`/bien-nhan/${formData.MaBienNhan}`);
   };
 
   const calculateRemainingAmount = () => {
-    const amount = parseFloat(formData.amount) || 0;
+    const amount = parseFloat(formData.LePhi) || 0;
     const receivedAmount = parseFloat(formData.receivedAmount) || 0;
     return amount - receivedAmount;
   };
@@ -82,15 +82,15 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
         <h2>Nhập thông tin biên nhận</h2>
         <label>Số biên nhận:</label>
         <input
-          name="receiptNumber"
-          value={formData.receiptNumber}
+          name="MaBienNhan"
+          value={formData.MaBienNhan}
           readOnly
           placeholder="Số biên nhận (Tự động tạo)"
         />
         <label>Tên đội bóng:</label>
         <select
-          name="teamName"
-          value={formData.teamName}
+          name="TenDoiBong"
+          value={formData.TenDoiBong}
           onChange={handleChange}
         >
           <option value="">-- Chọn đội bóng --</option>
@@ -102,16 +102,16 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
         </select>
         <label>Số tiền (VNĐ):</label>
         <input
-          name="amount"
+          name="LePhi"
           type="number"
-          value={formData.amount}
+          value={formData.LePhi}
           onChange={handleChange}
           placeholder="Số tiền"
         />
         <label>Bằng chữ:</label>
         <input
           type="text"
-          value={toVietnameseCurrencyString(formData.amount)}
+          value={toVietnameseCurrencyString(formData.LePhi)}
           readOnly
           placeholder="Số tiền bằng chữ"
         />
@@ -132,23 +132,23 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
         />
         <label>Ngày nhận:</label>
         <input
-          name="receivedDate"
+          name="NgayThanhToan"
           type="date"
-          value={formData.receivedDate}
+          value={formData.NgayThanhToan}
           onChange={handleChange}
           placeholder="Ngày nhận"
         />
         <label>Lý do:</label>
         <input
-          name="reason"
-          value={formData.reason}
+          name="LyDo"
+          value={formData.LyDo}
           onChange={handleChange}
           placeholder="Lý do"
         />
         <label>Tình trạng:</label>
         <input
-          name="status"
-          value={formData.status}
+          name="TinhTrang"
+          value={formData.TinhTrang}
           onChange={handleChange}
           readOnly
         >

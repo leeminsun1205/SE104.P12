@@ -16,13 +16,9 @@ const BienNhan = sequelize.define('BienNhan', {
         type: DataTypes.BIGINT,
         allowNull: false,
     },
-    NgayBatDau: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-    },
-    NgayHetHan: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
+    LyDo: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
     },
     NgayThanhToan: {
         type: DataTypes.DATEONLY,

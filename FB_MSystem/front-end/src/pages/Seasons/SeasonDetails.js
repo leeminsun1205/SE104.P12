@@ -56,7 +56,7 @@ function SeasonDetails({ API_URL }) {
                         throw new Error(`Failed to fetch teams for season: ${response.status} - ${message}`);
                     }
                     const data = await response.json();
-                    setTeams(data.doiBong || []); 
+                    setTeams(data || []); 
                 } catch (error) {
                     console.error("Error fetching teams for season:", error);
                     setError(error.message);
@@ -212,18 +212,16 @@ function SeasonDetails({ API_URL }) {
                 },
                 body: JSON.stringify({links: selectedTeamsToAdd}),
             });
-
             if (!response.ok) {
                 const message = await response.text();
                 throw new Error(`Failed to add teams to season: ${response.status} - ${message}`);
             }
 
-            // After adding teams, refetch the season details to get the updated team list
             const updatedSeasonResponse = await fetch(`${API_URL}/mua-giai/${MaMuaGiai}`);
             const updatedSeasonData = await updatedSeasonResponse.json();
             setSeason(updatedSeasonData.muaGiai);
-            setTeams(updatedSeasonData.muaGiai.teams || []); // Assuming teams are in the season data
-
+            setTeams(selectedTeamsToAdd || []);
+            console.log(selectedTeamsToAdd)
             handleCloseAddTeamsModal();
         } catch (error) {
             console.error("Error adding teams to season:", error);
@@ -297,7 +295,7 @@ function SeasonDetails({ API_URL }) {
                     <ul className={styles.list}>
                         {rounds.map(round => (
                             <li key={round.MaVongDau} className={styles['list-item']}>
-                                {round.LuotDau ? "Lượt về" : "Lượt đi"} (
+                                {round.LuotDau} (
                                 {new Date(round.NgayBatDau).toLocaleDateString()} -
                                 {new Date(round.NgayKetThuc).toLocaleDateString()}
                                 )
@@ -374,7 +372,7 @@ function SeasonDetails({ API_URL }) {
                                         <li key={team.MaDoiBong} className={styles['modal-list-item']}>
                                             <label>
                                                 <input
-                                                    type="checkbox"
+                                                    type="checkbox" 
                                                     checked={selectedTeamsToAdd.some(item => item.MaDoiBong === team.MaDoiBong)}
                                                     onChange={() => handleToggleTeamSelection(team.MaDoiBong)}
                                                 />
