@@ -122,10 +122,38 @@ const DoiBongController = {
             const { id } = req.params;
             const doiBong = await DoiBong.findByPk(id);
             if (!doiBong) return res.status(404).json({ error: 'Không tìm thấy đội bóng.' });
+    
+            // Kiểm tra các bảng liên quan
+            const mgdbCount = await MgDb.count({ where: { MaDoiBong: id } });
+            const dbctCount = await DbCt.count({ where: { MaDoiBong: id } });
+            const banThangCount = await BanThang.count({ where: { MaDoiBong: id } });
+            // const thePhatCount = await ThePhat.count({ where: { MaDoiBong: id } }); // ThePhat không có MaDoiBong
+            const tranDauCount = await TranDau.count({
+              where: {
+                [Op.or]: [
+                  { MaDoiBongNha: id },
+                  { MaDoiBongKhach: id }
+                ]
+              }
+            });
+    
+            if (mgdbCount > 0 || dbctCount > 0 || banThangCount > 0 || tranDauCount > 0) {
+                return res.status(400).json({
+                    error: 'Không thể xóa đội bóng vì tồn tại các liên kết phụ thuộc.',
+                    details: {
+                        mgDb: mgdbCount > 0,
+                        dbCt: dbctCount > 0,
+                        banThang: banThangCount > 0,
+                        tranDau: tranDauCount > 0,
+                    }
+                });
+            }
+    
             await doiBong.destroy();
             res.status(204).send();
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi xóa đội bóng.' });
+            console.error(error);
+            res.status(500).json({ error: 'Lỗi khi xóa đội bóng.', details: error.message });
         }
     },
 };

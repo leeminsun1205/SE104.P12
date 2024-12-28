@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import TeamSelector from "../../components/TeamSelector.js/TeamSelector";
+import TeamSelector from "../../components/TeamSelector/TeamSelector";
 import styles from "./LookUpAchievements.module.css";
 
 function LookUpAchievements({ API_URL }) {

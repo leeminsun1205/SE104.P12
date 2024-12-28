@@ -98,16 +98,77 @@ const BanThangController = {
     },
     
     async delete(req, res) {
+        const t = await sequelize.transaction(); // Bắt đầu transaction
         try {
             const { id } = req.params;
-            const banThang = await BanThang.findByPk(id);
-            if (!banThang) return res.status(404).json({ error: 'Không tìm thấy bàn thắng.' });
-            await banThang.destroy();
+            const banThang = await BanThang.findByPk(id, { transaction: t });
+            if (!banThang) {
+                await t.rollback(); // Rollback nếu không tìm thấy bàn thắng
+                return res.status(404).json({ error: 'Không tìm thấy bàn thắng.' });
+            }
+    
+            // Lấy thông tin MaCauThu và MaMuaGiai từ bàn thắng bị xóa
+            const { MaCauThu, TranDau } = banThang;
+            const { MaVongDau } = await VongDau.findByPk(TranDau.MaVongDau, {
+                attributes: ['MaVongDau'],
+                include: [{ model: MuaGiai, as: 'MuaGiai', attributes: ['MaMuaGiai'] }],
+                transaction: t,
+            });
+    
+            const MaMuaGiai = TranDau.VongDau.MuaGiai.MaMuaGiai;
+    
+            await banThang.destroy({ transaction: t });
+    
+            // Cập nhật Vua Phá Lưới
+            await updateVuaPhaLuoi(MaMuaGiai, t);
+    
+            await t.commit(); // Commit nếu mọi thứ thành công
             res.status(204).send();
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi xóa bàn thắng.' });
+            await t.rollback(); // Rollback nếu có lỗi
+            console.error('Lỗi khi xóa bàn thắng:', error);
+            res.status(500).json({ error: 'Lỗi khi xóa bàn thắng.', details: error.message });
         }
     },
+    
+    // Hàm cập nhật Vua Phá Lưới
+    async updateVuaPhaLuoi(MaMuaGiai, transaction) {
+        try {
+            // Xóa các bản ghi hiện tại trong bảng VuaPhaLuoi cho mùa giải này
+            await VuaPhaLuoi.destroy({
+                where: { MaMuaGiai: MaMuaGiai },
+                transaction: transaction,
+            });
+    
+            // Tính toán lại Vua Phá Lưới từ bảng BanThang
+            const topScorers = await BanThang.findAll({
+                attributes: [
+                    'MaCauThu',
+                    [sequelize.fn('COUNT', sequelize.col('MaBanThang')), 'SoBanThang'],
+                ],
+                where: {
+                    MaMuaGiai: MaMuaGiai,
+                },
+                group: ['MaCauThu'],
+                order: [[sequelize.fn('COUNT', sequelize.col('MaBanThang')), 'DESC']],
+                limit: 1, // Chỉ lấy người ghi bàn nhiều nhất
+                transaction: transaction,
+            });
+    
+            // Thêm bản ghi mới vào VuaPhaLuoi nếu có cầu thủ ghi bàn
+            if (topScorers.length > 0) {
+                const topScorer = topScorers[0];
+                await VuaPhaLuoi.create({
+                    MaMuaGiai: MaMuaGiai,
+                    MaCauThu: topScorer.MaCauThu,
+                    SoBanThang: topScorer.get('SoBanThang'),
+                }, { transaction: transaction });
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật Vua Phá Lưới:', error);
+            throw error; // Re-throw lỗi để được xử lý ở cấp cao hơn
+        }
+    }
 };
 
 module.exports = BanThangController;

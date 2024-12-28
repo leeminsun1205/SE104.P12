@@ -74,6 +74,23 @@ const CauThuController = {
             const { id } = req.params;
             const cauThu = await CauThu.findByPk(id);
             if (!cauThu) return res.status(404).json({ error: 'Không tìm thấy cầu thủ.' });
+    
+            // Kiểm tra các bảng liên quan
+            const dbctCount = await DbCt.count({ where: { MaCauThu: id } });
+            const banThangCount = await BanThang.count({ where: { MaCauThu: id } });
+            const thePhatCount = await ThePhat.count({ where: { MaCauThu: id } });
+    
+            if (dbctCount > 0 || banThangCount > 0 || thePhatCount > 0) {
+                return res.status(400).json({
+                    error: 'Không thể xóa cầu thủ vì tồn tại các liên kết phụ thuộc.',
+                    details: {
+                        dbCt: dbctCount > 0,
+                        banThang: banThangCount > 0,
+                        thePhat: thePhatCount > 0,
+                    }
+                });
+            }
+    
             await cauThu.destroy();
             res.status(204).send();
         } catch (error) {

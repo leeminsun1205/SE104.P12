@@ -211,7 +211,7 @@ const TranDauController = {
         try {
             const { id } = req.params;
             const updates = req.body;
-
+            
             // Truy vấn TranDau kèm theo VongDau để lấy MaMuaGiai
             const tranDau = await TranDau.findByPk(id, {
                 include: {
@@ -319,6 +319,19 @@ const TranDauController = {
             const { id } = req.params;
             const tranDau = await TranDau.findByPk(id);
             if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
+    
+            // Kiểm tra xem có bàn thắng nào liên quan đến trận đấu này không
+            const banThangCount = await BanThang.count({ where: { MaTranDau: id } });
+            if (banThangCount > 0) {
+                return res.status(400).json({ error: 'Không thể xóa trận đấu vì có bàn thắng liên quan.' });
+            }
+    
+            // Kiểm tra xem có thẻ phạt nào liên quan đến trận đấu này không
+            const thePhatCount = await ThePhat.count({ where: { MaTranDau: id } });
+            if (thePhatCount > 0) {
+                return res.status(400).json({ error: 'Không thể xóa trận đấu vì có thẻ phạt liên quan.' });
+            }
+    
             await tranDau.destroy();
             res.status(204).send();
         } catch (error) {

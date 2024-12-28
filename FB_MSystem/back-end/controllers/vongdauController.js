@@ -70,6 +70,13 @@ const VongDauController = {
             const { id } = req.params;
             const vongDau = await VongDau.findByPk(id);
             if (!vongDau) return res.status(404).json({ error: 'Không tìm thấy vòng đấu.' });
+    
+            // Kiểm tra xem có trận đấu nào thuộc vòng đấu này không
+            const tranDauCount = await TranDau.count({ where: { MaVongDau: id } });
+            if (tranDauCount > 0) {
+                return res.status(400).json({ error: 'Không thể xóa vòng đấu vì có trận đấu thuộc vòng đấu này.' });
+            }
+    
             await vongDau.destroy();
             res.status(204).send();
         } catch (error) {

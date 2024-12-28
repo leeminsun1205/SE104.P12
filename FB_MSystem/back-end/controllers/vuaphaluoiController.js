@@ -27,7 +27,7 @@ const VuaPhaLuoiController = {
                     // {
                     //     model: MuaGiai,
                     //     as: 'MuaGiai',
-                    //     attributes: ['MaMuaGiai', 'TenMuaGiai'], // Lấy các cột cần thiết
+                    //     attributes: ['MaMu   aGiai', 'TenMuaGiai'], // Lấy các cột cần thiết
                     // },
                 ],
                 order: [['SoBanThang', 'DESC']], // Sắp xếp theo số bàn thắng giảm dần
@@ -42,6 +42,21 @@ const VuaPhaLuoiController = {
         } catch (error) {
             console.error('Lỗi khi lấy danh sách vua phá lưới:', error);
             res.status(500).json({ error: 'Lỗi khi lấy danh sách vua phá lưới theo mùa giải.' });
+        }
+    },
+
+    async getAllMuaGiai(req, res) {
+        try {
+            const allMuaGiai = await MuaGiai.findAll();
+
+            if (!allMuaGiai || allMuaGiai.length === 0) {
+                return res.status(404).json({ message: 'Không tìm thấy dữ liệu mùa giải nào.' });
+            }
+
+            res.status(200).json(allMuaGiai);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách mùa giải:', error);
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách tất cả các mùa giải.' });
         }
     },
 };

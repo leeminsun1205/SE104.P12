@@ -97,11 +97,37 @@ const MuaGiaiController = {
         try {
             const { id } = req.params;
             const muaGiai = await MuaGiai.findByPk(id);
-            if (!muaGiai) return res.status(404).json({ error: 'Không tìm thấy mùa giải.' });
+            if (!muaGiai) {
+                return res.status(404).json({ error: 'Không tìm thấy mùa giải.' });
+            }
+    
+            // Kiểm tra các bảng liên quan
+            const mgdbCount = await MgDb.count({ where: { MaMuaGiai: id } });
+            const utXepHangCount = await UtXepHang.count({ where: { MaMuaGiai: id } });
+            const vongDauCount = await VongDau.count({ where: { MaMuaGiai: id } });
+            const bangXepHangCount = await BangXepHang.count({ where: { MaMuaGiai: id } });
+            const thanhTichCount = await ThanhTich.count({ where: { MaMuaGiai: id } });
+            const vuaPhaLuoiCount = await VuaPhaLuoi.count({ where: { MaMuaGiai: id } });
+    
+            if (mgdbCount > 0 || utXepHangCount > 0 || vongDauCount > 0 || bangXepHangCount > 0 || thanhTichCount > 0 || vuaPhaLuoiCount > 0) {
+                return res.status(400).json({
+                    error: 'Không thể xóa mùa giải vì tồn tại các liên kết phụ thuộc.',
+                    details: {
+                        mgDb: mgdbCount > 0,
+                        utXepHang: utXepHangCount > 0,
+                        vongDau: vongDauCount > 0,
+                        bangXepHang: bangXepHangCount > 0,
+                        thanhTich: thanhTichCount > 0,
+                        vuaPhaLuoi: vuaPhaLuoiCount > 0,
+                    }
+                });
+            }
+    
             await muaGiai.destroy();
             res.status(204).send();
         } catch (error) {
-            res.status(500).json({ error: 'Lỗi khi xóa mùa giải.' });
+            console.error('Lỗi khi xóa mùa giải:', error);
+            res.status(500).json({ error: 'Lỗi khi xóa mùa giải.', details: error.message });
         }
     },
 };

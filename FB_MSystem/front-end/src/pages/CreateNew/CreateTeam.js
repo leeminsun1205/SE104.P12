@@ -208,36 +208,6 @@ const CreateTeam = ({ API_URL }) => {
                     {errors.TieuChuan && <p className="error-message">{errors.TieuChuan}</p>}
                 </div>
                 <div>
-                    <label htmlFor="home_kit_image">Áo sân nhà:</label>
-                    <input
-                        type="text"
-                        id="home_kit_image"
-                        name="home_kit_image"
-                        value={team.home_kit_image}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="away_kit_image">Áo sân khách:</label>
-                    <input
-                        type="text"
-                        id="away_kit_image"
-                        name="away_kit_image"
-                        value={team.away_kit_image}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="third_kit_image">Áo dự bị:</label>
-                    <input
-                        type="text"
-                        id="third_kit_image"
-                        name="third_kit_image"
-                        value={team.third_kit_image}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
                     <label htmlFor="ThongTin">Mô tả đội bóng:</label>
                     <textarea
                         id="ThongTin"

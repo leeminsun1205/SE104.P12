@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import TeamSelector from "../../components/TeamSelector.js/TeamSelector";
+import TeamSelector from "../../components/TeamSelector/TeamSelector";
 import styles from "./LookUpMatch.module.css";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector"; // Adjust path if necessary
 

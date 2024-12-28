@@ -205,6 +205,7 @@ const Matches = ({ API_URL }) => {
   // Function to handle saving the edited match
   const handleSaveEditedMatch = useCallback(async (updatedMatch) => {
     try {
+      console.log(JSON.stringify(updatedMatch))
       const response = await fetch(
         `${API_URL}/tran-dau/${updatedMatch.MaTranDau}`,
         {
@@ -437,11 +438,18 @@ const Matches = ({ API_URL }) => {
 
 // Create a separate component for the Edit Match Form
 const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
-  const [editedMatch, setEditedMatch] = useState({ ...match });
+  const [editedMatch, setEditedMatch] = useState(match || {}); // Khởi tạo với match hoặc object rỗng
   const [availableTeams, setAvailableTeams] = useState([]);
-  const [teamPlayers, setTeamPlayers] = useState({}); // To select goal scorers, keyed by team ID
-  const [goals, setGoals] = useState(match.goals || []); // State for managing goals
+  const [teamPlayers, setTeamPlayers] = useState({});
+  const [goals, setGoals] = useState(match?.goals || []); // Sử dụng optional chaining
   const [availableStadiums, setAvailableStadiums] = useState([]);
+
+  useEffect(() => {
+    if (match) {
+      setEditedMatch(match);
+      setGoals(match.goals || []);
+    }
+  }, [match]);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -460,7 +468,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     const fetchPlayersByTeam = async (maDoiBong) => {
       try {
         const response = await fetch(
-          `${API_URL}/db-ct/doi-bong/${maDoiBong}/cau-thu/${match.MaMuaGiai}`
+          `${API_URL}/db-ct/doi-bong/${maDoiBong}/cau-thu/${match.VongDau.MaMuaGiai}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -493,7 +501,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     fetchStadiums();
     if (match.MaDoiBongNha) fetchPlayersByTeam(match.MaDoiBongNha);
     if (match.MaDoiBongKhach) fetchPlayersByTeam(match.MaDoiBongKhach);
-  }, [API_URL, match.MaDoiBongNha, match.MaDoiBongKhach, match.MaMuaGiai, match]); // Added match to dependencies
+  }, [API_URL, match?.MaDoiBongNha, match?.MaDoiBongKhach, match?.VongDau?.MaMuaGiai, match]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -520,13 +528,8 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Include the goals in the updated match data
     onSave({ ...editedMatch, goals });
   };
-
-  useEffect(() => {
-    setGoals(match.goals || []);
-  }, [match.goals]);
 
   const TeamSelect = ({ value, onChange }) => (
     <select name="MaDoiBong" value={value} onChange={onChange}>
@@ -562,7 +565,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
           type="date"
           id="NgayThiDau"
           name="NgayThiDau"
-          value={editedMatch.NgayThiDau}
+          value={editedMatch.NgayThiDau || ""}
           onChange={handleChange}
           required
         />
@@ -573,7 +576,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
           type="time"
           id="GioThiDau"
           name="GioThiDau"
-          value={editedMatch.GioThiDau}
+          value={editedMatch.GioThiDau || ""}
           onChange={handleChange}
           required
         />
@@ -583,9 +586,11 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
         <select
           id="MaDoiBongNha"
           name="MaDoiBongNha"
-          value={editedMatch.MaDoiBongNha}
+          value={editedMatch.MaDoiBongNha || ""}
           onChange={handleChange}
           required
+          disabled
+          className={styles.readOnlyField}
         >
           <option value="">Chọn đội nhà</option>
           {availableTeams.map((team) => (
@@ -600,9 +605,11 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
         <select
           id="MaDoiBongKhach"
           name="MaDoiBongKhach"
-          value={editedMatch.MaDoiBongKhach}
+          value={editedMatch.MaDoiBongKhach || ""}
           onChange={handleChange}
           required
+          disabled
+          className={styles.readOnlyField}
         >
           <option value="">Chọn đội khách</option>
           {availableTeams.map((team) => (
@@ -617,7 +624,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
         <select
           id="MaSan"
           name="MaSan"
-          value={editedMatch.MaSan}
+          value={editedMatch.MaSan || ""}
           onChange={handleChange}
           required
         >
@@ -638,11 +645,11 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
               type="text"
               name="ThoiDiem"
               placeholder="Phút"
-              value={goal.ThoiDiem}
+              value={goal.ThoiDiem || ""}
               onChange={(e) => handleGoalChange(index, e)}
             />
             <TeamSelect
-              value={goal.MaDoiBong}
+              value={goal.MaDoiBong || ""}
               onChange={(e) =>
                 handleGoalChange(index, {
                   target: { name: "MaDoiBong", value: e.target.value },
@@ -650,7 +657,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
               }
             />
             <PlayerSelect
-              value={goal.MaCauThu}
+              value={goal.MaCauThu || ""}
               onChange={(e) =>
                 handleGoalChange(index, {
                   target: { name: "MaCauThu", value: e.target.value },

@@ -286,29 +286,6 @@ function EditTeam({ API_URL, onEditTeam }) {
                     readOnly
                 />
             </div>
-            {[
-                { name: 'home_kit_image', label: 'Quần áo sân nhà' },
-                { name: 'away_kit_image', label: 'Quần áo sân khách' },
-                { name: 'third_kit_image', label: 'Quần áo dự bị' },
-            ].map((fileInput) => (
-                <div key={fileInput.name}>
-                    <label>{fileInput.label}</label>
-                    <input
-                        type="file"
-                        name={fileInput.name}
-                        onChange={handleFileChange}
-                        accept="image/*"
-                        aria-label={fileInput.label}
-                    />
-                    {team[fileInput.name] && typeof team[fileInput.name] === 'string' && (
-                        <img
-                            src={team[fileInput.name]}
-                            alt={`${fileInput.label} preview`}
-                            className="image-preview"
-                        />
-                    )}
-                </div>
-            ))}
             <div>
                 <label htmlFor="ThongTin">Giới thiệu đội</label>
                 <textarea

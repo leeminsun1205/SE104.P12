@@ -97,23 +97,6 @@
   font-size: 14px;
   font-weight: 600;
 }
-
-.action button.edit-player {
-  background-color: #6c5ce7; 
-}
-
-.action button.edit-player:hover {
-  background-color: #5e49c3; 
-}
-
-.action button.delete-player {
-  background-color: rgb(255, 115, 115); 
-}
-
-.action button.delete-player:hover {
-  background-color: rgb(255, 0, 0); 
-}
-
 .search-container {
   position: relative;
   max-width: 500px;
@@ -171,7 +154,44 @@
   background-color: #0056b3;
 }
 
+.player-actions button.navigate {
+  background-color: #6c5ce7; 
+}
 
+.player-actions button.navigate:hover {
+  background-color: #5e49c3; 
+}
+
+.player-actions button.delete {
+  background-color: rgb(255, 115, 115); 
+}
+
+.player-actions button.delete:hover {
+  background-color: rgb(255, 0, 0); 
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #007bff; /* Example active color */
+  color: white;
+  border-color: #007bff;
+}
+
+.pagination button:hover:not(.active) {
+  background-color: #f0f0f0;
+}
 /* Modal styles */
 .modal {
   position: fixed;

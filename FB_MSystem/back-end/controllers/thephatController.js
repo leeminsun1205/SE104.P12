@@ -57,7 +57,7 @@ const ThePhatController = {
 
     async delete(req, res) {
         const { id } = req.params;
-
+    
         const transaction = await sequelize.transaction();
         try {
             // Tìm thẻ phạt để lấy thông tin cần thiết
@@ -65,15 +65,15 @@ const ThePhatController = {
             if (!thePhat) {
                 return res.status(404).json({ error: 'Không tìm thấy thẻ phạt với MaThePhat đã cung cấp.' });
             }
-
+    
             const { MaCauThu, MaTranDau } = thePhat;
-
+    
             // Xóa thẻ phạt
             await thePhat.destroy({ transaction });
-
+    
             // Gọi hàm cập nhật DsThePhat
             await updateDsThePhat(MaCauThu, MaTranDau, transaction);
-
+    
             await transaction.commit();
             res.status(200).json({ message: 'Xóa thẻ phạt thành công và tự động cập nhật DsThePhat.' });
         } catch (error) {
@@ -82,7 +82,6 @@ const ThePhatController = {
             res.status(500).json({ error: 'Lỗi khi xóa thẻ phạt.', details: error.message });
         }
     },
-
     
 };
 

@@ -4,6 +4,7 @@ const router = express.Router();
 
 // Lấy danh sách cầu thủ theo đội bóng
 router.get('/doi-bong/:MaDoiBong/cau-thu', DbCtController.getByDoiBong);
+router.get('/doi-bong/:MaDoiBong/cau-thu/:MaCauThu', DbCtController.getByCauThu);
 
 // Thêm liên kết mới giữa đội bóng và cầu thủ
 router.post('/create', DbCtController.create);

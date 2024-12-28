@@ -79,17 +79,30 @@ const SanThiDauController = {
     async delete(req, res) {
         try {
             const { id } = req.params;
-
+    
             // Tìm và xóa sân thi đấu
             const sanThiDaus = await SanThiDau.findByPk(id);
             if (!sanThiDaus) return res.status(404).json({ error: 'Không tìm thấy sân thi đấu.' });
+    
+            // Kiểm tra xem sân có đang được sử dụng bởi đội bóng nào không
+            const doiBong = await DoiBong.findOne({ where: { MaSan: id } });
+            if (doiBong) {
+                return res.status(400).json({ error: 'Sân đang được sử dụng bởi một đội bóng.' });
+            }
+    
+            // Kiểm tra xem sân có đang được sử dụng trong trận đấu nào không
+            const tranDau = await TranDau.findOne({ where: { MaSan: id } });
+            if (tranDau) {
+                return res.status(400).json({ error: 'Sân đang được sử dụng trong một trận đấu.' });
+            }
+    
             await sanThiDaus.destroy();
             res.status(204).send();
         } catch (error) {
             console.error('Lỗi khi xóa sân thi đấu:', error);
-            res.status(500).json({ 
-                error: 'Lỗi khi xóa sân thi đấu', 
-                details: error.message 
+            res.status(500).json({
+                error: 'Lỗi khi xóa sân thi đấu',
+                details: error.message
             });
         }
     },

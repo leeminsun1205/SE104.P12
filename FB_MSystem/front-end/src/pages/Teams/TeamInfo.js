@@ -84,47 +84,6 @@ function TeamInfo({ API_URL, teams }) {
           <span>{team.ThongTin}</span>
         </p>
       </div>
-      <div className="uniform-images">
-        <div className="kit-container">
-          <p className="kit-label">Áo sân nhà</p>
-          <img
-            src={
-              team.home_kit_image instanceof File
-                ? URL.createObjectURL(team.home_kit_image)
-                : team.home_kit_image || defaultHomeImage
-            }
-            alt={`${team.TenDoiBong} Home Uniform`}
-            className="uniform-image"
-            loading="lazy"
-          />
-        </div>
-        <div className="kit-container">
-          <p className="kit-label">Áo sân khách</p>
-          <img
-            src={
-              team.away_kit_image instanceof File
-                ? URL.createObjectURL(team.away_kit_image)
-                : team.away_kit_image || defaultAwayImage
-            }
-            alt={`${team.TenDoiBong} Away Uniform`}
-            className="uniform-image"
-            loading="lazy"
-          />
-        </div>
-        <div className="kit-container">
-          <p className="kit-label">Áo dự bị</p>
-          <img
-            src={
-              team.third_kit_image instanceof File
-                ? URL.createObjectURL(team.third_kit_image)
-                : team.third_kit_image || defaultThirdImage
-            }
-            alt={`${team.name} Third Uniform`}
-            className="uniform-image"
-            loading="lazy"
-          />
-        </div>
-      </div>
       <div className="action">
         <button className="to-player" onClick={() => handleToPlayer(team.MaDoiBong)}>
           Cầu thủ

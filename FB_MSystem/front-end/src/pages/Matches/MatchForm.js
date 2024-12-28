@@ -1,8 +1,13 @@
+
 import React, { useState, useEffect } from "react";
 import styles from "./MatchForm.module.css";
 
-function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
+function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players }) {
   const [editedMatch, setEditedMatch] = useState(initialMatch);
+
+  useEffect(() => {
+    setEditedMatch(initialMatch);
+  }, [initialMatch]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -27,8 +32,8 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="text"
           id="homeTeam"
-          name="homeTeamName"
-          value={editedMatch?.TenDoiBongNha || ""}
+          name="DoiBongNha"
+          value={editedMatch?.DoiBongNha?.TenDoiBong || ""}
           readOnly
         />
       </div>
@@ -40,8 +45,8 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="text"
           id="awayTeam"
-          name="awayTeamName"
-          value={editedMatch?.TenDoiBongKhach || ""}
+          name="DoiBongKhach"
+          value={editedMatch?.DoiBongKhach?.TenDoiBong || ""}
           readOnly
         />
       </div>
@@ -53,8 +58,8 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="number"
           id="homeScore"
-          name="homeScore"
-          value={editedMatch?.homeScore || 0}
+          name="BanThangDoiNha"
+          value={editedMatch?.BanThangDoiNha || 0}
           onChange={handleInputChange}
         />
       </div>
@@ -66,8 +71,8 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="number"
           id="awayScore"
-          name="awayScore"
-          value={editedMatch?.awayScore || 0}
+          name="BanThangDoiKhach"
+          value={editedMatch?.BanThangDoiKhach || 0}
           onChange={handleInputChange}
         />
       </div>
@@ -79,7 +84,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="date"
           id="date"
-          name="date"
+          name="NgayThiDau"
           value={editedMatch?.NgayThiDau || ""}
           onChange={handleInputChange}
         />
@@ -92,7 +97,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="time"
           id="time"
-          name="time"
+          name="GioThiDau"
           value={editedMatch?.GioThiDau || ""}
           onChange={handleInputChange}
         />
@@ -105,8 +110,8 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL }) {
           className={styles.input}
           type="text"
           id="stadium"
-          name="stadiumName"
-          value={editedMatch?.TenSan || ""}
+          name="SanThiDau"
+          value={editedMatch?.SanThiDau?.TenSan || ""}
           readOnly
         />
       </div>

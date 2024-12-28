@@ -25,7 +25,7 @@ function CardsList({ API_URL }) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setAvailableSeasons(data.seasons.filter(season => season !== 'all'));
+                setAvailableSeasons(data.muaGiai.filter(season => season !== 'all'));
             } catch (error) {
                 console.error("Error fetching seasons:", error);
                 setError("Failed to load seasons.");
@@ -45,7 +45,7 @@ function CardsList({ API_URL }) {
                     }
                     const data = await response.json();
                     const playersMap = {};
-                    data.forEach(player => playersMap[player.MaCauThu] = player);
+                    data.cauThu.forEach(player => playersMap[player.MaCauThu] = player);
                     setPlayers(playersMap);
                 } catch (error) {
                     console.error("Error fetching players:", error);
