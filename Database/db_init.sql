@@ -213,7 +213,7 @@ CREATE TABLE THEPHAT (
 	MaCauThu CHAR(10) NOT NULL,    
     MaDoiBong CHAR(10) NOT NULL,
 	MaLoaiThePhat CHAR(10) NOT NULL,               
-	ThoiGian TIME NOT NULL,                         
+	ThoiGian TINYINT NOT NULL,                         
 	LyDo VARCHAR(100) NOT NULL, 
     CONSTRAINT PK_THEPHAT PRIMARY KEY (MaThePhat),
 	CONSTRAINT FK_THETPHAT_TRANDAU FOREIGN KEY (MaTranDau) REFERENCES TRANDAU(MaTranDau), 
@@ -291,14 +291,12 @@ INSERT INTO THAMSO (
     SoLuongCauThuToiDa,
     SoCauThuNgoaiToiDa,
     LePhi,
-    NgayBatDauLePhi,
-    NgayHetHanLePhi,
     ThoiDiemGhiBanToiDa,
     DiemThang,
     DiemHoa,
     DiemThua
 ) VALUES (
-    1, 5000, 3, 18, 40, 11, 25, 5, 1000000000, '2024-12-23', '2025-1-23', 90, 3, 1, 0
+    1, 5000, 3, 16, 40, 15, 23, 3, 1000000000, 90, 3, 1, 0
 );
 
 

@@ -47,14 +47,6 @@ const ThamSo = sequelize.define('ThamSo', {
         allowNull: false,
         validate: { min: 500 },
     },
-    NgayBatDauLePhi: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-    },
-    NgayHetHanLePhi: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-    },
     ThoiDiemGhiBanToiDa: {
         type: DataTypes.INTEGER,
         allowNull: false,
