@@ -311,8 +311,8 @@ VALUES
 INSERT INTO LOAIUUTIEN (MaLoaiUuTien, TenLoaiUuTien, MoTa)
 VALUES
     ('LUT01', 'Hiệu số', 'Ưu tiên tính hiệu số'),
-    ('LUT02', 'Đối đầu', 'Ưu tiên kết quả đối đầu'),
-    ('LUT03', 'Số bàn thắng', 'Ưu tiên tính số bàn thắng');
+    ('LUT02', 'Số bàn thắng', 'Ưu tiên tính số bàn thắng'),
+    ('LUT03', 'Đối đầu', 'Ưu tiên kết quả đối đầu');
 
 INSERT INTO LOAITHEPHAT (MaLoaiThePhat, TenLoaiThePhat, MoTa)
 VALUES
