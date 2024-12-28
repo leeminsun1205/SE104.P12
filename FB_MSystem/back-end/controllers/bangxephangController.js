@@ -1,7 +1,7 @@
 // --- START OF FILE bangxephangController.js ---
 
 // const { UUID, MACADDR } = require('sequelize');
-const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, MuaGiai, Sequelize } = require('../models');
+const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, MuaGiai, VongDau, TranDau, Sequelize } = require('../models');
 // const LoaiUuTien = require('../models/loaiuutien');
 // const MuaGiaiController = require('./muaGiaiController');
 
@@ -66,6 +66,17 @@ const BangXepHangController = {
                     XepHang: index + 1,
                 };
             });
+
+            // Kiểm tra mùa giải đã hoàn thành để thực hiện cập nhật
+            const isMuaGiaiHoanThanh = await checkMuaGiaiHoanThanh(MaMuaGiai);
+
+            if (isMuaGiaiHoanThanh) {
+                console.log(`=== Mùa giải ${MaMuaGiai} đã hoàn thành. Tiến hành cập nhật cho ThanhTich và LichSuGiaiDau ===`);
+                await updateThanhTichFromBangXepHang(MaMuaGiai);
+                await updateLichSuGiaiDau();
+            } else {
+                console.log(`=== Mùa giải ${MaMuaGiai} chưa hoàn thành. Không cập nhật dữ liệu cho ThanhTich và LichSuGiaiDau ===`);
+            }
 
             res.status(200).json(bangXepHangWithRank);
         } catch (error) {
@@ -303,6 +314,33 @@ const updateLichSuGiaiDau = async () => {
         console.log(`=== Hoàn tất cập nhật LS_GIAIDAU ===`);
     } catch (error) {
         console.error("Lỗi khi cập nhật LS_GIAIDAU:", error);
+    }
+};
+
+// Hàm kiểm tra trạng thái mùa giải
+const checkMuaGiaiHoanThanh = async (MaMuaGiai) => {
+    try {
+        const vongDauList = await VongDau.findAll({
+            where: { MaMuaGiai },
+            attributes: ['MaVongDau'],
+        });
+        const maVongDauList = vongDauList.map(vd => vd.MaVongDau);
+
+        const incompleteMatches = await TranDau.findOne({
+            where: {
+                MaVongDau: maVongDauList,
+                [Sequelize.Op.or]: [
+                    { BanThangDoiNha: null },
+                    { BanThangDoiKhach: null },
+                    { TinhTrang: true },
+                ],
+            },
+        });
+
+        return !incompleteMatches;
+    } catch (error) {
+        console.error("Lỗi khi kiểm tra trạng thái mùa giải:", error);
+        return false;
     }
 };
 
