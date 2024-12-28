@@ -47,7 +47,7 @@ function PlayerCardList({ API_URL }) {
         setError(null);
         setNotFound(false);
         try {
-            const response = await fetch(`${API_URL}/seasons/cards?season=${selectedSeason}`);
+            const response = await fetch(`${API_URL}/ds-the-phat/mua-giai/${selectedSeason}`);
             if (!response.ok) {
                 if (response.status === 404) {
                     console.log(`Card list not found for season: ${selectedSeason}`);
@@ -126,7 +126,7 @@ function PlayerCardList({ API_URL }) {
 
   const handleRowClick = (id, teamId) => {
     console.log(`handleRowClick - Player ID: ${id}, Team ID: ${teamId}`); // Debug handleRowClick
-    navigate(`/teams/${teamId}/players/${id}`);
+    navigate(`db-ct/doi-bong/${teamId}/cau-thu/${id}`);
   };
 
   return (

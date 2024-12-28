@@ -29,7 +29,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players, av
         </label>
         <select
           className={styles.input}
-          id="homeTeam"
+          id="MaDoiBongNha"
           name="MaDoiBongNha"
           value={editedMatch?.MaDoiBongNha || ""}
           disabled // Added disabled attribute
@@ -48,7 +48,7 @@ function MatchForm({ match: initialMatch, onSave, onCancel, API_URL, players, av
         </label>
         <select
           className={styles.input}
-          id="awayTeam"
+          id="MaDoiBongKhach"
           name="MaDoiBongKhach"
           value={editedMatch?.MaDoiBongKhach || ""}
           disabled // Added disabled attribute
