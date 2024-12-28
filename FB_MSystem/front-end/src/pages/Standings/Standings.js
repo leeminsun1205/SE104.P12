@@ -175,12 +175,12 @@ function Standings({ API_URL }) {
                                     console.log("Đội trong map:", team); // Debug team object in map
                                     return (
                                         <tr
-                                            key={`${team.rank}-${team.name}-${team.season}`}
+                                            key={`${team.XepHang}-${team.TenDoiBong}-${team.MaMuaGiai}`}
                                             onClick={() => handleRowClick(team.MaDoiBong, selectedSeason)}
                                             className={styles.standingsRow}
                                         >
-                                            <td>{team.rank}</td>
-                                            <td className={styles.teamName}>{team.name}</td>
+                                            <td>{team.XepHang}</td>
+                                            <td className={styles.teamName}>{team.TenDoiBong}</td>
                                             <td>{team.SoTran}</td>
                                             <td>{team.SoTranThang}</td>
                                             <td>{team.SoTranHoa}</td>
