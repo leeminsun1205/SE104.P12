@@ -1,10 +1,16 @@
+const sequelize = require('../config/database',{logging: console.log, });
 const { TranDau, VongDau, MgDb, DbCt, BanThang, VuaPhaLuoi } = require('../models');
 
 // Hàm tự động cập nhật trận đấu
-const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, thoiDiem) => {
+const autoUpdateMatch = async (maTranDau, maDoiBongParam, maCauThuParam, maLoaiBanThang, thoiDiem) => {
+    console.log("Bắt đầu autoUpdateMatch với:", { maTranDau, maDoiBong: maDoiBongParam, maCauThu: maCauThuParam, maLoaiBanThang, thoiDiem });
     const transaction = await sequelize.transaction(); // Start a transaction
 
     try {
+        const maCauThu = maCauThuParam;
+        const maDoiBong = maDoiBongParam;
+
+        // Lấy thông tin trận đấu, bao gồm mùa giải
         const tranDau = await TranDau.findOne({
             where: { MaTranDau: maTranDau },
             include: {
@@ -13,13 +19,11 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
                 attributes: ['MaMuaGiai'],
             },
             transaction,
+            
+            rejectOnEmpty: true, // Thêm để throw lỗi nếu không tìm thấy
         });
 
-        if (!tranDau) {
-            throw new Error('Không tìm thấy trận đấu.');
-        }
-
-        const maMuaGiai = tranDau.VongDau.MaMuaGiai;
+        console.log("Thông tin TranDau:", tranDau.toJSON());
 
         if (tranDau.TinhTrang !== true) {
             throw new Error('Trận đấu không ở trạng thái đang diễn ra.');
@@ -29,18 +33,23 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
             throw new Error('Đội bóng không thuộc trận đấu này.');
         }
 
-        const isPlayerInTeam = await MgDb.findOne({
-            where: { MaMuaGiai: maMuaGiai, MaDoiBong: maDoiBong },
-            include: {
-                model: DbCt,
-                as: 'DbCt',
-                where: { MaCauThu: maCauThu },
-                required: true,
-            },
+        const maMuaGiai = tranDau.VongDau.MaMuaGiai;
+
+        const isPlayerInTeamInSeason = await DbCt.findOne({
+            where: { MaCauThu: maCauThu },
+            include: [{
+                model: MgDb,
+                as: 'MgDb', // Đảm bảo bí danh này khớp với định nghĩa association của bạn
+                where: { MaMuaGiai: maMuaGiai, MaDoiBong: maDoiBong},
+                required: true // Bắt buộc phải có bản ghi khớp ở bảng MgDb
+            }],
+            logging: console.log,
             transaction,
         });
 
-        if (!isPlayerInTeam) {
+        console.log("Kết quả kiểm tra cầu thủ trong đội (mùa giải):", isPlayerInTeamInSeason ? isPlayerInTeamInSeason.toJSON() : 'Không tìm thấy');
+
+        if (!isPlayerInTeamInSeason) {
             throw new Error('Cầu thủ không thuộc đội bóng trong mùa giải này.');
         }
 
@@ -62,7 +71,7 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
         });
 
         // Gọi hàm tự động cập nhật vua phá lưới
-        const vuaPhaLuoi = await autoUpdateTopScorer(maCauThu, maMuaGiai, maDoiBong, maTranDau, transaction); // Pass transaction if autoUpdateTopScorer interacts with DB
+        const vuaPhaLuoi = await autoUpdateTopScorer(maCauThu, maMuaGiai, maDoiBong, maTranDau, transaction); // Pass transaction
 
         await transaction.commit();
 

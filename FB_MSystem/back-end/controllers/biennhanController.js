@@ -94,12 +94,6 @@ const BienNhanController = {
                     const ngayBatDau = new Date(bienNhan.NgayBatDau);
                     const ngayHetHan = new Date(bienNhan.NgayHetHan);
     
-                    // if (ngayThanhToan < ngayBatDau || ngayThanhToan > ngayHetHan) {
-                    //     return res.status(400).json({
-                    //         error: 'Ngày thanh toán phải nằm trong khoảng từ Ngày bắt đầu đến Ngày hết hạn.',
-                    //     });
-                    // }
-    
                     updates.NgayThanhToan = ngayThanhToan;
                     updates.TinhTrang = true; // Đặt TinhTrang thành true nếu NgayThanhToan hợp lệ
                 }
