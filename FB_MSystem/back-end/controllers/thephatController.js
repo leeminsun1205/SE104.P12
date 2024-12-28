@@ -1,4 +1,4 @@
-const { DsThePhat, ThePhat, TranDau, CauThu, LoaiThePhat, VongDau, sequelize } = require('../models');
+const { DsThePhat, ThePhat, TranDau, CauThu, LoaiThePhat, DbCt, VongDau, sequelize } = require('../models');
 
 const ThePhatController = {
     async getAll(req, res) {
@@ -7,6 +7,7 @@ const ThePhatController = {
                 include: [
                     { model: TranDau, as: 'TranDau' },
                     { model: CauThu, as: 'CauThu' },
+                    { model: DoiBong, as: 'DoiBong' },
                     { model: LoaiThePhat, as: 'LoaiThePhat' },
                 ],
             });
@@ -23,6 +24,7 @@ const ThePhatController = {
                 where: { MaTranDau },
                 include: [
                     { model: CauThu, as: 'CauThu' },
+                    { model: DoiBong, as: 'DoiBong' },
                     { model: LoaiThePhat, as: 'LoaiThePhat' },
                 ],
             });
@@ -37,9 +39,18 @@ const ThePhatController = {
 
         const transaction = await sequelize.transaction();
         try {
+            // Lấy MaDoiBong từ bảng DbCt dựa trên MaCauThu
+            const dbCt = await DbCt.findOne({
+                where: { MaCauThu },
+                transaction
+            });
+            if (!dbCt) {
+                return res.status(404).json({ error: 'Không tìm thấy thông tin đội bóng cho cầu thủ này.' });
+            }
+            const MaDoiBong = dbCt.MaDoiBong;
             // Tạo mới thẻ phạt
             const newThePhat = await ThePhat.create(
-                { MaThePhat, MaTranDau, MaCauThu, MaLoaiThePhat, ThoiGian, LyDo },
+                { MaThePhat, MaTranDau, MaCauThu, MaDoiBong, MaLoaiThePhat, ThoiGian, LyDo },
                 { transaction }
             );
 
@@ -57,7 +68,7 @@ const ThePhatController = {
 
     async delete(req, res) {
         const { id } = req.params;
-    
+
         const transaction = await sequelize.transaction();
         try {
             // Tìm thẻ phạt để lấy thông tin cần thiết
@@ -65,15 +76,15 @@ const ThePhatController = {
             if (!thePhat) {
                 return res.status(404).json({ error: 'Không tìm thấy thẻ phạt với MaThePhat đã cung cấp.' });
             }
-    
+
             const { MaCauThu, MaTranDau } = thePhat;
-    
+
             // Xóa thẻ phạt
             await thePhat.destroy({ transaction });
-    
+
             // Gọi hàm cập nhật DsThePhat
             await updateDsThePhat(MaCauThu, MaTranDau, transaction);
-    
+
             await transaction.commit();
             res.status(200).json({ message: 'Xóa thẻ phạt thành công và tự động cập nhật DsThePhat.' });
         } catch (error) {
@@ -82,7 +93,7 @@ const ThePhatController = {
             res.status(500).json({ error: 'Lỗi khi xóa thẻ phạt.', details: error.message });
         }
     },
-    
+
 };
 
 const updateDsThePhat = async (MaCauThu, MaTranDau, transaction) => {

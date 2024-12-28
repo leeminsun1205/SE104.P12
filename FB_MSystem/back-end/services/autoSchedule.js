@@ -1,27 +1,27 @@
-const { VongDau, TranDau, DoiBong, MgDb } = require('../models');
+const { VongDau, TranDau, DoiBong, MuaGiai, MgDb } = require('../models');
 const _ = require('lodash'); // Thư viện lodash để hỗ trợ ngẫu nhiên hóa
 
 async function autoSchedule(maMuaGiai) {
     try {
-        // Lấy danh sách đội bóng thuộc mùa giải từ MgDb
+        const muaGiai = await MuaGiai.findByPk(maMuaGiai);
+        if (!muaGiai) {
+            throw new Error('Không tìm thấy thông tin mùa giải.');
+        }
+
+        const { NgayBatDau: NgayBatDauMua, NgayKetThuc: NgayKetThucMua } = muaGiai;
+
+        if (!NgayBatDauMua || !NgayKetThucMua) {
+            throw new Error('Ngày bắt đầu và kết thúc của mùa giải chưa được cấu hình.');
+        }
+
+        // Lấy danh sách đội bóng thuộc mùa giải
         const doiBongTrongMua = await MgDb.findAll({
             where: { MaMuaGiai: maMuaGiai },
-            attributes: ['MaDoiBong'], // Lấy mã đội bóng
-            include: [
-                {
-                    model: DoiBong,
-                    as: 'DoiBong',
-                },
-            ],
-            group: ['MaDoiBong'],
+            attributes: ['MaDoiBong'],
         });
 
-        // Trích xuất danh sách mã đội bóng
-        let doiBongList = doiBongTrongMua.map(item => item.MaDoiBong);
-
+        const doiBongList = doiBongTrongMua.map(item => item.MaDoiBong);
         const soDoi = doiBongList.length;
-        console.log('Đội bóng trong mùa giải:', doiBongTrongMua);
-        console.log('Số đội bóng tính được:', soDoi);
 
         if (soDoi < 2) {
             throw new Error('Mùa giải phải có ít nhất 2 đội bóng để tạo vòng đấu.');
@@ -29,21 +29,25 @@ async function autoSchedule(maMuaGiai) {
 
         // Xử lý số đội lẻ
         if (soDoi % 2 !== 0) {
-            doiBongList.push(null); // Thêm đội "BYE" để xử lý số đội lẻ
+            doiBongList.push(null); // Thêm đội "BYE"
         }
 
-        // Số vòng đấu = số đội x 2 nếu số đội lẻ, hoặc (số đội - 1) x 2 nếu số đội chẵn
         const soVongDau = (soDoi % 2 === 0) ? (soDoi - 1) * 2 : soDoi * 2;
+        const ngayChoMoiVong = Math.floor((new Date(NgayKetThucMua) - new Date(NgayBatDauMua)) / (soVongDau * 86400000));
 
-        // Tạo các vòng đấu
         const vongDauData = [];
+        const randomDateInRange = (startDate, endDate) => {
+            const start = new Date(startDate).getTime();
+            const end = new Date(endDate).getTime();
+            return new Date(start + Math.random() * (end - start));
+        };
         for (let i = 0; i < soVongDau; i++) {
-            const luotDau = i < soVongDau / 2 ? 0 : 1; // 0 = Lượt đi, 1 = Lượt về
+            const luotDau = i < soVongDau / 2 ? 0 : 1; // 0: Lượt đi, 1: Lượt về
             const soThuTu = i + 1;
             const maVongDau = `${maMuaGiai}_VD${soThuTu.toString().padStart(2, '0')}`;
 
-            const ngayBatDau = null; // Để người dùng tự điền
-            const ngayKetThuc = null; // Để người dùng tự điền
+            const ngayBatDau = randomDateInRange(NgayBatDauMua, NgayKetThucMua);
+            const ngayKetThuc = randomDateInRange(ngayBatDau, NgayKetThucMua);
 
             vongDauData.push({
                 MaVongDau: maVongDau,
@@ -54,14 +58,12 @@ async function autoSchedule(maMuaGiai) {
             });
         }
 
-        // Lưu vòng đấu vào cơ sở dữ liệu
         await VongDau.bulkCreate(vongDauData, { ignoreDuplicates: true });
         console.log(`Đã tạo ${soVongDau} vòng đấu cho mùa giải ${maMuaGiai}.`);
 
         // Tạo lịch thi đấu
         const tranDauData = [];
-
-        const tranDauSanNhaKhach = {}; // Theo dõi số trận sân nhà/khách liên tiếp của mỗi đội
+        const tranDauSanNhaKhach = {};
 
         doiBongList.forEach(doi => {
             if (doi) tranDauSanNhaKhach[doi] = { sanNha: 0, sanKhach: 0 };
@@ -76,10 +78,8 @@ async function autoSchedule(maMuaGiai) {
                     let doiNha = doiBongThamGia[i];
                     let doiKhach = doiBongThamGia[doiBongThamGia.length - 1 - i];
 
-                    // Nếu gặp đội nghỉ (BYE), bỏ qua trận này
                     if (!doiNha || !doiKhach) continue;
 
-                    // Kiểm tra và hoán đổi để không quá 2 trận sân nhà hoặc sân khách liên tiếp
                     if (tranDauSanNhaKhach[doiNha].sanNha >= 2) {
                         [doiNha, doiKhach] = [doiKhach, doiNha];
                     } else if (tranDauSanNhaKhach[doiKhach].sanKhach >= 2) {
@@ -91,17 +91,22 @@ async function autoSchedule(maMuaGiai) {
                         ? (await DoiBong.findByPk(doiNha)).MaSan
                         : (await DoiBong.findByPk(doiKhach)).MaSan;
 
+                    const ngayThiDau = randomDateInRange(vongDau.NgayBatDau, vongDau.NgayKetThuc);
+
+                    if (ngayThiDau > new Date(vongDau.NgayKetThuc)) {
+                        throw new Error(`Ngày thi đấu vượt quá giới hạn vòng đấu: ${vongDau.MaVongDau}`);
+                    }
+
                     tranDauData.push({
                         MaVongDau: vongDau.MaVongDau,
                         MaTranDau: maTranDau,
                         MaDoiBongNha: doiNha,
                         MaDoiBongKhach: doiKhach,
                         MaSan: maSan,
-                        NgayThiDau: null, // Để người dùng tự điền
-                        GioThiDau: null, // Để người dùng tự điền
+                        NgayThiDau: ngayThiDau,
+                        GioThiDau: null,
                     });
 
-                    // Cập nhật bộ đếm sân nhà/sân khách liên tiếp
                     tranDauSanNhaKhach[doiNha].sanNha++;
                     tranDauSanNhaKhach[doiNha].sanKhach = 0;
 
@@ -109,20 +114,18 @@ async function autoSchedule(maMuaGiai) {
                     tranDauSanNhaKhach[doiKhach].sanNha = 0;
                 }
 
-                // Xoay vòng đội bóng (với đội nghỉ cố định ở cuối)
                 const last = doiBongThamGia.pop();
                 doiBongThamGia.splice(1, 0, last);
             }
         }
 
-        // Lưu trận đấu vào cơ sở dữ liệu
         await TranDau.bulkCreate(tranDauData, { ignoreDuplicates: true });
         console.log(`Đã tạo ${tranDauData.length} trận đấu cho mùa giải ${maMuaGiai}.`);
 
-        return { vongDauData, tranDauData }; // Trả về cả vòng đấu và trận đấu đã tạo
+        return { vongDauData, tranDauData };
     } catch (error) {
         console.error('Lỗi khi tạo vòng đấu và trận đấu:', error.message);
-        throw error; // Ném lỗi để controller xử lý
+        throw error;
     }
 }
 
