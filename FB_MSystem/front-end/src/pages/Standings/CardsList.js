@@ -1,3 +1,4 @@
+// --- START OF FILE CardsList.js ---
 // CardsList.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -5,7 +6,7 @@ import styles from './CardsList.module.css';
 import SeasonSelector from '../../components/SeasonSelector/SeasonSelector';
 
 function CardsList({ API_URL }) {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [selectedSeason, setSelectedSeason] = useState('');
     const [cards, setCards] = useState([]);
     const [availableSeasons, setAvailableSeasons] = useState([]);
@@ -15,7 +16,6 @@ function CardsList({ API_URL }) {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'descending' });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const [players, setPlayers] = useState({});
 
     useEffect(() => {
         const fetchSeasons = async () => {
@@ -36,30 +36,6 @@ function CardsList({ API_URL }) {
     }, [API_URL]);
 
     useEffect(() => {
-        const fetchPlayersData = async () => {
-            if (selectedSeason) {
-                try {
-                    const response = await fetch(`${API_URL}/cau-thu`);
-                    if (!response.ok) {
-                        throw new Error(`Could not fetch players: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    const playersMap = {};
-                    data.cauThu.forEach(player => playersMap[player.MaCauThu] = player);
-                    setPlayers(playersMap);
-                } catch (error) {
-                    console.error("Error fetching players:", error);
-                    setError("Failed to load players.");
-                }
-            } else {
-                setPlayers({});
-            }
-        };
-
-        fetchPlayersData();
-    }, [API_URL, selectedSeason]);
-
-    useEffect(() => {
         if (!selectedSeason) {
             setCards([]);
             setSortConfig({ key: null, direction: 'descending' });
@@ -72,10 +48,10 @@ function CardsList({ API_URL }) {
             setError(null);
             setNotFound(false);
             try {
-                const response = await fetch(`${API_URL}/tran-dau/mua-giai${selectedSeason}`);
+                const response = await fetch(`${API_URL}/ds-the-phat/mua-giai/${selectedSeason}`);
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Matches not found for season: ${selectedSeason}`);
+                        console.log(`Cards not found for season: ${selectedSeason}`);
                         setNotFound(true);
                         setCards([]);
                     } else {
@@ -84,10 +60,10 @@ function CardsList({ API_URL }) {
                     return;
                 }
                 const data = await response.json();
-                processMatchData(data);
+                setCards(data);
             } catch (error) {
-                console.error("Error fetching match data:", error);
-                setError("Failed to load match data.");
+                console.error("Error fetching card data:", error);
+                setError("Failed to load card data.");
                 setCards([]);
             } finally {
                 setLoading(false);
@@ -95,35 +71,8 @@ function CardsList({ API_URL }) {
             }
         };
 
-        const processMatchData = (matches) => {
-            const playerCards = {};
-            matches.forEach(match => {
-                if (match.cards) {
-                    match.cards.forEach(card => {
-                        const playerId = card.playerId;
-                        playerCards[playerId] = {
-                            numCards: (playerCards[playerId]?.numCards || 0) + 1,
-                        };
-                    });
-                }
-            });
-
-            const playerCardDetails = Object.entries(playerCards).map(([playerId, cardData]) => ({
-                playerId: parseInt(playerId),
-                numCards: cardData.numCards,
-            }));
-
-            const cardsWithDetails = playerCardDetails.map(card => ({
-                ...card,
-                playerName: players[card.playerId]?.name || 'Không rõ',
-                playerType: players[card.playerId]?.playerType || 'Không rõ', 
-            })).sort((a, b) => b.numCards - a.numCards);
-
-            setCards(cardsWithDetails);
-        };
-
         fetchCardsData();
-    }, [selectedSeason, API_URL, players]);
+    }, [selectedSeason, API_URL]);
 
     const handleSeasonChange = (season) => {
         setSelectedSeason(season);
@@ -187,6 +136,10 @@ function CardsList({ API_URL }) {
         return <div>Lỗi: {error}</div>;
     }
 
+    const handlePlayerClick = (playerId) => {
+        navigate(`/cau-thu/${playerId}`);
+    };
+
     return (
         <div className={styles.cardsListContainer}>
             <h2 className={styles.cardsListTitle}>Danh sách thẻ phạt</h2>
@@ -203,35 +156,38 @@ function CardsList({ API_URL }) {
                     <thead>
                         <tr>
                             <th>Hạng</th>
-                            <th onClick={() => requestSort('playerName')}>Cầu thủ {getSortIndicator('playerName')}</th>
-                            <th onClick={() => requestSort('playerType')}>Loại cầu thủ {getSortIndicator('playerType')}</th>
-                            <th onClick={() => requestSort('numCards')}>Số thẻ phạt {getSortIndicator('numCards')}</th>
-                            <th onClick={() => requestSort('numgGames')}>Số trận thi đấu {getSortIndicator('numgGames')}</th>
+                            <th onClick={() => requestSort('CauThu.TenCauThu')}>Cầu thủ {getSortIndicator('CauThu.TenCauThu')}</th>
+                            <th onClick={() => requestSort('SoTheVang')}>Số thẻ vàng {getSortIndicator('SoTheVang')}</th>
+                            <th onClick={() => requestSort('SoTheDo')}>Số thẻ đỏ {getSortIndicator('SoTheDo')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {selectedSeason ? (
                             currentItems.length > 0 ? (
                                 currentItems.map((card, index) => (
-                                    <tr key={`${index}-${card.playerId}`}>
+                                    <tr key={`${index}-${card.MaCauThu}-${card.MaVongDau}`}>
                                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                        <td>{card.playerName}</td>
-                                        <td>{card.playerType}</td>
-                                        <td>{card.numCards}</td>
-                                        <td>{card.numGames}</td>
+                                        <td
+                                            className={`${styles.playerName} ${styles.clickable}`}
+                                            onClick={() => handlePlayerClick(card.CauThu?.MaCauThu)}
+                                        >
+                                            {card.CauThu?.TenCauThu || 'Không rõ'}
+                                        </td>
+                                        <td>{card.SoTheVang}</td>
+                                        <td>{card.SoTheDo}</td>
                                     </tr>
                                 ))
                             ) : loading ? (
-                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Đang tải dữ liệu thẻ phạt...</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Đang tải dữ liệu thẻ phạt...</td></tr>
                             ) : notFound ? (
-                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Không tìm thấy dữ liệu thẻ phạt cho mùa giải này.</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Không tìm thấy dữ liệu thẻ phạt cho mùa giải này.</td></tr>
                             ) : error ? (
-                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Lỗi: {error}</td></tr>
                             ) : (
-                                <tr><td colSpan="5" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
+                                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Không có dữ liệu cho mùa giải này.</td></tr>
                             )
                         ) : (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>Vui lòng chọn một mùa giải</td></tr>
                         )}
                     </tbody>
                 </table>

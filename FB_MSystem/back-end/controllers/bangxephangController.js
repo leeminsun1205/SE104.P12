@@ -1,5 +1,3 @@
-// --- START OF FILE bangxephangController.js ---
-
 // const { UUID, MACADDR } = require('sequelize');
 const { BangXepHang, DoiBong, UtXepHang, ThanhTich, LichSuGiaiDau, MuaGiai, VongDau, TranDau, Sequelize } = require('../models');
 // const LoaiUuTien = require('../models/loaiuutien');
@@ -13,9 +11,6 @@ const BangXepHangController = {
             const utxh = await UtXepHang.findAll({
                 where: { MaMuaGiai: MaMuaGiai }
             });
-
-            await updateThanhTichFromBangXepHang(MaMuaGiai);
-            await updateLichSuGiaiDau();
 
             let sortCriteria = [];
             const validSortColumns = ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'];
@@ -67,17 +62,6 @@ const BangXepHangController = {
                 };
             });
 
-            // Kiểm tra mùa giải đã hoàn thành để thực hiện cập nhật
-            const isMuaGiaiHoanThanh = await checkMuaGiaiHoanThanh(MaMuaGiai);
-
-            if (isMuaGiaiHoanThanh) {
-                console.log(`=== Mùa giải ${MaMuaGiai} đã hoàn thành. Tiến hành cập nhật cho ThanhTich và LichSuGiaiDau ===`);
-                await updateThanhTichFromBangXepHang(MaMuaGiai);
-                await updateLichSuGiaiDau();
-            } else {
-                console.log(`=== Mùa giải ${MaMuaGiai} chưa hoàn thành. Không cập nhật dữ liệu cho ThanhTich và LichSuGiaiDau ===`);
-            }
-
             res.status(200).json(bangXepHangWithRank);
         } catch (error) {
             console.error('Lỗi khi truy vấn bảng xếp hạng:', error);
@@ -86,6 +70,7 @@ const BangXepHangController = {
     },
 
     async getAll(req, res) {
+        // ... (rest of the getAll method remains the same)
         try {
             const allSeasons = await MuaGiai.findAll({
                 order: [['NgayBatDau', 'ASC']]
@@ -118,7 +103,7 @@ const BangXepHangController = {
                         {
                             model: DoiBong,
                             as: 'DoiBong',
-                            attributes: ['TenDoiBong'],
+                            attributes: ['MaDoiBong', 'TenDoiBong'],
                         },
                     ],
                     attributes: ['SoTran', 'SoTranThang', 'SoTranHoa', 'SoTranThua', 'SoBanThang', 'SoBanThua', 'DiemSo', 'HieuSo'],
@@ -135,6 +120,7 @@ const BangXepHangController = {
                     DiemSo: item.DiemSo,
                     HieuSo: item.HieuSo,
                     DoiBong: {
+                        MaDoiBong: item.DoiBong.MaDoiBong,
                         TenDoiBong: item.DoiBong.TenDoiBong
                     },
                     TenDoiBong: item.DoiBong.TenDoiBong,
@@ -182,6 +168,7 @@ const BangXepHangController = {
 
             const formattedData = teamPositions.map(item => ({
                 TenDoiBong: item.DoiBong.TenDoiBong,
+                MaDoiBong: item.MaDoiBong, // Important for linking
                 SoLanThamGia: item.SoLanThamGia,
                 SoLanVoDich: item.SoLanVoDich,
                 SoLanAQuan: item.SoLanAQuan,
@@ -189,7 +176,7 @@ const BangXepHangController = {
                 TongSoTranThang: totalWinsMap[item.MaDoiBong] || 0, // Get total wins from the map
             }));
 
-            res.status(200).json({ doiBong: formattedData });
+            res.status(200).json({ doiBong: formattedData }); // Changed key to 'teams'
         } catch (error) {
             console.error("Lỗi khi truy vấn thống kê vị trí đội bóng:", error);
             res.status(500).json({ error: error.message });
@@ -197,9 +184,10 @@ const BangXepHangController = {
     },
 };
 
-// Hàm cập nhật ThanhTich từ BangXepHang
+// Hàm cập nhật ThanhTich từ BangXepHang (Consider triggering this on season completion)
 const updateThanhTichFromBangXepHang = async (MaMuaGiai) => {
     try {
+        // ... (rest of the updateThanhTichFromBangXepHang function remains the same)
         console.log(`=== Bắt đầu cập nhật ThanhTich cho MaMuaGiai=${MaMuaGiai} ===`);
 
         // Lấy bảng xếp hạng theo mùa giải
@@ -246,6 +234,7 @@ const updateThanhTichFromBangXepHang = async (MaMuaGiai) => {
 
 const updateLichSuGiaiDau = async () => {
     try {
+        // ... (rest of the updateLichSuGiaiDau function remains the same)
         console.log(`=== Bắt đầu cập nhật LS_GIAIDAU ===`);
 
         // Truy vấn tính thứ hạng
@@ -320,6 +309,7 @@ const updateLichSuGiaiDau = async () => {
 // Hàm kiểm tra trạng thái mùa giải
 const checkMuaGiaiHoanThanh = async (MaMuaGiai) => {
     try {
+        // ... (rest of the checkMuaGiaiHoanThanh function remains the same)
         const vongDauList = await VongDau.findAll({
             where: { MaMuaGiai },
             attributes: ['MaVongDau'],

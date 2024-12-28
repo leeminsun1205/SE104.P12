@@ -1,3 +1,4 @@
+// --- START OF FILE Standings.js ---
 // Standings.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -176,11 +177,15 @@ function Standings({ API_URL }) {
                                     return (
                                         <tr
                                             key={`${team.XepHang}-${team.TenDoiBong}`}
-                                            onClick={() => handleRowClick(team.DoiBong.MaDoiBong, selectedSeason)}
                                             className={styles.standingsRow}
                                         >
                                             <td>{team.XepHang}</td>
-                                            <td className={styles.teamName}>{team.TenDoiBong}</td>
+                                            <td
+                                                className={`${styles.teamName} ${styles.clickable}`}
+                                                onClick={() => handleRowClick(team.DoiBong.MaDoiBong, selectedSeason)}
+                                            >
+                                                {team.TenDoiBong}
+                                            </td>
                                             <td>{team.SoTran}</td>
                                             <td>{team.SoTranThang}</td>
                                             <td>{team.SoTranHoa}</td>

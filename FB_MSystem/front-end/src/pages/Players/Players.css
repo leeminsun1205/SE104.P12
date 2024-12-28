@@ -292,6 +292,10 @@
   .modal-content select {
     font-size: 14px;
   }
+  .page-button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
 
 button:focus,
@@ -299,3 +303,45 @@ input:focus {
   outline: 2px solid #007bff;
   outline-offset: 2px;
 }
+/* Container for pagination */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+/* Style for each page button */
+.page-button {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #007bff;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Active page button */
+.active-page {
+  color: #fff;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+}
+
+/* Dots for page range */
+.page-button:disabled {
+  background-color: transparent;
+  border: none;
+  color: #999;
+  cursor: default;
+}
+
+/* Hover effect for buttons */
+.page-button:hover:not(.active-page) {
+  background-color: #f1f1f1;
+}
+
+

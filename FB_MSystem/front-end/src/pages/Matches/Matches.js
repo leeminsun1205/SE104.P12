@@ -21,6 +21,7 @@ const Matches = ({ API_URL }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const matchesPerPage = 4;
+  const maxVisiblePages = 5;
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
@@ -191,19 +192,66 @@ const Matches = ({ API_URL }) => {
 
   const renderPageNumbers = useMemo(() => {
     const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          onClick={() => paginate(i)}
-          className={currentPage === i ? styles.activePage : styles.pageButton}
-        >
-          {i}
-        </button>
-      );
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <button
+            key={i}
+            onClick={() => paginate(i)}
+            className={currentPage === i ? styles.activePage : styles.pageButton}
+          >
+            {i}
+          </button>
+        );
+      }
+    } else {
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, currentPage + Math.floor((maxVisiblePages - 1) / 2));
+
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        if (startPage === 1) {
+          endPage = Math.min(totalPages, maxVisiblePages);
+        } else {
+          startPage = Math.max(1, totalPages - maxVisiblePages + 1);
+        }
+      }
+
+      if (startPage > 1) {
+        pageNumbers.push(
+          <button
+            key="prev-dots"
+            className={styles.pageButton}
+          >
+            ...
+          </button>
+        );
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(
+          <button
+            key={i}
+            onClick={() => paginate(i)}
+            className={currentPage === i ? styles.activePage : styles.pageButton}
+          >
+            {i}
+          </button>
+        );
+      }
+
+      if (endPage < totalPages) {
+        pageNumbers.push(
+          <button
+            key="next-dots"
+            className={styles.pageButton}
+          >
+            ...
+          </button>
+        );
+      }
     }
     return pageNumbers;
-  }, [currentPage, paginate, totalPages, styles.activePage, styles.pageButton]);
+  }, [currentPage, paginate, totalPages, styles.activePage, styles.pageButton, maxVisiblePages]);
 
   const rounds = useMemo(() => {
     return matches
@@ -488,7 +536,11 @@ const Matches = ({ API_URL }) => {
                   ))}
                 </tbody>
               </table>
-              {totalPages > 1 && <div className={styles.pagination}>{renderPageNumbers}</div>}
+              {totalPages > 1 && (
+                <div className={styles.paginationContainer}>
+                  {renderPageNumbers}
+                </div>
+              )}
             </>
           )}
         </>

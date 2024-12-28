@@ -13,16 +13,23 @@ const PlayerInfo = ({ API_URL }) => {
     if (!player) {
       const fetchPlayerFromAPI = async () => {
         try {
-          const url = MaDoiBong
-            ? `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu/${MaCauThu}`
-            : `${API_URL}/cau-thu/${MaCauThu}`;
-
+          let url = ''
+          if (MaDoiBong) {
+            url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu/${MaCauThu}`
+          }
+          else {
+            url = `${API_URL}/cau-thu/${MaCauThu}`;
+          }
           const response = await fetch(url);
           if (!response.ok) {
             throw new Error("Player not found");
           }
-          const data = await response.json();
-          setPlayer(data.cauThu);
+          let data = await response.json();
+          if (MaDoiBong) {
+            data = data.cauThu
+          }
+          console.log(data)
+          setPlayer(data);
         } catch (err) {
           setError(err.message);
         }
@@ -61,31 +68,31 @@ const PlayerInfo = ({ API_URL }) => {
       <h2>Thông tin cầu thủ</h2>
       <div className={styles["player-details"]}>
         <p>
-          <strong>Tên:</strong> {player[0].TenCauThu}
+          <strong>Tên:</strong> {MaDoiBong ? player[0].TenCauThu : player.TenCauThu}
         </p>
         <p>
-          <strong>Năm sinh:</strong> {player[0].NgaySinh}
+          <strong>Năm sinh:</strong> {MaDoiBong ? player[0].NgaySinh : player.NgaySinh}
         </p>
         <p>
-          <strong>Tuổi:</strong> {calculateAge(player[0].NgaySinh)}
+          <strong>Tuổi:</strong> {MaDoiBong ? calculateAge(player[0].NgaySinh) :  calculateAge(player.NgaySinh)}
         </p>
         <p>
-          <strong>Vị trí:</strong> {player[0].ViTri}
+          <strong>Vị trí:</strong> {MaDoiBong ? player[0].ViTri : player.ViTri}
         </p>
         <p>
-          <strong>Quốc tịch:</strong> {player[0].QuocTich}
+          <strong>Quốc tịch:</strong> {MaDoiBong ? player[0].QuocTich : player.QuocTich}
         </p>
         <p>
-          <strong>Chiều cao:</strong> {player[0].ChieuCao} cm
+          <strong>Chiều cao:</strong> {MaDoiBong ? player[0].ChieuCao : player.ChieuCao} cm
         </p>
         <p>
-          <strong>Cân nặng:</strong> {player[0].CanNang} kg
+          <strong>Cân nặng:</strong> {MaDoiBong ? player[0].CanNang : player.CanNang} kg
         </p>
         <p>
-          <strong>Tiểu sử:</strong> {player[0].TieuSu}
+          <strong>Tiểu sử:</strong> {MaDoiBong ? player[0].TieuSu : player.TieuSu}
         </p>
         <p>
-          <strong>Loại cầu thủ:</strong> {player[0].LoaiCauThu ? "Trong nước" : "Nước ngoài"}
+          <strong>Loại cầu thủ:</strong> {(MaDoiBong ? player[0].LoaiCauThu : player.LoaiCauThu) ? "Trong nước" : "Nước ngoài"}
         </p>
       </div>
     </div>

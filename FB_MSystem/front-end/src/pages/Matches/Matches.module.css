@@ -211,12 +211,17 @@
   color: #aaa;
   pointer-events: none;
 }
-.pagination {
+.paginationContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 5px;
   margin-top: 20px;
+}
+
+.activePage {
+  background-color: #0056b3;
+  color: #fff;
+  border: 1px solid #0056b3;
+  font-weight: bold;
 }
 
 .pageButton {
@@ -235,12 +240,6 @@
   color: #fff;
 }
 
-.activePage {
-  background-color: #0056b3;
-  color: #fff;
-  border: 1px solid #0056b3;
-  font-weight: bold;
-}
 .goalsContainer {
   max-height: 200px; /* Điều chỉnh chiều cao tối đa tùy ý */
   overflow-y: auto;

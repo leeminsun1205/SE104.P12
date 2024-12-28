@@ -1,4 +1,5 @@
 const { LichSuGiaiDau, DoiBong, BangXepHang } = require('../models');
+const { sequelize } = require('../models'); // Import sequelize instance
 
 const LichSuGiaiDauController = {
     async getByDoiBong(req, res) {
