@@ -263,9 +263,9 @@ function UnauthenticatedRoutes({ onLogin }) {
     return (
         <Routes>
             <Route path="/temp" element={<Temp />} />
-            <Route path="/login" element={<Login onLogin={onLogin} />} />
+            <Route path="/login" element={<Login onLogin={onLogin} API_URL={API_URL} />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signup" element={<SignUp API_URL={API_URL}/> } />
             <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
     );
