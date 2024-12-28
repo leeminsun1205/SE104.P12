@@ -63,8 +63,9 @@ body {
 
 .priorityInfo button.editButton {
     height: 36px;
+    width: 150px;
     padding: 6px 10px;
-    position: fixed;
+    position: absolute;
     right: 30%;
     top: 53%;
     transform: translateX(50%); 

@@ -14,6 +14,10 @@ async function autoSchedule(maMuaGiai) {
             throw new Error('Ngày bắt đầu và kết thúc của mùa giải chưa được cấu hình.');
         }
 
+        const startMua = new Date(NgayBatDauMua);
+        const endMua = new Date(NgayKetThucMua);
+        const totalDays = (endMua - startMua) / (1000 * 60 * 60 * 24);
+
         // Lấy danh sách đội bóng thuộc mùa giải
         const doiBongTrongMua = await MgDb.findAll({
             where: { MaMuaGiai: maMuaGiai },
@@ -28,74 +32,80 @@ async function autoSchedule(maMuaGiai) {
         }
 
         // Xử lý số đội lẻ
-        if (soDoi % 2 !== 0) {
-            doiBongList.push(null); // Thêm đội "BYE"
-        }
-
-        const soVongDau = (soDoi % 2 === 0) ? (soDoi - 1) * 2 : soDoi * 2;
-        const ngayChoMoiVong = Math.floor((new Date(NgayKetThucMua) - new Date(NgayBatDauMua)) / (soVongDau * 86400000));
+        const numTeams = soDoi % 2 === 0 ? soDoi : soDoi + 1;
+        const roundsPerSeason = (numTeams - 1) * 2; // Số vòng đấu (lượt đi và về)
+        const avgDaysPerRound = Math.floor(totalDays / roundsPerSeason);
+        const minDaysPerRound = Math.max(1, Math.floor(avgDaysPerRound * 0.7)); // Giảm biên độ dưới
+        const maxDaysPerRound = Math.floor(avgDaysPerRound * 1.1); // Giảm biên độ trên
 
         const vongDauData = [];
-        const randomDateInRange = (startDate, endDate) => {
-            const start = new Date(startDate).getTime();
-            const end = new Date(endDate).getTime();
-            return new Date(start + Math.random() * (end - start));
-        };
-        for (let i = 0; i < soVongDau; i++) {
-            const luotDau = i < soVongDau / 2 ? 0 : 1; // 0: Lượt đi, 1: Lượt về
+        let currentStartDate = new Date(startMua);
+
+        for (let i = 0; i < roundsPerSeason; i++) {
+            const luotDau = i < roundsPerSeason / 2 ? 0 : 1; // 0: Lượt đi, 1: Lượt về
             const soThuTu = i + 1;
             const maVongDau = `${maMuaGiai}_VD${soThuTu.toString().padStart(2, '0')}`;
 
-            const ngayBatDau = randomDateInRange(NgayBatDauMua, NgayKetThucMua);
-            const ngayKetThuc = randomDateInRange(ngayBatDau, NgayKetThucMua);
+            let roundDays = Math.floor(minDaysPerRound + Math.random() * (maxDaysPerRound - minDaysPerRound + 1));
+            let ngayKetThuc = new Date(currentStartDate);
+            ngayKetThuc.setDate(currentStartDate.getDate() + roundDays);
+
+            // Đảm bảo ngày kết thúc vòng không vượt quá ngày kết thúc mùa giải
+            if (ngayKetThuc > endMua) {
+                ngayKetThuc = new Date(endMua);
+            }
 
             vongDauData.push({
                 MaVongDau: maVongDau,
                 MaMuaGiai: maMuaGiai,
                 LuotDau: luotDau,
-                NgayBatDau: ngayBatDau,
-                NgayKetThuc: ngayKetThuc,
+                NgayBatDau: new Date(currentStartDate),
+                NgayKetThuc: new Date(ngayKetThuc),
             });
+
+            // Cập nhật ngày bắt đầu cho vòng tiếp theo, đảm bảo không vượt quá ngày kết thúc mùa giải
+            currentStartDate = new Date(ngayKetThuc);
+            currentStartDate.setDate(currentStartDate.getDate() + 1);
+            if (currentStartDate > endMua) {
+                break; // Nếu đã vượt quá ngày kết thúc mùa giải, dừng lại
+            }
         }
 
         await VongDau.bulkCreate(vongDauData, { ignoreDuplicates: true });
-        console.log(`Đã tạo ${soVongDau} vòng đấu cho mùa giải ${maMuaGiai}.`);
+        console.log(`Đã tạo ${vongDauData.length} vòng đấu cho mùa giải ${maMuaGiai}.`);
 
         // Tạo lịch thi đấu
         const tranDauData = [];
-        const tranDauSanNhaKhach = {};
+        const numTeamsForScheduling = soDoi % 2 === 0 ? soDoi : soDoi + 1;
+        const teams = [...doiBongList];
+        if (soDoi % 2 !== 0) {
+            teams.push(null); // Add a "null" team for odd number of teams
+        }
 
-        doiBongList.forEach(doi => {
-            if (doi) tranDauSanNhaKhach[doi] = { sanNha: 0, sanKhach: 0 };
-        });
+        for (let roundIndex = 0; roundIndex < vongDauData.length; roundIndex++) { // Duyệt qua số vòng đấu đã tạo
+            const vongDau = vongDauData[roundIndex];
+            const teamsInRound = [...teams];
 
-        for (let luot = 0; luot < 2; luot++) {
-            let doiBongThamGia = [...doiBongList];
-            for (let vongIndex = 0; vongIndex < doiBongList.length - 1; vongIndex++) {
-                const vongDau = vongDauData[luot * (doiBongList.length - 1) + vongIndex];
+            for (let matchDay = 0; matchDay < numTeamsForScheduling / 2; matchDay++) {
+                const teamCount = teamsInRound.length;
+                const team1 = teamsInRound[matchDay];
+                const team2 = teamsInRound[teamCount - 1 - matchDay];
 
-                for (let i = 0; i < Math.floor(doiBongList.length / 2); i++) {
-                    let doiNha = doiBongThamGia[i];
-                    let doiKhach = doiBongThamGia[doiBongThamGia.length - 1 - i];
+                if (team1 && team2) {
+                    const maTranDau = `${vongDau.MaVongDau}_TD${matchDay + 1}`;
+                    const [doiNha, doiKhach] = roundIndex < roundsPerSeason / 2 ? [team1, team2] : [team2, team1];
+                    const maSan = (await DoiBong.findByPk(doiNha)).MaSan;
+                    const startRoundDate = new Date(vongDau.NgayBatDau);
+                    const endRoundDate = new Date(vongDau.NgayKetThuc);
+                    // Đảm bảo ngày thi đấu không vượt quá ngày kết thúc vòng
+                    const latestPossibleDate = new Date(endRoundDate);
+                    latestPossibleDate.setDate(latestPossibleDate.getDate()); // Để chắc chắn không bị lệch 1 ngày
 
-                    if (!doiNha || !doiKhach) continue;
+                    const minTime = startRoundDate.getTime();
+                    const maxTime = latestPossibleDate.getTime();
 
-                    if (tranDauSanNhaKhach[doiNha].sanNha >= 2) {
-                        [doiNha, doiKhach] = [doiKhach, doiNha];
-                    } else if (tranDauSanNhaKhach[doiKhach].sanKhach >= 2) {
-                        [doiNha, doiKhach] = [doiKhach, doiNha];
-                    }
-
-                    const maTranDau = `${vongDau.MaVongDau}_TD${i + 1}`;
-                    const maSan = luot === 0
-                        ? (await DoiBong.findByPk(doiNha)).MaSan
-                        : (await DoiBong.findByPk(doiKhach)).MaSan;
-
-                    const ngayThiDau = randomDateInRange(vongDau.NgayBatDau, vongDau.NgayKetThuc);
-
-                    if (ngayThiDau > new Date(vongDau.NgayKetThuc)) {
-                        throw new Error(`Ngày thi đấu vượt quá giới hạn vòng đấu: ${vongDau.MaVongDau}`);
-                    }
+                    const randomTime = minTime + Math.random() * (maxTime - minTime);
+                    const ngayThiDau = new Date(randomTime);
 
                     tranDauData.push({
                         MaVongDau: vongDau.MaVongDau,
@@ -106,17 +116,15 @@ async function autoSchedule(maMuaGiai) {
                         NgayThiDau: ngayThiDau,
                         GioThiDau: null,
                     });
-
-                    tranDauSanNhaKhach[doiNha].sanNha++;
-                    tranDauSanNhaKhach[doiNha].sanKhach = 0;
-
-                    tranDauSanNhaKhach[doiKhach].sanKhach++;
-                    tranDauSanNhaKhach[doiKhach].sanNha = 0;
                 }
-
-                const last = doiBongThamGia.pop();
-                doiBongThamGia.splice(1, 0, last);
             }
+
+            // Thuật toán Robin-round để xoay lịch thi đấu
+            const fixedTeam = teamsInRound[0];
+            const rotatingTeams = teamsInRound.slice(1);
+            const lastTeam = rotatingTeams.pop();
+            rotatingTeams.unshift(lastTeam);
+            teamsInRound.splice(1, teamsInRound.length - 1, ...rotatingTeams);
         }
 
         await TranDau.bulkCreate(tranDauData, { ignoreDuplicates: true });

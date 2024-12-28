@@ -300,6 +300,11 @@ INSERT INTO THAMSO (
 ) VALUES (
     1, 5000, 3, 18, 40, 11, 25, 5, 1000000000, '2024-12-23', '2025-1-23', 90, 3, 1, 0
 );
+INSERT INTO UTXT (MaMuaGiai, MaLoaiUuTien, MucDoUuTien)
+VALUES
+    ('UTXH01', 'Bình thường', 'Bàn thắng ghi bình thường'),
+    ('UTXH02', 'Phạt đền', 'Bàn thắng từ quả phạt đền'),
+    ('UTXH03', 'Phản lưới nhà', 'Bàn thắng phản lưới nhà');
 
 INSERT INTO LOAIBANTHANG (MaLoaiBanThang, TenLoaiBanThang, MoTa)
 VALUES
