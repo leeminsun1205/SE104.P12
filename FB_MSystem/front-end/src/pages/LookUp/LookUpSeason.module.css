@@ -1,72 +1,160 @@
+/* General container styling */
 .standingsContainer {
-    padding: 16px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    max-width: 1200px;
-    margin-top: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .standingsTitle {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  
-  .tableWrapper {
-    overflow-x: auto;
-    margin-top: 16px;
-  }
-  
-  .standingsTable {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-  }
-  
-  .standingsTable th, 
-  .standingsTable td {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-  }
-  
-  .standingsTable th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .standingsTable tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  max-width: 1200px;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.standingsTitle {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  display: inline-block;
+  padding-bottom: 8px;
+}
 
-  .teamName {
-    font-weight: bold;
-    color: #007bff;
-  }
-  
-  .points {
-    font-weight: bold;
-    color: #28a745;
-  }
-  
-  .notFoundMessage {
-    margin-top: 16px;
-    font-size: 16px;
-    color: #dc3545;
-    text-align: center;
-  }
-  .standingsRow {
-    cursor: pointer;
-  }
-  
-  .standingsRow:hover {
-    background-color: #f0f0f0; /* Example hover effect */
-  }
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.standingsTable {
+  width: 95%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  font-size: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #fdfdfd;
+}
+
+.standingsTable thead {
+  background-color: #007bff;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.standingsTable th {
+  padding: 14px;
+  cursor: pointer;
+  background-color: #036bda;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  background-color: 007bff;
+
+}
+
+.standingsTable th:hover {
+  background-color: #0056b3;
+  transition: background-color 0.2s ease;
+}
+
+.standingsTable td {
+  padding: 14px;
+  text-align: center;
+  background-color: #ffffff;
+  color: #555;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.standingsTable tbody tr {
+  margin-bottom: 10px;
+  display: table-row;
+}
+
+.standingsTable tbody tr:hover td {
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.playerName {
+  font-weight: 600;
+  color: #007bff;
+  transition: color 0.2s ease;
+}
+
+.playerName:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.standingsTable tbody tr td:last-child {
+  font-weight: bold;
+  color: #28a745;
+}
+
+.standingsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.pagination button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-width: 200px;
+  color: #333;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.pagination button:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  border-color: #dee2e6;
+}
+.backButton {
+  display: inline-block;
+  margin-right: 30px;
+  background-color: #007bff; /* Màu xanh chủ đạo */
+  color: #fff; /* Màu chữ trắng */
+  text-decoration: none; /* Loại bỏ gạch chân */
+  padding: 8px 16px; /* Khoảng cách bên trong nút */
+  border-radius: 4px; /* Bo tròn góc nút */
+  font-size: 14px; /* Kích thước chữ */
+  font-weight: bold; /* Chữ đậm */
+  transition: all 0.3s ease; /* Hiệu ứng chuyển đổi khi hover */
+  border: 1px solid #007bff; /* Viền cùng màu */
+}
+
+.backButton:hover {
+  background-color: #0056b3; /* Màu đậm hơn khi hover */
+  color: #fff; /* Giữ màu chữ trắng */
+  border-color: #0056b3; /* Viền cũng thay đổi màu khi hover */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Khoảng cách phía dưới header */
+}

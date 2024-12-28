@@ -1,101 +1,175 @@
-/* LookUpMatch.module.css */
-
+/* General container styling */
 .matchesPage {
-    padding: 20px;
+    padding: 16px;
     background-color: #f9f9f9;
+    border-radius: 8px;
+    max-width: 1200px;
     margin-top: 80px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 20px;
-    max-width: 1000px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.filterContainer {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header Styling */
+  .header {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 15px;
+    align-items: center;
     margin-bottom: 20px;
-}
-
-.TeamSelector,
-.searchContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1;
-}
-
-.label {
+  }
+  
+  .matchesTitle {
+    font-size: 28px;
     font-weight: bold;
+    margin-bottom: 24px;
+    text-align: center;
     color: #333;
-}
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+    padding-bottom: 8px;
+  }
   
-.selectField {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-  
-.searchField {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-  
-.clearButton {
-    background: none;
-    max-width: 0px;
-    border: none;
-    color: #ff5a5a;
-    font-size: 16px;
-    cursor: pointer;
-    top: -62px;
-    right: -265px;
-    position: relative;
-}
-.clearButton:hover {
-    color:red;
-    background-color: transparent;
-}
-  
-.matchesTitle {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-}
-  
-.matchesTable {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    border: 1px solid #ddd;
-}
-  
-.headerCell {
-    text-align: left;
-    padding: 10px;
+  .backButton {
+    display: inline-block;
     background-color: #007bff;
     color: #fff;
-    cursor: pointer;
-}
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 1px solid #007bff;
+  }
   
-.headerCell:hover {
+  .backButton:hover {
     background-color: #0056b3;
-}
+    border-color: #0056b3;
+  }
   
-.cell {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
+  /* Filter Container */
+  .filterContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .TeamSelector {
+    flex-grow: 1;
+    margin-right: 16px;
+  }
+  
+  .searchContainer {
+    position: relative;
+  }
+  
+  .searchField {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+  }
+  
+  .clearButton {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
     cursor: pointer;
-}
+    color: #888;
+  }
   
-.row:hover {
-    background-color: #f1f1f1;
-}
+  /* Matches Table */
+  .matchesTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    font-size: 16px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fdfdfd;
+  }
+  
+  .matchesTable thead {
+    background-color: #007bff;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+  
+  .headerCell {
+    padding: 14px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    background-color: #036bda;
+  }
+  
+  .headerCell:hover {
+    background-color: #0056b3;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cell {
+    padding: 14px;
+    text-align: center;
+    background-color: #ffffff;
+    color: #555;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .row:hover .cell {
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* No Matches Found */
+  .noMatches {
+    text-align: center;
+    color: #d9534f;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 8px;
+  }
+  
+  .pagination button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination button:hover {
+    background-color: #e0e0e0;
+    border-color: #999;
+  }
+  
+  .pagination button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+  
+  .pagination button:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #dee2e6;
+  }
   

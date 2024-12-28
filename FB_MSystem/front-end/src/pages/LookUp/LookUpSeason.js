@@ -1,5 +1,7 @@
+// --- START OF FILE LookUpSeason.js ---
+
 import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "./LookUpSeason.module.css";
 
 function LookUpSeason({ API_URL }) {
@@ -8,24 +10,27 @@ function LookUpSeason({ API_URL }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [currentPage, setCurrentPage] = useState(1);
+    const teamsPerPage = 5;
 
     useEffect(() => {
         const fetchTeamStatistics = async () => {
             setLoading(true);
             setError(null);
-            const url = `${API_URL}/teams/position`;
-            console.log("LookUpSeason: Fetching team statistics from:", url); // Debugging URL
+            const url = `${API_URL}/bang-xep-hang/doi-bong/xep-hang`;
+            console.log("LookUpSeason: Fetching team statistics from:", url);
 
             try {
                 const response = await fetch(url);
-                console.log("LookUpSeason: Response status:", response.status); // Debugging response status
+                console.log("LookUpSeason: Response status:", response.status);
                 if (!response.ok) {
-                    console.error("LookUpSeason: HTTP error details:", response); // More detailed error
+                    console.error("LookUpSeason: HTTP error details:", response);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
                 console.log("LookUpSeason: Dữ liệu thống kê đội bóng từ API:", data);
                 setTeamStatistics(data.doiBong);
+                setCurrentPage(1); // Reset to first page when new data arrives
             } catch (error) {
                 console.error("LookUpSeason: Lỗi khi tải dữ liệu thống kê đội bóng:", error);
                 setError("Failed to load team statistics.");
@@ -75,6 +80,20 @@ function LookUpSeason({ API_URL }) {
         return "";
     };
 
+    const indexOfLastTeam = currentPage * teamsPerPage;
+    const indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
+    const currentTeams = useMemo(() => sortedStatistics.slice(indexOfFirstTeam, indexOfLastTeam), [sortedStatistics, currentPage]);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const pageNumbers = useMemo(() => {
+        const pages = [];
+        for (let i = 1; i <= Math.ceil(sortedStatistics.length / teamsPerPage); i++) {
+            pages.push(i);
+        }
+        return pages;
+    }, [sortedStatistics.length, teamsPerPage]);
+
     if (loading) {
         return <div>Đang tải dữ liệu...</div>;
     }
@@ -85,34 +104,48 @@ function LookUpSeason({ API_URL }) {
 
     return (
         <div className={styles.standingsContainer}>
-            <h2 className={styles.standingsTitle}>Thống kê thành tích các đội bóng</h2>
+            <div className={styles.header}>
+                <h2 className={styles.standingsTitle}>Thống kê thành tích các đội bóng</h2>
+                <Link to="/tra-cuu" className={styles.backButton}>
+                    Quay lại
+                </Link>
+            </div>
             <div className={styles.tableWrapper}>
                 <table className={styles.standingsTable}>
                     <thead>
                         <tr>
-                            <th onClick={() => requestSort('name')}>Tên đội {getSortIndicator('name')}</th>
-                            <th onClick={() => requestSort('participations')}>Số lần tham gia {getSortIndicator('participations')}</th>
-                            <th onClick={() => requestSort('wins')}>Số lần vô địch {getSortIndicator('wins')}</th>
-                            <th onClick={() => requestSort('runnerUps')}>Số lần á quân {getSortIndicator('runnerUps')}</th>
-                            <th onClick={() => requestSort('thirdPlaces')}>Số lần hạng 3 {getSortIndicator('thirdPlaces')}</th>
+                            <th onClick={() => requestSort('TenDoiBong')}>Tên đội {getSortIndicator('TenDoiBong')}</th>
+                            <th onClick={() => requestSort('SoLanThamGia')}>Số lần tham gia {getSortIndicator('SoLanThamGia')}</th>
+                            <th onClick={() => requestSort('TongSoTranThang')}>Tổng số trận thắng {getSortIndicator('TongSoTranThang')}</th>
+                            <th onClick={() => requestSort('SoLanVoDich')}>Số lần vô địch {getSortIndicator('SoLanVoDich')}</th>
+                            <th onClick={() => requestSort('SoLanAQuan')}>Số lần á quân {getSortIndicator('SoLanAQuan')}</th>
+                            <th onClick={() => requestSort('SoLanHangBa')}>Số lần hạng 3 {getSortIndicator('SoLanHangBa')}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedStatistics.length > 0 ? (
-                            sortedStatistics.map((team) => (
+                        {currentTeams.length > 0 ? (
+                            currentTeams.map((team) => (
                                 <tr key={team.TenDoiBong} className={styles.standingsRow}>
                                     <td>{team.TenDoiBong}</td>
-                                    <td>{team.participations}</td>
-                                    <td>{team.wins}</td>
-                                    <td>{team.runnerUps}</td>
-                                    <td>{team.thirdPlaces}</td>
+                                    <td>{team.SoLanThamGia}</td>
+                                    <td>{team.TongSoTranThang}</td>
+                                    <td>{team.SoLanVoDich}</td>
+                                    <td>{team.SoLanAQuan}</td>
+                                    <td>{team.SoLanHangBa}</td>
                                 </tr>
                             ))
                         ) : (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Không có dữ liệu</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Không có dữ liệu</td></tr>
                         )}
                     </tbody>
                 </table>
+            </div>
+            <div className={styles.pagination}>
+                {pageNumbers.map(number => (
+                    <button key={number} onClick={() => paginate(number)} className={currentPage === number ? styles.active : ''}>
+                        {number}
+                    </button>
+                ))}
             </div>
         </div>
     );
