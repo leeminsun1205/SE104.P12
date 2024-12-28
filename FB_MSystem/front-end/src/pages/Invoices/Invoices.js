@@ -22,7 +22,7 @@ const SignatureBox = ({ label }) => (
 function Invoices({ invoices }) {
   const { invoiceId } = useParams();
   const navigate = useNavigate();
-  const invoiceData = invoices.find((invoice) => invoice.id === invoiceId);
+  const invoiceData = invoices.find((invoice) => invoice.MaBienNhan === invoiceId);
 
   const goBackToForm = () => {
     navigate("/bien-nhan");
@@ -46,15 +46,15 @@ function Invoices({ invoices }) {
   }
 
   const invoiceFields = [
-    { label: "Số biên nhận", value: invoiceData?.receiptNumber },
-    { label: "Tên đội bóng", value: invoiceData?.teamName },
-    { label: "Số tiền", value: invoiceData?.amount ? formatCurrency(invoiceData.amount) : "" },
-    { label: "Bằng chữ", value: toVietnameseCurrencyString(invoiceData?.amount) },
+    { label: "Số biên nhận", value: invoiceData?.MaBienNhan },
+    { label: "Tên đội bóng", value: invoiceData?.TenDoiBongTenDoiBong },
+    { label: "Số tiền", value: invoiceData?.LePhi ? formatCurrency(invoiceData.LePhi) : "" },
+    { label: "Bằng chữ", value: toVietnameseCurrencyString(invoiceData?.LePhi) },
     { label: "Đã nhận", value: invoiceData?.receivedAmount ? formatCurrency(invoiceData.receivedAmount) : "" },
-    { label: "Số tiền còn lại", value: invoiceData?.amount && invoiceData?.receivedAmount ? formatCurrency(invoiceData.amount - invoiceData.receivedAmount) : "" },
+    { label: "Số tiền còn lại", value: invoiceData?.LePhi && invoiceData?.receivedAmount ? formatCurrency(invoiceData.LePhi - invoiceData.receivedAmount) : "" },
     { label: "Ngày nhận", value: invoiceData?.receivedDate },
-    { label: "Lý do", value: invoiceData?.reason },
-    { label: "Tình trạng", value: invoiceData?.status },
+    { label: "Lý do", value: invoiceData?.LyDo },
+    { label: "Tình trạng", value: invoiceData?.TinhTrang },
   ];
   return (
     <div className={styles.printable}>
