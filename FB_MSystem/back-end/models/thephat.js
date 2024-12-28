@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-
+const {autoCreateCode} = require('../utils/autoCreateCode')
 const ThePhat = sequelize.define('ThePhat', {
     MaThePhat: {
         type: DataTypes.CHAR(10),
@@ -42,6 +42,13 @@ const ThePhat = sequelize.define('ThePhat', {
 }, {
     tableName: 'THEPHAT',
     timestamps: false,
+    hooks: {
+        beforeValidate: async (record) => {
+            if (!record.MaThePhat) {
+                record.MaThePhat = await autoCreateCode(ThePhat, 'TP', 'MaThePhat', 7);
+            }
+        },
+    },
 });
 
 // Thiết lập quan hệ với các bảng khác
