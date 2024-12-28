@@ -4,7 +4,7 @@ const BienNhanController = {
     async getAll(req, res) {
         try {
             const bienNhans = await BienNhan.findAll({
-                attributes: ['MaBienNhan', 'LePhi', 'NgayThanhToan', 'LyDo', 'TinhTrang'],
+                attributes: ['MaBienNhan', 'LePhi', 'NgayThanhToan', 'LyDo', 'SoTienDaNhan', 'TinhTrang'],
                 include: [
                     {
                         model: DoiBong,
@@ -46,7 +46,7 @@ const BienNhanController = {
 
     async create(req, res) {
         try {
-            const { MaBienNhan, MaDoiBong, NgayThanhToan, TinhTrang } = req.body;
+            const { MaBienNhan, MaDoiBong, NgayThanhToan, SoTienDaNhan, TinhTrang } = req.body;
             const thamSo = await ThamSo.findOne();
             if (!thamSo) {
                 return res.status(500).json({ error: 'Không tìm thấy giá trị tham số trong hệ thống.' });
@@ -57,6 +57,7 @@ const BienNhanController = {
                 MaDoiBong,
                 LePhi,
                 NgayThanhToan,
+                SoTienDaNhan,
                 TinhTrang,
                 LyDo,
             });
@@ -91,8 +92,6 @@ const BienNhanController = {
                     updates.TinhTrang = false; // Đặt TinhTrang thành false nếu NgayThanhToan là null
                 } else {
                     const ngayThanhToan = new Date(NgayThanhToan);
-                    const ngayBatDau = new Date(bienNhan.NgayBatDau);
-                    const ngayHetHan = new Date(bienNhan.NgayHetHan);
     
                     updates.NgayThanhToan = ngayThanhToan;
                     updates.TinhTrang = true; // Đặt TinhTrang thành true nếu NgayThanhToan hợp lệ

@@ -16,6 +16,10 @@ const BienNhan = sequelize.define('BienNhan', {
         type: DataTypes.BIGINT,
         allowNull: false,
     },
+    SoTienDaNhan: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+    },
     LyDo: {
         type: DataTypes.STRING(1000),
         allowNull: true,

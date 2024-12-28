@@ -46,6 +46,7 @@ CREATE TABLE BIENNHAN (
 	MaBienNhan	CHAR(10) NOT NULL,
 	MaDoiBong CHAR(10) NOT NULL UNIQUE,
 	LePhi BIGINT NOT NULL, -- VND
+    SoTienDaNhan BIGINT NOT NULL, -- VND
 	NgayThanhToan DATE,
     LyDo VARCHAR(1000),
 	TinhTrang BIT NOT NULL, -- false: Chưa thanh toán, true: Đã thanh toán
