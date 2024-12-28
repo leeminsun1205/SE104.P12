@@ -5,110 +5,70 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from './TopScorers.module.css';
 
 function TopScorers({ API_URL }) {
-    const { seasonId } = useParams();
+    const { MaMuaGiai } = useParams();
     const navigate = useNavigate();
     const [topScorers, setTopScorers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [teams, setTeams] = useState({});
-    const [players, setPlayers] = useState({}); // To store player names
+    const [notFound, setNotFound] = useState(false);
+    const [players, setPlayers] = useState({});
+    const [season, setSeasons] = useState({});
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-
     useEffect(() => {
-        const fetchSeasonTeams = async () => {
+        const fetchSeasons = async () => {
             try {
-                const response = await fetch(`${API_URL}/teams?season=${seasonId}`);
-                if (!response.ok) {
-                    throw new Error(`Could not fetch teams for season: ${response.status}`);
-                }
-                const data = await response.json();
-                const teamsMap = {};
-                data.teams.forEach(team => {
-                    teamsMap[team.id] = team.name;
-                });
-                setTeams(teamsMap);
-            } catch (error) {
-                console.error("Error fetching teams:", error);
-                setError(error);
-            }
-        };
-
-        fetchSeasonTeams();
-    }, [API_URL, seasonId]);
-
-    useEffect(() => {
-        const fetchSeasonPlayers = async () => {
-            try {
-                const response = await fetch(`${API_URL}/players?season=${seasonId}`);
-                if (!response.ok) {
-                    const message = `Could not fetch players for season: ${response.status} - ${response.statusText}`;
-                    throw new Error(message);
-                }
-                const data = await response.json();
-                console.log("Players API Response:", data);
-    
-                // Directly process the array of players
-                if (Array.isArray(data)) {
-                    const playersMap = {};
-                    data.forEach(player => {
-                        playersMap[player.id] = player.name;
-                    });
-                    setPlayers(playersMap);
-                } else {
-                    console.error("API response for players is not an array:", data);
-                    setError("Invalid player data format.");
-                }
-            } catch (error) {
-                console.error("Error fetching players:", error);
-                setError("Failed to load player data.");
-            }
-        };
-    
-        fetchSeasonPlayers();
-    }, [API_URL, seasonId]);
-
-    useEffect(() => {
-        const fetchTopScorers = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await fetch(`${API_URL}/matches?season=${seasonId}`);
+                const response = await fetch(`${API_URL}/mua-giai`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                processMatchData(data);
-            } catch (e) {
-                setError(e);
+                setSeasons(data.muaGiai.filter(season => season.MaMuaGiai === MaMuaGiai));
+            } catch (error) {
+                console.error("Error fetching seasons:", error);
+                setError("Failed to load seasons.");
+            }
+        };
+
+        fetchSeasons();
+    }, [API_URL]);
+    useEffect(() => {
+        if (!MaMuaGiai) {
+            setTopScorers([]);
+            setSortConfig({ key: null, direction: 'descending' });
+            setNotFound(false);
+            return;
+        }
+
+        const fetchTopScorers = async () => {
+            setLoading(true);
+            setError(null);
+            setNotFound(false);
+            try {
+                const response = await fetch(`${API_URL}/vua-pha-luoi/mua-giai/${MaMuaGiai}`); // Endpoint gọi backend để lấy top scorer
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.log(`Top scorers not found for season: ${MaMuaGiai}`);
+                        setNotFound(true);
+                        setTopScorers([]);
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return;
+                }
+                const data = await response.json();
+                setTopScorers(data); // Cập nhật trực tiếp state với dữ liệu từ backend
+            } catch (error) {
+                console.error("Error fetching top scorers:", error);
+                setError("Failed to load top scorers.");
+                setTopScorers([]);
             } finally {
                 setLoading(false);
             }
         };
 
-        const processMatchData = (matches) => {
-            const playerGoals = {};
-            matches.forEach(match => {
-                if (match.goals) {
-                    match.goals.forEach(goal => {
-                        const playerId = goal.player; // Assuming goal.player is the player ID
-                        const teamId = goal.teamId;
-                        playerGoals[playerId] = {
-                            goals: (playerGoals[playerId]?.goals || 0) + 1,
-                            teamId: teamId
-                        };
-                    });
-                }
-            });
-
-            const scorersArray = Object.entries(playerGoals)
-                .map(([playerId, data]) => ({ playerId: parseInt(playerId), goals: data.goals, teamId: data.teamId }))
-                .sort((a, b) => b.goals - a.goals);
-
-            setTopScorers(scorersArray);
-        };
-
         fetchTopScorers();
-    }, [API_URL, seasonId]);
+    }, [MaMuaGiai, API_URL]);
 
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -153,30 +113,30 @@ function TopScorers({ API_URL }) {
 
     return (
         <div className={styles.topScorersPage}>
-            <h2 className={styles.title}>Vua phá lưới - Mùa giải {seasonId}</h2>
+            <h2 className={styles.title}>Vua phá lưới - {season[0].TenMuaGiai}</h2>
             {sortedTopScorers.length > 0 ? (
                 <table className={styles.scorersTable}>
                     <thead>
                         <tr>
-                            <th>Hạng</th>
-                            <th onClick={() => requestSort('playerId')}> {/* Sort by playerId */}
-                                Cầu thủ {getSortIndicator('playerId')}
+                            <th className={styles.center}>Hạng</th>
+                            <th onClick={() => requestSort('MaCauThu')} className={styles.center}> {/* Sort by MaCauThu */}
+                                Cầu thủ {getSortIndicator('MaCauThu')}
                             </th>
-                            <th onClick={() => requestSort('teamId')}>
-                                Đội {getSortIndicator('teamId')}
+                            <th onClick={() => requestSort('MaDoiBong')} className={styles.center}>
+                                Đội {getSortIndicator('MaDoiBong')}
                             </th>
-                            <th onClick={() => requestSort('goals')}>
-                                Số bàn thắng {getSortIndicator('goals')}
+                            <th onClick={() => requestSort('SoBanThang')} className={styles.center}>
+                                Số bàn thắng {getSortIndicator('SoBanThang')}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         {sortedTopScorers.map((scorer, index) => (
                             <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{players[scorer.playerId] || 'Unknown Player'}</td> {/* Display player name */}
-                                <td>{teams[scorer.teamId] || 'Unknown Team'}</td>
-                                <td>{scorer.goals}</td>
+                                <td className={styles.center}>{index + 1}</td>
+                                <td className={styles.center}>{scorer.CauThu.TenCauThu || 'Unknown Player'}</td> {/* Display player name */}
+                                <td className={styles.center}>{scorer.DoiBong.TenDoiBong || 'Unknown Team'}</td>
+                                <td className={styles.center}>{scorer.SoBanThang}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -184,11 +144,11 @@ function TopScorers({ API_URL }) {
             ) : (
                 <p>Không có bàn thắng nào được ghi trong mùa giải này.</p>
             )}
-            <button className={styles.backButton} onClick={() => navigate(`/seasons/${seasonId}`)}>
+            <button className={styles.backButton} onClick={() => navigate(`/mua-giai/${MaMuaGiai}`)}>
                 Quay lại thông tin mùa giải
             </button>
         </div>
     );
 }
 
-export default TopScorers;  
+export default TopScorers;

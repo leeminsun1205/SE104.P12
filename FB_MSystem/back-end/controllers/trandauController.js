@@ -1,4 +1,4 @@
-const { BangXepHang, ThamSo, TranDau, DoiBong, SanThiDau, VongDau, BanThang, Sequelize } = require('../models');
+const { BangXepHang, ThamSo, TranDau, DoiBong, SanThiDau, VongDau, BanThang, ThePhat, Sequelize } = require('../models');
 const { Op } = Sequelize;
 
 const TranDauController = {
@@ -31,7 +31,6 @@ const TranDauController = {
             });
 
             const results = tranDaus.map((tranDau) => {
-                // Access MaVongDau from the included VongDau object
                 const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
                 const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
 
@@ -56,6 +55,7 @@ const TranDauController = {
                         model: VongDau,
                         as: 'VongDau',
                         attributes: ['MaMuaGiai', 'MaVongDau'],
+                        where: { MaMuaGiai: MaMuaGiai },
                     },
                     {
                         model: DoiBong,
@@ -211,13 +211,12 @@ const TranDauController = {
         try {
             const { id } = req.params;
             const updates = req.body;
-            
-            // Truy vấn TranDau kèm theo VongDau để lấy MaMuaGiai
+
             const tranDau = await TranDau.findByPk(id, {
                 include: {
                     model: VongDau,
-                    as: 'VongDau', // Alias được định nghĩa trong quan hệ
-                    attributes: ['MaMuaGiai'], // Chỉ lấy cột MaMuaGiai từ VongDau
+                    as: 'VongDau',
+                    attributes: ['MaMuaGiai'],
                 },
             });
 
@@ -239,11 +238,9 @@ const TranDauController = {
             console.log('tranDau.TinhTrang từ DB:', tranDau.TinhTrang);
 
             if (updates.TinhTrang === false && tranDau.TinhTrang === true) {
-                // Lấy MaMuaGiai từ VongDau
                 const maMuaGiai = tranDau.VongDau.MaMuaGiai;
 
-                // Lấy điểm số từ bảng ThamSo
-                const thamSo = await ThamSo.findOne(); // Giả sử bảng ThamSo chỉ có một bản ghi
+                const thamSo = await ThamSo.findOne();
                 if (!thamSo) {
                     return res.status(500).json({ error: 'Không tìm thấy thông tin điểm số trong bảng ThamSo.' });
                 }
@@ -254,7 +251,6 @@ const TranDauController = {
                     DiemThua: thamSo.DiemThua,
                 });
 
-                // Truy vấn đồng thời các đội bóng trong BangXepHang
                 const [doiNha, doiKhach] = await Promise.all([
                     BangXepHang.findOne({
                         where: { MaDoiBong: tranDau.MaDoiBongNha, MaMuaGiai: maMuaGiai },
@@ -268,7 +264,6 @@ const TranDauController = {
                     return res.status(404).json({ error: 'Không tìm thấy đội bóng trong bảng xếp hạng.' });
                 }
 
-                // Logic cập nhật bảng xếp hạng
                 if (tranDau.BanThangDoiKhach > tranDau.BanThangDoiNha) {
                     doiKhach.SoTranThang += 1;
                     doiKhach.DiemSo += thamSo.DiemThang;
@@ -307,6 +302,9 @@ const TranDauController = {
                 console.log('Cập nhật TinhTrang về false thành công!');
             }
 
+            Object.assign(tranDau, updates); // Apply the updates
+            await tranDau.save();
+
             res.status(200).json(tranDau);
         } catch (error) {
             console.error('Lỗi khi cập nhật trận đấu:', error);
@@ -319,19 +317,17 @@ const TranDauController = {
             const { id } = req.params;
             const tranDau = await TranDau.findByPk(id);
             if (!tranDau) return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
-    
-            // Kiểm tra xem có bàn thắng nào liên quan đến trận đấu này không
+
             const banThangCount = await BanThang.count({ where: { MaTranDau: id } });
             if (banThangCount > 0) {
                 return res.status(400).json({ error: 'Không thể xóa trận đấu vì có bàn thắng liên quan.' });
             }
-    
-            // Kiểm tra xem có thẻ phạt nào liên quan đến trận đấu này không
+
             const thePhatCount = await ThePhat.count({ where: { MaTranDau: id } });
             if (thePhatCount > 0) {
                 return res.status(400).json({ error: 'Không thể xóa trận đấu vì có thẻ phạt liên quan.' });
             }
-    
+
             await tranDau.destroy();
             res.status(204).send();
         } catch (error) {
