@@ -39,12 +39,88 @@ body {
     margin-right: 16px;
     transition: color 0.3s ease;
 }
+
 .priorityInfo {
-    position :absolute;
-    top: 200px;
-    right: 280px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #ffffff;
 }
 
+.priorityInfoTitle {
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center; /* Changed to center */
+    align-items: center;
+    flex-direction: column; /* Optional: If you want the button below the text */
+}
+
+.priorityInfoTitle p {
+    margin-top: 10px;
+}
+
+.priorityInfo button.editButton {
+    height: 36px;
+    padding: 6px 10px;
+    position: absolute;
+    right: 30%;
+    top: 53%;
+    transform: translateX(50%); 
+}
+
+.priorityItem {
+    margin-bottom: 8px;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.priorityItem:last-child {
+    border-bottom: none;
+}
+
+/* Styles for Edit Priority Modal (optional, if you want specific styling) */
+.editPriorityModalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
+
+.editPriorityModalContent .close {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.editPriorityModalContent h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.editPriorityModalContent .modal-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.editPriorityModalContent .modal-list-item label {
+    margin-right: 10px;
+}
+
+.editPriorityModalContent .modal-list-item input[type="number"] {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
 /* List styling */
 .list {
     list-style: none;

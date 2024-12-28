@@ -18,6 +18,9 @@ function SeasonDetails({ API_URL }) {
     const [isCreatingRound, setIsCreatingRound] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [priority, setPriority] = useState([]);
+    const [isEditPriorityModalOpen, setIsEditPriorityModalOpen] = useState(false);
+    const [editedPriority, setEditedPriority] = useState([]);
+    const [editPriorityError, setEditPriorityError] = useState('');
     const teamsPerPage = 5;
 
     useEffect(() => {
@@ -34,6 +37,7 @@ function SeasonDetails({ API_URL }) {
                 }
                 const data = await response.json();
                 setPriority(data);
+                setEditedPriority(data.sort((a, b) => a.MucDoUuTien - b.MucDoUuTien)); // Initialize editedPriority with fetched data
             } catch (err) {
                 console.error("Error fetching season details:", err);
                 setError(err.message);
@@ -246,10 +250,7 @@ function SeasonDetails({ API_URL }) {
             const updatedSeasonResponse = await fetch(`${API_URL}/mua-giai/${MaMuaGiai}`);
             const updatedSeasonData = await updatedSeasonResponse.json();
             setSeason(updatedSeasonData.muaGiai);
-            // setTeams(updatedSeasonData.muaGiai.doiBongs || []);
-
-            setTeams(selectedTeamsToAdd || []);
-            console.log(selectedTeamsToAdd)
+            setTeams(prevTeams => [...prevTeams, ...selectedTeamsToAdd]);
             handleCloseAddTeamsModal();
         } catch (error) {
             console.error("Error adding teams to season:", error);
@@ -285,6 +286,99 @@ function SeasonDetails({ API_URL }) {
         }
     };
 
+    const handleOpenEditPriorityModal = () => {
+        setEditPriorityError('');
+        setIsEditPriorityModalOpen(true);
+    };
+
+    const handleCloseEditPriorityModal = () => {
+        setIsEditPriorityModalOpen(false);
+    };
+
+    const handlePriorityInputChange = (index, value) => {
+        const newValue = parseInt(value, 10);
+        if (newValue >= 1 && newValue <= 3) {
+            const newPriority = [...editedPriority];
+            const currentValue = newPriority[index].MucDoUuTien;
+            newPriority[index].MucDoUuTien = newValue;
+
+            // Check for duplicates and resolve
+            newPriority.forEach((item, i) => {
+                if (i !== index && item.MucDoUuTien === newValue) {
+                    // If the new value is taken, push the existing one
+                    if (currentValue < newValue) {
+                        item.MucDoUuTien = currentValue; // Move the existing one down
+                    } else {
+                        item.MucDoUuTien = currentValue; // Move the existing one up
+                    }
+                }
+            });
+
+            // Ensure no other duplicates are created by the shifting
+            const seen = {};
+            for (let i = 0; i < newPriority.length; i++) {
+                if (seen[newPriority[i].MucDoUuTien]) {
+                    // Find another available slot (simplistic approach, can be improved)
+                    for (let j = 1; j <= 3; j++) {
+                        if (!seen[j]) {
+                            newPriority[i].MucDoUuTien = j;
+                            break;
+                        }
+                    }
+                }
+                seen[newPriority[i].MucDoUuTien] = true;
+            }
+
+            setEditedPriority(newPriority.sort((a, b) => a.MaLoaiUuTien - b.MaLoaiUuTien)); // Keep original order
+        }
+    };
+
+    const handleSavePriority = async () => {
+        setEditPriorityError('');
+        const priorities = editedPriority.map(p => ({
+            MaLoaiUuTien: p.MaLoaiUuTien,
+            MucDoUuTien: p.MucDoUuTien
+        }));
+
+        // Check for duplicates before saving
+        const seenPriorities = new Set();
+        for (const p of priorities) {
+            if (seenPriorities.has(p.MucDoUuTien)) {
+                setEditPriorityError('Mỗi mức độ ưu tiên chỉ được gán cho một tiêu chí.');
+                return;
+            }
+            seenPriorities.add(p.MucDoUuTien);
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/ut-xep-hang/mua-giai/${MaMuaGiai}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tieuChi: priorities }),
+            });
+
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(`Failed to update ranking priority: ${response.status} - ${message}`);
+            }
+
+            const updatedPriorityResponse = await fetch(`${API_URL}/ut-xep-hang/mua-giai/${MaMuaGiai}`);
+            if (!updatedPriorityResponse.ok) {
+                const message = await updatedPriorityResponse.text();
+                throw new Error(`Failed to fetch updated ranking priority: ${updatedPriorityResponse.status} - ${message}`);
+            }
+            const updatedPriorityData = await updatedPriorityResponse.json();
+            setPriority(updatedPriorityData);
+            handleCloseEditPriorityModal();
+
+        } catch (error) {
+            console.error("Error updating ranking priority:", error);
+            setEditPriorityError(error.message);
+        }
+    };
+
     if (loading) {
         return <div className="container">Đang tải chi tiết mùa giải...</div>;
     }
@@ -301,7 +395,7 @@ function SeasonDetails({ API_URL }) {
     const currentTeams = availableTeamsForSeason.slice(indexOfFirstTeam, indexOfLastTeam);
     const totalPages = Math.ceil(availableTeamsForSeason.length / teamsPerPage);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-    console.log(priority)
+
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>{season.TenMuaGiai}</h2>
@@ -310,9 +404,17 @@ function SeasonDetails({ API_URL }) {
             <p className={styles.paragraph}><strong>Ngày kết thúc:</strong> {new Date(season.NgayKetThuc).toLocaleDateString()}</p>
             <div className={styles.infoAndLinks}>
                 <div className={styles.priorityInfo}>
-                    <p className={styles.paragraph}><strong>Tên loại ưu tiên:</strong> {priority[0]?.LoaiUuTien?.TenLoaiUuTien} -  <strong>Mức độ ưu tiên: </strong>{priority[0]?.MucDoUuTien}</p>
-                    <p className={styles.paragraph}><strong>Tên loại ưu tiên:</strong> {priority[1]?.LoaiUuTien?.TenLoaiUuTien} -  <strong>Mức độ ưu tiên: </strong>{priority[1]?.MucDoUuTien}</p>
-                    <p className={styles.paragraph}><strong>Tên loại ưu tiên:</strong> {priority[2]?.LoaiUuTien?.TenLoaiUuTien} -  <strong>Mức độ ưu tiên: </strong>{priority[2]?.MucDoUuTien}</p>
+                <button onClick={handleOpenEditPriorityModal} className={styles.editButton} style={{ marginLeft: '10px', fontSize: '14px' }}>
+                            Sửa
+                        </button>
+                    <p className={styles.paragraph}>
+                        <strong>Ưu tiên xếp hạng:</strong>
+                    </p>
+                    {priority.sort((a, b) => a.MucDoUuTien - b.MucDoUuTien).map((p, index) => (
+                        <p key={p.MaLoaiUuTien} className={styles.paragraph}>
+                            <strong>{index + 1}. {p.LoaiUuTien?.TenLoaiUuTien}:</strong> Mức độ {p.MucDoUuTien}
+                        </p>
+                    ))}
                 </div>
                 <div className={styles.navigationLinks}>
                     <Link to={`/mua-giai/${MaMuaGiai}/bang-xep-hang`} className={styles.link}>
@@ -391,6 +493,35 @@ function SeasonDetails({ API_URL }) {
                             className={styles['modal-input']}
                         />
                         <button onClick={handleSaveEditedRound} className={styles.button}>Lưu</button>
+                    </div>
+                </div>
+            )}
+
+            {isEditPriorityModalOpen && (
+                <div className={styles.modal}>
+                    <div className={styles['modal-content']}>
+                        <span className={styles.close} onClick={handleCloseEditPriorityModal}>×</span>
+                        <h3>Sửa ưu tiên xếp hạng</h3>
+                        {editPriorityError && <p className={styles.error}>{editPriorityError}</p>}
+                        <ul className={styles.list}>
+                            {editedPriority.sort((a, b) => a.MaLoaiUuTien - b.MaLoaiUuTien).map((item, index) => (
+                                <li key={item.MaLoaiUuTien} className={styles['modal-list-item']}>
+                                    <label htmlFor={`priority-${index}`}>
+                                        {item.LoaiUuTien?.TenLoaiUuTien}:
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id={`priority-${index}`}
+                                        value={item.MucDoUuTien}
+                                        min="1"
+                                        max="3"
+                                        onChange={(e) => handlePriorityInputChange(index, e.target.value)}
+                                        className={styles['modal-input']}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                        <button onClick={handleSavePriority} className={styles.button}>Lưu thay đổi</button>
                     </div>
                 </div>
             )}
