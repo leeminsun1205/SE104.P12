@@ -302,7 +302,43 @@ const TranDauController = {
                 console.log('Cập nhật TinhTrang về false thành công!');
             }
             await tranDau.update(updates);
-            res.status(200).json(tranDau);
+
+            // Retrieve the updated tranDau with associations for formatting
+            const updatedTranDau = await TranDau.findByPk(id, {
+                include: [
+                    {
+                        model: VongDau,
+                        as: 'VongDau',
+                        attributes: ['MaMuaGiai', 'MaVongDau'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongNha',
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
+                    },
+                    {
+                        model: DoiBong,
+                        as: 'DoiBongKhach',
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
+                    },
+                    {
+                        model: SanThiDau,
+                        as: 'SanThiDau',
+                        attributes: ['TenSan'],
+                    },
+                ],
+                attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
+            });
+
+            const maVongDau = updatedTranDau.VongDau ? updatedTranDau.VongDau.MaVongDau : null;
+            const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
+
+            const result = {
+                ...updatedTranDau.get(),
+                TenVongDau: tenVongDau,
+            };
+
+            res.status(200).json({ tranDau: result });
         } catch (error) {
             console.error('Lỗi khi cập nhật trận đấu:', error);
             res.status(500).json({ error: error.message });

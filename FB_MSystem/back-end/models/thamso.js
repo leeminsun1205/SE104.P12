@@ -77,6 +77,7 @@ const ThamSo = sequelize.define('ThamSo', {
     },
 }, {
     tableName: 'THAMSO',
+    scheme: 'se104',
     timestamps: false,
 });
 

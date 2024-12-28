@@ -1,4 +1,4 @@
-const { DsThePhat, ThePhat, TranDau, CauThu, LoaiThePhat, DbCt, VongDau, sequelize } = require('../models');
+const { DsThePhat, ThePhat, DoiBong, TranDau, CauThu, LoaiThePhat, DbCt, VongDau, sequelize } = require('../models');
 
 const ThePhatController = {
     async getAll(req, res) {

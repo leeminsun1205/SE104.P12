@@ -24,7 +24,6 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
         if (tranDau.TinhTrang !== true) {
             throw new Error('Trận đấu không ở trạng thái đang diễn ra.');
         }
-
         if (maDoiBong !== tranDau.MaDoiBongNha && maDoiBong !== tranDau.MaDoiBongKhach) {
             throw new Error('Đội bóng không thuộc trận đấu này.');
         }
