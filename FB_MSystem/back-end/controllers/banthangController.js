@@ -34,7 +34,29 @@ const BanThangController = {
             res.status(500).json({ error: 'Lỗi khi lấy bàn thắng của trận đấu.' });
         }
     },
+    async getByTranDauandId(req, res) {
+        try {
+            const { MaTranDau, id } = req.params;
+            const banThang = await BanThang.findOne({
+                where: { MaTranDau: MaTranDau, MaBanThang: id },
+                include: [
+                    { model: TranDau, as: 'TranDau' },
+                    { model: CauThu, as: 'CauThu' },
+                    { model: DoiBong, as: 'DoiBong' },
+                    { model: LoaiBanThang, as: 'LoaiBanThang' },
+                ],
+            });
 
+            if (!banThang) {
+                return res.status(404).json({ message: 'Không tìm thấy bàn thắng cho trận đấu và ID này.' });
+            }
+
+            res.status(200).json(banThang);
+        } catch (error) {
+            console.error('Lỗi khi lấy bàn thắng theo MaTranDau và ID:', error);
+            res.status(500).json({ error: 'Lỗi khi lấy bàn thắng.', details: error.message });
+        }
+    },
     async getByCauThu(req, res) {
         try {
             const { MaCauThu } = req.params; // Lấy mã cầu thủ từ URL
@@ -96,7 +118,47 @@ const BanThangController = {
             res.status(500).json({ error: error.message });
         }
     },
-    
+    async putByTranDauandID(req, res) {
+        try {
+            const { MaTranDau, id } = req.params;
+            const { MaLoaiBanThang, ThoiDiem } = req.body;
+
+            // Tìm bàn thắng cần cập nhật
+            const banThang = await BanThang.findOne({
+                where: { MaTranDau: MaTranDau, MaBanThang: id }
+            });
+
+            if (!banThang) {
+                return res.status(404).json({ message: 'Không tìm thấy bàn thắng cho trận đấu và ID này.' });
+            }
+
+            // Cập nhật các trường có thể thay đổi
+            if (MaLoaiBanThang) {
+                banThang.MaLoaiBanThang = MaLoaiBanThang;
+            }
+            if (ThoiDiem) {
+                banThang.ThoiDiem = ThoiDiem;
+            }
+
+            await banThang.save();
+
+            // Lấy lại thông tin bàn thắng đã cập nhật để trả về
+            const updatedBanThang = await BanThang.findByPk(id, {
+                include: [
+                    { model: TranDau, as: 'TranDau' },
+                    { model: CauThu, as: 'CauThu' },
+                    { model: DoiBong, as: 'DoiBong' },
+                    { model: LoaiBanThang, as: 'LoaiBanThang' },
+                ],
+            });
+
+            res.status(200).json(updatedBanThang);
+
+        } catch (error) {
+            console.error('Lỗi khi cập nhật bàn thắng theo MaTranDau và ID:', error);
+            res.status(500).json({ error: 'Lỗi khi cập nhật bàn thắng.', details: error.message });
+        }
+    },
     async delete(req, res) {
         const t = await sequelize.transaction(); // Bắt đầu transaction
         try {
@@ -127,6 +189,27 @@ const BanThangController = {
         } catch (error) {
             await t.rollback(); // Rollback nếu có lỗi
             console.error('Lỗi khi xóa bàn thắng:', error);
+            res.status(500).json({ error: 'Lỗi khi xóa bàn thắng.', details: error.message });
+        }
+    },
+    async deleteByTranDauandID(req, res) {
+        try {
+            const { MaTranDau, id } = req.params;
+
+            const banThang = await BanThang.findOne({
+                where: { MaTranDau: MaTranDau, MaBanThang: id }
+            });
+
+            if (!banThang) {
+                return res.status(404).json({ message: 'Không tìm thấy bàn thắng với MaTranDau và ID này.' });
+            }
+
+            await banThang.destroy();
+
+            res.status(200).json({ message: 'Xóa bàn thắng thành công.' });
+
+        } catch (error) {
+            console.error('Lỗi khi xóa bàn thắng theo MaTranDau và ID:', error);
             res.status(500).json({ error: 'Lỗi khi xóa bàn thắng.', details: error.message });
         }
     },
