@@ -21,7 +21,6 @@ const DsThePhatController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-            console.log(`=== Bắt đầu lấy danh sách thẻ phạt cho mùa giải: ${MaMuaGiai} ===`);
 
             // Lấy tất cả các vòng đấu theo MaMuaGiai
             const vongDauData = await VongDau.findAll({
@@ -30,7 +29,6 @@ const DsThePhatController = {
                 raw: true,
             });
 
-            console.log(`=== Tìm thấy ${vongDauData.length} vòng đấu trong mùa giải ${MaMuaGiai} ===`);
             if (!vongDauData || vongDauData.length === 0) {
                 console.warn(`Không tìm thấy vòng đấu nào cho mùa giải ${MaMuaGiai}`);
                 return res.status(404).json({ error: `Không tìm thấy vòng đấu cho mùa giải ${MaMuaGiai}.` });
@@ -38,7 +36,6 @@ const DsThePhatController = {
 
             // Trích xuất danh sách MaVongDau
             const maVongDauList = vongDauData.map(v => v.MaVongDau);
-            console.log(`=== Danh sách MaVongDau: ${maVongDauList.join(', ')} ===`);
 
             // Lấy tất cả thẻ phạt liên quan đến danh sách MaVongDau
             const dsThePhat = await DsThePhat.findAll({
@@ -49,7 +46,6 @@ const DsThePhatController = {
                 ],
             });
 
-            console.log(`=== Tìm thấy ${dsThePhat.length} bản ghi trong bảng DsThePhat ===`);
             if (!dsThePhat || dsThePhat.length === 0) {
                 console.warn(`Không tìm thấy thẻ phạt nào cho mùa giải ${MaMuaGiai}`);
                 return res.status(404).json({ error: `Không tìm thấy thẻ phạt cho mùa giải ${MaMuaGiai}.` });
@@ -64,7 +60,6 @@ const DsThePhatController = {
 
     async update(req, res) {
         try {
-            console.log('=== Bắt đầu cập nhật danh sách thẻ phạt ===');
 
             // Lấy danh sách các loại thẻ phạt
             const loaiThePhat = await LoaiThePhat.findAll({
@@ -92,7 +87,6 @@ const DsThePhatController = {
                 return res.status(500).json({ error: 'Không xác định được mã thẻ vàng hoặc thẻ đỏ.' });
             }
 
-            console.log('=== Loại thẻ phạt đã ánh xạ:', loaiTheMap);
 
             // Lấy danh sách thẻ phạt
             const thePhatData = await ThePhat.findAll({
@@ -105,7 +99,6 @@ const DsThePhatController = {
                 return res.status(500).json({ error: 'Không tìm thấy dữ liệu thẻ phạt.' });
             }
 
-            console.log(`=== Đã tìm thấy ${thePhatData.length} bản ghi trong bảng ThePhat.`);
 
             // Lấy MaVongDau từ bảng TranDau dựa trên MaTranDau
             const tranDauData = await TranDau.findAll({
@@ -123,7 +116,6 @@ const DsThePhatController = {
                 tranDauMap[tran.MaTranDau] = tran.MaVongDau;
             });
 
-            console.log(`=== Đã ánh xạ ${tranDauData.length} bản ghi từ bảng TranDau.`);
 
             // Sử dụng forEach với async/await
             await Promise.all(
@@ -136,7 +128,6 @@ const DsThePhatController = {
                         return; // Bỏ qua bản ghi không hợp lệ
                     }
 
-                    console.log(`=== Đang xử lý: MaCauThu=${MaCauThu}, MaTranDau=${MaTranDau}, MaVongDau=${MaVongDau}`);
 
                     // Đếm số thẻ vàng và thẻ đỏ của cầu thủ trong vòng đấu
                     try {
@@ -154,7 +145,6 @@ const DsThePhatController = {
                             raw: true,
                         });
 
-                        console.log(`Truy vấn số thẻ cho MaCauThu=${MaCauThu}, MaTranDau=${MaTranDau}:`, soThe);
 
                         let SoTheVang = 0;
                         let SoTheDo = 0;
@@ -168,12 +158,10 @@ const DsThePhatController = {
                             }
                         });
 
-                        console.log(`Số thẻ tính toán cho MaCauThu=${MaCauThu}: SoTheVang=${SoTheVang}, SoTheDo=${SoTheDo}`);
 
                         // Cập nhật tình trạng thi đấu
                         const TinhTrangThiDau = SoTheVang >= 2 || SoTheDo >= 1 ? 0 : 1;
 
-                        console.log(`TinhTrangThiDau cho MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}: ${TinhTrangThiDau}`);
 
                         // Kiểm tra và cập nhật DsThePhat
                         try {
@@ -186,7 +174,6 @@ const DsThePhatController = {
                                 await dsThePhat.update({ SoTheVang, SoTheDo, TinhTrangThiDau });
                             }
 
-                            console.log(`Cập nhật thành công DsThePhat cho MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}`);
                         } catch (updateError) {
                             console.error(`Lỗi khi cập nhật DsThePhat cho MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}:`, updateError);
                         }
@@ -196,7 +183,6 @@ const DsThePhatController = {
                 })
             );
 
-            console.log('=== Cập nhật danh sách thẻ phạt hoàn tất ===');
             res.status(200).json({ message: 'Cập nhật danh sách thẻ phạt thành công!' });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi cập nhật thông tin danh sách thẻ phạt.' });

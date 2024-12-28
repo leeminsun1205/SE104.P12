@@ -108,7 +108,6 @@ const ThanhTichController = {
                     }
                 }
     
-                console.log(`Đã cập nhật thành tích cho mùa giải: ${MaMuaGiai}`);
             }
     
             res.status(200).json({ message: 'Cập nhật thành tích cho tất cả mùa giải thành công.' });

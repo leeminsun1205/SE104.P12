@@ -72,7 +72,6 @@ async function autoSchedule(maMuaGiai) {
         }
 
         await VongDau.bulkCreate(vongDauData, { ignoreDuplicates: true });
-        console.log(`Đã tạo ${vongDauData.length} vòng đấu cho mùa giải ${maMuaGiai}.`);
 
         // Tạo lịch thi đấu
         const tranDauData = [];
@@ -128,7 +127,6 @@ async function autoSchedule(maMuaGiai) {
         }
 
         await TranDau.bulkCreate(tranDauData, { ignoreDuplicates: true });
-        console.log(`Đã tạo ${tranDauData.length} trận đấu cho mùa giải ${maMuaGiai}.`);
 
         return { vongDauData, tranDauData };
     } catch (error) {

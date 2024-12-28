@@ -211,7 +211,6 @@ const TranDauController = {
         try {
             const { id } = req.params;
             const updates = req.body;
-
             const tranDau = await TranDau.findByPk(id, {
                 include: {
                     model: VongDau,
@@ -224,18 +223,14 @@ const TranDauController = {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
             }
 
-            console.log('TinhTrang hiện tại:', tranDau.TinhTrang);
-            console.log('TinhTrang muốn cập nhật:', updates.TinhTrang);
 
             if (tranDau.TinhTrang === false && updates.TinhTrang === true) {
                 tranDau.BanThangDoiNha = 0;
                 tranDau.BanThangDoiKhach = 0;
                 tranDau.TinhTrang = true;
                 await tranDau.save();
-                console.log('Trận đấu đã bắt đầu!');
             }
 
-            console.log('tranDau.TinhTrang từ DB:', tranDau.TinhTrang);
 
             if (updates.TinhTrang === false && tranDau.TinhTrang === true) {
                 const maMuaGiai = tranDau.VongDau.MaMuaGiai;
@@ -244,12 +239,6 @@ const TranDauController = {
                 if (!thamSo) {
                     return res.status(500).json({ error: 'Không tìm thấy thông tin điểm số trong bảng ThamSo.' });
                 }
-
-                console.log('Điểm số từ ThamSo:', {
-                    DiemThang: thamSo.DiemThang,
-                    DiemHoa: thamSo.DiemHoa,
-                    DiemThua: thamSo.DiemThua,
-                });
 
                 const [doiNha, doiKhach] = await Promise.all([
                     BangXepHang.findOne({
@@ -283,7 +272,6 @@ const TranDauController = {
 
                 doiNha.SoTran += 1;
                 doiKhach.SoTran += 1;
-
                 doiNha.SoBanThang += tranDau.BanThangDoiNha;
                 doiNha.SoBanThua += tranDau.BanThangDoiKhach;
                 doiKhach.SoBanThang += tranDau.BanThangDoiKhach;
@@ -295,11 +283,9 @@ const TranDauController = {
                 await doiNha.save();
                 await doiKhach.save();
 
-                console.log('Kết thúc trận đấu, cập nhật bảng xếp hạng thành công!');
 
                 tranDau.TinhTrang = false;
                 await tranDau.save();
-                console.log('Cập nhật TinhTrang về false thành công!');
             }
             await tranDau.update(updates);
 
@@ -337,7 +323,6 @@ const TranDauController = {
                 ...updatedTranDau.get(),
                 TenVongDau: tenVongDau,
             };
-
             res.status(200).json({ tranDau: result });
         } catch (error) {
             console.error('Lỗi khi cập nhật trận đấu:', error);

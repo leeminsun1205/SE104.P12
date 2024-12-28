@@ -87,7 +87,6 @@ const VongDauController = {
     async createByMuaGiai(req, res) {
         try {
             const { maMuaGiai } = req.params;
-            console.log('maMuaGiai:', maMuaGiai);
 
             // Gọi service để tạo vòng đấu và lịch thi đấu
             const { vongDauData, tranDauData } = await autoSchedule(maMuaGiai);

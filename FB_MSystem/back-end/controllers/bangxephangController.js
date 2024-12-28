@@ -19,7 +19,6 @@ const BangXepHangController = {
             };
             const doiDauSort = utxh.find(item => item.MaLoaiUuTien === 'LUT03');
 
-            console.log('array: ', utxh);
 
             if (utxh && utxh.length > 0) {
                 const sortedUtxh = utxh.sort((a, b) => b.MucDoUuTien - a.MucDoUuTien);
@@ -161,17 +160,14 @@ const BangXepHangController = {
 
 const updateThanhTichFromBangXepHang = async (MaMuaGiai) => {
     try {
-        console.log(`=== Bắt đầu cập nhật ThanhTich cho MaMuaGiai=${MaMuaGiai} ===`);
         const bangXepHangData = await BangXepHang.findAll({
             where: { MaMuaGiai },
             order: [['DiemSo', 'DESC'], ['HieuSo', 'DESC']],
         });
-        console.log(`=== Số đội trong BangXepHang (MaMuaGiai=${MaMuaGiai}): ${bangXepHangData.length} ===`);
 
         let rank = 1;
         for (const bxh of bangXepHangData) {
             const { MaDoiBong, SoTran, SoTranThang, SoTranHoa, SoTranThua } = bxh;
-            console.log(`Đang xử lý đội: MaDoiBong=${MaDoiBong}, Rank=${rank}, DiemSo=${bxh.DiemSo}, HieuSo=${bxh.HieuSo}`);
             await ThanhTich.upsert({
                 MaMuaGiai,
                 MaDoiBong,
@@ -181,10 +177,8 @@ const updateThanhTichFromBangXepHang = async (MaMuaGiai) => {
                 SoTranThua,
                 XepHang: rank,
             });
-            console.log(`Cập nhật thành công ThanhTich: MaDoiBong=${MaDoiBong}, XepHang=${rank}`);
             rank++;
         }
-        console.log(`=== Hoàn tất cập nhật ThanhTich cho MaMuaGiai=${MaMuaGiai} ===`);
     } catch (error) {
         console.error("Lỗi khi cập nhật ThanhTich từ BangXepHang:", error);
     }
@@ -192,7 +186,6 @@ const updateThanhTichFromBangXepHang = async (MaMuaGiai) => {
 
 const updateLichSuGiaiDau = async () => {
     try {
-        console.log(`=== Bắt đầu cập nhật LS_GIAIDAU ===`);
         const rankingQuery = `
             SELECT
                 bxh.MaMuaGiai,
@@ -211,8 +204,6 @@ const updateLichSuGiaiDau = async () => {
         `;
 
         const rankings = await BangXepHang.sequelize.query(rankingQuery, { type: Sequelize.QueryTypes.SELECT });
-        console.log(`=== Dữ liệu tính thứ hạng: ===`);
-        console.log(rankings);
 
         const summaryData = rankings.reduce((acc, curr) => {
             const { MaDoiBong, MaMuaGiai, Ranking, SoTran } = curr;
@@ -225,8 +216,6 @@ const updateLichSuGiaiDau = async () => {
             return acc;
         }, {});
 
-        console.log(`=== Dữ liệu tổng hợp: ===`);
-        console.log(summaryData);
 
         for (const MaDoiBong in summaryData) {
             const data = summaryData[MaDoiBong];
@@ -239,7 +228,6 @@ const updateLichSuGiaiDau = async () => {
                 SoLanHangBa: data.SoLanHangBa,
             });
         }
-        console.log(`=== Hoàn tất cập nhật LS_GIAIDAU ===`);
     } catch (error) {
         console.error("Lỗi khi cập nhật LS_GIAIDAU:", error);
     }

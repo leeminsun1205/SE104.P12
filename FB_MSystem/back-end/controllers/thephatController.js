@@ -325,7 +325,6 @@ const updateDsThePhat = async (MaCauThu, MaTranDau, transaction) => {
             await dsThePhat.update({ SoTheVang, SoTheDo, TinhTrangThiDau }, { transaction });
         }
 
-        console.log(`Cập nhật DsThePhat thành công: MaCauThu=${MaCauThu}, MaVongDau=${MaVongDau}, SoTheVang=${SoTheVang}, SoTheDo=${SoTheDo}, TinhTrangThiDau=${TinhTrangThiDau}`);
     } catch (error) {
         console.error('Lỗi khi cập nhật DsThePhat:', error.message);
         throw error;

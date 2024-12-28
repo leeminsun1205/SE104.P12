@@ -194,7 +194,6 @@ const MgDbController = {
         try {
             const { MaMuaGiai, MaDoiBong } = req.params; // Liên kết cũ
             const updates = req.body; // Dữ liệu mới
-            console.log({ MaMuaGiai, MaDoiBong })
             const link = await MgDb.findOne({
                 where: { MaMuaGiai, MaDoiBong },
             });
@@ -268,7 +267,6 @@ const MgDbController = {
                     }]
                 }]
             });
-            console.log(dbCtRecord)
             if (!dbCtRecord) {
                 return res.status(404).json({ error: 'Không tìm thấy cầu thủ này trong đội ở mùa giải này.' });
             }
