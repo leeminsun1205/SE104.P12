@@ -1,24 +1,52 @@
 const { MgDb, DoiBong, DbCt, CauThu } = require('../models');
 const { updateRanking, validateStadiumConditions, validatePlayerConditions} = require('../services/mg_DbServices')
 const MgDbController = {
-    // Lấy danh sách đội bóng theo mùa giải
+    // Lấy danh sách đội bóng theo mùa giải và danh sách mã cầu thủ
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-            const data = await MgDb.findAll({
+            const mgDbEntries = await MgDb.findAll({
                 where: { MaMuaGiai },
                 include: [
                     {
                         model: DoiBong,
                         as: 'DoiBong',
-                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan'], 
+                        attributes: ['MaDoiBong', 'TenDoiBong', 'MaSan'],
                     },
                 ],
             });
-            res.status(200).json({doiBong: data.map(item => item.DoiBong)});
+
+            const doiBongInfoWithCauThuIds = [];
+
+            for (const mgDbEntry of mgDbEntries) {
+                const doiBong = mgDbEntry.DoiBong;
+                if (doiBong) {
+                    const dbCtEntries = await DbCt.findAll({
+                        where: { MaDoiBong: doiBong.MaDoiBong },
+                        include: [
+                            {
+                                model: CauThu,
+                                as: 'CauThu',
+                                attributes: ['MaCauThu'], // Chỉ lấy mã cầu thủ
+                            },
+                        ],
+                    });
+
+                    const cauThuIds = dbCtEntries.map(dbCt => dbCt.CauThu.MaCauThu);
+
+                    doiBongInfoWithCauThuIds.push({
+                        MaDoiBong: doiBong.MaDoiBong,
+                        TenDoiBong: doiBong.TenDoiBong,
+                        MaSan: doiBong.MaSan,
+                        maCauThu: cauThuIds,
+                    });
+                }
+            }
+
+            res.status(200).json(doiBongInfoWithCauThuIds);
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách đội bóng theo mùa giải:", error);
-            res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng theo mùa giải.' });
+            console.error("Lỗi khi lấy danh sách đội bóng và mã cầu thủ theo mùa giải:", error);
+            res.status(500).json({ error: 'Lỗi khi lấy danh sách đội bóng và mã cầu thủ theo mùa giải.' });
         }
     },
 
@@ -40,7 +68,6 @@ const MgDbController = {
             if (!mgDbEntry || !mgDbEntry.DoiBong) {
                 return res.status(404).json({ error: 'Không tìm thấy đội bóng trong mùa giải này.' });
             }
-
             // Lấy danh sách cầu thủ thuộc DoiBong thông qua DbCt
             const dbCtEntries = await DbCt.findAll({
                 where: { MaDoiBong: MaDoiBong },
@@ -63,7 +90,6 @@ const MgDbController = {
                     },
                 ],
             });
-
             const cauThus = dbCtEntries.map(dbCt => ({
                 MaMuaGiai: MaMuaGiai,
                 MaDoiBong: MaDoiBong,
@@ -110,38 +136,37 @@ const MgDbController = {
         }
     },
 
-
     async createMany(req, res) {
         try {
             const { links } = req.body;
-    
+
             if (!Array.isArray(links) || links.length === 0) {
                 return res.status(400).json({ error: 'Danh sách liên kết không hợp lệ.' });
             }
-    
+
             const createdLinks = [];
             const existingLinks = [];
             const invalidLinks = [];
-    
+
             for (const link of links) {
                 const { MaMuaGiai, MaDoiBong } = link;
                 try {
                     // Kiểm tra điều kiện sân nhà
                     await validateStadiumConditions(MaDoiBong);
-    
+
                     // Kiểm tra điều kiện cầu thủ
                     await validatePlayerConditions(MaMuaGiai, MaDoiBong);
-    
+
                     // Kiểm tra liên kết đã tồn tại chưa
                     const existingLink = await MgDb.findOne({
                         where: { MaMuaGiai, MaDoiBong },
                     });
-    
+
                     if (existingLink) {
                         existingLinks.push(link);
                         continue;
                     }
-    
+
                     // Tạo liên kết mới
                     const newLink = await MgDb.create({ MaMuaGiai, MaDoiBong });
                     createdLinks.push(newLink);
@@ -151,7 +176,7 @@ const MgDbController = {
                     invalidLinks.push({ link, error: err.message });
                 }
             }
-    
+
             res.status(201).json({
                 createdLinks,
                 existingLinks,

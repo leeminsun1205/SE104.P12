@@ -1,0 +1,644 @@
+{
+    "links": [
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000001"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000002"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000003"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000004"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000005"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000006"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000007"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000008"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000009"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000010"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000011"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000012"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000013"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000014"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000015"
+        },
+        {
+            "MaDoiBong": "DB001",
+            "MaCauThu": "CT000016"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000017"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000018"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000019"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000020"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000021"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000022"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000023"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000024"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000025"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000026"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000027"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000028"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000029"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000030"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000031"
+        },
+        {
+            "MaDoiBong": "DB002",
+            "MaCauThu": "CT000032"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000033"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000034"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000035"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000036"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000037"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000038"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000039"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000040"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000041"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000042"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000043"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000044"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000045"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000046"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000047"
+        },
+        {
+            "MaDoiBong": "DB003",
+            "MaCauThu": "CT000048"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000049"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000050"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000051"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000052"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000053"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000054"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000055"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000056"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000057"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000058"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000059"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000060"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000061"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000062"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000063"
+        },
+        {
+            "MaDoiBong": "DB004",
+            "MaCauThu": "CT000064"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000065"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000066"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000067"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000068"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000069"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000070"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000071"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000072"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000073"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000074"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000075"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000076"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000077"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000078"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000079"
+        },
+        {
+            "MaDoiBong": "DB005",
+            "MaCauThu": "CT000080"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000081"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000082"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000083"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000084"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000085"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000086"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000087"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000088"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000089"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000090"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000091"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000092"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000093"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000094"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000095"
+        },
+        {
+            "MaDoiBong": "DB006",
+            "MaCauThu": "CT000096"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000097"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000098"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000099"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000100"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000101"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000102"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000103"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000104"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000105"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000106"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000107"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000108"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000109"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000110"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000111"
+        },
+        {
+            "MaDoiBong": "DB007",
+            "MaCauThu": "CT000112"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000113"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000114"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000115"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000116"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000117"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000118"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000119"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000120"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000121"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000122"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000123"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000124"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000125"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000126"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000127"
+        },
+        {
+            "MaDoiBong": "DB008",
+            "MaCauThu": "CT000128"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000129"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000130"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000131"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000132"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000133"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000134"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000135"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000136"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000137"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000138"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000139"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000140"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000141"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000142"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000143"
+        },
+        {
+            "MaDoiBong": "DB009",
+            "MaCauThu": "CT000144"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000145"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000146"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000147"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000148"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000149"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000150"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000151"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000152"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000153"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000154"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000155"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000156"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000157"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000158"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000159"
+        },
+        {
+            "MaDoiBong": "DB010",
+            "MaCauThu": "CT000160"
+        }
+    ]
+}

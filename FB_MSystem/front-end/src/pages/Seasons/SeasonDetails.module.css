@@ -9,7 +9,10 @@ body {
 
 /* Container styles */
 .container {
-    margin: 60px auto;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
     max-width: 800px;
     padding: 30px;
     background: #ffffff;
