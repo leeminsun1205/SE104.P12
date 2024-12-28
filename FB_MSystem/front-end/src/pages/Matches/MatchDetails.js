@@ -79,7 +79,7 @@ function MatchDetails({ API_URL }) {
   const removeGoal = async (goalId) => {
     try {
       const response = await fetch(
-        `${API_URL}/tran-dau/${MaTranDau}/ban-thang/${goalId}`,
+        `${API_URL}/ban-thang/${MaTranDau}/${goalId}`,
         {
           method: "DELETE",
         }
@@ -152,7 +152,7 @@ function MatchDetails({ API_URL }) {
   const removeCard = async (MaThePhat) => {
     try {
       const response = await fetch(
-        `${API_URL}/tran-dau/${MaTranDau}/the-phat/${MaThePhat}`,
+        `${API_URL}/the-phat/${MaTranDau}/${MaThePhat}`,
         {
           method: "DELETE",
         }
@@ -180,7 +180,7 @@ function MatchDetails({ API_URL }) {
 
       for (const newGoal of newGoals) {
         const response = await fetch(
-          `${API_URL}/tran-dau/${MaTranDau}/ban-thang`,
+          `${API_URL}/bang-thang/tran-dau/${MaTranDau}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -193,7 +193,7 @@ function MatchDetails({ API_URL }) {
 
       for (const existingGoal of existingGoals) {
         const response = await fetch(
-          `${API_URL}/tran-dau/${MaTranDau}/ban-thang/${existingGoal.MaBanThang}`,
+          `${API_URL}/ban-thang/${MaTranDau}/${existingGoal.MaBanThang}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -225,7 +225,7 @@ function MatchDetails({ API_URL }) {
 
       for (const newCard of newCards) {
         const response = await fetch(
-          `${API_URL}/tran-dau/${MaTranDau}/the-phat`,
+          `${API_URL}/the-phat/tran-dau/${MaTranDau}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -238,7 +238,7 @@ function MatchDetails({ API_URL }) {
 
       for (const existingCard of existingCards) {
         const response = await fetch(
-          `${API_URL}/tran-dau/${MaTranDau}/the-phat/${existingCard.MaThePhat}`,
+          `${API_URL}/the-phat/${MaTranDau}/${existingCard.MaThePhat}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
