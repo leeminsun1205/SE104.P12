@@ -22,7 +22,7 @@ function LookUpAchievements({ API_URL }) {
                 }
                 const data = await response.json();
                 console.log("Dữ liệu đội bóng từ API:", data);
-                setAvailableTeams(data.teams);
+                setAvailableTeams(data.doiBong);
             } catch (error) {
                 console.error("Lỗi khi tải danh sách đội bóng:", error);
             }
@@ -141,7 +141,7 @@ function LookUpAchievements({ API_URL }) {
 
     return (
         <div className={styles.standingsContainer}>
-            <h2 className={styles.standingsTitle}>Lịch sử giải đấu</h2>
+            <h2 className={styles.standingsTitle}>Thành tích đội bóng</h2>
             {availableTeams.length > 0 && (
                 <TeamSelector
                     onTeamsChange={handleTeamChange}
