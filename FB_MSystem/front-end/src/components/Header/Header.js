@@ -77,10 +77,10 @@ function Header({ onLogout, onToggleSidebar }) {
                         Cài đặt <i className="fa fa-caret-down"></i>
                     </button>
                     <div className={`${styles.dropdownContent} ${showSettingsDropdown ? styles.show : ''}`}>
-                        <NavLink to="/settings/general" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/cai-dat/chung" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Cài đặt chung
                         </NavLink>
-                        <NavLink to="/settings/types" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/cai-dat/cac-loai" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Cài đặt các loại
                         </NavLink>
                     </div>

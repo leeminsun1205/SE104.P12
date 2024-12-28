@@ -130,7 +130,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
             className={`${styles.management} ${showSettings ? styles.show : ""}`}
           >
             <NavLink
-              to="/settings/general"
+              to="/cai-dat/chung"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
@@ -138,7 +138,7 @@ function Sidebar({ isOpen, onToggleSidebar }) {
               <i className="fas fa-cog"></i> Cài đặt chung
             </NavLink>
             <NavLink
-              to="/settings/types"
+              to="/cai-dat/cac-loai"
               className={({ isActive }) =>
                 isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
               }
