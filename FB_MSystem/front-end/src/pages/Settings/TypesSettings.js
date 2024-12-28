@@ -1,16 +1,12 @@
-
 // pages/Settings/TypesSettings.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './TypesSettings.module.css';
 
 function TypesSettings({ API_URL }) {
-    const [goalTypes, setGoalTypes] = useState([
-]);
+    const [goalTypes, setGoalTypes] = useState([]);
     const [cardTypes, setCardTypes] = useState([]);
     const [priorityOptions, setPriorityOptions] = useState([]);
-    const [rankingPriorityOrder, setRankingPriorityOrder] = useState(['UT1', 'UT2', 'UT3']);
     const [saveStatus, setSaveStatus] = useState(null);
-    const nextPriorityCode = useRef(priorityOptions.length + 1);
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -18,18 +14,9 @@ function TypesSettings({ API_URL }) {
                 const response = await fetch(`${API_URL}/settings/types`);
                 if (response.ok) {
                     const data = await response.json();
-                    setGoalTypes(data.settings.LoaiBanThang ? data.settings.LoaiBanThang.map(gt => ({ ...gt, MaLoaiBanThang: gt.MaLoaiBanThang || Date.now() + '-' + Math.random() })) : goalTypes);
-                    setCardTypes(data.settings.LoaiThePhat ? data.settings.LoaiThePhat.map(ct => ({ ...ct, MaLoaiThePhat: ct.MaLoaiThePhat || Date.now() + '-' + Math.random() })) : cardTypes);
-                    setPriorityOptions(data.settings.MaLoaiUuTien || priorityOptions);
-                    setRankingPriorityOrder(data.settings.Ut_XepHang || rankingPriorityOrder);
-                    // Update the ref based on loaded data
-                    if (data.priorityOptions && data.priorityOptions.length > 0) {
-                        const maxCodeNumber = data.priorityOptions.reduce((max, option) => {
-                            const number = parseInt(option.code.replace('UT', ''), 10);
-                            return number > max ? number : max;
-                        }, 0);
-                        nextPriorityCode.current = maxCodeNumber + 1;
-                    }
+                    setGoalTypes(data.settings.LoaiBanThang ? data.settings.LoaiBanThang.map(gt => ({ ...gt, MaLoaiBanThang: gt.MaLoaiBanThang })) : []);
+                    setCardTypes(data.settings.LoaiThePhat ? data.settings.LoaiThePhat.map(ct => ({ ...ct, MaLoaiThePhat: ct.MaLoaiThePhat })) : []);
+                    setPriorityOptions(data.settings.MaLoaiUuTien ? data.settings.MaLoaiUuTien.map(pu => ({ ...pu, priorityLevel: pu.priorityLevel })) : []);
                 }
             } catch (error) {
                 console.error("Error fetching types settings:", error);
@@ -38,6 +25,26 @@ function TypesSettings({ API_URL }) {
 
         fetchSettings();
     }, [API_URL]);
+
+    // Hàm tạo mã loại bàn thắng tự động
+    const generateGoalTypeCode = () => {
+        if (!goalTypes || goalTypes.length === 0) {
+            return 'LBT01';
+        }
+        const lastCode = goalTypes.slice().sort((a, b) => b.MaLoaiBanThang.localeCompare(a.MaLoaiBanThang))[0].MaLoaiBanThang;
+        const number = parseInt(lastCode.slice(3), 10) + 1;
+        return `LBT${number.toString().padStart(2, '0')}`;
+    };
+
+    // Hàm tạo mã loại thẻ phạt tự động
+    const generateCardTypeCode = () => {
+        if (!cardTypes || cardTypes.length === 0) {
+            return 'LTP01';
+        }
+        const lastCode = cardTypes.slice().sort((a, b) => b.MaLoaiThePhat.localeCompare(a.MaLoaiThePhat))[0].MaLoaiThePhat;
+        const number = parseInt(lastCode.slice(3), 10) + 1;
+        return `LTP${number.toString().padStart(2, '0')}`;
+    };
 
     // Goal Types Handlers
     const handleGoalTypeChange = (MaLoaiBanThang, field, value) => {
@@ -49,12 +56,8 @@ function TypesSettings({ API_URL }) {
         setGoalTypes(newGoalTypes);
     };
 
-    // const generateUniqueCode = (prefix) => {
-    //     return `${prefix}${Date.now().toString().slice(-5)}`; // Simple unique code
-    // };
-
     const addGoalType = () => {
-        setGoalTypes([...goalTypes, { id: Date.now(), name: '', description: '' }]);
+        setGoalTypes([...goalTypes, { MaLoaiBanThang: generateGoalTypeCode(), TenLoaiBanThang: '', MoTa: '' }]);
     };
 
     const removeGoalType = (MaLoaiBanThang) => {
@@ -71,11 +74,11 @@ function TypesSettings({ API_URL }) {
     };
 
     const addCardType = () => {
-        setCardTypes([...cardTypes, { MaLoaiThePhat: Date.now(), TenLoaiThePhat: '', MoTa: '' }]);
+        setCardTypes([...cardTypes, { MaLoaiThePhat: generateCardTypeCode(), TenLoaiThePhat: '', MoTa: '' }]);
     };
 
-    const removeCardType = (id) => {
-        const newCardTypes = cardTypes.filter(cardType => cardType.MaLoaiThePhat !== id);
+    const removeCardType = (MaLoaiThePhat) => {
+        const newCardTypes = cardTypes.filter(cardType => cardType.MaLoaiThePhat !== MaLoaiThePhat);
         setCardTypes(newCardTypes);
     };
 
@@ -86,63 +89,17 @@ function TypesSettings({ API_URL }) {
         setPriorityOptions(newPriorityOptions);
     };
 
-    const addPriorityOption = () => {
-        const newCode = `UT${nextPriorityCode.current}`;
-        const newPriority = { code: newCode, name: '' };
-        setPriorityOptions([...priorityOptions, newPriority]);
-        setRankingPriorityOrder([...rankingPriorityOrder, newCode]);
-        nextPriorityCode.current++;
-    };
-
-    const removePriorityOption = (codeToRemove) => {
-        setPriorityOptions(priorityOptions.filter(option => option.code !== codeToRemove));
-        setRankingPriorityOrder(rankingPriorityOrder.filter(code => code !== codeToRemove));
-    };
-
-    const movePriorityUp = (code) => {
-        const index = rankingPriorityOrder.indexOf(code);
-        if (index > 0) {
-            const newOrder = [...rankingPriorityOrder];
-            [newOrder[index], newOrder[index - 1]] = [newOrder[index - 1], newOrder[index]];
-            setRankingPriorityOrder(newOrder);
-        }
-    };
-
-    const movePriorityDown = (code) => {
-        const index = rankingPriorityOrder.indexOf(code);
-        if (index < rankingPriorityOrder.length - 1) {
-            const newOrder = [...rankingPriorityOrder];
-            [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-            setRankingPriorityOrder(newOrder);
-        }
-    };
-
-    const toggleRankingPriority = (code) => {
-        if (rankingPriorityOrder.includes(code)) {
-            setRankingPriorityOrder(rankingPriorityOrder.filter(c => c !== code));
-        } else {
-            setRankingPriorityOrder([...rankingPriorityOrder, code]);
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaveStatus('loading');
 
-        // Ensure priority options codes are in UT format before saving
-        const updatedPriorityOptions = priorityOptions.map((option, index) => ({
-            ...option,
-            code: `UT${index + 1}`,
-        }));
-        setPriorityOptions(updatedPriorityOptions);
-        setRankingPriorityOrder(rankingPriorityOrder.map((code, index) => `UT${index + 1}`));
-        nextPriorityCode.current = updatedPriorityOptions.length + 1;
+        const sortedPriorityOptions = [...priorityOptions].sort((a, b) => a.priorityLevel - b.priorityLevel);
 
         const settingsData = {
-            goalTypes: goalTypes,
-            cardTypes: cardTypes,
-            rankingPriorityOrder: rankingPriorityOrder,
-            priorityOptions: updatedPriorityOptions, // Save the updated priority options
+            LoaiBanThang: goalTypes,
+            LoaiThePhat: cardTypes,
+            MaLoaiUuTien: sortedPriorityOptions,
+            Ut_XepHang: sortedPriorityOptions.map(option => option.code),
         };
 
         try {
@@ -195,13 +152,13 @@ function TypesSettings({ API_URL }) {
                                             <input
                                                 type="text"
                                                 value={goalType.TenLoaiBanThang}
-                                                onChange={(e) => handleGoalTypeChange(goalType.MaLoaiBanThang, 'name', e.target.value)}
+                                                onChange={(e) => handleGoalTypeChange(goalType.MaLoaiBanThang, 'TenLoaiBanThang', e.target.value)}
                                             />
                                         </td>
                                         <td>
                                             <textarea
                                                 value={goalType.MoTa}
-                                                onChange={(e) => handleGoalTypeChange(goalType.MaLoaiBanThang, 'description', e.target.value)}
+                                                onChange={(e) => handleGoalTypeChange(goalType.MaLoaiBanThang, 'MoTa', e.target.value)}
                                             />
                                         </td>
                                         <td>
@@ -239,13 +196,13 @@ function TypesSettings({ API_URL }) {
                                             <input
                                                 type="text"
                                                 value={cardType.TenLoaiThePhat}
-                                                onChange={(e) => handleCardTypeChange(cardType.MaLoaiThePhat, 'name', e.target.value)}
+                                                onChange={(e) => handleCardTypeChange(cardType.MaLoaiThePhat, 'TenLoaiThePhat', e.target.value)}
                                             />
                                         </td>
                                         <td>
                                             <textarea
                                                 value={cardType.MoTa}
-                                                onChange={(e) => handleCardTypeChange(cardType.MaLoaiThePhat, 'description', e.target.value)}
+                                                onChange={(e) => handleCardTypeChange(cardType.MaLoaiThePhat, 'MoTa', e.target.value)}
                                             />
                                         </td>
                                         <td>
@@ -264,30 +221,14 @@ function TypesSettings({ API_URL }) {
                     <table className={styles["settings-table"]}>
                         <thead>
                             <tr>
-                                <th>Chọn</th>
                                 <th>Mã</th>
                                 <th>Tên loại ưu tiên</th>
-                                <th>Hành động</th>
+                                <th>Mức độ ưu tiên</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {priorityOptions.sort((a, b) => {
-                                const indexA = rankingPriorityOrder.indexOf(a.code);
-                                const indexB = rankingPriorityOrder.indexOf(b.code);
-
-                                if (indexA === -1 && indexB === -1) return 0;
-                                if (indexA === -1) return 1;
-                                if (indexB === -1) return -1;
-                                return indexA - indexB;
-                            }).map((option) => (
+                            {priorityOptions.sort((a, b) => a.priorityLevel - b.priorityLevel).map((option, index) => (
                                 <tr key={option.code}>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={rankingPriorityOrder.includes(option.code)}
-                                            onChange={() => toggleRankingPriority(option.code)}
-                                        />
-                                    </td>
                                     <td>
                                         <input
                                             type="text"
@@ -299,37 +240,25 @@ function TypesSettings({ API_URL }) {
                                         <input
                                             type="text"
                                             value={option.name}
-                                            onChange={(e) => handlePriorityOptionChange(priorityOptions.findIndex(opt => opt.code === option.code), 'name', e.target.value)}
+                                            onChange={(e) => handlePriorityOptionChange(index, 'name', e.target.value)}
                                         />
                                     </td>
                                     <td>
-                                        {rankingPriorityOrder.includes(option.code) && (
-                                            <>
-                                                <button
-                                                    style={{ backgroundColor: '#007bff', color: 'white', marginRight: '5px' }}
-                                                    type="button"
-                                                    onClick={() => movePriorityUp(option.code)}
-                                                    disabled={rankingPriorityOrder.indexOf(option.code) === 0}
-                                                >
-                                                    Lên
-                                                </button>
-                                                <button
-                                                    style={{ backgroundColor: '#007bff', color: 'white', marginRight: '5px' }}
-                                                    type="button"
-                                                    onClick={() => movePriorityDown(option.code)}
-                                                    disabled={rankingPriorityOrder.indexOf(option.code) === rankingPriorityOrder.length - 1}
-                                                >
-                                                    Xuống
-                                                </button>
-                                            </>
-                                        )}
-                                        <button style={{ backgroundColor: '#dc3545', color: 'white' }} type="button" onClick={() => removePriorityOption(option.code)}>Xóa</button>
+                                        <input
+                                            type="number"
+                                            value={option.priorityLevel}
+                                            onChange={(e) => {
+                                                const newPriorityLevel = parseInt(e.target.value, 10);
+                                                if (!isNaN(newPriorityLevel)) {
+                                                    handlePriorityOptionChange(index, 'priorityLevel', newPriorityLevel);
+                                                }
+                                            }}
+                                        />
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    <button type="button" onClick={addPriorityOption}>Thêm loại ưu tiên</button>
                 </div>
 
                 <button type="submit" className={styles["save-button"]} disabled={saveStatus === 'loading'}>
