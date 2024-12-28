@@ -1,66 +1,78 @@
 const { TranDau, VongDau, MgDb, DbCt, BanThang, VuaPhaLuoi } = require('../models');
 
 // Hàm tự động cập nhật trận đấu
-const autoUpdateMatch = async (MaTranDau, MaDoiBong, MaCauThu, MaLoaiBanThang, ThoiDiem) => {
-    const tranDau = await TranDau.findOne({
-        where: { MaTranDau },
-        include: {
-            model: VongDau,
-            as: 'VongDau',
-            attributes: ['MaMuaGiai'],
-        },
-    });
+const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, thoiDiem) => {
+    const transaction = await sequelize.transaction(); // Start a transaction
 
-    if (!tranDau) {
-        throw new Error('Không tìm thấy trận đấu.');
+    try {
+        const tranDau = await TranDau.findOne({
+            where: { MaTranDau: maTranDau },
+            include: {
+                model: VongDau,
+                as: 'VongDau',
+                attributes: ['MaMuaGiai'],
+            },
+            transaction,
+        });
+
+        if (!tranDau) {
+            throw new Error('Không tìm thấy trận đấu.');
+        }
+
+        const maMuaGiai = tranDau.VongDau.MaMuaGiai;
+
+        if (tranDau.TinhTrang !== true) {
+            throw new Error('Trận đấu không ở trạng thái đang diễn ra.');
+        }
+
+        if (maDoiBong !== tranDau.MaDoiBongNha && maDoiBong !== tranDau.MaDoiBongKhach) {
+            throw new Error('Đội bóng không thuộc trận đấu này.');
+        }
+
+        const isPlayerInTeam = await MgDb.findOne({
+            where: { MaMuaGiai: maMuaGiai, MaDoiBong: maDoiBong },
+            include: {
+                model: DbCt,
+                as: 'DbCt',
+                where: { MaCauThu: maCauThu },
+                required: true,
+            },
+            transaction,
+        });
+
+        if (!isPlayerInTeam) {
+            throw new Error('Cầu thủ không thuộc đội bóng trong mùa giải này.');
+        }
+
+        if (maDoiBong === tranDau.MaDoiBongNha) {
+            tranDau.BanThangDoiNha = (tranDau.BanThangDoiNha || 0) + 1;
+        } else if (maDoiBong === tranDau.MaDoiBongKhach) {
+            tranDau.BanThangDoiKhach = (tranDau.BanThangDoiKhach || 0) + 1;
+        }
+
+        await tranDau.save({ transaction });
+
+        const banThang = await BanThang.create({
+            MaTranDau: maTranDau,
+            MaDoiBong: maDoiBong,
+            MaCauThu: maCauThu,
+            MaLoaiBanThang: maLoaiBanThang,
+            ThoiDiem: thoiDiem,
+            transaction,
+        });
+
+        // Gọi hàm tự động cập nhật vua phá lưới
+        const vuaPhaLuoi = await autoUpdateTopScorer(maCauThu, maMuaGiai, maDoiBong, maTranDau, transaction); // Pass transaction if autoUpdateTopScorer interacts with DB
+
+        await transaction.commit();
+
+        return { banThang, tranDau, vuaPhaLuoi };
+
+    } catch (error) {
+        await transaction.rollback();
+        console.error("Lỗi khi cập nhật trận đấu:", error);
+        throw error;
     }
-
-    const { MaMuaGiai } = tranDau.VongDau;
-
-    if (tranDau.TinhTrang !== true) {
-        throw new Error('Trận đấu không ở trạng thái đang diễn ra.');
-    }
-
-    if (MaDoiBong !== tranDau.MaDoiBongNha && MaDoiBong !== tranDau.MaDoiBongKhach) {
-        throw new Error('Đội bóng không thuộc trận đấu này.');
-    }
-
-    // Kiểm tra cầu thủ có thuộc đội bóng trong mùa giải không
-    const isPlayerInTeam = await MgDb.findOne({
-        where: { MaMuaGiai, MaDoiBong },
-        include: {
-            model: DbCt,
-            as: 'DbCt',
-            where: { MaCauThu },
-            required: true,
-        },
-    });
-
-    if (!isPlayerInTeam) {
-        throw new Error('Cầu thủ không thuộc đội bóng trong mùa giải này.');
-    }
-
-    // Cập nhật số bàn thắng cho đội nhà hoặc đội khách
-    if (MaDoiBong === tranDau.MaDoiBongNha) {
-        tranDau.BanThangDoiNha = tranDau.BanThangDoiNha ? tranDau.BanThangDoiNha + 1 : 1;
-    } else if (MaDoiBong === tranDau.MaDoiBongKhach) {
-        tranDau.BanThangDoiKhach = tranDau.BanThangDoiKhach ? tranDau.BanThangDoiKhach + 1 : 1;
-    }
-
-    await tranDau.save();
-
-    const banThang = await BanThang.create({
-        MaTranDau,
-        MaDoiBong,
-        MaCauThu,
-        MaLoaiBanThang,
-        ThoiDiem,
-    });
-
-    // Gọi hàm tự động cập nhật vua phá lưới
-    const vuaPhaLuoi = await autoUpdateTopScorer(MaCauThu, MaMuaGiai, MaDoiBong, MaTranDau);
-
-    return { banThang, tranDau, vuaPhaLuoi };
 };
 
 // Hàm tự động cập nhật vua phá lưới
