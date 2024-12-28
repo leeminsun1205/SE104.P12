@@ -23,6 +23,14 @@ const ThePhat = sequelize.define('ThePhat', {
             key: 'MaCauThu',
         },
     },
+    MaDoiBong: {
+        type: DataTypes.CHAR(10),
+        allowNull: false,
+        references: {
+            model: 'DoiBong',
+            key: 'MaDoiBong',
+        },
+    },
     MaLoaiThePhat: {
         type: DataTypes.CHAR(10),
         allowNull: false,
@@ -65,6 +73,14 @@ ThePhat.associate = (models) => {
     ThePhat.belongsTo(models.CauThu, {
         foreignKey: 'MaCauThu',
         as: 'CauThu',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    });
+
+    // Thuộc một đội bóng
+    ThePhat.belongsTo(models.DoiBong, {
+        foreignKey: 'MaDoiBong',
+        as: 'DoiBong',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     });

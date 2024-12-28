@@ -2,9 +2,10 @@ const { TranDau, VongDau, MgDb, DbCt, BanThang, VuaPhaLuoi, DoiBong } = require(
 const sequelize = require('../config/database');
 
 const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, thoiDiem) => {
-    const transaction = await sequelize.transaction(); // Start a transaction
+    const transaction = await sequelize.transaction();
 
     try {
+        // Lấy thông tin trận đấu
         const tranDau = await TranDau.findOne({
             where: { MaTranDau: maTranDau },
             include: {
@@ -13,13 +14,12 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
                 attributes: ['MaMuaGiai'],
             },
             transaction,
+            lock: transaction.LOCK.UPDATE // Thêm lock để tránh race condition khi cập nhật
         });
 
         if (!tranDau) {
             throw new Error('Không tìm thấy trận đấu.');
         }
-
-        // const maMuaGiai = tranDau.VongDau.MaMuaGiai; // Không sử dụng đến nữa trong cách này
 
         if (tranDau.TinhTrang !== true) {
             throw new Error('Trận đấu không ở trạng thái đang diễn ra.');
@@ -29,15 +29,17 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
             throw new Error('Đội bóng không thuộc trận đấu này.');
         }
 
-        // Kiểm tra xem cầu thủ có thuộc đội bóng này không (chỉ dùng DbCt)
+        // Kiểm tra xem cầu thủ có thuộc đội bóng này không
         const isPlayerInTeam = await DbCt.findOne({
             where: { MaCauThu: maCauThu, MaDoiBong: maDoiBong },
+            transaction,
         });
 
         if (!isPlayerInTeam) {
             throw new Error('Cầu thủ không thuộc đội bóng này.');
         }
 
+        // Cập nhật số bàn thắng
         if (maDoiBong === tranDau.MaDoiBongNha) {
             tranDau.BanThangDoiNha = (tranDau.BanThangDoiNha || 0) + 1;
         } else if (maDoiBong === tranDau.MaDoiBongKhach) {
@@ -45,22 +47,22 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
         }
 
         await tranDau.save({ transaction });
-        console.log(maTranDau, maDoiBong, maCauThu, maLoaiBanThang, thoiDiem, transaction)
+
+        // Tạo mới bàn thắng
         const banThang = await BanThang.create({
             MaTranDau: maTranDau,
             MaDoiBong: maDoiBong,
             MaCauThu: maCauThu,
             MaLoaiBanThang: maLoaiBanThang,
             ThoiDiem: thoiDiem,
-            // transaction,
-        });
+        }, { transaction });
 
-        // Gọi hàm tự động cập nhật vua phá lưới (cần xem xét lại logic nếu chỉ dùng DbCt)
-        // const vuaPhaLuoi = await autoUpdateTopScorer(maCauThu, tranDau.VongDau.MaMuaGiai, maDoiBong, maTranDau, transaction); // Vẫn truyền MaMuaGiai để logic vua phá lưới hoạt động
+        // Gọi hàm tự động cập nhật vua phá lưới (đã được sửa đổi để nhận transaction)
+        const vuaPhaLuoiResult = await autoUpdateTopScorer(maCauThu, tranDau.VongDau.MaMuaGiai, maDoiBong, maTranDau, transaction);
 
         await transaction.commit();
 
-        return { banThang, tranDau, vuaPhaLuoi };
+        return { banThang, tranDau, vuaPhaLuoi: vuaPhaLuoiResult };
 
     } catch (error) {
         await transaction.rollback();
@@ -69,38 +71,33 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
     }
 };
 
-// Hàm tự động cập nhật vua phá lưới (có thể cần điều chỉnh logic)
+// Hàm tự động cập nhật vua phá lưới (đã sửa đổi để nhận transaction)
 const autoUpdateTopScorer = async (MaCauThu, MaMuaGiai, MaDoiBong, MaTranDau, transaction) => {
-    // Tìm cầu thủ trong bảng VuaPhaLuoi
+    // Tìm cầu thủ trong bảng VuaPhaLuoi với lock
     let vuaPhaLuoi = await VuaPhaLuoi.findOne({
         where: { MaCauThu, MaMuaGiai },
         transaction,
+        lock: transaction.LOCK.UPDATE
     });
 
-    // Kiểm tra xem cầu thủ đã ghi bàn trong trận này chưa
     const hasScoredInMatch = await BanThang.findOne({
         where: { MaTranDau, MaCauThu },
         transaction,
     });
 
     if (!vuaPhaLuoi) {
-        // Nếu cầu thủ chưa có trong bảng VuaPhaLuoi, thêm mới
         vuaPhaLuoi = await VuaPhaLuoi.create({
             MaCauThu,
             MaMuaGiai,
             MaDoiBong,
-            SoTran: 1, // Ghi bàn lần đầu trong trận này
-            SoBanThang: 1, // Ghi 1 bàn thắng
+            SoTran: 1,
+            SoBanThang: 1,
         }, { transaction });
     } else {
-        // Nếu cầu thủ đã có trong bảng VuaPhaLuoi, cập nhật
         vuaPhaLuoi.SoBanThang += 1;
-
-        // Tăng số trận nếu chưa ghi bàn trong trận này
         if (!hasScoredInMatch) {
             vuaPhaLuoi.SoTran += 1;
         }
-
         await vuaPhaLuoi.save({ transaction });
     }
 
