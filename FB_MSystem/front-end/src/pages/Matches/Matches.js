@@ -338,7 +338,6 @@ const Matches = ({ API_URL }) => {
 
   const handleSaveEditedMatch = useCallback(async (updatedMatch) => {
     try {
-      console.log("Saving updated match:", updatedMatch);
       const response = await fetch(
         `${API_URL}/tran-dau/${updatedMatch.MaTranDau}`,
         {

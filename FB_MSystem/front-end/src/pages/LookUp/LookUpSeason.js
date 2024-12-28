@@ -17,17 +17,14 @@ function LookUpSeason({ API_URL }) {
             setLoading(true);
             setError(null);
             const url = `${API_URL}/bang-xep-hang/doi-bong/xep-hang`;
-            console.log("LookUpSeason: Fetching team statistics from:", url);
 
             try {
                 const response = await fetch(url);
-                console.log("LookUpSeason: Response status:", response.status);
                 if (!response.ok) {
                     console.error("LookUpSeason: HTTP error details:", response);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("LookUpSeason: Dữ liệu thống kê đội bóng từ API:", data);
                 setTeamStatistics(data.doiBong);
                 setCurrentPage(1); // Reset to first page when new data arrives
             } catch (error) {

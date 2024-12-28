@@ -46,7 +46,6 @@ function LookUpMatch({ API_URL }) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("Dữ liệu đội bóng từ API:", data);
                 setAvailableTeams(data.doiBong);
             } catch (error) {
                 console.error("Lỗi khi tải danh sách đội bóng:", error);
@@ -57,7 +56,6 @@ function LookUpMatch({ API_URL }) {
     }, [API_URL]);
 
     useEffect(() => {
-        console.log("Danh sách đội bóng có sẵn:", availableTeams);
         if (availableTeams.length > 0 && !selectedTeam) {
             const trySetDefaultTeam = async () => {
                 for (const team of availableTeams) {
@@ -66,7 +64,6 @@ function LookUpMatch({ API_URL }) {
                         setError(null);
                         const response = await fetch(`${API_URL}/tran-dau/doi-bong/${team.MaDoiBong}${selectedSeason ? `?maMuaGiai=${selectedSeason}` : ''}`);
                         if (response.ok) {
-                            console.log(`Đã chọn đội mặc định: ${team.TenDoiBong}`);
                             setSelectedTeam(team.MaDoiBong);
                             return; // Exit the loop once a valid team is found
                         } else {
@@ -78,7 +75,6 @@ function LookUpMatch({ API_URL }) {
                         setLoading(false);
                     }
                 }
-                console.log("Không có đội mặc định nào được chọn do lỗi.");
             };
             trySetDefaultTeam();
         }
@@ -86,7 +82,6 @@ function LookUpMatch({ API_URL }) {
 
     useEffect(() => {
         if (selectedTeam && selectedSeason) {
-            console.log("useEffect fetchMatches được gọi với selectedTeam:", selectedTeam, " và selectedSeason:", selectedSeason);
             const fetchMatches = async () => {
                 setLoading(true);
                 setError(null);
@@ -103,7 +98,6 @@ function LookUpMatch({ API_URL }) {
                         setMatches([]);
                     } else {
                         const data = await response.json();
-                        console.log("Dữ liệu trận đấu từ API:", data);
                         setMatches(data.tranDau);
                         setError(null);
                         setCurrentPage(1);
@@ -123,8 +117,6 @@ function LookUpMatch({ API_URL }) {
     }, [API_URL, selectedTeam, hasUserInteracted, selectedSeason]);
 
     const filteredMatches = useMemo(() => {
-        console.log("Giá trị matches trong filteredMatches:", matches);
-        console.log("Giá trị selectedTeam trong filteredMatches:", selectedTeam);
         return matches
             .filter((match) =>
                 selectedTeam ? match.DoiBongNha.MaDoiBong === selectedTeam || match.DoiBongKhach.MaDoiBong === selectedTeam : false
@@ -151,7 +143,6 @@ function LookUpMatch({ API_URL }) {
     }, [matches, selectedTeam, searchQuery, sortConfig]);
 
     const handleTeamsChange = (teamId) => {
-        console.log("Đội được chọn:", teamId);
         setSelectedTeam(teamId);
         setHasUserInteracted(true);
         setError(null);

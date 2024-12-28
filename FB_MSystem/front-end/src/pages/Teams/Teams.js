@@ -18,7 +18,6 @@ function Teams({
     const fetchAllTeams = async () => {
       try { 
         const response = await fetch(`${API_URL}/doi-bong`);
-        console.log(`${API_URL}/doi-bong`)
         if (!response.ok) {
           throw new Error('Failed to fetch teams');
         }

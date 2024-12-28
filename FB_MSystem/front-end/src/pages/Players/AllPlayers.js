@@ -20,7 +20,6 @@ function AllPlayers({ API_URL }) {
       try {
         const response = await fetch(`${API_URL}/cau-thu`);
         const data = await response.json();
-        console.log(data);
         if (!response.ok) {
           throw new Error("Failed to fetch players");
         }
@@ -59,7 +58,6 @@ function AllPlayers({ API_URL }) {
   };
 
   const handleSearch = (event) => {
-    console.log("Search: ", event.target.value);
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to the first page when searching
   };

@@ -28,7 +28,6 @@ const PlayerInfo = ({ API_URL }) => {
           if (MaDoiBong) {
             data = data.cauThu
           }
-          console.log(data)
           setPlayer(data);
         } catch (err) {
           setError(err.message);

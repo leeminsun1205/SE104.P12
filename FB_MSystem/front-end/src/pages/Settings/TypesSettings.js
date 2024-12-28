@@ -16,7 +16,6 @@ function TypesSettings({ API_URL }) {
                 const response = await fetch(`${API_URL}/settings/types`);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
                     setGoalTypes(data.settings.LoaiBanThang ? data.settings.LoaiBanThang.map(gt => ({ ...gt, MaLoaiBanThang: gt.MaLoaiBanThang })) : []);
                     setCardTypes(data.settings.LoaiThePhat ? data.settings.LoaiThePhat.map(ct => ({ ...ct, MaLoaiThePhat: ct.MaLoaiThePhat })) : []);
                     setPriorityTypes(data.settings.LoaiUuTien ? data.settings.LoaiUuTien.map(pt => ({ ...pt, MaLoaiUuTien: pt.MaLoaiUuTien })) : []); // Lấy dữ liệu loại ưu tiên
