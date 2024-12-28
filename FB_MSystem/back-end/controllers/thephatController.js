@@ -1,4 +1,4 @@
-const { DsThePhat, ThePhat, TranDau, CauThu, LoaiThePhat, DbCt, VongDau, sequelize } = require('../models');
+const { DsThePhat, ThePhat, TranDau, CauThu, LoaiThePhat, DbCt, VongDau, sequelize, DoiBong } = require('../models');
 
 const ThePhatController = {
     async getAll(req, res) {
@@ -13,6 +13,7 @@ const ThePhatController = {
             });
             res.status(200).json(thePhats);
         } catch (error) {
+            console.error(error)
             res.status(500).json({ error: 'Lỗi khi lấy danh sách thẻ phạt.' });
         }
     },
