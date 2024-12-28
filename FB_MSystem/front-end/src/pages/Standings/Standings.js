@@ -51,7 +51,6 @@ function Standings({ API_URL }) {
                 const response = await fetch(`${API_URL}/bang-xep-hang/mua-giai/${selectedSeason}`);
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Standings not found for season: ${selectedSeason}`);
                         setNotFound(true);
                         setStandings([]);
                     } else {
@@ -60,7 +59,6 @@ function Standings({ API_URL }) {
                     return;
                 }
                 const data = await response.json();
-                console.log("Dữ liệu bảng xếp hạng từ API:", data); // Debug API response
                 setStandings(data);
             } catch (error) {
                 console.error("Lỗi khi fetch bảng xếp hạng:", error);
@@ -76,7 +74,6 @@ function Standings({ API_URL }) {
     }, [selectedSeason, API_URL]);
 
     const handleSeasonChange = (season) => {
-        console.log("Mùa giải được chọn:", season); // Debug season selection
         setSelectedSeason(season);
     };
 
@@ -138,7 +135,6 @@ function Standings({ API_URL }) {
     }
 
     const handleRowClick = (teamId, seasonId) => {
-        console.log(`handleRowClick - Team ID: ${teamId}, Season ID: ${seasonId}`);
         navigate(`/doi-bong/${teamId}/mua-giai/${seasonId}`);
     };
 
@@ -173,7 +169,6 @@ function Standings({ API_URL }) {
                         {selectedSeason ? (
                             currentItems.length > 0 ? (
                                 currentItems.map((team) => {
-                                    console.log("Đội trong map:", team);
                                     return (
                                         <tr
                                             key={`${team.XepHang}-${team.TenDoiBong}`}

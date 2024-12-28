@@ -21,7 +21,6 @@ function LookUpAchievements({ API_URL }) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("Dữ liệu đội bóng từ API:", data);
                 setAvailableTeams(data.doiBong); // Adjust based on actual API response
             } catch (error) {
                 console.error("Lỗi khi tải danh sách đội bóng:", error);
@@ -47,7 +46,6 @@ function LookUpAchievements({ API_URL }) {
                 const response = await fetch(`${API_URL}/bang-xep-hang/team-positions`); // Corrected API endpoint for team achievements
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Team data not found`);
                         setNotFound(true);
                         setAchievements([]);
                     } else {
@@ -56,7 +54,6 @@ function LookUpAchievements({ API_URL }) {
                     return;
                 }
                 const data = await response.json();
-                console.log("Dữ liệu thành tích đội từ API:", data);
                 if (data && data.doiBong) {
                     const teamData = data.doiBong.find(team => team.MaDoiBong === selectedTeam);
                     if (teamData) {
@@ -83,7 +80,6 @@ function LookUpAchievements({ API_URL }) {
     }, [selectedTeam, API_URL]);
 
     const handleTeamChange = (teamId) => {
-        console.log("Đội được chọn:", teamId);
         setSelectedTeam(teamId);
     };
 
@@ -137,7 +133,6 @@ function LookUpAchievements({ API_URL }) {
     // You might need a different endpoint to view details of a specific season for a team.
     const handleRowClick = (/* Assuming you have MaMuaGiai available */) => {
         // navigate(`/mua-giai/${seasonId}`); // Adjust this based on your routing and data
-        console.log("Row clicked, navigation to season details needs implementation.");
     };
 
     return (

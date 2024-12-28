@@ -21,7 +21,6 @@ function SeasonalStandings({ API_URL }) {
                 const response = await fetch(`${API_URL}/bang-xep-hang/mua-giai/${MaMuaGiai}`);
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Standings not found for season: ${MaMuaGiai}`);
                         setNotFound(true);
                         setStandings([]);
                     } else {
@@ -30,7 +29,6 @@ function SeasonalStandings({ API_URL }) {
                     return;
                 }
                 const data = await response.json();
-                console.log("Dữ liệu bảng xếp hạng từ API:", data); // Debug API response
                 setStandings(data);
             } catch (error) {
                 console.error("Lỗi khi fetch bảng xếp hạng:", error);

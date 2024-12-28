@@ -132,7 +132,6 @@ function App() {
             }
 
             const data = await response.json();
-            console.log("Player added:", data.player);
 
         } catch (error) {
             console.error("Error adding player:", error);
@@ -149,11 +148,9 @@ function App() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const updatedTeamData = await response.json();
-            console.log("Updated Team Data", updatedTeamData)
             setTeams((prevTeams) =>
                 prevTeams.map((team) => (team.MaDoiBong === updatedTeam.MaDoiBong ? updatedTeamData : team))
             );
-            console.log(teams)
         } catch (error) {
             console.error("Error updating team:", error);
         }

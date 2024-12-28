@@ -51,7 +51,6 @@ function TopScorersStandings({ API_URL }) {
                 const response = await fetch(`${API_URL}/vua-pha-luoi/mua-giai/${selectedSeason}`); // Endpoint gọi backend để lấy top scorer
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Top scorers not found for season: ${selectedSeason}`);
                         setNotFound(true);
                         setTopScorers([]);
                     } else {

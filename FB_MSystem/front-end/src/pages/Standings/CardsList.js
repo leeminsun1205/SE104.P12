@@ -51,7 +51,6 @@ function CardsList({ API_URL }) {
                 const response = await fetch(`${API_URL}/ds-the-phat/mua-giai/${selectedSeason}`);
                 if (!response.ok) {
                     if (response.status === 404) {
-                        console.log(`Cards not found for season: ${selectedSeason}`);
                         setNotFound(true);
                         setCards([]);
                     } else {

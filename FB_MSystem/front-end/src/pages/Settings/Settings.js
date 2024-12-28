@@ -32,8 +32,6 @@ function Setting({ API_URL }) {
         setSaveStatus('loading');
 
         try {
-            console.log("Dữ liệu gửi đi:", teamSettings); // Kiểm tra dữ liệu trước khi gửi
-
             const response = await fetch(`${API_URL}/tham-so`, {
                 method: 'PUT',
                 headers: {
@@ -41,11 +39,7 @@ function Setting({ API_URL }) {
                 },
                 body: JSON.stringify(teamSettings),
             });
-
-            console.log("Phản hồi từ server:", response.status);
             const responseData = await response.json();
-            console.log("Dữ liệu phản hồi:", responseData);
-
             if (!response.ok) {
                 throw new Error(`Failed to save settings. HTTP status: ${response.status}`);
             }

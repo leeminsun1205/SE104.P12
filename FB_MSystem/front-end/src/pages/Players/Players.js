@@ -95,7 +95,6 @@ function Players({ API_URL }) {
             throw new Error("Failed to fetch players");
           }
           let data = await response.json();
-          console.log(data);
           setPlayers(data.cauThu);
           setCurrentPage(1);
         } catch (error) {
@@ -159,7 +158,6 @@ function Players({ API_URL }) {
 
   const handleAddPlayersToTeam = async (selectedPlayerIds) => {
     if (selectedPlayerIds.length === 0) return;
-    console.log(selectedPlayerIds)
     setLoading(true);
     try {
       const playersToAdd = selectedPlayerIds.map((playerId) => ({
@@ -199,7 +197,6 @@ function Players({ API_URL }) {
     }
   };
   const handleNavigate = (player) => {
-    console.log();
     navigate(`/doi-bong/${MaDoiBong}/cau-thu/${player.MaCauThu}`, {
       state: { player },
     });

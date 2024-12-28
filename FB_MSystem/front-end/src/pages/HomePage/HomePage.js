@@ -37,7 +37,6 @@ function HomePage( {API_URL } ) {
                     throw new Error("Failed to fetch teams");
                 }
                 const teamsData = await teamsResponse.json();
-                console.log(teamsData)
                 setTeams(teamsData);
             } catch (error) {
                 setError(error.message);
