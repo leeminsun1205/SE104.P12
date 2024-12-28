@@ -705,21 +705,21 @@ INSERT INTO CAUTHU (MaCauThu, TenCauThu, NgaySinh, QuocTich, LoaiCauThu, ViTri, 
 ('CT000321', 'Vũ Đình Hai', '2001-08-20', 'Việt Nam', 1, 'Tiền đạo', 1.77, 73.00, 29, 'Tiền đạo trẻ.'),
 ('CT000322', 'Trần Mạnh Cường', '1991-04-04', 'Việt Nam', 1, 'Hậu vệ', 1.80, 75.00, 12, 'Hậu vệ đa năng.');
 
-INSERT INTO BIENNHAN (MaBienNhan, MaDoiBong, LePhi, NgayThanhToan, TinhTrang, LyDo) VALUES
-('BN00001', 'DB001', 1000000000, '2023-09-15', 1, 'Lệ phí tham gia giải đấu'),
-('BN00002', 'DB002', 1000000000, '2023-08-31', 1, 'Lệ phí tham gia giải đấu'),
-('BN00003', 'DB003', 1000000000, '2023-09-22', 1, 'Lệ phí tham gia giải đấu'),
-('BN00004', 'DB004', 1000000000, '2023-09-05', 1, 'Lệ phí tham gia giải đấu'),
-('BN00005', 'DB005', 1000000000, '2023-09-28', 1, 'Lệ phí tham gia giải đấu'),
-('BN00006', 'DB006', 1000000000, '2023-09-10', 1, 'Lệ phí tham gia giải đấu'),
-('BN00007', 'DB007', 1000000000, '2023-09-18', 1, 'Lệ phí tham gia giải đấu'),
-('BN00008', 'DB008', 1000000000, '2023-08-31', 1, 'Lệ phí tham gia giải đấu'),
-('BN00009', 'DB009', 1000000000, '2023-09-25', 1, 'Lệ phí tham gia giải đấu'),
-('BN00010', 'DB010', 1000000000, '2023-09-01', 1, 'Lệ phí tham gia giải đấu'),
-('BN00011', 'DB011', 1000000000, '2023-09-12', 1, 'Lệ phí tham gia giải đấu'),
-('BN00012', 'DB012', 1000000000, '2023-09-29', 1, 'Lệ phí tham gia giải đấu'),
-('BN00013', 'DB013', 1000000000, '2023-09-08', 1, 'Lệ phí tham gia giải đấu'),
-('BN00014', 'DB014', 1000000000, '2023-09-20', 1, 'Lệ phí tham gia giải đấu');
+INSERT INTO BIENNHAN (MaBienNhan, MaDoiBong, SoTienDaNhan, LePhi, NgayThanhToan, TinhTrang, LyDo) VALUES
+('BN00001', 'DB001', 0, 1000000000, '2023-09-15', 1, 'Lệ phí tham gia giải đấu'),
+('BN00002', 'DB002', 0, 1000000000, '2023-08-31', 1, 'Lệ phí tham gia giải đấu'),
+('BN00003', 'DB003', 0, 1000000000, '2023-09-22', 1, 'Lệ phí tham gia giải đấu'),
+('BN00004', 'DB004', 0, 1000000000, '2023-09-05', 1, 'Lệ phí tham gia giải đấu'),
+('BN00005', 'DB005', 0, 1000000000, '2023-09-28', 1, 'Lệ phí tham gia giải đấu'),
+('BN00006', 'DB006', 0, 1000000000, '2023-09-10', 1, 'Lệ phí tham gia giải đấu'),
+('BN00007', 'DB007', 0, 1000000000, '2023-09-18', 1, 'Lệ phí tham gia giải đấu'),
+('BN00008', 'DB008', 0, 1000000000, '2023-08-31', 1, 'Lệ phí tham gia giải đấu'),
+('BN00009', 'DB009', 0, 1000000000, '2023-09-25', 1, 'Lệ phí tham gia giải đấu'),
+('BN00010', 'DB010', 0, 1000000000, '2023-09-01', 1, 'Lệ phí tham gia giải đấu'),
+('BN00011', 'DB011', 0, 1000000000, '2023-09-12', 1, 'Lệ phí tham gia giải đấu'),
+('BN00012', 'DB012', 0, 1000000000, '2023-09-29', 1, 'Lệ phí tham gia giải đấu'),
+('BN00013', 'DB013', 0, 1000000000, '2023-09-08', 1, 'Lệ phí tham gia giải đấu'),
+('BN00014', 'DB014', 0, 1000000000, '2023-09-20', 1, 'Lệ phí tham gia giải đấu');
 
 INSERT INTO MUAGIAI (MaMuaGiai, TenMuaGiai, NgayBatDau, NgayKetThuc) VALUES ('MG2023_1', 'Giải vô địch quốc gia V-league 2023-2024', '2023-10-20', '2024-06-30');
 
@@ -1637,3 +1637,5 @@ INNER JOIN MG_DB ON DB_CT.MaDoiBong = MG_DB.MaDoiBong
 WHERE DB_CT.MaCauThu = 'CT000017'
   AND DB_CT.MaDoiBong = 'DB002'
   AND MG_DB.MaMuaGiai = 'MG2026_1';
+  
+-- drop database se104
