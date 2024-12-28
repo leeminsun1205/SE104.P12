@@ -24,7 +24,81 @@ function Setting({ API_URL }) {
 
     const handleChangeTeamSettings = (e) => {
         const { name, value } = e.target;
-        setTeamSettings({ ...teamSettings, [name]: value });
+        let newValue = value;
+
+        if (name !== "LePhi") {
+            const parsedValue = parseInt(value, 10);
+            if (!isNaN(parsedValue) && parsedValue >= 0) {
+                if (name === "TieuChuanToiThieu" && (parsedValue < 1 || parsedValue > 5)) {
+                    return; // Don't update if outside the 1-5 range
+                }
+                newValue = parsedValue;
+            } else if (value === "") {
+                newValue = ""; // Allow clearing the input
+            } else if (value === "0") {
+                newValue = 0; // Explicitly handle "0"
+            } else {
+                return; // Don't update if not a non-negative number
+            }
+        } else {
+            const parsedValue = parseInt(value, 10);
+            if (!isNaN(parsedValue) && parsedValue >= 0) {
+                newValue = parsedValue;
+            } else if (value === "") {
+                newValue = "";
+            } else if (value === "0") {
+                newValue = 0;
+            } else {
+                return;
+            }
+        }
+
+        setTeamSettings({ ...teamSettings, [name]: newValue });
+    };
+
+    const handleChangeLePhi = (e) => {
+        const { value } = e.target;
+        const parsedValue = parseInt(value, 10);
+
+        if (!isNaN(parsedValue) && parsedValue >= 0) {
+            setTeamSettings(prevSettings => ({
+                ...prevSettings,
+                LePhi: parsedValue,
+            }));
+        } else if (value === "") {
+            setTeamSettings(prevSettings => ({
+                ...prevSettings,
+                LePhi: "",
+            }));
+        } else if (value === "0") {
+            setTeamSettings(prevSettings => ({
+                ...prevSettings,
+                LePhi: 0,
+            }));
+        }
+    };
+
+    const handleBlurLePhi = (e) => {
+        const { value } = e.target;
+        const parsedValue = parseInt(value, 10);
+        if (!isNaN(parsedValue) && parsedValue >= 0) {
+            const roundedValue = Math.ceil(parsedValue / 1000000) * 1000000;
+            setTeamSettings(prevSettings => ({
+                ...prevSettings,
+                LePhi: roundedValue,
+            }));
+        } else if (value === "0") {
+            setTeamSettings(prevSettings => ({
+                ...prevSettings,
+                LePhi: 0,
+            }));
+        } else if (value !== "") {
+            // Revert to previous valid value if input is invalid and not empty
+            setTeamSettings(prevSettings => ({
+                ...prevSettings,
+                LePhi: prevSettings.LePhi || 0, // Revert to 0 if no previous valid value
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -67,20 +141,21 @@ function Setting({ API_URL }) {
                         <label>Số cầu thủ tối thiểu của 1 đội</label>
                         <input
                             type="number"
-                            name="SoLuongCauThuToiThieu" // Đã sửa
-                            value={teamSettings.SoLuongCauThuToiThieu}
+                            name="SoLuongCauThuToiThieu"
+                            value={teamSettings.SoLuongCauThuToiThieu === 0 ? '0' : teamSettings.SoLuongCauThuToiThieu || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         />
                     </div>
 
-                    {/* Các input khác tương tự */}
                     <div className={styles["setting-group"]}>
                         <label>Số cầu thủ tối đa của 1 đội</label>
                         <input
                             type="number"
-                            name="SoLuongCauThuToiDa" // Đã sửa
-                            value={teamSettings.SoLuongCauThuToiDa}
+                            name="SoLuongCauThuToiDa"
+                            value={teamSettings.SoLuongCauThuToiDa === 0 ? '0' : teamSettings.SoLuongCauThuToiDa || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         />
                     </div>
 
@@ -88,9 +163,10 @@ function Setting({ API_URL }) {
                         <label>Số cầu thủ ngoại tối đa</label>
                         <input
                             type="number"
-                            name="SoCauThuNgoaiToiDa" // Đã sửa
-                            value={teamSettings.SoCauThuNgoaiToiDa}
+                            name="SoCauThuNgoaiToiDa"
+                            value={teamSettings.SoCauThuNgoaiToiDa === 0 ? '0' : teamSettings.SoCauThuNgoaiToiDa || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         />
                     </div>
 
@@ -98,9 +174,10 @@ function Setting({ API_URL }) {
                         <label>Tuổi thi đấu tối thiểu</label>
                         <input
                             type="number"
-                            name="TuoiToiThieu" // Đã sửa
-                            value={teamSettings.TuoiToiThieu}
+                            name="TuoiToiThieu"
+                            value={teamSettings.TuoiToiThieu === 0 ? '0' : teamSettings.TuoiToiThieu || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         /> tuổi
                     </div>
 
@@ -108,9 +185,10 @@ function Setting({ API_URL }) {
                         <label>Tuổi thi đấu tối đa</label>
                         <input
                             type="number"
-                            name="TuoiToiDa" // Đã sửa
-                            value={teamSettings.TuoiToiDa}
+                            name="TuoiToiDa"
+                            value={teamSettings.TuoiToiDa === 0 ? '0' : teamSettings.TuoiToiDa || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         /> tuổi
                     </div>
 
@@ -118,9 +196,10 @@ function Setting({ API_URL }) {
                         <label>Sức chứa tối thiểu sân đấu</label>
                         <input
                             type="number"
-                            name="SucChuaToiThieu" // Đã sửa
-                            value={teamSettings.SucChuaToiThieu}
+                            name="SucChuaToiThieu"
+                            value={teamSettings.SucChuaToiThieu === 0 ? '0' : teamSettings.SucChuaToiThieu || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         /> người
                     </div>
 
@@ -128,9 +207,11 @@ function Setting({ API_URL }) {
                         <label>Số sao đạt chuẩn tối thiểu</label>
                         <input
                             type="number"
-                            name="TieuChuanToiThieu" // Đã sửa
-                            value={teamSettings.TieuChuanToiThieu}
+                            name="TieuChuanToiThieu"
+                            value={teamSettings.TieuChuanToiThieu === 0 ? '0' : teamSettings.TieuChuanToiThieu || ''}
                             onChange={handleChangeTeamSettings}
+                            min="1"
+                            max="5"
                         /> sao
                     </div>
 
@@ -138,10 +219,13 @@ function Setting({ API_URL }) {
                         <label>Lệ phí tham gia</label>
                         <input
                             type="number"
-                            name="LePhi" // Đã sửa
-                            value={teamSettings.LePhi}
-                            onChange={handleChangeTeamSettings}
-                        /> VND
+                            name="LePhi"
+                            value={teamSettings.LePhi === 0 ? '0' : teamSettings.LePhi || ''}
+                            onChange={handleChangeLePhi}
+                            onBlur={handleBlurLePhi}
+                            min="0"
+                        />
+                        <span>VND</span>
                     </div>
                 </div>
 
@@ -151,9 +235,10 @@ function Setting({ API_URL }) {
                         <label>Thời điểm ghi bàn tối đa</label>
                         <input
                             type="number"
-                            name="ThoiDiemGhiBanToiDa" // Đã sửa
-                            value={teamSettings.ThoiDiemGhiBanToiDa}
+                            name="ThoiDiemGhiBanToiDa"
+                            value={teamSettings.ThoiDiemGhiBanToiDa === 0 ? '0' : teamSettings.ThoiDiemGhiBanToiDa || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         /> phút
                     </div>
                 </div>
@@ -164,9 +249,10 @@ function Setting({ API_URL }) {
                         <label>Điểm khi thắng</label>
                         <input
                             type="number"
-                            name="DiemThang" // Đã sửa
-                            value={teamSettings.DiemThang}
+                            name="DiemThang"
+                            value={teamSettings.DiemThang === 0 ? '0' : teamSettings.DiemThang || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         />
                     </div>
 
@@ -174,9 +260,10 @@ function Setting({ API_URL }) {
                         <label>Điểm khi hòa</label>
                         <input
                             type="number"
-                            name="DiemHoa" // Đã sửa
-                            value={teamSettings.DiemHoa}
+                            name="DiemHoa"
+                            value={teamSettings.DiemHoa === 0 ? '0' : teamSettings.DiemHoa || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         />
                     </div>
 
@@ -184,9 +271,10 @@ function Setting({ API_URL }) {
                         <label>Điểm khi thua</label>
                         <input
                             type="number"
-                            name="DiemThua" // Đã sửa
-                            value={teamSettings.DiemThua}
+                            name="DiemThua"
+                            value={teamSettings.DiemThua === 0 ? '0' : teamSettings.DiemThua || ''}
                             onChange={handleChangeTeamSettings}
+                            min="0"
                         />
                     </div>
                 </div>

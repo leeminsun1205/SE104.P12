@@ -5,15 +5,15 @@ import "./CreatePlayer.css";
 function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
   const navigate = useNavigate();
   const [player, setPlayer] = useState({
-    name: "",
-    dob: "",
-    nationality: "",
-    position: "",
-    birthplace: "",
-    height: "",
-    weight: "",
-    bio: "",
-    playerType: "",
+    TenCauThu: "",
+    NgaySinh: "",
+    QuocTich: "",
+    ViTri: "",
+    SoAo: "",
+    ChieuCao: "",
+    CanNang: "",
+    TieuSu: "",
+    LoaiCauThu: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -28,24 +28,24 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     let isValid = true;
     const newErrors = {};
 
-    if (!player.name.trim()) {
-      newErrors.name = "Tên cầu thủ không được để trống";
+    if (!player.TenCauThu.trim()) {
+      newErrors.TenCauThu = "Tên cầu thủ không được để trống";
       isValid = false;
     }
-    if (!player.position) {
-      newErrors.position = "Vị trí thi đấu không được để trống";
+    if (!player.ViTri) {
+      newErrors.ViTri = "Vị trí thi đấu không được để trống";
       isValid = false;
     }
-    if (!player.nationality.trim()) {
-      newErrors.nationality = "Quốc tịch không được để trống";
+    if (!player.QuocTich.trim()) {
+      newErrors.QuocTich = "Quốc tịch không được để trống";
       isValid = false;
     }
-    if (!player.dob) {
-      newErrors.dob = "Ngày tháng năm sinh không được để trống";
+    if (!player.NgaySinh) {
+      newErrors.NgaySinh = "Ngày tháng năm sinh không được để trống";
       isValid = false;
     }
-    if (!player.playerType) {
-      newErrors.playerType = "Loại cầu thủ không được để trống";
+    if (!player.LoaiCauThu) {
+      newErrors.LoaiCauThu = "Loại cầu thủ không được để trống";
       isValid = false;
     }
 
@@ -54,8 +54,8 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     if (isValid) {
       const newPlayer = {
         ...player,
-        height: player.height ? parseInt(player.height, 10) : null,
-        weight: player.weight ? parseInt(player.weight, 10) : null,
+        ChieuCao: player.ChieuCao ? parseInt(player.ChieuCao, 10) : null,
+        CanNang: player.CanNang ? parseInt(player.CanNang, 10) : null,
       };
 
       try {
@@ -90,15 +90,15 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
 
   const resetForm = () => {
     setPlayer({
-      name: "",
-      dob: "",
-      nationality: "",
-      position: "",
-      birthplace: "",
-      height: "",
-      weight: "",
-      bio: "",
-      playerType: "",
+      TenCauThu: "",
+      NgaySinh: "",
+      QuocTich: "",
+      ViTri: "",
+      SoAo: "",
+      ChieuCao: "",
+      CanNang: "",
+      TieuSu: "",
+      LoaiCauThu: "",
     });
     setErrors({});
   };
@@ -113,57 +113,57 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         </label>
         <input
           type="text"
-          name="name"
-          id="name"
-          value={player.name}
+          name="TenCauThu"
+          id="TenCauThu"
+          value={player.TenCauThu}
           onChange={handleInputChange}
         />
-        {errors.name && <p className="error-message">{errors.name}</p>}
+        {errors.TenCauThu && <p className="error-message">{errors.TenCauThu}</p>}
       </div>
       <div>
-        <label htmlFor="dob">
+        <label htmlFor="NgaySinh">
           Ngày sinh <span style={{ color: "red" }}>*</span>
         </label>
         <input
           type="date"
-          name="dob"
-          id="dob"
-          value={player.dob}
+          name="NgaySinh"
+          id="NgaySinh"
+          value={player.NgaySinh}
           onChange={handleInputChange}
         />
-        {errors.dob && <p className="error-message">{errors.dob}</p>}
+        {errors.NgaySinh && <p className="error-message">{errors.NgaySinh}</p>}
       </div>
       <div>
-        <label htmlFor="nationality">
+        <label htmlFor="QuocTich">
           Quốc tịch <span style={{ color: "red" }}>*</span>
         </label>
         <input
           type="text"
-          name="nationality"
-          id="nationality"
-          value={player.nationality}
+          name="QuocTich"
+          id="QuocTich"
+          value={player.QuocTich}
           onChange={handleInputChange}
         />
-        {errors.nationality && <p className="error-message">{errors.nationality}</p>}
+        {errors.QuocTich && <p className="error-message">{errors.QuocTich}</p>}
       </div>
       <div>
-        <label htmlFor="birthplace">Nơi sinh</label>
+        <label htmlFor="SoAo">Số áo</label>
         <input
           type="text"
-          name="birthplace"
-          id="birthplace"
-          value={player.birthplace}
+          name="SoAo"
+          id="SoAo"
+          value={player.SoAo}
           onChange={handleInputChange}
         />
       </div>
       <div>
-        <label htmlFor="position">
+        <label htmlFor="ViTri">
           Vị trí thi đấu <span style={{ color: "red" }}>*</span>
         </label>
         <select
-          id="position"
-          name="position"
-          value={player.position}
+          id="ViTri"
+          name="ViTri"
+          value={player.ViTri}
           onChange={handleInputChange}
         >
           <option value="">Lựa chọn vị trí thi đấu</option>
@@ -172,50 +172,50 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
           <option value="Hậu vệ">Hậu vệ</option>
           <option value="Thủ môn">Thủ môn</option>
         </select>
-        {errors.position && <p className="error-message">{errors.position}</p>}
+        {errors.ViTri && <p className="error-message">{errors.ViTri}</p>}
       </div>
       <div>
-        <label htmlFor="playerType">
+        <label htmlFor="LoaiCauThu">
           Loại cầu thủ <span style={{ color: "red" }}>*</span>
         </label>
         <select
-          id="playerType"
-          name="playerType"
-          value={player.playerType}
+          id="LoaiCauThu"
+          name="LoaiCauThu"
+          value={player.LoaiCauThu}
           onChange={handleInputChange}
         >
           <option value="">Chọn loại cầu thủ</option>
           <option value="Trong nước">Trong nước</option>
           <option value="Ngoài nước">Ngoài nước</option>
         </select>
-        {errors.playerType && <p className="error-message">{errors.playerType}</p>}
+        {errors.LoaiCauThu && <p className="error-message">{errors.LoaiCauThu}</p>}
       </div>
       <div>
-        <label htmlFor="height">Chiều cao (cm)</label>
+        <label htmlFor="ChieuCao">Chiều cao (cm)</label>
         <input
           type="number"
-          name="height"
-          id="height"
-          value={player.height}
+          name="ChieuCao"
+          id="ChieuCao"
+          value={player.ChieuCao}
           onChange={handleInputChange}
         />
       </div>
       <div>
-        <label htmlFor="weight">Cân nặng (kg)</label>
+        <label htmlFor="CanNang">Cân nặng (kg)</label>
         <input
           type="number"
-          name="weight"
-          id="weight"
-          value={player.weight}
+          name="CanNang"
+          id="CanNang"
+          value={player.CanNang}
           onChange={handleInputChange}
         />
       </div>
       <div>
-        <label htmlFor="bio">Tiểu sử:</label>
+        <label htmlFor="TieuSu">Tiểu sử:</label>
         <textarea
-          id="bio"
-          name="bio"
-          value={player.bio}
+          id="TieuSu"
+          name="TieuSu"
+          value={player.TieuSu}
           onChange={handleInputChange}
         />
       </div>
