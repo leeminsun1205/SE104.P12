@@ -19,10 +19,8 @@ function EditTeam({ API_URL, onEditTeam }) {
     });
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
-    const [availableStadiums, setAvailableStadiums] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [availabilityMessage, setAvailabilityMessage] = useState('');
-    const [isStadiumFieldDisabled, setIsStadiumFieldDisabled] = useState(true); // Đảm bảo state này được thêm
+    const [stadiumName, setStadiumName] = useState(''); // State để lưu tên sân
 
     useEffect(() => {
         const fetchTeam = async () => {
@@ -34,9 +32,11 @@ function EditTeam({ API_URL, onEditTeam }) {
                 let data = await response.json();
                 data = data.doiBong;
                 setTeam({
-                    ...data, // Sử dụng spread operator để gán tất cả các thuộc tính
+                    ...data,
                 });
-                setIsStadiumFieldDisabled(true); // Đảm bảo dòng này có
+                if (data.MaSan) {
+                    fetchStadiumName(data.MaSan);
+                }
             } catch (error) {
                 console.error('Error fetching team:', error);
                 setErrors({ general: error.message });
@@ -45,43 +45,21 @@ function EditTeam({ API_URL, onEditTeam }) {
             }
         };
 
-        const fetchAvailableStadiums = async () => {
+        const fetchStadiumName = async (maSan) => {
             try {
-                const stadiumsResponse = await fetch(`${API_URL}/san-thi-dau`);
-                if (!stadiumsResponse.ok) {
-                    throw new Error('Failed to fetch stadiums');
+                const response = await fetch(`${API_URL}/san-thi-dau/${maSan}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch stadium data');
                 }
-                const stadiumsData = await stadiumsResponse.json();
-                const allStadiums = stadiumsData.doiBong || stadiumsData;
-
-                const teamsResponse = await fetch(`${API_URL}/doi-bong`);
-                if (!teamsResponse.ok) {
-                    throw new Error('Failed to fetch teams');
-                }
-                const teamsData = await teamsResponse.json();
-                const allTeams = teamsData.doiBong || teamsData;
-
-                const currentTeam = allTeams.find(t => t.MaDoiBong === MaDoiBong);
-                const currentTeamMaSan = currentTeam?.MaSan;
-
-                const usedStadiumIds = allTeams
-                    .filter(t => t.MaDoiBong !== MaDoiBong && t.MaSan)
-                    .map(t => t.MaSan);
-
-                const available = allStadiums.filter(stadium =>
-                    !usedStadiumIds.includes(stadium.MaSan) || stadium.MaSan === currentTeamMaSan
-                );
-
-                setAvailableStadiums(available);
-
+                const data = await response.json();
+                setStadiumName(data.san.TenSan);
             } catch (error) {
-                console.error('Error fetching available stadiums:', error);
-                setErrors({ general: 'Failed to fetch available stadiums' });
+                console.error('Error fetching stadium name:', error);
+                setStadiumName('Không có sân');
             }
         };
 
         fetchTeam();
-        fetchAvailableStadiums();
     }, [MaDoiBong, API_URL]);
 
     const handleChange = (e) => {
@@ -103,14 +81,10 @@ function EditTeam({ API_URL, onEditTeam }) {
         }
     };
 
-    // Đảm bảo hàm này đã được loại bỏ hoặc comment out
-    // const handleStadiumChange = async (e) => { ... }
-
     const handleSave = async () => {
         setLoading(true);
         setErrors({});
         setSuccessMessage('');
-        setAvailabilityMessage('');
 
         let isValid = true;
         const newErrors = {};
@@ -140,9 +114,7 @@ function EditTeam({ API_URL, onEditTeam }) {
                     TenDoiBong: team.TenDoiBong,
                     ThanhPhoTrucThuoc: team.ThanhPhoTrucThuoc,
                     TenHLV: team.TenHLV,
-                    MaSan: team.MaSan,
-                    SucChua: team.SucChua,
-                    TieuChuan: team.TieuChuan,
+                    // Không gửi MaSan, SucChua, TieuChuan để tránh việc chỉnh sửa
                     home_kit_image: team.home_kit_image,
                     away_kit_image: team.away_kit_image,
                     third_kit_image: team.third_kit_image,
@@ -151,11 +123,7 @@ function EditTeam({ API_URL, onEditTeam }) {
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                if (errorData && errorData.error && errorData.error.includes('không khả dụng')) {
-                    setAvailabilityMessage(errorData.error);
-                } else {
-                    setErrors({ general: errorData.error || 'Lỗi khi cập nhật đội bóng' });
-                }
+                setErrors({ general: errorData.error || 'Lỗi khi cập nhật đội bóng' });
                 return;
             }
 
@@ -221,21 +189,14 @@ function EditTeam({ API_URL, onEditTeam }) {
             </div>
 
             <div>
-                <label htmlFor="MaSan">
+                <label>
                     Địa điểm sân nhà
                 </label>
-                <select
-                    name="MaSan"
-                    id="MaSan"
-                    value={team.MaSan || ''}
-                    disabled={isStadiumFieldDisabled} // Đảm bảo thuộc tính này có
-                    // Không có onChange ở đây
-                >
-                    <option value="">{availableStadiums.find(stadium => stadium.MaSan === team.MaSan)?.TenSan || 'Không có sân'}</option>
-                    {/* Bạn có thể không cần hiển thị danh sách sân khác */}
-                </select>
-                {errors.MaSan && <p className="error-message">{errors.MaSan}</p>}
-                {availabilityMessage && <p className="warning-message error-text">{availabilityMessage}</p>}
+                <input
+                    type="text"
+                    value={stadiumName}
+                    readOnly
+                />
             </div>
             <div>
                 <label>Sức chứa:</label>
