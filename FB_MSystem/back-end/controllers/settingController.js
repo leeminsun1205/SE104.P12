@@ -6,14 +6,14 @@ const getSettings = async (req, res) => {
         const loaiBanThang = await LoaiBanThang.findAll();
         const loaiThePhat = await LoaiThePhat.findAll();
         const loaiUuTien = await LoaiUuTien.findAll();
-        const utXepHang = await UtXepHang.findAll(); // Thêm dòng này để lấy dữ liệu UtXepHang
+        // const utXepHang = await UtXepHang.findAll(); // Thêm dòng này để lấy dữ liệu UtXepHang
 
         // Chuẩn bị kết quả
         const settings = {
             LoaiBanThang: loaiBanThang,
             LoaiThePhat: loaiThePhat,
             LoaiUuTien: loaiUuTien,
-            Ut_XepHang: utXepHang, // Thêm UtXepHang vào đối tượng settings
+            // Ut_XepHang: utXepHang, // Thêm UtXepHang vào đối tượng settings
         };
 
         // Trả về kết quả
