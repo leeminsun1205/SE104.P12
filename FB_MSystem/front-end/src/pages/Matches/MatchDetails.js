@@ -62,6 +62,48 @@ function MatchDetails({ API_URL }) {
     fetchData();
   }, [API_URL, MaTranDau, MaMuaGiai]);
 
+  const handleStartMatch = async () => {
+    try {
+      const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ TinhTrang: true }),
+      });
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(`Không thể bắt đầu trận đấu: ${message}`);
+      }
+      const updatedMatchData = await response.json();
+      setMatch(updatedMatchData.tranDau);
+    } catch (error) {
+      console.error("Lỗi khi bắt đầu trận đấu:", error);
+      setError(error);
+    }
+  };
+
+  const handleEndMatch = async () => {
+    try {
+      const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ TinhTrang: false }),
+      });
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(`Không thể kết thúc trận đấu: ${message}`);
+      }
+      const updatedMatchData = await response.json();
+      setMatch(updatedMatchData.tranDau);
+    } catch (error) {
+      console.error("Lỗi khi kết thúc trận đấu:", error);
+      setError(error);
+    }
+  };
+
   const addGoal = () => {
     if (!editedMatch) {
       console.error("editedMatch is null");
@@ -425,6 +467,18 @@ function MatchDetails({ API_URL }) {
       <h1 className={styles.matchTitle}>
         {match.DoiBongNha.TenDoiBong} <span>vs</span> {match.DoiBongKhach.TenDoiBong}
       </h1>
+
+      {match?.TinhTrang === false && (
+        <button className={styles.actionButton} onClick={handleStartMatch}>
+          Bắt đầu trận đấu
+        </button>
+      )}
+
+      {match?.TinhTrang === true && (
+        <button className={styles.actionButton} onClick={handleEndMatch}>
+          Kết thúc trận đấu
+        </button>
+      )}
 
       {!match?.TinhTrang && (
         <div>
