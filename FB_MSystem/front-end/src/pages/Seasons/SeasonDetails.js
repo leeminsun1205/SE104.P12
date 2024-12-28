@@ -398,7 +398,7 @@ function SeasonDetails({ API_URL }) {
 
     return (
         <div className={styles.container}>
-            <h2 className={styles.title}>{season.TenMuaGiai}</h2>
+            <h2 className={styles.title}>Mùa giải {season.TenMuaGiai}</h2>
             <p className={styles.paragraph}><strong>Mã mùa giải:</strong> {season.MaMuaGiai}</p>
             <p className={styles.paragraph}><strong>Ngày bắt đầu:</strong> {new Date(season.NgayBatDau).toLocaleDateString()}</p>
             <p className={styles.paragraph}><strong>Ngày kết thúc:</strong> {new Date(season.NgayKetThuc).toLocaleDateString()}</p>
