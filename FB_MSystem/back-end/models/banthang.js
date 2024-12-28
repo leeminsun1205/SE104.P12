@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const {autoCreateCode} = require('../utils/autoCreateCode')
+
 const BanThang = sequelize.define('BanThang', {
     MaBanThang: {
         type: DataTypes.CHAR(10),

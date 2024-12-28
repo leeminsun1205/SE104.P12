@@ -33,19 +33,6 @@ const CauThuController = {
                 return res.status(500).json({ error: 'Không tìm thấy giá trị tham số.' });
             }
     
-            // const { TuoiToiThieu, TuoiToiDa } = thamSo;
-    
-            // // Tính tuổi dựa trên NgaySinh và năm hiện tại (2024)
-            // const birthYear = new Date(NgaySinh).getFullYear();
-            // const age = 2024 - birthYear;
-    
-            // // Kiểm tra điều kiện độ tuổi
-            // if (age < TuoiToiThieu || age > TuoiToiDa) {
-            //     return res.status(400).json({
-            //         error: `Độ tuổi của cầu thủ phải nằm trong khoảng từ ${TuoiToiThieu} đến ${TuoiToiDa}. Độ tuổi hiện tại: ${age}`
-            //     });
-            // }
-    
             // Kiểm tra QuocTich và đặt giá trị mặc định cho LoaiCauThu, 1 là trong nước và 0 là ngoài nước
             const LoaiCauThu = (QuocTich && QuocTich.toLowerCase() === 'việt nam') ? 1 : 0;
     
