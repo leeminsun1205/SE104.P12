@@ -1,5 +1,3 @@
-// --- START OF FILE LookUpSeason.js ---
-
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./LookUpSeason.module.css";
@@ -12,6 +10,7 @@ function LookUpSeason({ API_URL }) {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [currentPage, setCurrentPage] = useState(1);
     const teamsPerPage = 5;
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchTeamStatistics = async () => {
@@ -42,6 +41,11 @@ function LookUpSeason({ API_URL }) {
         fetchTeamStatistics();
     }, [API_URL]);
 
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+        setCurrentPage(1); // Reset to first page when searching
+    };
+
     const requestSort = (key) => {
         let direction = 'ascending';
         if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -52,8 +56,14 @@ function LookUpSeason({ API_URL }) {
 
     const sortedStatistics = useMemo(() => {
         const sortableStatistics = [...teamStatistics];
+
+        // Apply search filter
+        const filteredStatistics = sortableStatistics.filter(team =>
+            team.TenDoiBong.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
         if (sortConfig.key !== null) {
-            sortableStatistics.sort((a, b) => {
+            filteredStatistics.sort((a, b) => {
                 const aValue = a[sortConfig.key];
                 const bValue = b[sortConfig.key];
 
@@ -70,8 +80,8 @@ function LookUpSeason({ API_URL }) {
                 }
             });
         }
-        return sortableStatistics;
-    }, [teamStatistics, sortConfig]);
+        return filteredStatistics;
+    }, [teamStatistics, sortConfig, searchTerm]);
 
     const getSortIndicator = (key) => {
         if (sortConfig.key === key) {
@@ -109,6 +119,14 @@ function LookUpSeason({ API_URL }) {
                 <Link to="/tra-cuu" className={styles.backButton}>
                     Quay lại
                 </Link>
+            </div>
+            <div className={styles.searchBar}>
+                <input
+                    type="text"
+                    placeholder="Tìm kiếm đội bóng..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                />
             </div>
             <div className={styles.tableWrapper}>
                 <table className={styles.standingsTable}>
