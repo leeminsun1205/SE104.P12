@@ -1,157 +1,68 @@
 // src/pages/Dashboard/Dashboard.js
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./Dashboard.module.css";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { Link } from "react-router-dom";
 
 function Dashboard() {
-  const [matchesData, setMatchesData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [totalTeams, setTotalTeams] = useState(0);
-  const [topScorer, setTopScorer] = useState(null);
-  const [chartData, setChartData] = useState(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("http://localhost:5000/api/dashboard");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        // setTeamsData(data.teams || []);
-        setMatchesData(data.matches || []);
-        setTotalTeams(data.totalTeams);
-        setTopScorer(data.topScorer);
-        const teamGoals = data.teams.map(team => ({
-          name: team.name,
-          goals: calculateGoalsForTeam(team.id, "2023-2024") 
-        }));
-  
-        setChartData({
-          labels: teamGoals.map(team => team.name),
-          datasets: [
-            {
-              label: "Tổng số bàn thắng",
-              data: teamGoals.map(team => team.goals),
-              backgroundColor: "rgba(54, 162, 235, 0.5)",
-              borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 1,
-            },
-          ],
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchData();
-  }, []);
-  
-  // Hàm giả lập tính toán số bàn thắng cho mỗi đội
-  function calculateGoalsForTeam(teamId, season) {
-    const sampleGoals = {
-      1: 25,
-      2: 20,
-      3: 18,
-      4: 15,
-      5: 12,
-    }; 
-  
-    return sampleGoals[teamId] || 0;
-  }
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Số bàn thắng của các đội bóng",
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Số bàn thắng",
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: "Đội bóng",
-        },
-      },
-    },
-  };
-
-  if (loading) {
-    return <div className={styles.loading}>Đang tải dữ liệu...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>Lỗi: {error}</div>;
-  }
-
   return (
     <div className={styles.dashboard}>
-      <h2 className={styles.title}>Bảng điều khiển</h2>
-      <div className={styles.cards}>
-        <div className={styles.card}>
-          <h3>Tổng số đội</h3>
-          <p>{totalTeams}</p>
+      <h2 className={styles.title}>Chào mừng đến với Trang Điều Hướng</h2>
+      <div className={styles.navigationGrid}>
+        {/* Nhóm Quản lý Giải Đấu */}
+        <div className={styles.navigationGroup}>
+          <h3>Quản lý Giải Đấu</h3>
+          <Link to="/mua-giai" className={styles.navigationCard}>
+            <i className="fas fa-calendar"></i>
+            <span>Mùa giải</span>
+          </Link>
+          <Link to="/doi-bong" className={styles.navigationCard}>
+            <i className="fas fa-users"></i>
+            <span>Đội bóng</span>
+          </Link>
+          <Link to="/san-thi-dau" className={styles.navigationCard}>
+            <i className="fas fa-futbol"></i>
+            <span>Sân thi đấu</span>
+          </Link>
+          <Link to="/cau-thu" className={styles.navigationCard}>
+            <i className="fas fa-user"></i>
+            <span>Cầu thủ</span>
+          </Link>
+          <Link to="/tran-dau" className={styles.navigationCard}>
+            <i className="fas fa-futbol"></i>
+            <span>Trận đấu</span>
+          </Link>
+          <Link to="/danh-sach" className={styles.navigationCard}>
+            <i className="fas fa-list-ol"></i>
+            <span>Danh sách</span>
+          </Link>
+          <Link to="/tao-moi" className={styles.navigationCard}>
+            <i className="fas fa-plus"></i>
+            <span>Thêm mới</span>
+          </Link>
+          <Link to="/bien-nhan" className={styles.navigationCard}>
+            <i className="fas fa-file-invoice"></i>
+            <span>Biên nhận lệ phí</span>
+          </Link>
+          <Link to="/tra-cuu" className={styles.navigationCard}>
+            <i className="fas fa-search"></i>
+            <span>Tra cứu</span>
+          </Link>
         </div>
-        <div className={styles.card}>
-          <h3>Trận đấu sắp tới</h3>
-          <p>{matchesData?.filter((match) => !match.played).length || 0}</p>
-        </div>
-        <div className={styles.card}>
-          <h3>Trận đấu đã hoàn thành</h3>
-          <p>{matchesData?.filter((match) => match.played).length || 0}</p>
-        </div>
-        <div className={styles.card}>
-          <h3>Vua phá lưới</h3>
-          <p>
-            {topScorer
-              ? `${topScorer.name} - ${topScorer.goals || 0} Bàn thắng`
-              : "Không có dữ liệu"}
-          </p>
-        </div>
-      </div>
 
-      <div className={styles.graphs}>
-        <div className={styles.graph}>
-          {chartData ? (
-            <Bar options={chartOptions} data={chartData} />
-          ) : (
-            <p>Đang tải biểu đồ...</p>
-          )}
+        {/* Nhóm Cài Đặt */}
+        <div className={styles.navigationGroup}>
+          <h3>Cài Đặt</h3>
+          <Link to="/cai-dat/chung" className={styles.navigationCard}>
+            <i className="fas fa-cog"></i>
+            <span>Cài đặt chung</span>
+          </Link>
+          <Link to="/cai-dat/cac-loai" className={styles.navigationCard}>
+            <i className="fas fa-sliders-h"></i>
+            <span>Cài đặt các loại</span>
+          </Link>
         </div>
+
+        {/* Bạn có thể thêm các nhóm điều hướng khác nếu cần */}
       </div>
     </div>
   );

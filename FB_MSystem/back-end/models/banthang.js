@@ -27,7 +27,7 @@ const BanThang = sequelize.define('BanThang', {
     ThoiDiem: {
         type: DataTypes.TINYINT,
         allowNull: false,
-        validate: { min: 1 },
+        validate: { min: 0 },
     },
 }, {
     tableName: 'BANTHANG',

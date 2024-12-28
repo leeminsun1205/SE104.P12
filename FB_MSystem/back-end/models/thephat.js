@@ -40,7 +40,7 @@ const ThePhat = sequelize.define('ThePhat', {
         },
     },
     ThoiGian: {
-        type: DataTypes.TIME,
+        type: DataTypes.TINYINT,
         allowNull: false,
     },
     LyDo: {
