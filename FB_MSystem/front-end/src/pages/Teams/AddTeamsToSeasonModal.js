@@ -68,7 +68,7 @@ function AddTeamsToSeasonModal({ season, onAddTeamsToSeason, onClose }) {
                       checked={selectedTeams.includes(team.MaDoiBong)}
                       onChange={() => handleTeamSelection(team.MaDoiBong)}
                     />
-                    <span className="add-teams-name">{team.name}</span>
+                    <span className="add-teams-name">{team.TenDoiBong}</span>
                   </label>
                 </li>
               ))}

@@ -220,6 +220,8 @@ function SeasonDetails({ API_URL }) {
             const updatedSeasonResponse = await fetch(`${API_URL}/mua-giai/${MaMuaGiai}`);
             const updatedSeasonData = await updatedSeasonResponse.json();
             setSeason(updatedSeasonData.muaGiai);
+            // setTeams(updatedSeasonData.muaGiai.doiBongs || []);
+
             setTeams(selectedTeamsToAdd || []);
             console.log(selectedTeamsToAdd)
             handleCloseAddTeamsModal();

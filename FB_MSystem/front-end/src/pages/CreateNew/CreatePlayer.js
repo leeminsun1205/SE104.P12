@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreatePlayer.css";
 
-function CreatePlayer({ API_URL, onAddPlayer }) {
+function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
   const navigate = useNavigate();
   const [player, setPlayer] = useState({
     name: "",
@@ -70,11 +70,12 @@ function CreatePlayer({ API_URL, onAddPlayer }) {
         if (response.ok) {
           const data = await response.json();
           alert("Đã thêm cầu thủ thành công!");
-          navigate("/tao-moi");
+          // navigate("/tao-moi");
           // If you need to update the parent's state with the new player
           if (onAddPlayer) {
-            onAddPlayer(data.player);
+            onAddPlayer(data);
           }
+          onClose();
         } else {
           const errorData = await response.json();
           console.error("Failed to add player:", errorData);
