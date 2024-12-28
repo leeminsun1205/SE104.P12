@@ -118,14 +118,14 @@ function TopScorers({ API_URL }) {
                 <table className={styles.scorersTable}>
                     <thead>
                         <tr>
-                            <th className={styles.center}>Hạng</th>
-                            <th onClick={() => requestSort('MaCauThu')} className={styles.center}> {/* Sort by MaCauThu */}
+                            <th>Hạng</th>
+                            <th onClick={() => requestSort('MaCauThu')}> {/* Sort by MaCauThu */}
                                 Cầu thủ {getSortIndicator('MaCauThu')}
                             </th>
-                            <th onClick={() => requestSort('MaDoiBong')} className={styles.center}>
+                            <th onClick={() => requestSort('MaDoiBong')}>
                                 Đội {getSortIndicator('MaDoiBong')}
                             </th>
-                            <th onClick={() => requestSort('SoBanThang')} className={styles.center}>
+                            <th onClick={() => requestSort('SoBanThang')}>
                                 Số bàn thắng {getSortIndicator('SoBanThang')}
                             </th>
                         </tr>
@@ -133,10 +133,10 @@ function TopScorers({ API_URL }) {
                     <tbody>
                         {sortedTopScorers.map((scorer, index) => (
                             <tr key={index}>
-                                <td className={styles.center}>{index + 1}</td>
-                                <td className={styles.center}>{scorer.CauThu.TenCauThu || 'Unknown Player'}</td> {/* Display player name */}
-                                <td className={styles.center}>{scorer.DoiBong.TenDoiBong || 'Unknown Team'}</td>
-                                <td className={styles.center}>{scorer.SoBanThang}</td>
+                                <td>{index + 1}</td>
+                                <td>{scorer.CauThu.TenCauThu || 'Unknown Player'}</td> {/* Display player name */}
+                                <td>{scorer.DoiBong.TenDoiBong || 'Unknown Team'}</td>
+                                <td>{scorer.SoBanThang}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -151,4 +151,4 @@ function TopScorers({ API_URL }) {
     );
 }
 
-export default TopScorers;
+export default TopScorers;  

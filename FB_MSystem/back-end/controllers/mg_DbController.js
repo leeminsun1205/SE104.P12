@@ -249,6 +249,37 @@ const MgDbController = {
             res.status(500).json({ error: 'Lỗi khi xóa liên kết.' });
         }
     },
+
+    async deleteCauThuFromDoiBongMuaGiai(req, res) {
+        try {
+            const { MaMuaGiai, MaDoiBong, MaCauThu } = req.params;
+    
+            // Kiểm tra xem bản ghi DbCt có tồn tại không
+            const dbCtRecord = await DbCt.findOne({
+                where: { MaDoiBong, MaCauThu },
+                include: [{
+                    model: DoiBong,
+                    as: 'DoiBong',
+                    where: { MaDoiBong },
+                    include: [{
+                        model: MgDb,
+                        as: 'CacMuaGiaiThamGia',
+                        where: { MaMuaGiai }
+                    }]
+                }]
+            });
+            console.log(dbCtRecord)
+            if (!dbCtRecord) {
+                return res.status(404).json({ error: 'Không tìm thấy cầu thủ này trong đội ở mùa giải này.' });
+            }
+    
+            await dbCtRecord.destroy();
+            res.status(204).send();
+        } catch (error) {
+            console.error('Lỗi khi xóa cầu thủ khỏi đội trong mùa giải:', error);
+            res.status(500).json({ error: 'Lỗi khi xóa cầu thủ khỏi đội trong mùa giải.' });
+        }
+    },
 };
 
 module.exports = MgDbController;

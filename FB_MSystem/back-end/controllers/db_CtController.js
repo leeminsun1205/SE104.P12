@@ -118,6 +118,7 @@ const DbCtController = {
     async createMany(req, res) {
         try {
             const { links } = req.body; // Nhận danh sách các bản ghi từ body
+            console.log(links)
             if (!Array.isArray(links) || links.length === 0) {
                 return res.status(400).json({ error: 'Danh sách liên kết không hợp lệ.' });
             }

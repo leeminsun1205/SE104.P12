@@ -17,10 +17,9 @@ function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, o
         }
         const allPlayersData = await allPlayersResponse.json();
         const allPlayers = allPlayersData.cauThu;
-
         // Fetch players currently in the team for the selected season
         const currentTeamPlayersResponse = await fetch(
-          `${aAPI_URl}/db-ct/doi-bong/${teamId}/cau-thu?season=${season}`
+          `${aAPI_URl}/mg-db/mua-giai/${season}/doi-bong/${teamId}`
         );
         if (!currentTeamPlayersResponse.ok) {
           throw new Error("Failed to fetch current team players");

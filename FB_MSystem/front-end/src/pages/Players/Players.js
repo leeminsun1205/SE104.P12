@@ -6,7 +6,7 @@ import AddPlayersToTeamModal from "./AddPlayersToTeamModal";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import "./Players.css";
 
-function Players({ API_URL, seasons }) {
+function Players({ API_URL }) {
   const { MaDoiBong } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState([]);
@@ -17,15 +17,17 @@ function Players({ API_URL, seasons }) {
   const [selectedSeason, setSelectedSeason] = useState("");
   const [availablePlayers, setAvailablePlayers] = useState([]);
   const [teamName, setTeamName] = useState("");
+  const [availableSeasons, setAvailableSeasons] = useState([]); // State để lưu các mùa giải hợp lệ
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [playersPerPage] = useState(5); // You can adjust the number of players per page
+  const [playersPerPage] = useState(5);
+  const paginationRange = 5; // Số lượng trang hiển thị
 
   useEffect(() => {
     const fetchTeamName = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/doi-bong/${MaDoiBong}`);
+        const response = await fetch(`${API_URL}/doi-bong/${MaDoiBong}`);
         if (!response.ok) {
           throw new Error("Failed to fetch team data");
         }
@@ -37,26 +39,40 @@ function Players({ API_URL, seasons }) {
     };
 
     fetchTeamName();
-  }, [MaDoiBong]);
+  }, [MaDoiBong, API_URL]);
 
-  // Fetch players based on the selected season
+  // Lấy danh sách các mùa giải mà đội bóng này đã tham gia
   useEffect(() => {
-    const fetchPlayers = async () => {
+    const fetchAvailableSeasons = async () => {
       setLoading(true);
       setError(null);
       try {
-        let url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu`;
-        if (selectedSeason && selectedSeason !== "all") {
-          url += `?season=${selectedSeason}`;
-        }
-        const response = await fetch(url);
+        const response = await fetch(`${API_URL}/mua-giai`); // Lấy tất cả các mùa giải
         if (!response.ok) {
-          throw new Error("Failed to fetch players");
+          throw new Error("Failed to fetch seasons");
         }
-        let data = await response.json();
-        console.log(data)
-        setPlayers(data.cauThu);
-        setCurrentPage(1);
+        const seasonsData = await response.json();
+        const filteredSeasons = [];
+        // Duyệt qua từng mùa giải và kiểm tra xem MaDoiBong có trong đó không
+        for (const season of seasonsData.muaGiai) {
+          const doiBongResponse = await fetch(`${API_URL}/mg-db/mua-giai/${season.MaMuaGiai}/doi-bong`);
+          if (doiBongResponse.ok) {
+            const doiBongData = await doiBongResponse.json();
+            const teamExistsInSeason = doiBongData.some(
+              (team) => team.MaDoiBong === MaDoiBong
+            );
+            if (teamExistsInSeason) {
+              filteredSeasons.push(season); // Chỉ lấy MaMuaGiai
+            }
+          } else {
+            console.error(`Failed to fetch team data for season ${season.MaMuaGiai}`);
+          }
+        }
+        setAvailableSeasons(filteredSeasons);
+        // Nếu chưa có mùa giải nào được chọn, chọn mùa giải đầu tiên có sẵn
+        if (filteredSeasons.length > 0 && !selectedSeason) {
+          setSelectedSeason(filteredSeasons[0].MaMuaGiai);
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -64,8 +80,34 @@ function Players({ API_URL, seasons }) {
       }
     };
 
-    fetchPlayers();
-  }, [MaDoiBong, selectedSeason]); // Include selectedSeason in the dependency array
+    fetchAvailableSeasons();
+  }, [API_URL, MaDoiBong, selectedSeason]);
+  // Fetch players dựa trên mùa giải được chọn
+  useEffect(() => {
+    if (selectedSeason) {
+      const fetchPlayers = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          let url = `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong/${MaDoiBong}`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("Failed to fetch players");
+          }
+          let data = await response.json();
+          console.log(data);
+          setPlayers(data.cauThu);
+          setCurrentPage(1);
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPlayers();
+    }
+  }, [API_URL, MaDoiBong, selectedSeason]);
 
   useEffect(() => {
     const fetchAvailablePlayers = async () => {
@@ -75,8 +117,7 @@ function Players({ API_URL, seasons }) {
           throw new Error("Failed to fetch available players");
         }
         const data = await response.json();
-        console.log(data);
-        setAvailablePlayers(data);
+        setAvailablePlayers(data.cauThu);
       } catch (error) {
         console.error("Error fetching available players:", error);
         setError("Failed to fetch available players.");
@@ -84,7 +125,7 @@ function Players({ API_URL, seasons }) {
     };
 
     fetchAvailablePlayers();
-  }, []); // Fetch available players only once
+  }, [API_URL]);
 
   const handleAddPlayer = (newPlayer) => {
     setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
@@ -97,10 +138,7 @@ function Players({ API_URL, seasons }) {
 
   const handleDeletePlayer = async (playerId) => {
     try {
-      let url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu/${playerId}`;
-      if (selectedSeason && selectedSeason !== "all") {
-        url += `?season=${selectedSeason}`;
-      }
+      let url = `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong/${MaDoiBong}/cau-thu/${playerId}`;
       const response = await fetch(url, {
         method: "DELETE",
       });
@@ -110,7 +148,6 @@ function Players({ API_URL, seasons }) {
         throw new Error(errorData.message || "Failed to delete player");
       }
 
-      // Update state to remove the deleted player
       setPlayers((prevPlayers) =>
         prevPlayers.filter((player) => player.MaCauThu !== playerId)
       );
@@ -122,7 +159,7 @@ function Players({ API_URL, seasons }) {
 
   const handleAddPlayersToTeam = async (selectedPlayerIds) => {
     if (selectedPlayerIds.length === 0) return;
-
+    console.log(selectedPlayerIds)
     setLoading(true);
     try {
       const playersToAdd = selectedPlayerIds.map((playerId) => ({
@@ -131,35 +168,29 @@ function Players({ API_URL, seasons }) {
         MaMuaGiai: selectedSeason,
       }));
       const response = await fetch(`${API_URL}/db-ct/createMany`, {
-        // Assuming this endpoint handles adding players to teams for a season
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(playersToAdd),
+        body: JSON.stringify({ links: playersToAdd }),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add players to team");
       }
 
-      // After successfully adding players, refetch the players for the current season
       const fetchPlayersResponse = await fetch(
-        `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu?season=${selectedSeason}`
+        `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong/${MaDoiBong}`
       );
       if (fetchPlayersResponse.ok) {
         const newData = await fetchPlayersResponse.json();
         setPlayers(newData.cauThu);
       }
-
-      // Filter out added players from the available players list (optional, depends on your logic)
       setAvailablePlayers((prevAvailablePlayers) =>
         prevAvailablePlayers.filter(
           (player) => !selectedPlayerIds.includes(player.MaCauThu)
         )
       );
-
       setShowAddPlayersModal(false);
     } catch (error) {
       setError(error.message);
@@ -181,13 +212,15 @@ function Players({ API_URL, seasons }) {
     setSelectedSeason(newSeason);
   };
 
-  // Get current players for pagination
   const indexOfLastPlayer = currentPage * playersPerPage;
   const indexOfFirstPlayer = indexOfLastPlayer - playersPerPage;
   const currentPlayers = players.slice(indexOfFirstPlayer, indexOfLastPlayer);
 
-  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const totalPages = Math.ceil(players.length / playersPerPage);
+  const startPage = Math.max(1, currentPage - Math.floor(paginationRange / 2));
+  const endPage = Math.min(totalPages, startPage + paginationRange - 1);
 
   return (
     <div className="players-container">
@@ -196,11 +229,10 @@ function Players({ API_URL, seasons }) {
       </button>
       <h2>Cầu thủ trong đội {teamName}</h2>
       <SeasonSelector
-        seasons={seasons}
+        seasons={availableSeasons} // Sử dụng danh sách mùa giải đã lọc
         selectedSeason={selectedSeason}
         onSeasonChange={handleSeasonChange}
       />
-      {/* Check for both not "all" and not an empty string */}
       {selectedSeason !== "all" && selectedSeason !== "" && (
         <button
           className="add-players-button"
@@ -212,7 +244,7 @@ function Players({ API_URL, seasons }) {
 
       {showAddPlayersModal && (
         <AddPlayersToTeamModal
-          aAPI_URl={"http://localhost:5000"}
+          aAPI_URl={`${API_URL}`}
           teamId={MaDoiBong}
           season={selectedSeason}
           onAddPlayersToTeam={handleAddPlayersToTeam}
@@ -223,7 +255,7 @@ function Players({ API_URL, seasons }) {
         <div className="create-player-modal">
           <div className="modal-content">
             <CreatePlayer
-              seasons={seasons}
+              seasons={availableSeasons} // Truyền danh sách mùa giải đã lọc cho CreatePlayer (nếu cần)
               onAddPlayer={handleAddPlayer}
               onClose={handleCloseCreatePlayerModal}
             />
@@ -242,17 +274,32 @@ function Players({ API_URL, seasons }) {
             season={selectedSeason}
           />
           <div className="pagination">
-            {Array.from({ length: Math.ceil(players.length / playersPerPage) }).map(
-              (_, index) => (
-                <button
-                  key={index + 1}
-                  onClick={() => paginate(index + 1)}
-                  className={currentPage === index + 1 ? "active" : ""}
-                >
-                  {index + 1}
-                </button>
-              )
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Trước
+            </button>
+            {Array.from({ length: endPage - startPage + 1 }).map(
+              (_, index) => {
+                const pageNumber = startPage + index;
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => paginate(pageNumber)}
+                    className={currentPage === pageNumber ? "active" : ""}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              }
             )}
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Sau
+            </button>
           </div>
         </>
       ) : (
