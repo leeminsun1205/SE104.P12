@@ -60,13 +60,13 @@ function AddTeamsToSeasonModal({ season, onAddTeamsToSeason, onClose }) {
             {/* Update class names here to match the CSS */}
             <ul className="add-teams-list">
               {availableTeams.map((team) => (
-                <li key={team.id} className="add-teams-item">
+                <li key={team.MaDoiBong} className="add-teams-item">
                   <label className="add-teams-label">
                     <input
                       type="checkbox"
                       className="add-teams-checkbox"
-                      checked={selectedTeams.includes(team.id)}
-                      onChange={() => handleTeamSelection(team.id)}
+                      checked={selectedTeams.includes(team.MaDoiBong)}
+                      onChange={() => handleTeamSelection(team.MaDoiBong)}
                     />
                     <span className="add-teams-name">{team.name}</span>
                   </label>

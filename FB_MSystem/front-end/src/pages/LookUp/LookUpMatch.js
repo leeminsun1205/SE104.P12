@@ -46,7 +46,7 @@ function LookUpMatch({ API_URL }) {
       setLoading(true);
       try {
         const response = await fetch(
-          `${API_URL}/matches?team=${selectedTeam}`
+          `${API_URL}/tran-dau?doi-bong=${selectedTeam}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -128,7 +128,7 @@ function LookUpMatch({ API_URL }) {
         <div className={styles.TeamSelector}>
           <TeamSelector
             onTeamsChange={handleTeamsChange}
-            teams={availableTeams.map(teams => ({ id: teams.id, name: teams.name }))}
+            teams={availableTeams.map(teams => ({ id: teams.MaDoiBong, name: teams.TenDoiBong }))}
             selectedTeam={selectedTeam}
             id="teams"
           />
@@ -202,14 +202,14 @@ function LookUpMatch({ API_URL }) {
               <tbody>
                 {filteredMatches.map((match) => (
                   <tr
-                    key={match.matchId}
+                    key={match.MaTranDau}
                     className={styles.row}
                     onClick={() =>
-                      navigate(`/match/${match.season}/${match.round}/${match.matchId}`)
+                      navigate(`/match/${match.MaMuaGiai}/${match.MaVongDau}/${match.MaTranDau}`)
                     }
                   >
-                    <td className={styles.cell}>{match.date}</td>
-                    <td className={styles.cell}>{match.time}</td>
+                    <td className={styles.cell}>{match.NgayThiDau}</td>
+                    <td className={styles.cell}>{match.GioThiDau}</td>
                     <td className={styles.cell}>{match.homeTeamName}</td>
                     <td className={styles.cell}>{match.awayTeamName}</td>
                     <td className={styles.cell}>{match.stadiumName}</td>
