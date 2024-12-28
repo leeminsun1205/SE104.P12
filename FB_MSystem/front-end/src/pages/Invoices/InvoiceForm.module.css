@@ -88,7 +88,29 @@ label {
   border: 1px solid #d9d9d9;
   cursor: not-allowed;  
 }
+.showIncrementButtons {
+  max-width: 200px;
+  max-height: 50px;
+  position: relative;
+  left: 170px;
+}
+.incrementButtonsContainer {
+  margin-top: 5px;
+}
 
+.incrementButtonsRow,
+.decrementButtonsRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px; /* Add some space between the rows */
+}
+
+.incrementButtonsRow button,
+.decrementButtonsRow button {
+  background-color: rgb(103, 133, 255);
+  padding: 8px 12px;
+  cursor: pointer;
+}
 @media (max-width: 768px) {
   .formContainer {
     padding: 15px;

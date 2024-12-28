@@ -17,6 +17,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
   const [availableTeams, setAvailableTeams] = useState([]);
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [errorTeams, setErrorTeams] = useState(null);
+  const [showIncrementButtons, setShowIncrementButtons] = useState(false);
 
   useEffect(() => {
     setFormData((prevFormData) => ({
@@ -67,6 +68,35 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
     return amount - receivedAmount;
   };
 
+  const incrementSoTienDaNhan = (amount) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      SoTienDaNhan: (parseFloat(prevFormData.SoTienDaNhan) || 0) + amount,
+    }));
+  };
+
+  const decrementSoTienDaNhan = (amount) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      SoTienDaNhan: Math.max(0, (parseFloat(prevFormData.SoTienDaNhan) || 0) - amount),
+    }));
+  };
+
+  const handleSoTienDaNhanChange = (e) => {
+    const value = e.target.value;
+    if (parseFloat(value) < 0 || value === '-') {
+      return; // Prevent negative values
+    }
+    setFormData({
+      ...formData,
+      SoTienDaNhan: value,
+    });
+  };
+
+  const toggleIncrementButtons = () => {
+    setShowIncrementButtons(!showIncrementButtons);
+  };
+
   if (loadingTeams) {
     return <div>Đang tải danh sách đội bóng...</div>;
   }
@@ -104,7 +134,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           name="LePhi"
           type="number"
           value={formData.LePhi}
-          onChange={handleChange}
+          readOnly
           placeholder="Số tiền"
         />
         <label>Bằng chữ:</label>
@@ -119,9 +149,44 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           name="SoTienDaNhan"
           type="number"
           value={formData.SoTienDaNhan}
-          onChange={handleChange}
+          onChange={handleSoTienDaNhanChange}
           placeholder="Số tiền đã nhận"
         />
+        <button type="button" className={styles.showIncrementButtons} onClick={toggleIncrementButtons}>
+          {showIncrementButtons ? "Ẩn nhanh" : "Thêm nhanh"}
+        </button>
+        {showIncrementButtons && (
+          <div className={styles.incrementButtonsContainer}>
+            <div className={styles.incrementButtonsRow}>
+              <button type="button" onClick={() => incrementSoTienDaNhan(500000)}>
+                +500K
+              </button>
+              <button type="button" onClick={() => incrementSoTienDaNhan(1000000)}>
+                +1 Triệu
+              </button>
+              <button type="button" onClick={() => incrementSoTienDaNhan(10000000)}>
+                +10 Triệu
+              </button>
+              <button type="button" onClick={() => incrementSoTienDaNhan(100000000)}>
+                +100 Triệu
+              </button>
+            </div>
+            <div className={styles.decrementButtonsRow}>
+              <button type="button" onClick={() => decrementSoTienDaNhan(500000)}>
+                -500K
+              </button>
+              <button type="button" onClick={() => decrementSoTienDaNhan(1000000)}>
+                -1 Triệu
+              </button>
+              <button type="button" onClick={() => decrementSoTienDaNhan(10000000)}>
+                -10 Triệu
+              </button>
+              <button type="button" onClick={() => decrementSoTienDaNhan(100000000)}>
+                -100 Triệu
+              </button>
+            </div>
+          </div>
+        )}
         <label>Số tiền còn lại:</label>
         <input
           type="text"
@@ -150,8 +215,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           value={formData.TinhTrang}
           onChange={handleChange}
           readOnly
-        >
-        </input>
+        />
         <button type="submit">Xuất biên nhận</button>
       </form>
     </div>
