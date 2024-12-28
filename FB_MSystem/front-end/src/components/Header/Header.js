@@ -58,7 +58,7 @@ function Header({ onLogout, onToggleSidebar }) {
                         <NavLink to="/tran-dau" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Trận đấu
                         </NavLink>
-                        <NavLink to="/bang-xep-hang" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
+                        <NavLink to="/danh-sach" className={({ isActive }) => isActive ? styles.active : styles.navLink}>
                             Danh sách
                         </NavLink>
                         <NavLink to="/tao-moi" className={({ isActive }) => isActive ? styles.active : styles.navLink}>

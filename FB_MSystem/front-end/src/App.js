@@ -232,7 +232,7 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/cau-thu/:MaCauThu" element={<PlayerInfo API_URL={API_URL}/>} />
             <Route path="/tran-dau" element={<Matches API_URL={API_URL} />} />
             <Route path="/tran-dau/:MaMuaGiai/:MaVongDau/:MaTranDau" element={<MatchDetails API_URL={API_URL} />} />
-            <Route path="/bang-xep-hang" element={<Standings API_URL={API_URL} />} />
+            <Route path="/danh-sach/bang-xep-hang" element={<Standings API_URL={API_URL} />} />
             <Route path="/tao-moi" element={<CreateNew />} />
             <Route path="/bien-nhan" element={<InvoiceForm API_URL={API_URL} onAddInvoice={onAddInvoice} />} />
             <Route path="/bien-nhan/:MaBienNhan" element={<Invoices invoices={invoices} />} />
@@ -246,10 +246,10 @@ function AuthenticatedRoutes({ API_URL, teams, seasons, selectedSeason, onSeason
             <Route path="/mua-giai" element={<SeasonList API_URL={API_URL} />} />
             <Route path="/doi-bong/:MaDoiBong/tran-dau-khac" element={<OtherLeagueMatches />} /> 
             <Route path="/mua-giai/:MaMuaGiai/vua-pha-luoi" element={<TopScorers API_URL={API_URL} />} />
-            <Route path="/vua-pha-luoi" element={<TopScorersStandings API_URL={API_URL} />} />
+            <Route path="/danh-sach/vua-pha-luoi" element={<TopScorersStandings API_URL={API_URL} />} />
             <Route path="/mua-giai/:MaMuaGiai/bang-xep-hang" element={<SeasonalStandings API_URL={API_URL} />} />
-            <Route path="/the-phat" element={<CardsList API_URL={API_URL} />} />
-            <Route path="/combined-standings" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
+            <Route path="/danh-sach/the-phat" element={<CardsList API_URL={API_URL} />} />
+            <Route path="/danh-sach" element={<CombinedStandingsPage API_URL={API_URL} />} /> 
             <Route path="/tra-cuu" element={<LookUp />} />
             <Route path="/tra-cuu/tran-dau" element={<LookUpMatch API_URL={API_URL}/>} />
             <Route path="/tra-cuu/mua-giai" element={<LookUpSeason API_URL={API_URL}/>} />
