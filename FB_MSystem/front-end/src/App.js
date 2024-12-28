@@ -64,13 +64,11 @@ function App() {
         const fetchData = async () => {
             try {
                 const seasonsResponse = await fetch(`${API_URL}/mua-giai`);
-                console.log("Season Response", seasonsResponse)
                 if (!seasonsResponse.ok) {
                     throw new Error(`Failed to fetch seasons: ${seasonsResponse.status}`);
                 }
     
                 const seasonsData = await seasonsResponse.json();
-                console.log("Season Response", seasonsData)
                 const updatedSeasons = ['all', ...seasonsData.muaGiai];
                 setSeasons(updatedSeasons);
 

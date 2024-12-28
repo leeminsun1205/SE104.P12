@@ -38,8 +38,8 @@ function HomePage() {
                     throw new Error("Failed to fetch teams");
                 }
                 const teamsData = await teamsResponse.json();
-                console.log(teamsData);
-                setTeams(teamsData.doiBong);
+                
+                setTeams(teamsData);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -61,7 +61,6 @@ function HomePage() {
     if (error) {
         return <p>Error: {error}</p>;
     }
-
     return (
         <div className={styles.container}>
             <div className={styles.content}>

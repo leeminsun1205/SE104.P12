@@ -51,7 +51,6 @@ const CreateTeam = ({ API_URL }) => {
             ...prevState,
             MaSan: stadiumId,
         }));
-        console.log('Heheheh', team)
         const selectedStadium = stadiums.find(stadium => stadium.MaSan === stadiumId);
         if (selectedStadium) {
             // Set initial values, which can be overridden by user input
@@ -106,9 +105,7 @@ const CreateTeam = ({ API_URL }) => {
                     
                     body: JSON.stringify(team),
                 });
-                console.log(team);
                 if (response.ok) {
-                    console.log('Team created successfully');
                     navigate('/doi-bong');
                 } else {
                     console.error('Failed to create team');
