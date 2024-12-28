@@ -85,6 +85,10 @@ function Players({ API_URL, seasons }) {
     setShowCreatePlayer(false);
   };
 
+  const handleCloseCreatePlayerModal = () => {
+    setShowCreatePlayer(false);
+  };
+
   const handleDeletePlayer = async (playerId) => {
     try {
       let url = `${API_URL}/db-ct/doi-bong/${MaDoiBong}/cau-thu/${playerId}`;
@@ -150,7 +154,7 @@ function Players({ API_URL, seasons }) {
       // Filter out added players from the available players list (optional, depends on your logic)
       setAvailablePlayers((prevAvailablePlayers) =>
         prevAvailablePlayers.filter(
-          (player) => !selectedPlayerIds.includes(player.id)
+          (player) => !selectedPlayerIds.includes(player.MaCauThu)
         )
       );
 
@@ -207,7 +211,7 @@ function Players({ API_URL, seasons }) {
             <CreatePlayer
               seasons={seasons}
               onAddPlayer={handleAddPlayer}
-              onClose={() => setShowCreatePlayer(false)}
+              onClose={handleCloseCreatePlayerModal}
             />
           </div>
         </div>
