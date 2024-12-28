@@ -12,12 +12,12 @@ const TranDauController = {
                     {
                         model: DoiBong,
                         as: 'DoiBongNha',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                     {
                         model: DoiBong,
                         as: 'DoiBongKhach',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                     {
                         model: SanThiDau,
@@ -48,7 +48,6 @@ const TranDauController = {
     async getByMuaGiai(req, res) {
         try {
             const { MaMuaGiai } = req.params;
-            console.log(req.params)
             const tranDaus = await TranDau.findAll({
                 include: [
                     {
@@ -59,12 +58,12 @@ const TranDauController = {
                     {
                         model: DoiBong,
                         as: 'DoiBongNha',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                     {
                         model: DoiBong,
                         as: 'DoiBongKhach',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                     {
                         model: SanThiDau,
@@ -95,7 +94,7 @@ const TranDauController = {
     async getById(req, res) {
         try {
             const { MaTranDau } = req.params;
-            const tranDau = await TranDau.findByPk(MaTranDau, { // Use findByPk for fetching by ID
+            const tranDau = await TranDau.findByPk(MaTranDau, {
                 include: [
                     {
                         model: VongDau,
@@ -105,12 +104,12 @@ const TranDauController = {
                     {
                         model: DoiBong,
                         as: 'DoiBongNha',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                     {
                         model: DoiBong,
                         as: 'DoiBongKhach',
-                        attributes: ['TenDoiBong'],
+                        attributes: ['MaDoiBong', 'TenDoiBong'],
                     },
                     {
                         model: SanThiDau,
@@ -120,20 +119,20 @@ const TranDauController = {
                 ],
                 attributes: { exclude: ['MaVongDau', 'MaDoiBongNha', 'MaDoiBongKhach', 'MaSan'] }
             });
+    
             if (!tranDau) {
                 return res.status(404).json({ error: 'Không tìm thấy trận đấu.' });
-            } else {
-                const results = tranDaus.map((tranDau) => {
-                    const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
-                    const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
-    
-                    return {
-                        ...tranDau.get(),
-                        TenVongDau: tenVongDau,
-                    };
-                });
-                res.status(200).json({ tranDau: result });
             }
+    
+            const maVongDau = tranDau.VongDau ? tranDau.VongDau.MaVongDau : null;
+            const tenVongDau = maVongDau ? maVongDau.split('VD').pop() : null;
+    
+            const result = {
+                ...tranDau.get(),
+                TenVongDau: tenVongDau,
+            };
+    
+            res.status(200).json({ tranDau: result });
         } catch (error) {
             res.status(500).json({ error: 'Lỗi khi lấy thông tin trận đấu.', details: error.message });
         }

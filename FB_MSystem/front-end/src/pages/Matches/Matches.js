@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import SeasonSelector from "../../components/SeasonSelector/SeasonSelector";
 import styles from "./Matches.module.css";
@@ -23,6 +23,8 @@ const Matches = ({ API_URL }) => {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
+
+  // Fetch available seasons
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
@@ -40,6 +42,7 @@ const Matches = ({ API_URL }) => {
     fetchSeasons();
   }, [API_URL]);
 
+  // Set initial selected season
   useEffect(() => {
     if (availableSeasons.length > 0) {
       setSelectedSeason(availableSeasons[0].MaMuaGiai);
@@ -49,6 +52,7 @@ const Matches = ({ API_URL }) => {
   useEffect(() => {
     const fetchMatches = async () => {
       setLoading(true);
+      setError(null); // Reset error on new fetch
       try {
         const response = await fetch(
           `${API_URL}/tran-dau/mua-giai/${selectedSeason}`
@@ -56,8 +60,7 @@ const Matches = ({ API_URL }) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        let data = await response.json();
-        console.log(data.tranDau)
+        const data = await response.json();
         setMatches(data.tranDau);
       } catch (e) {
         setError(e);
@@ -65,19 +68,21 @@ const Matches = ({ API_URL }) => {
         setLoading(false);
       }
     };
+
     const fetchPlayersForSeason = async () => {
       try {
-        const response = await fetch(`${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong`);
+        const response = await fetch(
+          `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        // Assuming the API returns a list of teams with their players' IDs for the season
         const playersByTeam = {};
-        data.forEach(teamData => {
+        data.forEach((teamData) => {
           playersByTeam[teamData.MaDoiBong] = teamData.maCauThu;
         });
-        console.log(players)
+        setPlayers(playersByTeam);
       } catch (error) {
         console.error("Error fetching players for season:", error);
       }
@@ -85,24 +90,25 @@ const Matches = ({ API_URL }) => {
 
     if (selectedSeason) {
       fetchMatches();
-      fetchPlayersForSeason(); // Fetch players when season changes
+      fetchPlayersForSeason();
     }
   }, [API_URL, selectedSeason]);
+
   // Filter and sort matches
   const filteredAndSortedMatches = useMemo(() => {
     return matches
       .filter(
         (match) =>
-          match.MaMuaGiai === selectedSeason &&
-          (selectedRound === "" || match.MaVongDau === selectedRound)
+          match.VongDau.MaMuaGiai === selectedSeason &&
+          (selectedRound === "" || match.VongDau.MaVongDau === selectedRound)
       )
       .filter((match) => {
         const query = searchQuery.toLowerCase();
         return (
-          match.TenDoiBongNha.toLowerCase().includes(query) ||
-          match.TenDoiBongKhach.toLowerCase().includes(query) ||
-          match.TenSan.toLowerCase().includes(query) ||
-          match.NgayThiDau.includes(query) ||
+          match.DoiBongNha.TenDoiBong.toLowerCase().includes(query) ||
+          match.DoiBongKhach.TenDoiBong.toLowerCase().includes(query) ||
+          match.SanThiDau.TenSan.toLowerCase().includes(query) ||
+          (match.NgayThiDau && match.NgayThiDau.includes(query)) || // Fix: Ensure NgayThiDau exists
           match.TenVongDau.toLowerCase().includes(query)
         );
       })
@@ -120,13 +126,13 @@ const Matches = ({ API_URL }) => {
   // Pagination logic
   const indexOfLastMatch = currentPage * matchesPerPage;
   const indexOfFirstMatch = indexOfLastMatch - matchesPerPage;
-  const currentMatches = filteredAndSortedMatches.slice(indexOfFirstMatch, indexOfLastMatch);
+  const currentMatches = useMemo(() => filteredAndSortedMatches.slice(indexOfFirstMatch, indexOfLastMatch), [filteredAndSortedMatches, indexOfFirstMatch, indexOfLastMatch]);
 
   const totalPages = Math.ceil(filteredAndSortedMatches.length / matchesPerPage);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = useCallback((pageNumber) => setCurrentPage(pageNumber), []);
 
-  const renderPageNumbers = () => {
+  const renderPageNumbers = useMemo(() => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
       pageNumbers.push(
@@ -140,99 +146,118 @@ const Matches = ({ API_URL }) => {
       );
     }
     return pageNumbers;
-  };
+  }, [currentPage, paginate, totalPages, styles.activePage, styles.pageButton]);
 
   const rounds = useMemo(() => {
     return matches
-      .filter(match => match.MaMuaGiai === selectedSeason)
-      .map(match => ({ MaVongDau: match.MaVongDau, TenVongDau: match.TenVongDau }))
-      // Ensure unique rounds
-      .filter((round, index, self) =>
-        index === self.findIndex((r) => r.MaVongDau === round.MaVongDau)
+      .filter((match) => match.VongDau.MaMuaGiai === selectedSeason)
+      .filter(
+        (round, index, self) =>
+          index ===
+          self.findIndex(
+            (r) => r.VongDau.MaVongDau === round.VongDau.MaVongDau
+          )
       )
-      .sort((a, b) => parseInt(a.TenVongDau) - parseInt(b.TenVongDau)) // Sort rounds numerically
-      || [];
+      .sort((a, b) => parseInt(a.TenVongDau) - parseInt(b.TenVongDau)) || [];
   }, [matches, selectedSeason]);
 
-  const handleSeasonChange = (season) => {
-    setSelectedSeason(season);
-    setSelectedRound("");
-    setCurrentPage(1);
-  };
-  const handleSort = (key) => {
+  const handleSeasonChange = useCallback(
+    (season) => {
+      setSelectedSeason(season);
+      setSelectedRound("");
+      setCurrentPage(1);
+    },
+    []
+  );
+
+  const handleSort = useCallback((key) => {
     setSortConfig((prev) => ({
       key,
-      direction: prev.key === key && prev.direction === "ascending"
-        ? "descending"
-        : "ascending",
+      direction:
+        prev.key === key && prev.direction === "ascending"
+          ? "descending"
+          : "ascending",
     }));
-  };
+  }, []);
 
-  const getSortIndicator = (key) => {
-    if (sortConfig.key === key) {
-      return sortConfig.direction === "ascending" ? "↑" : "↓";
-    }
-    return "";
-  };
+  const getSortIndicator = useCallback(
+    (key) => {
+      if (sortConfig.key === key) {
+        return sortConfig.direction === "ascending" ? "↑" : "↓";
+      }
+      return "";
+    },
+    [sortConfig.direction, sortConfig.key]
+  );
 
   // Function to open the edit modal
-  const handleEditMatch = (match) => {
+  const handleEditMatch = useCallback((match) => {
     setEditingMatch(match);
     setIsEditModalOpen(true);
-  };
+  }, []);
 
   // Function to close the edit modal
-  const handleCloseEditModal = () => {
+  const handleCloseEditModal = useCallback(() => {
     setIsEditModalOpen(false);
     setEditingMatch(null);
-  };
+  }, []);
 
   // Function to handle saving the edited match
-  const handleSaveEditedMatch = async (updatedMatch) => {
+  const handleSaveEditedMatch = useCallback(async (updatedMatch) => {
     try {
-      const response = await fetch(`${API_URL}/tran-dau/${updatedMatch.MaTranDau}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedMatch),
-      });
+      const response = await fetch(
+        `${API_URL}/tran-dau/${updatedMatch.MaTranDau}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedMatch),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       // Update the matches state
-      setMatches(matches.map(match =>
-        match.MaTranDau === updatedMatch.MaTranDau ? updatedMatch : match
-      ));
+      setMatches((prevMatches) =>
+        prevMatches.map((match) =>
+          match.MaTranDau === updatedMatch.MaTranDau ? updatedMatch : match
+        )
+      );
       handleCloseEditModal();
     } catch (error) {
       console.error("Lỗi khi cập nhật trận đấu:", error);
       // Handle error, e.g., show a notification
     }
-  };
+  }, [API_URL, handleCloseEditModal]);
 
   // Function to handle deleting a match
-  const handleDeleteMatch = async (matchId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa trận đấu này?")) {
-      try {
-        const response = await fetch(`${API_URL}/tran-dau/${matchId}`, {
-          method: 'DELETE',
-        });
+  const handleDeleteMatch = useCallback(
+    async (matchId) => {
+      if (window.confirm("Bạn có chắc chắn muốn xóa trận đấu này?")) {
+        try {
+          const response = await fetch(`${API_URL}/tran-dau/${matchId}`, {
+            method: "DELETE",
+          });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Update the matches state by removing the deleted match
+          setMatches((prevMatches) =>
+            prevMatches.filter((match) => match.MaTranDau !== matchId)
+          );
+        } catch (error) {
+          console.error("Lỗi khi xóa trận đấu:", error);
+          // Handle error, e.g., show a notification
         }
-
-        // Update the matches state by removing the deleted match
-        setMatches(matches.filter(match => match.MaTranDau !== matchId));
-      } catch (error) {
-        console.error("Lỗi khi xóa trận đấu:", error);
-        // Handle error, e.g., show a notification
       }
-    }
-  };
+    },
+    [API_URL]
+  );
 
   if (loading) {
     return <div>Đang tải danh sách trận đấu...</div>;
@@ -247,7 +272,10 @@ const Matches = ({ API_URL }) => {
         <div className={styles.seasonSelector}>
           <SeasonSelector
             onSeasonChange={handleSeasonChange}
-            seasons={availableSeasons.map(season => ({ MaMuaGiai: season.MaMuaGiai, TenMuaGiai: season.TenMuaGiai }))}
+            seasons={availableSeasons.map((season) => ({
+              MaMuaGiai: season.MaMuaGiai,
+              TenMuaGiai: season.TenMuaGiai,
+            }))}
             selectedSeason={selectedSeason}
             id="season"
           />
@@ -264,7 +292,7 @@ const Matches = ({ API_URL }) => {
           >
             <option value="">Chọn vòng đấu</option>
             {rounds.map((round) => (
-              <option key={round.MaVongDau} value={round.MaVongDau}>
+              <option key={round.VongDau.MaVongDau} value={round.VongDau.MaVongDau}>
                 {round.TenVongDau}
               </option>
             ))}
@@ -315,22 +343,22 @@ const Matches = ({ API_URL }) => {
                       "Sân thi đấu",
                       "Vòng đấu",
                       "Hành động",
-                    ].map(
-                      (key) =>
-                        key !== "Hành động" && (
-                          <th
-                            key={key}
-                            className={styles.headerCell}
-                            onClick={() => handleSort(key)}
-                          >
-                            {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
-                            {getSortIndicator(key)}
-                          </th>
-                        )
+                    ].map((key) =>
+                      key !== "Hành động" ? (
+                        <th
+                          key={key}
+                          className={styles.headerCell}
+                          onClick={() => handleSort(key)}
+                        >
+                          {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                          {getSortIndicator(key)}
+                        </th>
+                      ) : (
+                        <th key="actions" className={styles.headerCell}>
+                          Hành động
+                        </th>
+                      )
                     )}
-                    <th key="actions" className={styles.headerCell}>
-                      Hành động
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -339,14 +367,20 @@ const Matches = ({ API_URL }) => {
                       key={match.MaTranDau}
                       className={styles.row}
                       onClick={() =>
-                        navigate(`/tran-dau/${match.MaMuaGiai}/${match.MaVongDau}/${match.MaTranDau}`)
+                        navigate(
+                          `/tran-dau/${match.VongDau.MaMuaGiai}/${match.VongDau.MaVongDau}/${match.MaTranDau}`
+                        )
                       }
                     >
                       <td className={styles.cell}>{match.NgayThiDau}</td>
                       <td className={styles.cell}>{match.GioThiDau}</td>
-                      <td className={styles.cell}>{match.TenDoiBongNha}</td>
-                      <td className={styles.cell}>{match.TenDoiBongKhach}</td>
-                      <td className={styles.cell}>{match.TenSan}</td>
+                      <td className={styles.cell}>
+                        {match.DoiBongNha.TenDoiBong}
+                      </td>
+                      <td className={styles.cell}>
+                        {match.DoiBongKhach.TenDoiBong}
+                      </td>
+                      <td className={styles.cell}>{match.SanThiDau.TenSan}</td>
                       <td className={styles.cell}>{match.TenVongDau}</td>
                       <td>
                         <button
@@ -373,9 +407,7 @@ const Matches = ({ API_URL }) => {
                 </tbody>
               </table>
               {totalPages > 1 && (
-                <div className={styles.pagination}>
-                  {renderPageNumbers()}
-                </div>
+                <div className={styles.pagination}>{renderPageNumbers}</div>
               )}
             </>
           )}
@@ -383,7 +415,9 @@ const Matches = ({ API_URL }) => {
       )}
 
       {isEditModalOpen && editingMatch && (
-        <div className={styles.modalOverlay}> {/* Lớp overlay */}
+        <div className={styles.modalOverlay}>
+          {" "}
+          {/* Lớp overlay */}
           <div className={styles.modalContent}>
             <h3 className={styles.modalTitle}>Sửa trận đấu</h3>
             {/* Pass players data as a prop to EditMatchForm */}
@@ -425,26 +459,31 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
 
     const fetchPlayersByTeam = async (maDoiBong) => {
       try {
-        const response = await fetch(`${API_URL}/db-ct/doi-bong/${maDoiBong}/cau-thu/${match.MaMuaGiai}`);
+        const response = await fetch(
+          `${API_URL}/db-ct/doi-bong/${maDoiBong}/cau-thu/${match.MaMuaGiai}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setTeamPlayers(prev => ({ ...prev, [maDoiBong]: data.cauThu }));
+        setTeamPlayers((prev) => ({ ...prev, [maDoiBong]: data.cauThu }));
       } catch (error) {
-        console.error(`Lỗi khi tải danh sách cầu thủ cho đội ${maDoiBong}:`, error);
-        setTeamPlayers(prev => ({ ...prev, [maDoiBong]: [] })); // Ensure empty array if fetch fails
+        console.error(
+          `Lỗi khi tải danh sách cầu thủ cho đội ${maDoiBong}:`,
+          error
+        );
+        setTeamPlayers((prev) => ({ ...prev, [maDoiBong]: [] })); // Ensure empty array if fetch fails
       }
     };
 
     const fetchStadiums = async () => {
       try {
-        const response = await fetch(`${API_URL}/san-van-dong`);
+        const response = await fetch(`${API_URL}/san-thi-dau`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setAvailableStadiums(data.sanVanDong);
+        setAvailableStadiums(data);
       } catch (error) {
         console.error("Lỗi khi tải danh sách sân vận động:", error);
       }
@@ -454,11 +493,11 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     fetchStadiums();
     if (match.MaDoiBongNha) fetchPlayersByTeam(match.MaDoiBongNha);
     if (match.MaDoiBongKhach) fetchPlayersByTeam(match.MaDoiBongKhach);
-  }, [API_URL, match.MaDoiBongNha, match.MaDoiBongKhach, match.MaMuaGiai]);
+  }, [API_URL, match.MaDoiBongNha, match.MaDoiBongKhach, match.MaMuaGiai, match]); // Added match to dependencies
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedMatch(prev => ({
+    setEditedMatch((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -472,7 +511,7 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
   };
 
   const addGoal = () => {
-    setGoals([...goals, { ThoiDiem: '', MaDoiBong: '', MaCauThu: '' }]);
+    setGoals([...goals, { ThoiDiem: "", MaDoiBong: "", MaCauThu: "" }]);
   };
 
   const removeGoal = (index) => {
@@ -492,8 +531,10 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
   const TeamSelect = ({ value, onChange }) => (
     <select name="MaDoiBong" value={value} onChange={onChange}>
       <option value="">Chọn đội</option>
-      {availableTeams.map(team => (
-        <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
+      {availableTeams.map((team) => (
+        <option key={team.MaDoiBong} value={team.MaDoiBong}>
+          {team.TenDoiBong}
+        </option>
       ))}
     </select>
   );
@@ -504,8 +545,10 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     return (
       <select name="MaCauThu" value={value} onChange={onChange}>
         <option value="">Chọn cầu thủ</option>
-        {playersInTeam.map(player => (
-          <option key={player.MaCauThu} value={player.MaCauThu}>{player.TenCauThu}</option>
+        {playersInTeam.map((player) => (
+          <option key={player.MaCauThu} value={player.MaCauThu}>
+            {player.TenCauThu}
+          </option>
         ))}
       </select>
     );
@@ -515,36 +558,74 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
     <form onSubmit={handleSubmit} className={styles.editMatchForm}>
       <div className={styles.formGroup}>
         <label htmlFor="NgayThiDau">Ngày thi đấu:</label>
-        <input type="date" id="NgayThiDau" name="NgayThiDau" value={editedMatch.NgayThiDau} onChange={handleChange} required />
+        <input
+          type="date"
+          id="NgayThiDau"
+          name="NgayThiDau"
+          value={editedMatch.NgayThiDau}
+          onChange={handleChange}
+          required
+        />
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="GioThiDau">Giờ:</label>
-        <input type="time" id="GioThiDau" name="GioThiDau" value={editedMatch.GioThiDau} onChange={handleChange} required />
+        <input
+          type="time"
+          id="GioThiDau"
+          name="GioThiDau"
+          value={editedMatch.GioThiDau}
+          onChange={handleChange}
+          required
+        />
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="MaDoiBongNha">Đội nhà:</label>
-        <select id="MaDoiBongNha" name="MaDoiBongNha" value={editedMatch.MaDoiBongNha} onChange={handleChange} required>
+        <select
+          id="MaDoiBongNha"
+          name="MaDoiBongNha"
+          value={editedMatch.MaDoiBongNha}
+          onChange={handleChange}
+          required
+        >
           <option value="">Chọn đội nhà</option>
-          {availableTeams.map(team => (
-            <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
+          {availableTeams.map((team) => (
+            <option key={team.MaDoiBong} value={team.MaDoiBong}>
+              {team.TenDoiBong}
+            </option>
           ))}
         </select>
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="MaDoiBongKhach">Đội khách:</label>
-        <select id="MaDoiBongKhach" name="MaDoiBongKhach" value={editedMatch.MaDoiBongKhach} onChange={handleChange} required>
+        <select
+          id="MaDoiBongKhach"
+          name="MaDoiBongKhach"
+          value={editedMatch.MaDoiBongKhach}
+          onChange={handleChange}
+          required
+        >
           <option value="">Chọn đội khách</option>
-          {availableTeams.map(team => (
-            <option key={team.MaDoiBong} value={team.MaDoiBong}>{team.TenDoiBong}</option>
+          {availableTeams.map((team) => (
+            <option key={team.MaDoiBong} value={team.MaDoiBong}>
+              {team.TenDoiBong}
+            </option>
           ))}
         </select>
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="MaSan">Sân thi đấu:</label>
-        <select id="MaSan" name="MaSan" value={editedMatch.MaSan} onChange={handleChange} required>
+        <select
+          id="MaSan"
+          name="MaSan"
+          value={editedMatch.MaSan}
+          onChange={handleChange}
+          required
+        >
           <option value="">Chọn sân vận động</option>
-          {availableStadiums.map(stadium => (
-            <option key={stadium.MaSan} value={stadium.MaSan}>{stadium.TenSan}</option>
+          {availableStadiums.map((stadium) => (
+            <option key={stadium.MaSan} value={stadium.MaSan}>
+              {stadium.TenSan}
+            </option>
           ))}
         </select>
       </div>
@@ -562,22 +643,38 @@ const EditMatchForm = ({ match, onSave, onCancel, API_URL, players }) => {
             />
             <TeamSelect
               value={goal.MaDoiBong}
-              onChange={(e) => handleGoalChange(index, { target: { name: 'MaDoiBong', value: e.target.value } })}
+              onChange={(e) =>
+                handleGoalChange(index, {
+                  target: { name: "MaDoiBong", value: e.target.value },
+                })
+              }
             />
             <PlayerSelect
               value={goal.MaCauThu}
-              onChange={(e) => handleGoalChange(index, { target: { name: 'MaCauThu', value: e.target.value } })}
+              onChange={(e) =>
+                handleGoalChange(index, {
+                  target: { name: "MaCauThu", value: e.target.value },
+                })
+              }
               teamId={goal.MaDoiBong}
             />
-            <button type="button" onClick={() => removeGoal(index)}>Xóa</button>
+            <button type="button" onClick={() => removeGoal(index)}>
+              Xóa
+            </button>
           </div>
         ))}
-        <button type="button" onClick={addGoal}>Thêm bàn thắng</button>
+        <button type="button" onClick={addGoal}>
+          Thêm bàn thắng
+        </button>
       </div>
 
       <div className={styles.formActions}>
-        <button type="submit" className={styles.saveButton}>Lưu</button>
-        <button type="button" className={styles.cancelButton} onClick={onCancel}>Hủy</button>
+        <button type="submit" className={styles.saveButton}>
+          Lưu
+        </button>
+        <button type="button" className={styles.cancelButton} onClick={onCancel}>
+          Hủy
+        </button>
       </div>
     </form>
   );
