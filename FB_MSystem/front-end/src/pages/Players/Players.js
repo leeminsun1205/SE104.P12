@@ -19,7 +19,7 @@ function Players({ API_URL }) {
   const [teamName, setTeamName] = useState("");
   const [availableSeasons, setAvailableSeasons] = useState([]);
   const [failedSeasons, setFailedSeasons] = useState([]); // State to store failed seasons
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -247,6 +247,15 @@ function Players({ API_URL }) {
         onSeasonChange={handleSeasonChange}
         disabledSeasons={failedSeasons} // Disable failed seasons
       />
+      {/* Thêm ô tìm kiếm ở đây */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Tìm kiếm cầu thủ..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+      </div>
       {(
         <button
           className="add-players-button"
@@ -279,7 +288,7 @@ function Players({ API_URL }) {
       {error && <p className="error-message">{error}</p>}
       {loading ? (
         <p>Đang tải...</p>
-      ) : players.length > 0 ? (
+      ) : filteredPlayers.length > 0 ? (
         <>
           <PlayerList
             players={currentPlayers}
@@ -319,6 +328,10 @@ function Players({ API_URL }) {
       ) : selectedSeason !== 'all' && !loading && !error ? ( // Only show this if a specific season is selected and no loading/error
         <div className="empty-state">
           <p>Không tìm thấy cầu thủ trong đội {teamName} cho mùa giải này.</p>
+        </div>
+      ) : !loading && selectedSeason === 'all' && players.length === 0 && !error ? (
+        <div className="empty-state">
+          <p>Không có cầu thủ nào.</p>
         </div>
       ) : null} {/* Don't show empty state message if loading or error or 'all' season */}
     </div>
