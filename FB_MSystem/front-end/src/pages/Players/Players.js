@@ -14,15 +14,16 @@ function Players({ API_URL }) {
   const [error, setError] = useState(null);
   const [showCreatePlayer, setShowCreatePlayer] = useState(false);
   const [showAddPlayersModal, setShowAddPlayersModal] = useState(false);
-  const [selectedSeason, setSelectedSeason] = useState("");
+  const [selectedSeason, setSelectedSeason] = useState("all");
   const [availablePlayers, setAvailablePlayers] = useState([]);
   const [teamName, setTeamName] = useState("");
-  const [availableSeasons, setAvailableSeasons] = useState([]); // State để lưu các mùa giải hợp lệ
+  const [availableSeasons, setAvailableSeasons] = useState([]);
+  const [failedSeasons, setFailedSeasons] = useState([]); // State to store failed seasons
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [playersPerPage] = useState(5);
-  const paginationRange = 5; // Số lượng trang hiển thị
+  const paginationRange = 5;
 
   useEffect(() => {
     const fetchTeamName = async () => {
@@ -41,38 +42,17 @@ function Players({ API_URL }) {
     fetchTeamName();
   }, [MaDoiBong, API_URL]);
 
-  // Lấy danh sách các mùa giải mà đội bóng này đã tham gia
   useEffect(() => {
     const fetchAvailableSeasons = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_URL}/mua-giai`); // Lấy tất cả các mùa giải
+        const response = await fetch(`${API_URL}/mua-giai`);
         if (!response.ok) {
           throw new Error("Failed to fetch seasons");
         }
         const seasonsData = await response.json();
-        const filteredSeasons = [];
-        // Duyệt qua từng mùa giải và kiểm tra xem MaDoiBong có trong đó không
-        for (const season of seasonsData.muaGiai) {
-          const doiBongResponse = await fetch(`${API_URL}/mg-db/mua-giai/${season.MaMuaGiai}/doi-bong`);
-          if (doiBongResponse.ok) {
-            const doiBongData = await doiBongResponse.json();
-            const teamExistsInSeason = doiBongData.some(
-              (team) => team.MaDoiBong === MaDoiBong
-            );
-            if (teamExistsInSeason) {
-              filteredSeasons.push(season); // Chỉ lấy MaMuaGiai
-            }
-          } else {
-            console.error(`Failed to fetch team data for season ${season.MaMuaGiai}`);
-          }
-        }
-        setAvailableSeasons(filteredSeasons);
-        // Nếu chưa có mùa giải nào được chọn, chọn mùa giải đầu tiên có sẵn
-        if (filteredSeasons.length > 0 && !selectedSeason) {
-          setSelectedSeason(filteredSeasons[0].MaMuaGiai);
-        }
+        setAvailableSeasons([{ MaMuaGiai: "all", TenMuaGiai: "Tất cả các mùa" }, ...seasonsData.muaGiai]);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -81,32 +61,45 @@ function Players({ API_URL }) {
     };
 
     fetchAvailableSeasons();
-  }, [API_URL, MaDoiBong, selectedSeason]);
-  // Fetch players dựa trên mùa giải được chọn
+  }, [API_URL]);
+
   useEffect(() => {
-    if (selectedSeason) {
-      const fetchPlayers = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-          let url = `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong/${MaDoiBong}`;
+    const fetchPlayers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        let url;
+        if (selectedSeason === "all") {
+          url = `${API_URL}/cau-thu`;
+        } else if (selectedSeason) {
+          url = `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong/${MaDoiBong}`;
+        }
+
+        if (url) {
           const response = await fetch(url);
           if (!response.ok) {
-            throw new Error("Failed to fetch players");
+            // Add the failed season to the failedSeasons state
+            if (selectedSeason !== 'all' && !failedSeasons.includes(selectedSeason)) {
+              setFailedSeasons(prevFailedSeasons => [...prevFailedSeasons, selectedSeason]);
+            }
+            // Optionally set players to an empty array to clear the list
+            setPlayers([]);
+            // Throw an error to be caught
+            throw new Error(`Đội bóng không tham gia mùa giải ${selectedSeason}`);
           }
           let data = await response.json();
           setPlayers(data.cauThu);
           setCurrentPage(1);
-        } catch (error) {
-          setError(error.message);
-        } finally {
-          setLoading(false);
         }
-      };
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchPlayers();
-    }
-  }, [API_URL, MaDoiBong, selectedSeason]);
+    fetchPlayers();
+  }, [API_URL, MaDoiBong, selectedSeason, failedSeasons]);
 
   useEffect(() => {
     const fetchAvailablePlayers = async () => {
@@ -138,6 +131,10 @@ function Players({ API_URL }) {
   const handleDeletePlayer = async (playerId) => {
     try {
       let url = `${API_URL}/mg-db/mua-giai/${selectedSeason}/doi-bong/${MaDoiBong}/cau-thu/${playerId}`;
+      if (selectedSeason === 'all') {
+        console.warn("Deleting players is not supported in 'All' season view.");
+        return;
+      }
       const response = await fetch(url, {
         method: "DELETE",
       });
@@ -163,7 +160,7 @@ function Players({ API_URL }) {
       const playersToAdd = selectedPlayerIds.map((playerId) => ({
         MaDoiBong: MaDoiBong,
         MaCauThu: playerId,
-        MaMuaGiai: selectedSeason,
+        MaMuaGiai: selectedSeason === 'all' ? null : selectedSeason,
       }));
       const response = await fetch(`${API_URL}/db-ct/createMany`, {
         method: "POST",
@@ -207,6 +204,8 @@ function Players({ API_URL }) {
 
   const handleSeasonChange = (newSeason) => {
     setSelectedSeason(newSeason);
+    // Reset error when changing season
+    setError(null);
   };
 
   const indexOfLastPlayer = currentPage * playersPerPage;
@@ -226,19 +225,20 @@ function Players({ API_URL }) {
       </button>
       <h2>Cầu thủ trong đội {teamName}</h2>
       <SeasonSelector
-        seasons={availableSeasons} // Sử dụng danh sách mùa giải đã lọc
+        seasons={availableSeasons}
         selectedSeason={selectedSeason}
         onSeasonChange={handleSeasonChange}
+        disabledSeasons={failedSeasons} // Disable failed seasons
       />
-      {selectedSeason !== "all" && selectedSeason !== "" && (
+      {(
         <button
           className="add-players-button"
           onClick={() => setShowAddPlayersModal(true)}
+          disabled={loading || error} // Disable if loading or error
         >
           Thêm cầu thủ vào đội
         </button>
       )}
-
       {showAddPlayersModal && (
         <AddPlayersToTeamModal
           aAPI_URl={`${API_URL}`}
@@ -252,7 +252,7 @@ function Players({ API_URL }) {
         <div className="create-player-modal">
           <div className="modal-content">
             <CreatePlayer
-              seasons={availableSeasons} // Truyền danh sách mùa giải đã lọc cho CreatePlayer (nếu cần)
+              seasons={availableSeasons}
               onAddPlayer={handleAddPlayer}
               onClose={handleCloseCreatePlayerModal}
             />
@@ -299,11 +299,11 @@ function Players({ API_URL }) {
             </button>
           </div>
         </>
-      ) : (
+      ) : selectedSeason !== 'all' && !loading && !error ? ( // Only show this if a specific season is selected and no loading/error
         <div className="empty-state">
           <p>Không tìm thấy cầu thủ trong đội {teamName} cho mùa giải này.</p>
         </div>
-      )}
+      ) : null} {/* Don't show empty state message if loading or error or 'all' season */}
     </div>
   );
 }

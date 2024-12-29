@@ -21,6 +21,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
   const [lePhiThamSo, setLePhiThamSo] = useState(null); // State để lưu trữ lệ phí từ ThamSo
   const [loadingLePhi, setLoadingLePhi] = useState(true);
   const [errorLePhi, setErrorLePhi] = useState(null);
+  const [errors, setErrors] = useState({}); // State để lưu trữ lỗi validation
 
   useEffect(() => {
     setFormData((prevFormData) => ({
@@ -71,17 +72,43 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear lỗi khi người dùng bắt đầu nhập
+    setErrors(prevErrors => ({ ...prevErrors, [e.target.name]: null }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newInvoice = {
-      id: formData.MaBienNhan,
-      ...formData,
-    };
+    let isValid = true;
+    const newErrors = {};
 
-    onAddInvoice(newInvoice);
-    navigate(`/bien-nhan/${formData.MaBienNhan}`);
+    if (!formData.TenDoiBong) {
+      newErrors.TenDoiBong = "Vui lòng chọn tên đội bóng.";
+      isValid = false;
+    }
+    if (!formData.LePhi) {
+      newErrors.LePhi = "Vui lòng nhập số tiền.";
+      isValid = false;
+    }
+    if (!formData.SoTienDaNhan) {
+      newErrors.SoTienDaNhan = "Vui lòng nhập số tiền đã nhận.";
+      isValid = false;
+    }
+    if (!formData.NgayThanhToan) {
+      newErrors.NgayThanhToan = "Vui lòng chọn ngày nhận.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+
+    if (isValid) {
+      const newInvoice = {
+        id: formData.MaBienNhan,
+        ...formData,
+      };
+
+      onAddInvoice(newInvoice);
+      navigate(`/bien-nhan/${formData.MaBienNhan}`);
+    }
   };
 
   const calculateRemainingAmount = () => {
@@ -95,6 +122,8 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
       ...prevFormData,
       SoTienDaNhan: (parseFloat(prevFormData.SoTienDaNhan) || 0) + amount,
     }));
+    // Clear lỗi khi thay đổi giá trị
+    setErrors(prevErrors => ({ ...prevErrors, SoTienDaNhan: null }));
   };
 
   const decrementSoTienDaNhan = (amount) => {
@@ -102,6 +131,8 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
       ...prevFormData,
       SoTienDaNhan: Math.max(0, (parseFloat(prevFormData.SoTienDaNhan) || 0) - amount),
     }));
+    // Clear lỗi khi thay đổi giá trị
+    setErrors(prevErrors => ({ ...prevErrors, SoTienDaNhan: null }));
   };
 
   const handleSoTienDaNhanChange = (e) => {
@@ -113,6 +144,8 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
       ...formData,
       SoTienDaNhan: value,
     });
+    // Clear lỗi khi thay đổi giá trị
+    setErrors(prevErrors => ({ ...prevErrors, SoTienDaNhan: null }));
   };
 
   const toggleIncrementButtons = () => {
@@ -151,6 +184,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
             </option>
           ))}
         </select>
+        {errors.TenDoiBong && <p className={styles.error}>{errors.TenDoiBong}</p>}
         <label>Số tiền (VNĐ):</label>
         <input
           name="LePhi"
@@ -159,6 +193,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           readOnly
           placeholder="Số tiền"
         />
+        {errors.LePhi && <p className={styles.error}>{errors.LePhi}</p>}
         <label>Bằng chữ:</label>
         <input
           type="text"
@@ -174,6 +209,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           onChange={handleSoTienDaNhanChange}
           placeholder="Số tiền đã nhận"
         />
+        {errors.SoTienDaNhan && <p className={styles.error}>{errors.SoTienDaNhan}</p>}
         <button type="button" className={styles.showIncrementButtons} onClick={toggleIncrementButtons}>
           {showIncrementButtons ? "Ẩn nhanh" : "Thêm nhanh"}
         </button>
@@ -224,6 +260,7 @@ function InvoiceForm({ API_URL, onAddInvoice }) {
           onChange={handleChange}
           placeholder="Ngày nhận"
         />
+        {errors.NgayThanhToan && <p className={styles.error}>{errors.NgayThanhToan}</p>}
         <label>Lý do:</label>
         <input
           name="LyDo"

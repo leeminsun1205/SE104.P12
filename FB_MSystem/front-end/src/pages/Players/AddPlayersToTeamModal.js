@@ -18,9 +18,18 @@ function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, o
         const allPlayersData = await allPlayersResponse.json();
         const allPlayers = allPlayersData.cauThu;
         // Fetch players currently in the team for the selected season
-        const currentTeamPlayersResponse = await fetch(
-          `${aAPI_URl}/mg-db/mua-giai/${season}/doi-bong/${teamId}`
-        );
+        let currentTeamPlayersResponse; // Khai báo biến ở bên ngoài
+        console.log(season)
+        if (season === 'all' || season === '') {
+          currentTeamPlayersResponse = await fetch(
+            `${aAPI_URl}/cau-thu`
+          );
+        }
+        else {
+          currentTeamPlayersResponse = await fetch(
+            `${aAPI_URl}/mg-db/mua-giai/${season}/doi-bong/${teamId}`
+          );
+        }
         if (!currentTeamPlayersResponse.ok) {
           throw new Error("Failed to fetch current team players");
         }
@@ -28,11 +37,15 @@ function AddPlayersToTeamModal({ aAPI_URl, teamId, season, onAddPlayersToTeam, o
         const currentTeamPlayerIds = currentTeamPlayersData.cauThu.map(
           (player) => player.MaCauThu
         );
-
-        // Filter out players already in the team for the current season
-        const filteredPlayers = allPlayers.filter(
-          (player) => !currentTeamPlayerIds.includes(player.MaCauThu)
-        );
+        let filteredPlayers
+        if (season === 'all' || season === '') {
+          filteredPlayers = allPlayers
+        }
+        else {
+          filteredPlayers = allPlayers.filter(
+            (player) => !currentTeamPlayerIds.includes(player.MaCauThu)
+          );
+        }
 
         setAvailablePlayers(filteredPlayers);
       } catch (error) {
