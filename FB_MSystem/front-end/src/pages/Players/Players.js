@@ -156,6 +156,7 @@ function Players({ API_URL }) {
   const handleAddPlayersToTeam = async (selectedPlayerIds) => {
     if (selectedPlayerIds.length === 0) return;
     setLoading(true);
+    setError(null); // Reset error before making the request
     try {
       const playersToAdd = selectedPlayerIds.map((playerId) => ({
         MaDoiBong: MaDoiBong,
@@ -171,7 +172,13 @@ function Players({ API_URL }) {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add players to team");
+        // Kiểm tra xem lỗi có phải do cầu thủ đã ở đội khác không
+        if (errorData.message && errorData.message.includes("already in another team")) {
+          setError("Một hoặc nhiều cầu thủ bạn chọn đã ở trong đội khác.");
+        } else {
+          setError(errorData.message || "Không thể thêm cầu thủ vào đội.");
+        }
+        return; // Dừng lại nếu có lỗi
       }
 
       const fetchPlayersResponse = await fetch(
@@ -188,7 +195,7 @@ function Players({ API_URL }) {
       );
       setShowAddPlayersModal(false);
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "Đã xảy ra lỗi khi thêm cầu thủ.");
     } finally {
       setLoading(false);
     }
@@ -208,13 +215,22 @@ function Players({ API_URL }) {
     setError(null);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const filteredPlayers = players.filter((player) =>
+    player.TenCauThu.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const indexOfLastPlayer = currentPage * playersPerPage;
   const indexOfFirstPlayer = indexOfLastPlayer - playersPerPage;
-  const currentPlayers = players.slice(indexOfFirstPlayer, indexOfLastPlayer);
+  const currentPlayers = filteredPlayers.slice(indexOfFirstPlayer, indexOfLastPlayer);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const totalPages = Math.ceil(players.length / playersPerPage);
+  const totalPages = Math.ceil(filteredPlayers.length / playersPerPage);
   const startPage = Math.max(1, currentPage - Math.floor(paginationRange / 2));
   const endPage = Math.min(totalPages, startPage + paginationRange - 1);
 
