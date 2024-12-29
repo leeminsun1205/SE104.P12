@@ -20,9 +20,9 @@ const SignatureBox = ({ label }) => (
 );
 
 function Invoices({ invoices }) {
-  const { invoiceId } = useParams();
+  const { MaBienNhan } = useParams();
   const navigate = useNavigate();
-  const invoiceData = invoices.find((invoice) => invoice.MaBienNhan === invoiceId);
+  const invoiceData = invoices.find((invoice) => invoice.MaBienNhan === MaBienNhan);
 
   const goBackToForm = () => {
     navigate("/bien-nhan");
