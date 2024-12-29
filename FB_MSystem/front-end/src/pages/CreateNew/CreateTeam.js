@@ -102,7 +102,7 @@ const CreateTeam = ({ API_URL }) => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    
+
                     body: JSON.stringify(team),
                 });
                 if (response.ok) {
@@ -141,7 +141,7 @@ const CreateTeam = ({ API_URL }) => {
             <h2>Thêm đội bóng mới</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="TenDoiBong">Tên đội bóng:</label>
+                    <label htmlFor="TenDoiBong">Tên đội bóng<span className="required">*</span></label>
                     <input
                         type="text"
                         id="TenDoiBong"
@@ -152,7 +152,7 @@ const CreateTeam = ({ API_URL }) => {
                     {errors.TenDoiBong && <p className="error-message">{errors.TenDoiBong}</p>}
                 </div>
                 <div>
-                    <label htmlFor="ThanhPhoTrucThuoc">Thành phố:</label>
+                    <label htmlFor="ThanhPhoTrucThuoc">Thành phố<span className="required">*</span></label>
                     <input
                         type="text"
                         id="ThanhPhoTrucThuoc"
@@ -163,7 +163,7 @@ const CreateTeam = ({ API_URL }) => {
                     {errors.ThanhPhoTrucThuoc && <p className="error-message">{errors.ThanhPhoTrucThuoc}</p>}
                 </div>
                 <div>
-                    <label htmlFor="TenHLV">Huấn luyện viên:</label>
+                    <label htmlFor="TenHLV">Huấn luyện viên</label>
                     <input
                         type="text"
                         id="TenHLV"
@@ -174,7 +174,7 @@ const CreateTeam = ({ API_URL }) => {
                     {errors.TenHLV && <p className="error-message">{errors.TenHLV}</p>}
                 </div>
                 <div>
-                    <label htmlFor="MaSan">Sân nhà:</label>
+                    <label htmlFor="MaSan">Sân nhà<span className="required">*</span></label>
                     <select id="MaSan" name="MaSan" onChange={handleStadiumChange} value={team.MaSan}>
                         <option value="">Lựa chọn sân vận động</option>
                         {stadiums.map(stadium => (
@@ -186,7 +186,7 @@ const CreateTeam = ({ API_URL }) => {
                     {errors.MaSan && <p className="error-message">{errors.MaSan}</p>}
                 </div>
                 <div>
-                    <label htmlFor="SucChua">Sức chứa:</label>
+                    <label htmlFor="SucChua">Sức chứa<span className="required">*</span></label>
                     <input
                         type="number"
                         id="SucChua"
@@ -197,7 +197,7 @@ const CreateTeam = ({ API_URL }) => {
                     {errors.SucChua && <p className="error-message">{errors.SucChua}</p>}
                 </div>
                 <div>
-                    <label htmlFor="TieuChuan">Tiêu chuẩn (số sao):</label>
+                    <label htmlFor="TieuChuan">Tiêu chuẩn (số sao)<span className="required">*</span></label>
                     <input
                         type="number"
                         id="TieuChuan"
@@ -205,10 +205,10 @@ const CreateTeam = ({ API_URL }) => {
                         value={team.TieuChuan}
                         onChange={handleChange} // Added onChange
                     />
-                    {errors.TieuChuan && <p className="error-message">{errors.TieuChuan}</p>}
+                    {errors.TieuChuan && <p className="error-message">{errors.TieuChuan}</p> }
                 </div>
                 <div>
-                    <label htmlFor="ThongTin">Mô tả đội bóng:</label>
+                    <label htmlFor="ThongTin">Mô tả đội bóng</label>
                     <textarea
                         id="ThongTin"
                         name="ThongTin"

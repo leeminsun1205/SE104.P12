@@ -53,7 +53,10 @@ textarea:focus {
   font-size: 14px;
   margin-bottom: 10px;
 }
-
+.form-container .required {
+  color: red;
+  margin-left: 4px;
+}
 .create-container {
   display: flex;
   justify-content: space-between;
