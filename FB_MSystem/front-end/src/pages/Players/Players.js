@@ -19,6 +19,7 @@ function Players({ API_URL }) {
   const [teamName, setTeamName] = useState("");
   const [availableSeasons, setAvailableSeasons] = useState([]);
   const [failedSeasons, setFailedSeasons] = useState([]); // State to store failed seasons
+  const [searchTerm, setSearchTerm] = useState("")
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
