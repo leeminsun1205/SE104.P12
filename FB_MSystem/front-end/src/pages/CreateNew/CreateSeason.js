@@ -88,7 +88,7 @@ function CreateSeason({ API_URL }) {
                 const data = await response.json();
                 setSuccessMessage('Mùa giải đã được tạo thành công!');
                 setTimeout(() => {
-                    navigate(`/tao-moi`);
+                    navigate(`/mua-giai`);
                 }, 1500);
             } catch (error) {
                 console.error('Error creating season:', error);

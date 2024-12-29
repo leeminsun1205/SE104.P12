@@ -25,8 +25,8 @@ function HomePage( {API_URL } ) {
                     name: "Quản lý đội bóng Quốc gia",
                     link: "https://github.com/leeminsun1205/SE104.P12",
                     format: "Nhập môn Công nghệ phần mềm",
-                    startDate: "01/08/2023",
-                    endDate: "31/05/2024",
+                    startDate: "21/12/2023",
+                    endDate: "28/12/2024",
                 });
 
                 // Fetch teams for the selected season
