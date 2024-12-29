@@ -104,7 +104,7 @@ function CreateSeason({ API_URL }) {
             {generalError && <p className={styles['error-message']}>{generalError}</p>}
             <form onSubmit={handleSubmit} className={styles['create-season-form']}>
                 <div className={styles['form-group']}>
-                    <label htmlFor="name">Tên mùa giải:</label>
+                    <label htmlFor="name">Tên mùa giải<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong></label>
                     <input
                         type="text"
                         id="TenMuaGiai"
@@ -115,7 +115,7 @@ function CreateSeason({ API_URL }) {
                     {errors.name && <p className={styles['error-message']}>{errors.name}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="startDate">Ngày bắt đầu:</label>
+                    <label htmlFor="startDate">Ngày bắt đầu<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong></label>
                     <input
                         type="date"
                         id="NgayBatDau"
@@ -126,7 +126,7 @@ function CreateSeason({ API_URL }) {
                     {errors.NgayBatDau && <p className={styles['error-message']}>{errors.NgayBatDau}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="endDate">Ngày kết thúc:</label>
+                    <label htmlFor="endDate">Ngày kết thúc<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong></label>
                     <input
                         type="date"
                         id="NgayKetThuc"
