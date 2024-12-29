@@ -260,6 +260,7 @@ function MatchDetails({ API_URL }) {
       console.error("Error deleting goal:", error);
     }
   };
+
   const handleGoalChange = (index, field, value) => {
     const updatedGoals = editedMatch.banThang.map((goal, i) => {
       if (i === index) {
@@ -377,8 +378,24 @@ function MatchDetails({ API_URL }) {
       }
       navigate(`/tran-dau/${MaMuaGiai}/${MaVongDau}/${MaTranDau}`);
       // Sau khi thêm/cập nhật bàn thắng, tính lại tỷ số
-      const homeGoals = matchGoals.filter(goal => goal.MaDoiBong === match.DoiBongNha.MaDoiBong).length;
-      const awayGoals = matchGoals.filter(goal => goal.MaDoiBong === match.DoiBongKhach.MaDoiBong).length;
+      let homeGoals = 0;
+      let awayGoals = 0;
+
+      matchGoals.forEach(goal => {
+        if (goal.MaLoaiBanThang === 'LBT03') { // LBT03 là mã loại bàn thắng "Phản lưới nhà"
+          if (goal.MaDoiBong === match.DoiBongNha.MaDoiBong) {
+            awayGoals++;
+          } else {
+            homeGoals++;
+          }
+        } else {
+          if (goal.MaDoiBong === match.DoiBongNha.MaDoiBong) {
+            homeGoals++;
+          } else {
+            awayGoals++;
+          }
+        }
+      });
 
       // Gọi API để cập nhật thông tin trận đấu
       const updateTranDauResponse = await fetch(`${API_URL}/tran-dau/${MaTranDau}`, {
