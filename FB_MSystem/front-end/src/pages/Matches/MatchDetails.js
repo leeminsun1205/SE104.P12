@@ -362,7 +362,7 @@ function MatchDetails({ API_URL }) {
         if (!response.ok)
           throw new Error(`Could not add goal: ${response.statusText}`);
       }
-
+      navigate(`/tran-dau/${MaMuaGiai}/${MaVongDau}/${MaTranDau}`);
       for (const existingGoal of existingGoals) {
         const response = await fetch(
           `${API_URL}/ban-thang/${MaTranDau}/${existingGoal.MaBanThang}`,
@@ -375,7 +375,7 @@ function MatchDetails({ API_URL }) {
         if (!response.ok)
           throw new Error(`Could not update goal: ${response.statusText}`);
       }
-
+      navigate(`/tran-dau/${MaMuaGiai}/${MaVongDau}/${MaTranDau}`);
       // Sau khi thêm/cập nhật bàn thắng, tính lại tỷ số
       const homeGoals = matchGoals.filter(goal => goal.MaDoiBong === match.DoiBongNha.MaDoiBong).length;
       const awayGoals = matchGoals.filter(goal => goal.MaDoiBong === match.DoiBongKhach.MaDoiBong).length;
@@ -762,9 +762,9 @@ function MatchDetails({ API_URL }) {
                               {getSortIndicator("MaCauThu", goalSortConfig)}
                             </th>
                             <th>Đội</th>
-                            <th onClick={() => sortGoals("MaMaLoaiBanThang")}>
+                            <th onClick={() => sortGoals("MaLoaiBanThang")}>
                               Loại bàn thắng{" "}
-                              {getSortIndicator("MaMaLoaiBanThang", goalSortConfig)}
+                              {getSortIndicator("MaLoaiBanThang", goalSortConfig)}
                             </th>
                             <th onClick={() => sortGoals("ThoiDiem")}>
                               Thời điểm ghi bàn{" "}
