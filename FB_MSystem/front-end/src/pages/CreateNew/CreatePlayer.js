@@ -20,7 +20,7 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPlayer((prev) => ({ ...prev, [name]: value }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); 
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
   const handleSubmit = async (event) => {
@@ -54,8 +54,8 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     if (isValid) {
       const newPlayer = {
         ...player,
-        ChieuCao: player.ChieuCao ? parseInt(player.ChieuCao, 10) : null,
-        CanNang: player.CanNang ? parseInt(player.CanNang, 10) : null,
+        ChieuCao: player.ChieuCao ? parseFloat(player.ChieuCao) : null, // Sử dụng parseFloat
+        CanNang: player.CanNang ? parseFloat(player.CanNang) : null, // Sử dụng parseFloat
       };
 
       try {
@@ -70,8 +70,6 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         if (response.ok) {
           const data = await response.json();
           alert("Đã thêm cầu thủ thành công!");
-          // navigate("/tao-moi");
-          // If you need to update the parent's state with the new player
           if (onAddPlayer) {
             onAddPlayer(data);
           }
@@ -83,7 +81,7 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         }
       } catch (error) {
         console.error("Error adding player:", error);
-        setErrors({ general: "Có lỗi xảy ra khi thêm cầu thủ." }); // General error
+        setErrors({ general: "Có lỗi xảy ra khi thêm cầu thủ." });
       }
     }
   };
@@ -191,13 +189,14 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         {errors.LoaiCauThu && <p className="error-message">{errors.LoaiCauThu}</p>}
       </div>
       <div>
-        <label htmlFor="ChieuCao">Chiều cao (cm)</label>
+        <label htmlFor="ChieuCao">Chiều cao (m)</label>
         <input
           type="number"
           name="ChieuCao"
           id="ChieuCao"
           value={player.ChieuCao}
           onChange={handleInputChange}
+          step="any"
         />
       </div>
       <div>
@@ -208,6 +207,7 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
           id="CanNang"
           value={player.CanNang}
           onChange={handleInputChange}
+          step="any"
         />
       </div>
       <div>
