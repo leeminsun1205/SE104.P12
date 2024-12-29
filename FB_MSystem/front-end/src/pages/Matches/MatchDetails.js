@@ -656,7 +656,7 @@ function MatchDetails({ API_URL }) {
         {match.DoiBongNha.TenDoiBong} <span>vs</span> {match.DoiBongKhach.TenDoiBong}
       </h1>
 
-      {match?.TinhTrang === false && (
+      {match?.TinhTrang === false && match.BanThangDoiNha === null && (
         <button className={styles.actionButton} onClick={handleStartMatch}>
           Bắt đầu trận đấu
         </button>
@@ -671,11 +671,12 @@ function MatchDetails({ API_URL }) {
       {match?.TinhTrang && (
         <div>
           <button className={styles.smallDetailsButton} onClick={toggleResult}>
-            {showResult ? "Ẩn kết quả trận đấu" : "Hiện kết quả trận đấu"}
+            {showResult ? "Hiện kết quả trận đấu" : "Ẩn kết quả trận đấu"}
           </button>
         </div>
       )}
-      {match?.TinhTrang && showResult && (
+
+      {(match?.TinhTrang && showResult) || (match?.BanThangDoiNha !== null || match?.BanThangDoiKhach !== null) && (
         <div className={styles.matchDetailsContainer}>
           <table className={styles.matchDetailsTable}>
             <tbody>
@@ -716,18 +717,18 @@ function MatchDetails({ API_URL }) {
               <tr>
                 <td colSpan="2">
                   <div className={styles.toggleButtonsContainer}>
-                    <button
+                    {match?.TinhTrang && (<button
                       className={styles.smallDetailsButton}
                       onClick={toggleGoals}
                     >
                       {showGoals ? "Ẩn bàn thắng (Chỉnh sửa)" : "Hiện bàn thắng (Chỉnh sửa)"}
-                    </button>
-                    <button
+                    </button>) }
+                    {match?.TinhTrang && (<button
                       className={styles.smallDetailsButton}
                       onClick={toggleCards}
                     >
                       {showCards ? "Ẩn thẻ phạt (Chỉnh sửa)" : "Hiện thẻ phạt (Chỉnh sửa)"}
-                    </button>
+                    </button>)}
                     <button
                       className={styles.smallDetailsButton}
                       onClick={toggleAllGoals}
