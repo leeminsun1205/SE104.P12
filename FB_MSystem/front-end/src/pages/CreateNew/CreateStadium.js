@@ -1,7 +1,7 @@
 // src/pages/Stadiums/CreateStadium.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './CreateStadium.module.css'; 
+import styles from './CreateStadium.module.css';
 
 function CreateStadium({ API_URL, onAddStadium }) {
     const [stadium, setStadium] = useState({
@@ -22,7 +22,7 @@ function CreateStadium({ API_URL, onAddStadium }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setStadium(prevState => ({
-            ...prevState,   
+            ...prevState,
             [name]: value,
         }));
         setErrors(prevState => ({ ...prevState, [name]: '' }));
@@ -116,7 +116,9 @@ function CreateStadium({ API_URL, onAddStadium }) {
             <h2>Thêm sân vận động mới</h2>
             <form onSubmit={handleSubmit} className={styles['create-stadium-form']}>
                 <div className={styles['form-group']}>
-                    <label htmlFor="TenSan">Tên sân:</label>
+                    <label htmlFor="TenSan">
+                        Tên sân<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong>
+                    </label>
                     <input
                         type="text"
                         id="TenSan"
@@ -127,7 +129,9 @@ function CreateStadium({ API_URL, onAddStadium }) {
                     {errors.TenSan && <p className={styles['error-message']}>{errors.TenSan}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="DiaChiSan">Địa chỉ:</label>
+                    <label htmlFor="DiaChiSan">
+                        Địa chỉ<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong>
+                    </label>
                     <input
                         type="text"
                         id="DiaChiSan"
@@ -138,7 +142,9 @@ function CreateStadium({ API_URL, onAddStadium }) {
                     {errors.DiaChiSan && <p className={styles['error-message']}>{errors.DiaChiSan}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="SucChua">Sức chứa:</label>
+                    <label htmlFor="SucChua">
+                        Sức chứa<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong>
+                    </label>
                     <input
                         type="number"
                         id="SucChua"
@@ -149,7 +155,9 @@ function CreateStadium({ API_URL, onAddStadium }) {
                     {errors.SucChua && <p className={styles['error-message']}>{errors.SucChua}</p>}
                 </div>
                 <div className={styles['form-group']}>
-                    <label htmlFor="TieuChuan">Tiêu chuẩn (1-5 sao):</label>
+                    <label htmlFor="TieuChuan">
+                        Tiêu chuẩn (1-5 sao)<strong><span style={{ color: 'red', marginLeft: '4px' }}>*</span></strong>
+                    </label>
                     <input
                         type="number"
                         id="TieuChuan"

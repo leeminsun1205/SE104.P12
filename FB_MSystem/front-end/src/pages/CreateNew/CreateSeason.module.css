@@ -51,6 +51,10 @@
     gap: 10px;
     margin-top: 20px;
   }
+  .required {
+    color: red;
+    margin-left: 4px;
+}
   .create-container button {
     padding: 10px 20px;
     border: none;
