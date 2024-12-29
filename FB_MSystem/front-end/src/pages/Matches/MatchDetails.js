@@ -171,7 +171,7 @@ function MatchDetails({ API_URL }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ TinhTrang: true }),
+        body: JSON.stringify({ TinhTrang: true, BanThangDoiNha: 0, BanThangDoiKhach: 0 }), // Khởi tạo tỷ số
       });
       if (!response.ok) {
         const message = await response.text();
@@ -187,12 +187,22 @@ function MatchDetails({ API_URL }) {
 
   const handleEndMatch = async () => {
     try {
+      // Lấy danh sách bàn thắng cuối cùng để tính tỷ số
+      const goalsResponse = await fetch(`${API_URL}/ban-thang/tran-dau/${MaTranDau}`);
+      let homeGoals = 0;
+      let awayGoals = 0;
+      if (goalsResponse.ok) {
+        const goalsData = await goalsResponse.json();
+        homeGoals = goalsData.filter(goal => goal.MaDoiBong === match.DoiBongNha.MaDoiBong).length;
+        awayGoals = goalsData.filter(goal => goal.MaDoiBong === match.DoiBongKhach.MaDoiBong).length;
+      }
+
       const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ TinhTrang: false }),
+        body: JSON.stringify({ TinhTrang: false, BanThangDoiNha: homeGoals, BanThangDoiKhach: awayGoals }), // Cập nhật tỷ số khi kết thúc
       });
       if (!response.ok) {
         const message = await response.text();
@@ -389,14 +399,34 @@ function MatchDetails({ API_URL }) {
       setMatch(updatedMatchData.tranDau);
       setEditedMatch(updatedMatchData.tranDau);
       setIsEditingGoals(false);
-      const fetchUpdatedGoals = async () => {
+      const fetchUpdatedGoalsForScore = async () => {
         const response = await fetch(`${API_URL}/ban-thang/tran-dau/${MaTranDau}`);
         if (response.ok) {
           const data = await response.json();
-          setMatchGoals(data);
+          const homeGoalsCount = data.filter(goal => goal.MaDoiBong === match.DoiBongNha.MaDoiBong).length;
+          const awayGoalsCount = data.filter(goal => goal.MaDoiBong === match.DoiBongKhach.MaDoiBong).length;
+
+          // Gọi API để cập nhật thông tin trận đấu VỚI TỶ SỐ MỚI
+          const updateTranDauResponse = await fetch(`${API_URL}/tran-dau/${MaTranDau}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              BanThangDoiNha: homeGoalsCount,
+              BanThangDoiKhach: awayGoalsCount,
+            }),
+          });
+
+          if (!updateTranDauResponse.ok) {
+            const message = await updateTranDauResponse.text();
+            throw new Error(`Could not update match score: ${message}`);
+          }
+
+          const updatedMatchData = await updateTranDauResponse.json();
+          setMatch(updatedMatchData.tranDau);
+          setEditedMatch(updatedMatchData.tranDau);
         }
       };
-      fetchUpdatedGoals();
+      await fetchUpdatedGoalsForScore();
     } catch (error) {
       console.error("Error updating goals:", error);
     }
@@ -430,13 +460,13 @@ function MatchDetails({ API_URL }) {
           throw new Error(`Could not update card: ${response.statusText}`);
       }
 
-      const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`);
+      const response = await fetch(`${API_URL}/tran-dau/${MaTranDau}`); // Refetching the entire match
       if (!response.ok)
         throw new Error(
           `Could not fetch updated match data: ${response.statusText}`
         );
       const data = await response.json();
-      setMatch(data.tranDau);
+      setMatch(data.tranDau); // Updating the match state here
       setEditedMatch(data.tranDau);
       setIsEditingCards(false);
       // Refetch match cards after saving

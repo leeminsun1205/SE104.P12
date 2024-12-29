@@ -54,8 +54,8 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     if (isValid) {
       const newPlayer = {
         ...player,
-        ChieuCao: player.ChieuCao ? parseInt(player.ChieuCao, 10) : null,
-        CanNang: player.CanNang ? parseInt(player.CanNang, 10) : null,
+        ChieuCao: player.ChieuCao ? player.ChieuCao : null,
+        CanNang: player.CanNang ? player.CanNang : null,
       };
 
       try {
@@ -68,14 +68,8 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         });
 
         if (response.ok) {
-          const data = await response.json();
           alert("Đã thêm cầu thủ thành công!");
-          // navigate("/tao-moi");
-          // If you need to update the parent's state with the new player
-          if (onAddPlayer) {
-            onAddPlayer(data);
-          }
-          onClose();
+          navigate("/tao-moi");
         } else {
           const errorData = await response.json();
           console.error("Failed to add player:", errorData);
@@ -191,7 +185,7 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         {errors.LoaiCauThu && <p className="error-message">{errors.LoaiCauThu}</p>}
       </div>
       <div>
-        <label htmlFor="ChieuCao">Chiều cao (cm)</label>
+        <label htmlFor="ChieuCao">Chiều cao (m)</label>
         <input
           type="number"
           name="ChieuCao"

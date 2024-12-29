@@ -1,4 +1,4 @@
-const { BanThang, TranDau, CauThu, DoiBong, LoaiBanThang, ThamSo} = require('../models');
+const { BanThang, TranDau, CauThu, DoiBong, LoaiBanThang, ThamSo, VongDau, sequelize} = require('../models');
 const { autoUpdateMatch } = require('../services/autoUpdateServices');
 
 const BanThangController = {
@@ -157,7 +157,7 @@ const BanThangController = {
         }
     },
     async delete(req, res) {
-        const t = await sequelize.transaction(); // Bắt đầu transaction
+        const t = await sequelize.transaction(); 
         try {
             const { id } = req.params;
             const banThang = await BanThang.findByPk(id, { transaction: t });
