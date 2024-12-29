@@ -19,8 +19,17 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+
+    // Kiểm tra và ngăn chặn nhập số âm cho Số áo, Chiều cao, Cân nặng
+    if (name === "SoAo" || name === "ChieuCao" || name === "CanNang") {
+      const parsedValue = parseFloat(value);
+      if (parsedValue < 1) {
+        return; // Không cập nhật state nếu giá trị âm
+      }
+    }
+
     setPlayer((prev) => ({ ...prev, [name]: value }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); 
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
   const handleSubmit = async (event) => {
@@ -54,8 +63,9 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     if (isValid) {
       const newPlayer = {
         ...player,
-        ChieuCao: player.ChieuCao ? player.ChieuCao : null,
-        CanNang: player.CanNang ? player.CanNang : null,
+        SoAo: player.SoAo === "" ? null : parseInt(player.SoAo),
+        ChieuCao: player.ChieuCao === "" ? null : player.ChieuCao,
+        CanNang: player.CanNang === "" ? null : player.CanNang,
       };
 
       try {
@@ -77,7 +87,7 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
         }
       } catch (error) {
         console.error("Error adding player:", error);
-        setErrors({ general: "Có lỗi xảy ra khi thêm cầu thủ." }); // General error
+        setErrors({ general: "Có lỗi xảy ra khi thêm cầu thủ." });
       }
     }
   };
@@ -143,12 +153,13 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
       <div>
         <label htmlFor="SoAo">Số áo</label>
         <input
-          type="text"
+          type="number"
           name="SoAo"
           id="SoAo"
           value={player.SoAo}
           onChange={handleInputChange}
         />
+        {errors.SoAo && <p className="error-message">{errors.SoAo}</p>}
       </div>
       <div>
         <label htmlFor="ViTri">
@@ -192,7 +203,9 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
           id="ChieuCao"
           value={player.ChieuCao}
           onChange={handleInputChange}
+          step="any"
         />
+        {errors.ChieuCao && <p className="error-message">{errors.ChieuCao}</p>}
       </div>
       <div>
         <label htmlFor="CanNang">Cân nặng (kg)</label>
@@ -202,7 +215,9 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
           id="CanNang"
           value={player.CanNang}
           onChange={handleInputChange}
+          step="any"
         />
+        {errors.CanNang && <p className="error-message">{errors.CanNang}</p>}
       </div>
       <div>
         <label htmlFor="TieuSu">Tiểu sử:</label>

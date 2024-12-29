@@ -1393,16 +1393,16 @@ INSERT INTO TRANDAU (MaVongDau, MaTranDau, MaDoiBongNha, MaDoiBongKhach, MaSan, 
 
 -- Insert data into THEPHAT table
 INSERT INTO THEPHAT (MaThePhat, MaTranDau, MaCauThu, MaDoiBong, MaLoaiThePhat, ThoiGian, LyDo) VALUES
-('TP0000001', 'MG2023_1_VD14_TD1', 'CT000015', 'DB001', 'LTP01', '17:15:00', 'Lỗi tắc bóng nguy hiểm'),
-('TP0000002', 'MG2023_1_VD14_TD3', 'CT000187', 'DB009', 'LTP02', '17:30:00', 'Phản ứng với trọng tài'),
-('TP0000003', 'MG2023_1_VD15_TD2', 'CT000052', 'DB003', 'LTP01', '19:45:00', 'Kéo người ngăn cản tấn công'),
-('TP0000004', 'MG2023_1_VD16_TD5', 'CT000299', 'DB013', 'LTP01', '17:52:00', 'Vào bóng bằng gầm giày'),
-('TP0000005', 'MG2023_1_VD14_TD6', 'CT000111', 'DB005', 'LTP02', '19:58:00', 'Đánh nguội cầu thủ đối phương'),
-('TP0000006', 'MG2023_1_VD15_TD7', 'CT000234', 'DB011', 'LTP01', '20:05:00', 'Chơi bóng bằng tay trong vòng cấm'),
-('TP0000007', 'MG2023_1_VD16_TD1', 'CT000088', 'DB004', 'LTP01', '17:22:00', 'Cản trở đá phạt nhanh'),
-('TP0000008', 'MG2023_1_VD14_TD2', 'CT000315', 'DB014', 'LTP01', '19:38:00', 'Lỗi cao chân'),
-('TP0000009', 'MG2023_1_VD15_TD4', 'CT000163', 'DB008', 'LTP02', '19:49:00', 'Ngăn cản cơ hội ghi bàn rõ rệt bằng tay'),
-('TP0000010', 'MG2023_1_VD16_TD7', 'CT000039', 'DB002', 'LTP01', '20:10:00', 'Câu giờ');
+('TP0000001', 'MG2023_1_VD14_TD1', 'CT000015', 'DB001', 'LTP01', '23', 'Lỗi tắc bóng nguy hiểm'),
+('TP0000002', 'MG2023_1_VD14_TD3', 'CT000187', 'DB009', 'LTP02', '42', 'Phản ứng với trọng tài'),
+('TP0000003', 'MG2023_1_VD15_TD2', 'CT000052', 'DB003', 'LTP01', '52', 'Kéo người ngăn cản tấn công'),
+('TP0000004', 'MG2023_1_VD16_TD5', 'CT000299', 'DB013', 'LTP01', '70', 'Vào bóng bằng gầm giày'),
+('TP0000005', 'MG2023_1_VD14_TD6', 'CT000111', 'DB005', 'LTP02', '11', 'Đánh nguội cầu thủ đối phương'),
+('TP0000006', 'MG2023_1_VD15_TD7', 'CT000234', 'DB011', 'LTP01', '22', 'Chơi bóng bằng tay trong vòng cấm'),
+('TP0000007', 'MG2023_1_VD16_TD1', 'CT000088', 'DB004', 'LTP01', '17', 'Cản trở đá phạt nhanh'),
+('TP0000008', 'MG2023_1_VD14_TD2', 'CT000315', 'DB014', 'LTP01', '71', 'Lỗi cao chân'),
+('TP0000009', 'MG2023_1_VD15_TD4', 'CT000163', 'DB008', 'LTP02', '76', 'Ngăn cản cơ hội ghi bàn rõ rệt bằng tay'),
+('TP0000010', 'MG2023_1_VD16_TD7', 'CT000039', 'DB002', 'LTP01', '41', 'Câu giờ');
 
 
 -- Insert 100 records into BANTHANG table
