@@ -17,12 +17,13 @@ function Players({ API_URL }) {
   const [selectedSeason, setSelectedSeason] = useState("");
   const [availablePlayers, setAvailablePlayers] = useState([]);
   const [teamName, setTeamName] = useState("");
-  const [availableSeasons, setAvailableSeasons] = useState([]); // State để lưu các mùa giải hợp lệ
+  const [availableSeasons, setAvailableSeasons] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [playersPerPage] = useState(5);
-  const paginationRange = 5; // Số lượng trang hiển thị
+  const paginationRange = 5;
 
   useEffect(() => {
     const fetchTeamName = async () => {
@@ -41,19 +42,17 @@ function Players({ API_URL }) {
     fetchTeamName();
   }, [MaDoiBong, API_URL]);
 
-  // Lấy danh sách các mùa giải mà đội bóng này đã tham gia
   useEffect(() => {
     const fetchAvailableSeasons = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_URL}/mua-giai`); // Lấy tất cả các mùa giải
+        const response = await fetch(`${API_URL}/mua-giai`);
         if (!response.ok) {
           throw new Error("Failed to fetch seasons");
         }
         const seasonsData = await response.json();
         const filteredSeasons = [];
-        // Duyệt qua từng mùa giải và kiểm tra xem MaDoiBong có trong đó không
         for (const season of seasonsData.muaGiai) {
           const doiBongResponse = await fetch(`${API_URL}/mg-db/mua-giai/${season.MaMuaGiai}/doi-bong`);
           if (doiBongResponse.ok) {
@@ -62,14 +61,13 @@ function Players({ API_URL }) {
               (team) => team.MaDoiBong === MaDoiBong
             );
             if (teamExistsInSeason) {
-              filteredSeasons.push(season); // Chỉ lấy MaMuaGiai
+              filteredSeasons.push(season);
             }
           } else {
             console.error(`Failed to fetch team data for season ${season.MaMuaGiai}`);
           }
         }
         setAvailableSeasons(filteredSeasons);
-        // Nếu chưa có mùa giải nào được chọn, chọn mùa giải đầu tiên có sẵn
         if (filteredSeasons.length > 0 && !selectedSeason) {
           setSelectedSeason(filteredSeasons[0].MaMuaGiai);
         }
@@ -82,7 +80,7 @@ function Players({ API_URL }) {
 
     fetchAvailableSeasons();
   }, [API_URL, MaDoiBong, selectedSeason]);
-  // Fetch players dựa trên mùa giải được chọn
+
   useEffect(() => {
     if (selectedSeason) {
       const fetchPlayers = async () => {
@@ -159,6 +157,7 @@ function Players({ API_URL }) {
   const handleAddPlayersToTeam = async (selectedPlayerIds) => {
     if (selectedPlayerIds.length === 0) return;
     setLoading(true);
+    setError(null); // Reset error before making the request
     try {
       const playersToAdd = selectedPlayerIds.map((playerId) => ({
         MaDoiBong: MaDoiBong,
@@ -174,7 +173,13 @@ function Players({ API_URL }) {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add players to team");
+        // Kiểm tra xem lỗi có phải do cầu thủ đã ở đội khác không
+        if (errorData.message && errorData.message.includes("already in another team")) {
+          setError("Một hoặc nhiều cầu thủ bạn chọn đã ở trong đội khác.");
+        } else {
+          setError(errorData.message || "Không thể thêm cầu thủ vào đội.");
+        }
+        return; // Dừng lại nếu có lỗi
       }
 
       const fetchPlayersResponse = await fetch(
@@ -191,7 +196,7 @@ function Players({ API_URL }) {
       );
       setShowAddPlayersModal(false);
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "Đã xảy ra lỗi khi thêm cầu thủ.");
     } finally {
       setLoading(false);
     }
@@ -209,13 +214,22 @@ function Players({ API_URL }) {
     setSelectedSeason(newSeason);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const filteredPlayers = players.filter((player) =>
+    player.TenCauThu.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const indexOfLastPlayer = currentPage * playersPerPage;
   const indexOfFirstPlayer = indexOfLastPlayer - playersPerPage;
-  const currentPlayers = players.slice(indexOfFirstPlayer, indexOfLastPlayer);
+  const currentPlayers = filteredPlayers.slice(indexOfFirstPlayer, indexOfLastPlayer);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const totalPages = Math.ceil(players.length / playersPerPage);
+  const totalPages = Math.ceil(filteredPlayers.length / playersPerPage);
   const startPage = Math.max(1, currentPage - Math.floor(paginationRange / 2));
   const endPage = Math.min(totalPages, startPage + paginationRange - 1);
 
@@ -226,11 +240,11 @@ function Players({ API_URL }) {
       </button>
       <h2>Cầu thủ trong đội {teamName}</h2>
       <SeasonSelector
-        seasons={availableSeasons} // Sử dụng danh sách mùa giải đã lọc
+        seasons={availableSeasons}
         selectedSeason={selectedSeason}
         onSeasonChange={handleSeasonChange}
       />
-      {selectedSeason !== "all" && selectedSeason !== "" && (
+      { (
         <button
           className="add-players-button"
           onClick={() => setShowAddPlayersModal(true)}
@@ -252,7 +266,7 @@ function Players({ API_URL }) {
         <div className="create-player-modal">
           <div className="modal-content">
             <CreatePlayer
-              seasons={availableSeasons} // Truyền danh sách mùa giải đã lọc cho CreatePlayer (nếu cần)
+              seasons={availableSeasons}
               onAddPlayer={handleAddPlayer}
               onClose={handleCloseCreatePlayerModal}
             />
@@ -262,47 +276,59 @@ function Players({ API_URL }) {
       {error && <p className="error-message">{error}</p>}
       {loading ? (
         <p>Đang tải...</p>
-      ) : players.length > 0 ? (
-        <>
-          <PlayerList
-            players={currentPlayers}
-            onDelete={handleDeletePlayer}
-            onNavigate={handleNavigate}
-            season={selectedSeason}
-          />
-          <div className="pagination">
-            <button
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Trước
-            </button>
-            {Array.from({ length: endPage - startPage + 1 }).map(
-              (_, index) => {
-                const pageNumber = startPage + index;
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    className={currentPage === pageNumber ? "active" : ""}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              }
-            )}
-            <button
-              onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Sau
-            </button>
-          </div>
-        </>
       ) : (
-        <div className="empty-state">
-          <p>Không tìm thấy cầu thủ trong đội {teamName} cho mùa giải này.</p>
-        </div>
+        <>
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Tìm kiếm cầu thủ..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </div>
+          {filteredPlayers.length > 0 ? (
+            <>
+              <PlayerList
+                players={currentPlayers}
+                onDelete={handleDeletePlayer}
+                onNavigate={handleNavigate}
+                season={selectedSeason}
+              />
+              <div className="pagination">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Trước
+                </button>
+                {Array.from({ length: endPage - startPage + 1 }).map(
+                  (_, index) => {
+                    const pageNumber = startPage + index;
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => paginate(pageNumber)}
+                        className={currentPage === pageNumber ? "active" : ""}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  }
+                )}
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Sau
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="empty-state">
+              <p>Không tìm thấy cầu thủ nào phù hợp với "{searchTerm}" trong đội {teamName} cho mùa giải này.</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

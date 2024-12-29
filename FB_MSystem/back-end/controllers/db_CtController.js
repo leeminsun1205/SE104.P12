@@ -95,7 +95,16 @@ const DbCtController = {
         try {
             const { MaDoiBong, MaCauThu } = req.body;
 
-            // Kiểm tra liên kết đã tồn tại chưa
+            // Kiểm tra xem cầu thủ đã có trong đội bóng nào chưa
+            const existingPlayerInTeam = await DbCt.findOne({
+                where: { MaCauThu },
+            });
+
+            if (existingPlayerInTeam) {
+                return res.status(400).json({ error: 'Cầu thủ này đã thuộc một đội bóng khác.' });
+            }
+
+            // Kiểm tra liên kết đã tồn tại chưa (trong trường hợp logic nghiệp vụ cho phép 1 cầu thủ ở 1 đội bóng nhiều lần trong các mùa giải khác nhau, bạn có thể bỏ qua bước này hoặc điều chỉnh)
             const existingLink = await DbCt.findOne({
                 where: { MaDoiBong, MaCauThu },
             });
@@ -125,9 +134,20 @@ const DbCtController = {
             const createdLinks = [];
             const existingLinks = [];
             const invalidLinks = [];
+            const playerAlreadyInTeamLinks = [];
 
             for (const link of links) {
                 const { MaDoiBong, MaCauThu } = link;
+
+                // Kiểm tra xem cầu thủ đã có trong đội bóng nào chưa
+                const existingPlayerInAnyTeam = await DbCt.findOne({
+                    where: { MaCauThu },
+                });
+
+                if (existingPlayerInAnyTeam) {
+                    playerAlreadyInTeamLinks.push(link);
+                    continue;
+                }
 
                 // Kiểm tra liên kết đã tồn tại chưa
                 const existingLink = await DbCt.findOne({
@@ -140,15 +160,21 @@ const DbCtController = {
                 }
 
                 // Tạo liên kết mới
-                const newLink = await DbCt.create({ MaDoiBong, MaCauThu });
-                createdLinks.push(newLink);
+                try {
+                    const newLink = await DbCt.create({ MaDoiBong, MaCauThu });
+                    createdLinks.push(newLink);
+                } catch (error) {
+                    console.error('Lỗi khi tạo liên kết trong createMany:', error);
+                    invalidLinks.push(link); // Ghi nhận liên kết không hợp lệ nếu có lỗi khi tạo
+                }
             }
 
             res.status(201).json({
                 createdLinks,
                 existingLinks,
                 invalidLinks,
-                message: `${createdLinks.length} liên kết mới đã được tạo. ${existingLinks.length} liên kết đã tồn tại. ${invalidLinks.length} liên kết không hợp lệ.`,
+                playerAlreadyInTeamLinks,
+                message: `${createdLinks.length} liên kết mới đã được tạo. ${existingLinks.length} liên kết đã tồn tại. ${invalidLinks.length} liên kết không hợp lệ. ${playerAlreadyInTeamLinks.length} cầu thủ đã thuộc đội bóng khác.`,
             });
         } catch (error) {
             console.error('Lỗi khi tạo nhiều liên kết:', error);
