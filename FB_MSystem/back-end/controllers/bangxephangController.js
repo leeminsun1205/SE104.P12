@@ -21,7 +21,7 @@ const BangXepHangController = {
 
 
             if (utxh && utxh.length > 0) {
-                const sortedUtxh = utxh.sort((a, b) => b.MucDoUuTien - a.MucDoUuTien);
+                const sortedUtxh = utxh.sort((a, b) => a.MucDoUuTien - b.MucDoUuTien);
                 for (const item of sortedUtxh) {
                     if (validSortColumns[item.MaLoaiUuTien]) {
                         sortCriteria.push([validSortColumns[item.MaLoaiUuTien], 'DESC']);
@@ -35,13 +35,18 @@ const BangXepHangController = {
 
             // Nếu có sortBy từ query, thêm nó lên đầu (sau DiemSo)
             if (sortBy && validSortColumns[sortBy]) {
-                sortCriteria.splice(1, 0, [validSortColumns[sortBy], (order || 'DESC').toUpperCase()]);
-                // Loại bỏ các trường trùng lặp nếu có
-                sortCriteria = sortCriteria.filter((value, index, self) =>
-                    index === self.findIndex((t) => (
-                        t[0] === value[0]
-                    ))
-                );
+                const orderDirection = (order && order.toLowerCase() === 'asc') ? 'ASC' : 'DESC';
+                sortCriteria.unshift([validSortColumns[sortBy], orderDirection]);
+
+                // Loại bỏ các trường trùng lặp nếu có (giữ lại cái đầu tiên - của người dùng)
+                const seenColumns = new Set();
+                sortCriteria = sortCriteria.filter(item => {
+                    if (seenColumns.has(item[0])) {
+                        return false;
+                    }
+                    seenColumns.add(item[0]);
+                    return true;
+                });
             }
 
             let bangXepHang = await BangXepHang.findAll({

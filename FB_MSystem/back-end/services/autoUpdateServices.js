@@ -1,4 +1,4 @@
-const { TranDau, VongDau, MgDb, DbCt, BanThang, VuaPhaLuoi, DoiBong } = require('../models');
+const { TranDau, VongDau, MgDb, DbCt, BanThang, VuaPhaLuoi, DoiBong, LoaiBanThang } = require('../models');
 const sequelize = require('../config/database');
 
 const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, thoiDiem) => {
@@ -38,11 +38,22 @@ const autoUpdateMatch = async (maTranDau, maDoiBong, maCauThu, maLoaiBanThang, t
             throw new Error('Cầu thủ không thuộc đội bóng này.');
         }
 
+        
+
         // Cập nhật số bàn thắng
-        if (maDoiBong === tranDau.MaDoiBongNha) {
-            tranDau.BanThangDoiNha = (tranDau.BanThangDoiNha || 0) + 1;
-        } else if (maDoiBong === tranDau.MaDoiBongKhach) {
-            tranDau.BanThangDoiKhach = (tranDau.BanThangDoiKhach || 0) + 1;
+        console.log(maLoaiBanThang);
+        if (maLoaiBanThang === 'LBT03') { // LBT03 là mã loại bàn thắng "Phản lưới nhà"
+            if (maDoiBong === tranDau.MaDoiBongNha) {
+                tranDau.BanThangDoiKhach = (tranDau.BanThangDoiKhach || 0) + 1;
+            } else if (maDoiBong === tranDau.MaDoiBongKhach) {
+                tranDau.BanThangDoiNha = (tranDau.BanThangDoiNha || 0) + 1;
+            }
+        } else {
+            if (maDoiBong === tranDau.MaDoiBongNha) {
+                tranDau.BanThangDoiNha = (tranDau.BanThangDoiNha || 0) + 1;
+            } else if (maDoiBong === tranDau.MaDoiBongKhach) {
+                tranDau.BanThangDoiKhach = (tranDau.BanThangDoiKhach || 0) + 1;
+            }
         }
 
         await tranDau.save({ transaction });
