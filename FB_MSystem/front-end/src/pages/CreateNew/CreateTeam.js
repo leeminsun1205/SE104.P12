@@ -53,7 +53,6 @@ const CreateTeam = ({ API_URL }) => {
         }));
         const selectedStadium = stadiums.find(stadium => stadium.MaSan === stadiumId);
         if (selectedStadium) {
-            // Set initial values, which can be overridden by user input
             setTeam(prevState => ({
                 ...prevState,
                 SucChua: selectedStadium.SucChua,
@@ -192,7 +191,8 @@ const CreateTeam = ({ API_URL }) => {
                         id="SucChua"
                         name="SucChua"
                         value={team.SucChua}
-                        onChange={handleChange} // Added onChange
+                        onChange={handleChange}
+                        readOnly
                     />
                     {errors.SucChua && <p className="error-message">{errors.SucChua}</p>}
                 </div>
@@ -203,7 +203,9 @@ const CreateTeam = ({ API_URL }) => {
                         id="TieuChuan"
                         name="TieuChuan"
                         value={team.TieuChuan}
-                        onChange={handleChange} // Added onChange
+                        onChange={handleChange}
+                        readOnly
+
                     />
                     {errors.TieuChuan && <p className="error-message">{errors.TieuChuan}</p> }
                 </div>

@@ -18,7 +18,7 @@ function PlayerList({ players, onDelete, onNavigate, season }) {
       {players.map((player) => (
         <li key={player.MaCauThu} className="player-item">
           <h3 className="player-name">
-            <Link to={`/doi-bong/${player.MaDoiBong}/cau-thu/${player.MaCauThu}`} state={{ player }}>
+            <Link to={`/cau-thu/${player.MaCauThu}`} state={{ player }}>
               {player.TenCauThu}
             </Link>
           </h3>

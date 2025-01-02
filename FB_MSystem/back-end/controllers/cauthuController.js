@@ -52,7 +52,6 @@ const CauThuController = {
             const { id } = req.params;
             const { TenCauThu, NgaySinh, QuocTich, ViTri, ChieuCao, CanNang, SoAo, TieuSu } = req.body;
 
-            // Kiểm tra QuocTich và đặt giá trị mặc định cho LoaiCauThu, 1 là trong nước và 0 là ngoài nước
             const LoaiCauThu = (QuocTich && QuocTich.toLowerCase() === 'việt nam') ? 1 : 0;
 
             const cauThu = await CauThu.findByPk(id);
