@@ -165,6 +165,9 @@ const PlayerInfo = ({ API_URL }) => {
             <strong>Vị trí:</strong> {player.ViTri}
           </p>
           <p>
+            <strong>Số áo:</strong> {player.SoAo}
+          </p>
+          <p>
             <strong>Quốc tịch:</strong> {player.QuocTich}
           </p>
           <p>
