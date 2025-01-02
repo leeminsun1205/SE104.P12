@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreatePlayer.css";
 
@@ -32,6 +32,21 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
+  useEffect(() => {
+    const checkQuocTich = () => {
+      const quocTich = player.QuocTich.toLowerCase();
+      if (quocTich === "việt nam" || quocTich === "viet nam" || quocTich === "vn") {
+        setPlayer(prev => ({ ...prev, LoaiCauThu: "Trong nước" }));
+      } else if (player.QuocTich.trim() !== "") {
+        setPlayer(prev => ({ ...prev, LoaiCauThu: "Ngoài nước" }));
+      } else {
+        setPlayer(prev => ({ ...prev, LoaiCauThu: "" }));
+      }
+    };
+
+    checkQuocTich();
+  }, [player.QuocTich]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     let isValid = true;
@@ -51,10 +66,6 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
     }
     if (!player.NgaySinh) {
       newErrors.NgaySinh = "Ngày tháng năm sinh không được để trống";
-      isValid = false;
-    }
-    if (!player.LoaiCauThu) {
-      newErrors.LoaiCauThu = "Loại cầu thủ không được để trống";
       isValid = false;
     }
 
@@ -181,19 +192,15 @@ function CreatePlayer({ API_URL, onAddPlayer, onClose }) {
       </div>
       <div>
         <label htmlFor="LoaiCauThu">
-          Loại cầu thủ <span style={{ color: "red" }}>*</span>
+          Loại cầu thủ
         </label>
-        <select
+        <input
+          type="text"
           id="LoaiCauThu"
           name="LoaiCauThu"
           value={player.LoaiCauThu}
-          onChange={handleInputChange}
-        >
-          <option value="">Chọn loại cầu thủ</option>
-          <option value="Trong nước">Trong nước</option>
-          <option value="Ngoài nước">Ngoài nước</option>
-        </select>
-        {errors.LoaiCauThu && <p className="error-message">{errors.LoaiCauThu}</p>}
+          readOnly
+        />
       </div>
       <div>
         <label htmlFor="ChieuCao">Chiều cao (m)</label>
