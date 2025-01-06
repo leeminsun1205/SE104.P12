@@ -35,12 +35,11 @@ const ThanhTichController = {
 
     async update(req, res) {
         try {
-            // Lấy tất cả mùa giải từ bảng BangXepHang
             const allMuaGiai = await BangXepHang.findAll({
                 attributes: ['MaMuaGiai'],
                 group: ['MaMuaGiai'], // Lấy danh sách mùa giải duy nhất
             });
-    
+            console.log(allMuaGiai)
             if (!allMuaGiai || allMuaGiai.length === 0) {
                 return res.status(404).json({ error: 'Không tìm thấy mùa giải nào trong bảng xếp hạng.' });
             }
