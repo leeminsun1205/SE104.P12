@@ -53,4 +53,3 @@
 | `21520398` | Nguyễn Quế Phong | 21520398@gm.uit.edu.vn   | [![ra1nei](https://img.shields.io/badge/ynwawithpogct-%2324292f.svg?style=flat-square&logo=github)](https://github.com/ynwawithpogct) |
 
 <hr>
-https://leeminsun1205.github.io/SE104.P12-Anti-man-dan
